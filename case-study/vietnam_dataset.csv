@@ -1,0 +1,2001 @@
+applicant_id,age,region,occupation,is_smoking,is_exercise,bmi,pre_existing_conditions,monthly_income_millions_vnd,health_score,has_family_history,mortality_multiplier,application_date
+VN-00001,47,Southeast,Office Worker,0,1,22.5,None,140.6,95,0,1.24,10/3/2024
+VN-00002,48,Central Highlands,Office Worker,1,0,21.5,None,117.7,95,0,1.56,5/10/2024
+VN-00003,47,South Central Coast,Farmer,0,1,25.2,Hypertension,72.6,86.4,0,1.74,2/19/2024
+VN-00004,46,Southeast,Construction Worker,0,1,25.3,Hypertension; Heart Disease,123.4,82.3,0,2.32,2/22/2024
+VN-00005,47,Central Highlands,Construction Worker,1,1,23.8,COPD/Asthma,114.6,85.6,0,2.24,8/18/2024
+VN-00006,50,Southeast,Service Industry,0,1,26.9,None,77.5,79.5,0,1.5,5/10/2024
+VN-00007,46,Southeast,Factory Worker,0,1,27,Diabetes,105.6,80.9,0,1.82,6/19/2024
+VN-00008,46,Northeast,Service Industry,0,0,19.4,None,97.9,95,0,1.52,12/13/2024
+VN-00009,50,Northwest,Office Worker,0,1,22.3,None,106.7,94.5,0,1.3,8/20/2024
+VN-00010,35,North Central,Farmer,0,0,20.6,None,89.1,95,0,1.3,5/5/2024
+VN-00011,41,Mekong Delta,Farmer,0,1,19.9,None,60.2,95,1,1.32,5/27/2024
+VN-00012,35,Northwest,Farmer,0,1,23.6,None,50,95,0,1.2,9/19/2024
+VN-00013,54,South Central Coast,Office Worker,1,0,24.5,None,132.4,85.7,1,1.68,4/13/2024
+VN-00014,56,Central Highlands,Farmer,0,1,24,None,55.7,82.3,0,1.62,5/14/2024
+VN-00015,30,South Central Coast,Office Worker,1,1,24.7,None,147.3,95,0,1.1,11/12/2024
+VN-00016,56,South Central Coast,Office Worker,1,0,18.8,None,115.1,95,0,1.72,7/6/2024
+VN-00017,36,North Central,Service Industry,1,0,24.5,None,101.1,95,0,1.52,10/25/2024
+VN-00018,42,Southeast,Office Worker,0,1,20.7,Hypertension,153.9,95,1,1.44,5/22/2024
+VN-00019,32,Central Highlands,Farmer,0,1,21.8,None,81.3,95,0,1.14,4/17/2024
+VN-00020,29,Central Highlands,Farmer,0,1,25.6,None,96.6,95,0,1.08,12/11/2024
+VN-00021,48,North Central,Farmer,0,0,25.3,None,122.4,85.3,0,1.56,3/16/2024
+VN-00022,54,South Central Coast,Farmer,0,1,22.7,Heart Disease,67.9,87.2,0,1.88,9/10/2024
+VN-00023,18,Central Highlands,Office Worker,0,1,18.1,None,116,95,0,0.66,12/5/2024
+VN-00024,42,Central Highlands,Factory Worker,0,0,22.6,None,99.8,95,1,1.54,8/29/2024
+VN-00025,36,Northwest,Merchant/Trader,0,1,22.9,None,99.4,95,0,1.12,7/10/2024
+VN-00026,52,Central Highlands,Merchant/Trader,0,0,23.7,None,133.4,87.9,0,1.54,3/24/2024
+VN-00027,35,Mekong Delta,Factory Worker,0,1,25,None,52.2,94.9,0,1.3,2/22/2024
+VN-00028,36,Southeast,Merchant/Trader,0,1,17.2,None,175.4,95,0,1.12,9/9/2024
+VN-00029,38,Northeast,Factory Worker,1,1,25.8,None,91.7,90.6,0,1.56,9/8/2024
+VN-00030,51,Red River Delta,Merchant/Trader,0,0,23.1,Hypertension,91.9,90.1,0,1.82,1/1/2024
+VN-00031,28,North Central,Factory Worker,0,1,24.2,None,104.9,95,1,1.16,2/16/2024
+VN-00032,29,Central Highlands,Office Worker,0,1,21.6,None,139.5,95,0,0.88,8/7/2024
+VN-00033,26,South Central Coast,Farmer,0,0,20.1,None,95.6,95,1,1.12,10/12/2024
+VN-00034,43,Mekong Delta,Farmer,0,0,18.6,None,107.1,95,0,1.46,11/6/2024
+VN-00035,45,Mekong Delta,Retired,0,0,24.4,None,50,84.2,0,2.3,10/14/2024
+VN-00036,48,Red River Delta,Construction Worker,0,0,22.3,None,113.9,88.6,0,1.86,7/25/2024
+VN-00037,49,Southeast,Service Industry,0,0,26.2,None,117.3,82.1,0,1.58,4/15/2024
+VN-00038,40,Mekong Delta,Service Industry,0,1,22,None,50,95,1,1.3,9/5/2024
+VN-00039,70,North Central,Office Worker,0,0,21.2,None,109.9,81.4,0,1.8,1/22/2024
+VN-00040,54,Red River Delta,Farmer,1,1,28.4,Hypertension,80.7,72.6,0,2.08,3/1/2024
+VN-00041,44,Mekong Delta,Office Worker,1,0,20.7,None,137.3,95,0,1.48,9/30/2024
+VN-00042,47,North Central,Office Worker,0,1,21.2,None,98.4,95,0,1.24,4/20/2024
+VN-00043,60,South Central Coast,Office Worker,0,1,24.8,None,107.7,79.9,0,1.5,12/15/2024
+VN-00044,26,Northeast,Construction Worker,0,1,17,None,109.7,95,0,1.32,4/3/2024
+VN-00045,48,Mekong Delta,Office Worker,0,0,20.4,None,125.2,95,0,1.36,10/19/2024
+VN-00046,31,South Central Coast,Service Industry,0,1,27.5,None,50,93.3,1,1.12,9/21/2024
+VN-00047,33,North Central,Construction Worker,0,0,28.9,None,105.8,83.4,0,1.56,11/23/2024
+VN-00048,60,Southeast,Merchant/Trader,0,1,25.2,None,114.2,77.4,0,1.6,10/14/2024
+VN-00049,19,Southeast,Office Worker,0,1,20.5,None,120.4,95,1,0.68,1/15/2024
+VN-00050,55,Mekong Delta,Factory Worker,0,0,25.7,None,108.2,77.1,0,1.8,4/27/2024
+VN-00051,57,Red River Delta,Farmer,0,0,22.5,None,83.4,85.4,0,1.74,10/29/2024
+VN-00052,52,Northwest,Office Worker,1,1,25.2,None,101.3,85.3,0,1.54,4/1/2024
+VN-00053,34,Red River Delta,Farmer,0,1,22,None,58.9,95,0,1.18,11/4/2024
+VN-00054,33,Northwest,Merchant/Trader,0,1,24.3,None,113.5,95,0,1.06,6/27/2024
+VN-00055,47,Northeast,Farmer,0,1,19.3,None,102.1,95,0,1.44,12/25/2024
+VN-00056,44,South Central Coast,Office Worker,0,1,22.4,None,123.1,95,0,1.18,6/23/2024
+VN-00057,71,South Central Coast,Factory Worker,1,1,29.3,Hypertension,112.4,55,0,2.52,9/11/2024
+VN-00058,18,Red River Delta,Farmer,1,0,20.8,None,75.4,95,0,1.16,8/10/2024
+VN-00059,34,Central Highlands,Merchant/Trader,1,0,21.7,None,102.8,95,1,1.38,1/20/2024
+VN-00060,55,Central Highlands,Factory Worker,0,1,26.1,Heart Disease,87.4,76.2,0,2,12/24/2024
+VN-00061,49,North Central,Farmer,0,0,20.2,None,78.6,95,0,1.58,4/26/2024
+VN-00062,18,Red River Delta,Farmer,0,1,25.8,None,100.3,95,1,0.86,11/5/2024
+VN-00063,37,Central Highlands,Farmer,0,1,23.1,None,81.9,95,0,1.24,2/5/2024
+VN-00064,44,South Central Coast,Farmer,0,0,23.9,None,59,92.2,0,1.48,1/25/2024
+VN-00065,50,Southeast,Office Worker,0,1,21.5,None,153.6,95,0,1.3,9/20/2024
+VN-00066,25,Central Highlands,Merchant/Trader,0,0,22.5,None,126.7,95,0,1,10/8/2024
+VN-00067,51,Red River Delta,Office Worker,0,0,23.3,None,91.9,91,1,1.42,4/7/2024
+VN-00068,48,Mekong Delta,Office Worker,0,0,23.3,None,147.8,93.5,0,1.36,8/14/2024
+VN-00069,42,Mekong Delta,Merchant/Trader,1,0,25.4,None,103.1,91.5,0,1.54,3/5/2024
+VN-00070,59,Northeast,Farmer,0,1,18.9,None,55.9,93.2,0,1.68,11/14/2024
+VN-00071,41,Central Highlands,Farmer,1,0,24.5,None,67.5,93,0,1.62,9/18/2024
+VN-00072,35,Southeast,Office Worker,0,0,18,None,153.5,95,0,1.1,3/29/2024
+VN-00073,60,Red River Delta,Service Industry,1,0,28.2,None,76.5,68.1,0,2,11/23/2024
+VN-00074,32,Southeast,Farmer,0,1,24.6,None,100.7,95,0,1.14,12/1/2024
+VN-00075,53,Mekong Delta,Merchant/Trader,0,0,24.3,None,104.6,85.4,0,1.56,3/22/2024
+VN-00076,31,Southeast,Merchant/Trader,1,1,22.6,None,140.9,95,1,1.22,3/14/2024
+VN-00077,56,North Central,Farmer,0,1,23,None,66.1,85,1,1.62,7/28/2024
+VN-00078,41,Mekong Delta,Retired,0,1,27.3,None,62.7,79.7,0,2.12,2/8/2024
+VN-00079,57,Northwest,Merchant/Trader,1,1,23.7,Heart Disease,105.1,83.7,0,2.04,2/27/2024
+VN-00080,60,Mekong Delta,Farmer,1,0,26.1,None,73.1,73.6,0,2,6/22/2024
+VN-00081,37,Southeast,Construction Worker,0,1,23.1,Diabetes,90.3,95,1,1.84,8/1/2024
+VN-00082,45,Central Highlands,Construction Worker,1,0,22.3,None,50,91,1,2,8/1/2024
+VN-00083,34,Red River Delta,Office Worker,0,1,23.2,None,110.6,95,0,0.98,6/14/2024
+VN-00084,54,South Central Coast,Office Worker,1,1,23.8,Diabetes,104,87.3,0,1.88,9/20/2024
+VN-00085,43,Southeast,Office Worker,0,0,23.9,None,183.7,95,0,1.26,1/12/2024
+VN-00086,36,Northeast,Service Industry,0,1,23.9,None,68.5,95,0,1.22,12/26/2024
+VN-00087,31,North Central,Farmer,1,0,22.3,None,97.5,95,0,1.42,2/19/2024
+VN-00088,51,Mekong Delta,Office Worker,0,1,18.9,None,108.5,95,0,1.32,12/20/2024
+VN-00089,36,Central Highlands,Office Worker,0,1,25.7,None,156.2,95,1,1.02,5/24/2024
+VN-00090,52,North Central,Retired,0,1,22.8,None,70.9,82.7,0,2.34,9/22/2024
+VN-00091,31,North Central,Office Worker,1,1,23.1,None,110.6,95,0,1.12,4/17/2024
+VN-00092,63,South Central Coast,Farmer,1,1,24.3,None,70.4,76,0,1.96,10/2/2024
+VN-00093,52,South Central Coast,Office Worker,0,1,23.9,Hypertension,107.5,88.7,0,1.64,3/26/2024
+VN-00094,64,Northeast,Office Worker,0,1,25.3,None,109.7,75.5,0,1.58,10/13/2024
+VN-00095,28,Southeast,Farmer,0,1,26.2,None,111.3,95,0,1.06,5/11/2024
+VN-00096,46,Southeast,Merchant/Trader,0,1,22.5,Diabetes,142.5,95,0,1.62,11/11/2024
+VN-00097,68,South Central Coast,Factory Worker,0,1,27.1,None,89.8,63.2,0,1.96,8/15/2024
+VN-00098,27,Central Highlands,Merchant/Trader,0,0,21.3,None,119.8,95,0,1.04,2/21/2024
+VN-00099,48,South Central Coast,Office Worker,0,1,23.4,None,109.2,93.3,0,1.26,8/28/2024
+VN-00100,48,South Central Coast,Construction Worker,1,0,22.2,None,97.3,89,0,2.06,1/9/2024
+VN-00101,29,North Central,Service Industry,0,1,23.4,None,68.6,95,0,1.08,3/9/2024
+VN-00102,47,Northeast,Merchant/Trader,1,1,23.1,None,109.1,93.4,0,1.54,9/14/2024
+VN-00103,50,Southeast,Factory Worker,0,1,19.5,None,95,95,0,1.6,6/12/2024
+VN-00104,52,Northeast,Construction Worker,0,1,21.9,None,96.7,86.5,0,1.84,2/27/2024
+VN-00105,56,Mekong Delta,Office Worker,0,1,20.2,None,123.4,95,1,1.42,4/30/2024
+VN-00106,25,Southeast,Farmer,0,1,19.7,None,94.4,95,0,1,3/24/2024
+VN-00107,33,Southeast,Farmer,0,0,23,None,101.7,95,0,1.26,6/28/2024
+VN-00108,50,Northwest,Service Industry,1,0,27.5,None,117.9,78.1,0,1.8,6/6/2024
+VN-00109,33,Northeast,Merchant/Trader,1,1,23.3,None,72.6,95,0,1.26,11/16/2024
+VN-00110,39,Central Highlands,Merchant/Trader,0,1,21.6,None,92.2,95,0,1.18,4/5/2024
+VN-00111,49,Mekong Delta,Construction Worker,1,1,24,None,94.4,83.4,0,1.98,2/25/2024
+VN-00112,24,Northwest,Factory Worker,1,0,20.2,None,76.8,95,0,1.38,8/8/2024
+VN-00113,47,North Central,Farmer,0,1,28.8,None,79.4,77,0,1.44,9/2/2024
+VN-00114,39,Southeast,Office Worker,1,0,24.7,None,140.1,95,0,1.38,7/9/2024
+VN-00115,21,Red River Delta,Farmer,1,0,21.8,None,89.3,95,0,1.22,2/17/2024
+VN-00116,43,Northeast,Merchant/Trader,0,1,26.3,None,136.3,88.3,1,1.26,3/27/2024
+VN-00117,39,Red River Delta,Merchant/Trader,1,1,22.8,None,125.6,95,0,1.38,9/17/2024
+VN-00118,55,South Central Coast,Merchant/Trader,0,1,25.7,Arthritis,112.7,80.1,0,1.8,11/19/2024
+VN-00119,49,South Central Coast,Farmer,0,1,26.3,None,62.9,82,0,1.48,7/1/2024
+VN-00120,46,Red River Delta,Factory Worker,0,1,24,Heart Disease,84.7,88.8,0,1.82,2/8/2024
+VN-00121,52,South Central Coast,Merchant/Trader,0,0,21.2,None,110.1,94.4,0,1.54,10/9/2024
+VN-00122,40,Mekong Delta,Factory Worker,0,1,24.9,None,105,91.2,0,1.4,8/16/2024
+VN-00123,40,Red River Delta,Farmer,0,1,19.7,None,56.1,95,0,1.3,1/13/2024
+VN-00124,47,South Central Coast,Office Worker,0,0,24.7,None,142.4,90.6,0,1.34,5/11/2024
+VN-00125,49,Central Highlands,Factory Worker,0,1,24.2,None,132.3,85.9,1,1.58,12/1/2024
+VN-00126,38,Northeast,Merchant/Trader,0,0,21.7,None,113.3,95,0,1.26,4/26/2024
+VN-00127,43,North Central,Farmer,0,1,26.6,None,59.5,86,0,1.36,8/27/2024
+VN-00128,64,Northeast,Office Worker,0,0,24.5,None,121,77.5,0,1.68,2/20/2024
+VN-00129,54,Southeast,Farmer,0,0,23,None,118,86.6,1,1.68,11/11/2024
+VN-00130,51,Red River Delta,Factory Worker,0,1,25.7,None,74.1,80.5,1,1.62,8/15/2024
+VN-00131,18,Northwest,Service Industry,0,0,23.9,None,95.9,95,0,0.96,10/31/2024
+VN-00132,26,South Central Coast,Retired,1,1,21.6,None,53.2,95,0,2.02,2/12/2024
+VN-00133,44,South Central Coast,Farmer,0,1,22,None,92.4,95,1,1.38,10/20/2024
+VN-00134,66,Southeast,Factory Worker,0,1,22.4,None,99.8,76.9,0,1.92,4/1/2024
+VN-00135,60,South Central Coast,Office Worker,0,1,24.4,None,117.5,81.1,0,1.5,9/24/2024
+VN-00136,31,South Central Coast,Construction Worker,0,0,21.6,None,121.6,95,0,1.52,12/30/2024
+VN-00137,38,Mekong Delta,Farmer,1,0,23.9,None,83.8,95,0,1.56,1/16/2024
+VN-00138,44,Mekong Delta,Factory Worker,0,1,20.9,None,95.3,95,0,1.48,8/14/2024
+VN-00139,46,Southeast,Office Worker,0,1,22,None,130,95,0,1.22,9/4/2024
+VN-00140,35,Red River Delta,Merchant/Trader,0,0,23.5,None,87.7,95,0,1.2,10/15/2024
+VN-00141,46,Northwest,Office Worker,0,0,20.8,None,81.3,95,0,1.32,8/14/2024
+VN-00142,43,Southeast,Factory Worker,0,1,23.8,Diabetes,124.9,91.8,0,1.76,11/23/2024
+VN-00143,39,Southeast,Factory Worker,0,1,20.3,None,126.9,95,0,1.38,7/24/2024
+VN-00144,47,Southeast,Construction Worker,1,0,24.4,COPD/Asthma,107.1,84,0,2.34,7/21/2024
+VN-00145,49,Red River Delta,Service Industry,1,1,27,None,50,80,0,1.68,9/11/2024
+VN-00146,36,Southeast,Construction Worker,0,0,21.7,None,120.6,95,1,1.62,3/16/2024
+VN-00147,28,Northwest,Farmer,0,1,21.9,None,62.1,95,0,1.06,12/26/2024
+VN-00148,30,South Central Coast,Office Worker,0,1,20.4,None,119.3,95,0,0.9,10/17/2024
+VN-00149,26,Central Highlands,Office Worker,1,0,17,None,109.8,95,0,1.12,12/9/2024
+VN-00150,40,Red River Delta,Office Worker,0,1,22.4,None,141.5,95,0,1.1,11/27/2024
+VN-00151,46,Northeast,Office Worker,0,0,24.7,Heart Disease,136.4,91.6,0,1.62,3/22/2024
+VN-00152,27,Red River Delta,Office Worker,0,1,24.6,None,103.8,95,0,0.84,2/20/2024
+VN-00153,44,Mekong Delta,Merchant/Trader,0,1,24.7,Heart Disease,165.6,91.6,1,1.58,7/31/2024
+VN-00154,36,Southeast,Farmer,0,1,25.2,None,93.3,95,0,1.22,10/14/2024
+VN-00155,45,Mekong Delta,Factory Worker,0,1,23.8,None,65.9,90.1,0,1.5,7/11/2024
+VN-00156,39,Mekong Delta,Construction Worker,0,1,26.3,None,86,85.3,0,1.58,11/16/2024
+VN-00157,42,Red River Delta,Farmer,0,1,23.9,None,71.7,93.8,0,1.34,2/4/2024
+VN-00158,54,Mekong Delta,Office Worker,0,1,22.9,None,129,89.8,0,1.38,12/7/2024
+VN-00159,49,North Central,Merchant/Trader,1,0,21.8,None,118.5,95,0,1.68,9/29/2024
+VN-00160,37,Southeast,Construction Worker,0,1,21.3,None,129.1,95,0,1.54,11/5/2024
+VN-00161,55,Red River Delta,Merchant/Trader,0,1,23.6,None,134.5,85.7,0,1.5,9/6/2024
+VN-00162,41,South Central Coast,Office Worker,0,0,21.9,None,133.5,95,0,1.22,12/30/2024
+VN-00163,43,Red River Delta,Farmer,1,1,22.9,None,97.7,95,0,1.56,8/1/2024
+VN-00164,51,Southeast,Office Worker,0,1,21.4,Heart Disease,167.2,95,0,1.62,11/22/2024
+VN-00165,56,Red River Delta,Farmer,0,0,20,None,99.2,92.8,1,1.72,3/15/2024
+VN-00166,28,Northwest,Farmer,0,1,22.2,None,92.2,95,1,1.06,1/13/2024
+VN-00167,28,Mekong Delta,Factory Worker,1,1,23.9,Hypertension,117.6,95,1,1.66,7/1/2024
+VN-00168,36,South Central Coast,Factory Worker,0,1,19.9,None,103.6,95,1,1.32,9/20/2024
+VN-00169,41,Northwest,Farmer,1,0,18.4,Diabetes,73.4,95,0,1.92,11/20/2024
+VN-00170,43,Mekong Delta,Farmer,0,1,25.6,None,83.8,88.6,0,1.36,6/27/2024
+VN-00171,45,South Central Coast,Factory Worker,0,1,21.7,None,89.8,95,0,1.5,1/21/2024
+VN-00172,44,South Central Coast,Office Worker,1,1,25.1,Arthritis,113.8,92,0,1.68,1/13/2024
+VN-00173,56,Mekong Delta,Farmer,0,0,22.7,None,105.5,85.6,0,1.72,5/28/2024
+VN-00174,51,Southeast,Factory Worker,1,1,26,None,120.3,79.7,0,1.82,9/14/2024
+VN-00175,39,North Central,Office Worker,1,1,17,None,122.4,95,0,1.28,10/9/2024
+VN-00176,60,Central Highlands,Farmer,0,1,19,None,65.5,92,0,1.7,5/14/2024
+VN-00177,46,South Central Coast,Merchant/Trader,0,1,24.8,None,97.9,89.7,0,1.32,1/4/2024
+VN-00178,41,Mekong Delta,Service Industry,0,0,19.6,None,67.7,95,1,1.42,6/29/2024
+VN-00179,52,Northeast,Office Worker,0,1,23.2,None,119.9,90.6,0,1.34,9/4/2024
+VN-00180,51,Red River Delta,Retired,1,0,22.6,None,68.5,84,1,2.62,1/6/2024
+VN-00181,24,Red River Delta,Merchant/Trader,0,0,21.1,None,80,95,0,0.98,1/19/2024
+VN-00182,47,Northeast,Farmer,1,0,21,None,106.3,95,0,1.74,12/17/2024
+VN-00183,29,South Central Coast,Merchant/Trader,0,0,20.2,None,102.2,95,0,1.08,3/31/2024
+VN-00184,47,Northeast,Farmer,0,1,31.8,COPD/Asthma,50.7,69.1,0,1.74,12/11/2024
+VN-00185,56,Northeast,Office Worker,0,1,21.8,None,124.3,91.1,0,1.42,8/8/2024
+VN-00186,39,North Central,Merchant/Trader,0,1,22.1,None,115.5,95,0,1.18,3/24/2024
+VN-00187,24,Central Highlands,Farmer,0,1,21.9,None,88.7,95,0,0.98,1/24/2024
+VN-00188,46,North Central,Merchant/Trader,0,1,23.8,None,108.4,92.3,0,1.32,11/8/2024
+VN-00189,28,Northeast,Farmer,0,1,19.4,None,103.9,95,0,1.06,7/24/2024
+VN-00190,30,Red River Delta,Construction Worker,1,1,23.3,None,127.4,95,0,1.6,9/10/2024
+VN-00191,48,Red River Delta,Construction Worker,1,0,23.9,None,117.6,84.6,0,2.06,1/1/2024
+VN-00192,53,Red River Delta,Farmer,1,1,25,None,57.7,82.1,0,1.76,12/2/2024
+VN-00193,28,Southeast,Merchant/Trader,1,0,21,None,157.8,95,0,1.26,6/16/2024
+VN-00194,48,Red River Delta,Office Worker,0,1,23.5,None,147.7,93.1,0,1.26,1/22/2024
+VN-00195,54,Northeast,Office Worker,0,0,24.7,Hypertension,99.4,85.1,0,1.78,4/6/2024
+VN-00196,25,North Central,Service Industry,1,1,21.4,None,67.7,95,0,1.2,3/19/2024
+VN-00197,45,Southeast,Office Worker,1,0,21.8,Diabetes,157.8,95,0,1.8,3/22/2024
+VN-00198,42,Southeast,Factory Worker,0,1,22.8,None,81,95,1,1.44,6/5/2024
+VN-00199,63,South Central Coast,Farmer,0,0,22.3,None,50,81,1,1.86,3/5/2024
+VN-00200,44,Red River Delta,Factory Worker,1,0,19.5,None,116.6,95,0,1.78,5/17/2024
+VN-00201,55,Northeast,Office Worker,1,1,22.4,None,111.3,90.4,0,1.6,9/4/2024
+VN-00202,22,Northeast,Office Worker,0,1,24.2,None,130.2,95,1,0.74,10/16/2024
+VN-00203,41,Southeast,Office Worker,1,0,20.7,None,159.6,95,0,1.42,3/31/2024
+VN-00204,27,South Central Coast,Farmer,0,1,17.8,None,85.7,95,0,1.04,12/28/2024
+VN-00205,54,South Central Coast,Office Worker,0,1,24.2,None,104,86.3,1,1.38,7/25/2024
+VN-00206,18,Northwest,Merchant/Trader,0,0,21.6,None,91.9,95,0,0.86,3/9/2024
+VN-00207,64,Northeast,Merchant/Trader,0,0,18.8,None,94,90.8,0,1.78,11/12/2024
+VN-00208,32,North Central,Office Worker,1,0,24.4,None,129.7,95,0,1.24,5/20/2024
+VN-00209,32,South Central Coast,Factory Worker,0,1,26.2,None,99.5,94.3,1,1.24,4/24/2024
+VN-00210,46,Northeast,Office Worker,1,1,19.3,None,108.7,95,0,1.42,1/19/2024
+VN-00211,31,Southeast,Farmer,0,0,26.6,Hypertension,107.1,95,0,1.52,9/25/2024
+VN-00212,41,North Central,Service Industry,0,1,22.7,Arthritis,64.7,95,0,1.62,4/29/2024
+VN-00213,39,Mekong Delta,Farmer,0,0,26.8,Arthritis,115.2,88.7,1,1.68,2/17/2024
+VN-00214,29,Northeast,Farmer,1,0,22.6,None,103.6,95,0,1.38,8/21/2024
+VN-00215,29,North Central,Factory Worker,0,1,20.6,None,83.8,95,1,1.18,5/3/2024
+VN-00216,67,Red River Delta,Farmer,0,0,27.1,COPD/Asthma,135,65.4,0,2.24,2/28/2024
+VN-00217,36,Mekong Delta,Merchant/Trader,0,0,21.2,None,148.2,95,0,1.22,1/8/2024
+VN-00218,39,Central Highlands,Farmer,0,0,25.1,None,97.2,93.2,0,1.38,3/2/2024
+VN-00219,28,Mekong Delta,Office Worker,0,1,24.1,None,131,95,0,0.86,11/21/2024
+VN-00220,49,Southeast,Merchant/Trader,1,1,18.8,None,134.8,95,0,1.58,8/4/2024
+VN-00221,50,Mekong Delta,Merchant/Trader,1,0,22.4,None,119.4,92.8,0,1.7,6/11/2024
+VN-00222,45,Central Highlands,Construction Worker,0,0,22.7,Hypertension; COPD/Asthma; Arthritis,118,90,0,2.7,12/21/2024
+VN-00223,54,Central Highlands,Service Industry,0,0,28.5,None,94.1,72.2,0,1.68,7/1/2024
+VN-00224,43,Central Highlands,Office Worker,0,1,22.3,None,142.5,95,0,1.16,3/15/2024
+VN-00225,42,Southeast,Office Worker,0,1,19.4,None,169.1,95,0,1.14,4/21/2024
+VN-00226,47,Red River Delta,Farmer,0,0,23.7,None,94.4,90.3,1,1.54,3/15/2024
+VN-00227,21,Red River Delta,Farmer,1,1,24.6,None,76.7,95,0,1.12,3/28/2024
+VN-00228,44,Mekong Delta,Farmer,0,0,27,None,108.2,84.1,0,1.48,9/29/2024
+VN-00229,39,Red River Delta,Farmer,0,1,20.8,None,78.8,95,0,1.28,12/25/2024
+VN-00230,47,Northeast,Office Worker,1,0,19.3,None,94,95,1,1.54,12/9/2024
+VN-00231,18,South Central Coast,Merchant/Trader,0,1,21.1,None,74.3,95,0,0.76,4/15/2024
+VN-00232,37,Northwest,Factory Worker,0,0,23.2,Heart Disease,67.2,95,0,1.74,11/27/2024
+VN-00233,56,North Central,Service Industry,0,0,23.4,None,118.1,83.9,0,1.72,4/4/2024
+VN-00234,61,North Central,Retired,0,1,25,None,59.6,69.7,0,2.52,11/13/2024
+VN-00235,37,Southeast,Factory Worker,0,0,20.3,None,102.8,95,0,1.44,1/13/2024
+VN-00236,48,Central Highlands,Office Worker,0,1,23.8,None,86.7,92.2,0,1.26,11/10/2024
+VN-00237,45,South Central Coast,Factory Worker,1,0,22.7,None,80.3,93,1,1.8,5/28/2024
+VN-00238,46,Red River Delta,Office Worker,0,1,21.7,None,126.3,95,0,1.22,11/26/2024
+VN-00239,23,Red River Delta,Merchant/Trader,0,1,21,None,118.5,95,0,0.86,8/8/2024
+VN-00240,36,Mekong Delta,Merchant/Trader,1,1,21.3,None,143.3,95,0,1.32,4/13/2024
+VN-00241,40,Central Highlands,Office Worker,0,0,23,None,137.5,95,0,1.2,7/4/2024
+VN-00242,59,Northwest,Farmer,0,1,23.7,None,84.6,80.6,0,1.68,7/2/2024
+VN-00243,28,Mekong Delta,Factory Worker,1,1,23,None,99.3,95,1,1.36,9/27/2024
+VN-00244,50,South Central Coast,Service Industry,0,0,26.4,None,65.9,80.8,0,1.6,5/28/2024
+VN-00245,56,Red River Delta,Merchant/Trader,0,0,22.8,None,130.2,87,0,1.62,10/29/2024
+VN-00246,43,Red River Delta,Office Worker,0,1,20.7,None,153.2,95,1,1.16,6/29/2024
+VN-00247,29,Mekong Delta,Farmer,0,0,22,None,50,95,0,1.18,8/7/2024
+VN-00248,48,Mekong Delta,Construction Worker,1,1,22.6,None,133.8,87.9,0,1.96,7/27/2024
+VN-00249,36,Red River Delta,Office Worker,0,1,23.3,None,135,95,0,1.02,6/11/2024
+VN-00250,50,Red River Delta,Office Worker,0,0,22.5,None,128.2,94,0,1.4,2/13/2024
+VN-00251,45,Mekong Delta,Office Worker,0,0,20.4,None,110.7,95,0,1.3,5/20/2024
+VN-00252,38,South Central Coast,Office Worker,0,1,21.2,None,121.1,95,1,1.06,5/15/2024
+VN-00253,63,Mekong Delta,Farmer,0,0,23.9,None,65.3,76.8,0,1.86,6/19/2024
+VN-00254,63,Mekong Delta,Office Worker,0,1,24.2,None,112.6,79.1,0,1.56,1/6/2024
+VN-00255,39,Northwest,Farmer,0,1,22.5,None,106.9,95,0,1.28,9/7/2024
+VN-00256,36,Southeast,Retired,0,1,20.7,None,67.5,95,0,2.02,8/24/2024
+VN-00257,21,Southeast,Merchant/Trader,0,0,26.6,None,118.4,95,0,0.92,9/14/2024
+VN-00258,31,Mekong Delta,Factory Worker,1,0,21.6,Diabetes,86.4,95,0,1.82,11/28/2024
+VN-00259,40,Red River Delta,Office Worker,0,1,22.5,None,106,95,0,1.1,1/8/2024
+VN-00260,29,Mekong Delta,Farmer,0,0,17,None,72.5,95,0,1.18,1/27/2024
+VN-00261,43,Southeast,Construction Worker,1,1,25.5,None,94.7,84.3,1,1.86,2/7/2024
+VN-00262,28,Northeast,Office Worker,0,0,19.1,None,113.4,95,0,0.96,4/15/2024
+VN-00263,29,Northeast,Factory Worker,0,0,22.4,None,88.2,95,0,1.28,9/1/2024
+VN-00264,67,North Central,Construction Worker,1,0,20.4,None,99.2,78.4,0,2.44,4/15/2024
+VN-00265,52,Northwest,Office Worker,0,0,24.2,None,99,88,0,1.44,12/26/2024
+VN-00266,51,Southeast,Construction Worker,1,1,22.1,None,126.8,86.7,1,2.02,1/10/2024
+VN-00267,39,Red River Delta,Office Worker,0,1,21.6,None,152.4,95,0,1.08,4/19/2024
+VN-00268,65,Red River Delta,Office Worker,0,1,24.8,None,105.3,76,0,1.6,6/12/2024
+VN-00269,57,Northeast,Merchant/Trader,0,1,28,Heart Disease,116,72.5,0,1.84,11/5/2024
+VN-00270,39,Mekong Delta,Office Worker,0,0,21.5,Hypertension,125.5,95,0,1.48,9/7/2024
+VN-00271,57,North Central,Office Worker,1,1,23.9,None,104.1,84.8,1,1.64,1/20/2024
+VN-00272,39,Central Highlands,Merchant/Trader,0,1,25.6,None,134.8,93.3,0,1.18,4/18/2024
+VN-00273,51,North Central,Retired,0,0,22.3,None,69.6,84.6,0,2.42,4/24/2024
+VN-00274,23,South Central Coast,Office Worker,1,1,22.1,None,101.9,95,0,0.96,8/17/2024
+VN-00275,30,Mekong Delta,Office Worker,0,1,23,None,120.9,95,0,0.9,7/26/2024
+VN-00276,50,Red River Delta,Merchant/Trader,0,0,26.7,None,100.4,81.7,0,1.5,11/8/2024
+VN-00277,34,Northwest,Office Worker,0,0,21.7,None,84.1,95,0,1.08,3/4/2024
+VN-00278,25,South Central Coast,Factory Worker,0,0,21.4,None,80.8,95,0,1.2,8/23/2024
+VN-00279,28,Southeast,Farmer,0,0,21.3,None,102.5,95,0,1.16,5/25/2024
+VN-00280,32,Northeast,Service Industry,0,1,23.6,None,127.2,95,0,1.14,9/24/2024
+VN-00281,47,Northwest,Service Industry,0,0,24.5,None,93.6,88.1,0,1.54,2/2/2024
+VN-00282,43,Red River Delta,Merchant/Trader,0,0,17.9,None,129.4,95,0,1.36,7/4/2024
+VN-00283,34,Southeast,Merchant/Trader,0,0,22.1,None,150.4,95,0,1.18,8/11/2024
+VN-00284,40,Northeast,Office Worker,1,1,26,None,131.1,93,0,1.3,12/4/2024
+VN-00285,31,Central Highlands,Factory Worker,0,0,24.5,COPD/Asthma,109.1,95,0,1.62,1/9/2024
+VN-00286,75,South Central Coast,Retired,1,1,25.5,Diabetes,50,57.1,1,3.3,1/12/2024
+VN-00287,51,Northeast,Farmer,0,1,26.1,None,76.8,80.9,0,1.52,5/16/2024
+VN-00288,36,North Central,Farmer,1,1,22.8,None,90.1,95,0,1.42,12/3/2024
+VN-00289,48,South Central Coast,Service Industry,0,1,28,None,70,78.3,0,1.46,8/1/2024
+VN-00290,25,Northeast,Merchant/Trader,0,1,24.9,None,117.7,95,0,0.9,3/20/2024
+VN-00291,54,South Central Coast,Farmer,0,0,27.3,Hypertension,50,75.3,0,1.98,12/8/2024
+VN-00292,28,South Central Coast,Factory Worker,0,0,22,None,63.2,95,0,1.26,2/19/2024
+VN-00293,42,Northwest,Merchant/Trader,1,1,22.4,None,93.4,95,0,1.44,10/23/2024
+VN-00294,48,South Central Coast,Construction Worker,1,0,21.4,None,94.8,91,1,2.06,5/5/2024
+VN-00295,53,Central Highlands,Merchant/Trader,0,0,23.7,None,122.5,86.9,0,1.56,5/1/2024
+VN-00296,19,Red River Delta,Merchant/Trader,0,0,23.1,None,145.2,95,0,0.88,6/2/2024
+VN-00297,69,Southeast,Office Worker,0,0,20.2,None,133.5,84.8,1,1.78,6/12/2024
+VN-00298,33,South Central Coast,Office Worker,0,0,20.1,None,86.1,95,0,1.06,8/10/2024
+VN-00299,30,Southeast,Merchant/Trader,1,1,21.4,None,109.1,95,0,1.2,5/23/2024
+VN-00300,34,Southeast,Merchant/Trader,1,0,23.3,None,121.8,95,0,1.38,7/28/2024
+VN-00301,53,Mekong Delta,Construction Worker,0,0,22.4,None,140.4,84.4,0,1.96,4/24/2024
+VN-00302,42,Northwest,Farmer,1,1,23.5,None,68.6,94.9,0,1.54,4/18/2024
+VN-00303,54,Southeast,Construction Worker,1,1,26.1,None,123.6,74,1,2.08,6/13/2024
+VN-00304,56,South Central Coast,Office Worker,0,0,21.8,None,126.3,91.1,0,1.52,5/30/2024
+VN-00305,23,Northwest,Farmer,0,1,24.1,None,78.2,95,1,0.96,3/19/2024
+VN-00306,43,North Central,Construction Worker,0,0,31.5,None,142.2,68.8,0,1.76,4/2/2024
+VN-00307,18,Southeast,Service Industry,0,1,19.5,None,117.2,95,0,0.86,1/16/2024
+VN-00308,36,North Central,Office Worker,0,1,24,None,177.7,95,0,1.02,4/6/2024
+VN-00309,29,Northeast,Farmer,0,1,25,None,95.8,95,1,1.08,6/30/2024
+VN-00310,24,Northwest,Factory Worker,0,0,21.6,None,118.1,95,0,1.18,10/31/2024
+VN-00311,30,Red River Delta,Factory Worker,0,1,25.7,Diabetes,52.6,95,0,1.5,10/12/2024
+VN-00312,47,North Central,Retired,0,0,22.6,None,83.3,87.2,0,2.34,2/25/2024
+VN-00313,30,Red River Delta,Merchant/Trader,0,1,19.1,None,82.4,95,1,1,4/9/2024
+VN-00314,40,Mekong Delta,Service Industry,0,1,20.3,None,59.7,95,1,1.3,5/4/2024
+VN-00315,57,Southeast,Factory Worker,1,1,23.2,None,128,82,0,1.94,8/6/2024
+VN-00316,54,Mekong Delta,Farmer,1,0,26.7,None,68.7,76.8,0,1.88,1/3/2024
+VN-00317,48,Mekong Delta,Merchant/Trader,0,0,25.2,None,121.2,87,0,1.46,11/2/2024
+VN-00318,41,Central Highlands,Office Worker,0,0,22.1,None,91.3,95,0,1.22,10/4/2024
+VN-00319,43,Mekong Delta,Merchant/Trader,1,1,20.9,None,83.3,95,0,1.46,11/19/2024
+VN-00320,35,Mekong Delta,Farmer,1,0,25,None,82.4,95,0,1.5,3/13/2024
+VN-00321,42,Central Highlands,Office Worker,0,1,22.1,None,134.6,95,0,1.14,5/10/2024
+VN-00322,25,North Central,Service Industry,0,0,20,None,50,95,0,1.1,7/7/2024
+VN-00323,37,Red River Delta,Farmer,0,1,26.7,None,72,90.6,1,1.24,7/30/2024
+VN-00324,72,Northeast,Retired,0,0,27.3,None,62.8,54.9,1,2.84,3/6/2024
+VN-00325,41,Northwest,Factory Worker,0,0,22.7,None,96,95,0,1.52,7/10/2024
+VN-00326,39,Northeast,Farmer,0,1,23.3,None,53.1,95,0,1.28,5/22/2024
+VN-00327,27,Southeast,Office Worker,1,1,21.2,None,161.8,95,0,1.04,5/19/2024
+VN-00328,40,Northeast,Farmer,0,1,24.2,None,90.9,94.6,0,1.3,12/3/2024
+VN-00329,46,Southeast,Office Worker,0,0,23.2,None,161.1,95,0,1.32,12/27/2024
+VN-00330,35,North Central,Office Worker,0,1,23.6,None,116.1,95,0,1,2/13/2024
+VN-00331,43,Red River Delta,Construction Worker,1,1,22.1,None,119.9,93.2,1,1.86,3/14/2024
+VN-00332,40,South Central Coast,Merchant/Trader,0,1,22.4,None,100.4,95,0,1.2,9/2/2024
+VN-00333,26,Central Highlands,Service Industry,0,0,25.3,None,89.2,95,0,1.12,10/5/2024
+VN-00334,52,Northeast,Farmer,0,1,23.8,None,54.6,86,1,1.54,9/11/2024
+VN-00335,40,Central Highlands,Farmer,0,0,23.7,None,95,95,0,1.4,6/29/2024
+VN-00336,45,Northwest,Merchant/Trader,0,1,25.1,None,82.7,89.7,0,1.3,12/6/2024
+VN-00337,27,Mekong Delta,Farmer,0,0,21.8,None,81.6,95,1,1.14,1/12/2024
+VN-00338,42,North Central,Office Worker,1,0,22,None,93.5,95,0,1.44,4/14/2024
+VN-00339,49,Southeast,Farmer,0,1,21.7,None,94.1,93.8,0,1.48,5/25/2024
+VN-00340,58,Southeast,Office Worker,0,0,20.6,None,149.3,92.6,0,1.56,12/17/2024
+VN-00341,28,Red River Delta,Office Worker,1,1,17.6,None,114.4,95,0,1.06,6/16/2024
+VN-00342,43,Northwest,Office Worker,0,1,27.1,None,125.9,87.7,0,1.16,4/23/2024
+VN-00343,41,Red River Delta,Office Worker,0,1,25.3,None,114.6,93.9,0,1.12,2/14/2024
+VN-00344,19,Northeast,Farmer,0,1,20.2,None,70.2,95,0,0.88,1/10/2024
+VN-00345,30,Northeast,Farmer,0,1,24.7,None,76.8,95,0,1.1,4/17/2024
+VN-00346,53,North Central,Service Industry,1,0,17,None,91.4,95,0,1.86,12/18/2024
+VN-00347,32,Northeast,Factory Worker,1,1,22.9,None,104.9,95,1,1.44,11/17/2024
+VN-00348,43,Mekong Delta,Office Worker,0,0,27.4,None,127,86.8,0,1.26,7/15/2024
+VN-00349,41,Red River Delta,Construction Worker,0,1,22.9,Heart Disease,99.5,92.7,0,1.92,12/30/2024
+VN-00350,18,Southeast,Farmer,0,1,17,None,111.8,95,0,0.86,11/5/2024
+VN-00351,44,North Central,Farmer,0,0,24.4,None,70.3,90.9,0,1.48,7/12/2024
+VN-00352,53,South Central Coast,Office Worker,0,1,22.8,None,109.5,90.9,0,1.36,12/24/2024
+VN-00353,26,Central Highlands,Retired,0,0,17.3,None,50,95,0,1.92,3/18/2024
+VN-00354,50,Southeast,Factory Worker,0,0,19.6,None,108.2,95,0,1.7,8/6/2024
+VN-00355,28,Mekong Delta,Service Industry,0,1,22.2,None,58.1,95,0,1.06,12/2/2024
+VN-00356,47,Southeast,Farmer,0,0,21.2,None,120.7,95,0,1.54,10/23/2024
+VN-00357,43,South Central Coast,Factory Worker,0,0,20.7,Hypertension,123.5,95,0,1.86,1/31/2024
+VN-00358,46,Northeast,Factory Worker,1,0,20.3,None,71.1,95,1,1.82,3/10/2024
+VN-00359,49,Central Highlands,Factory Worker,0,0,22.6,None,88,90,0,1.68,3/19/2024
+VN-00360,55,Red River Delta,Office Worker,1,1,17.3,None,160.8,95,1,1.6,11/9/2024
+VN-00361,26,North Central,Service Industry,0,0,23.4,None,75.5,95,0,1.12,1/3/2024
+VN-00362,44,Southeast,Office Worker,0,1,21.5,None,122.2,95,0,1.18,10/17/2024
+VN-00363,40,Red River Delta,Factory Worker,0,1,25,Hypertension,93.2,91,1,1.7,11/21/2024
+VN-00364,18,Mekong Delta,Retired,0,0,19.6,None,86,95,1,1.76,2/16/2024
+VN-00365,40,South Central Coast,Farmer,0,1,25.2,None,75.7,92.1,0,1.3,9/21/2024
+VN-00366,56,Red River Delta,Merchant/Trader,1,1,26.3,Hypertension; Diabetes,117.9,77.9,0,2.32,3/31/2024
+VN-00367,50,Central Highlands,Merchant/Trader,1,1,26.6,None,89.1,81.8,1,1.6,3/7/2024
+VN-00368,47,Central Highlands,Construction Worker,1,0,25,COPD/Asthma,116.5,82.4,1,2.34,8/24/2024
+VN-00369,27,Southeast,Farmer,0,0,22.8,None,107.9,95,0,1.14,9/27/2024
+VN-00370,30,Southeast,Office Worker,0,1,22.5,None,149.1,95,0,0.9,1/7/2024
+VN-00371,39,Mekong Delta,Farmer,1,0,23.4,None,69.4,95,0,1.58,3/20/2024
+VN-00372,54,North Central,Merchant/Trader,1,0,22.1,None,133.5,90.4,0,1.78,11/5/2024
+VN-00373,38,South Central Coast,Farmer,0,1,19.6,Hypertension,73.3,95,0,1.56,5/2/2024
+VN-00374,48,Mekong Delta,Factory Worker,0,1,26,None,72.5,82.1,0,1.56,4/9/2024
+VN-00375,37,Red River Delta,Farmer,0,0,24.1,None,76.6,95,1,1.34,12/27/2024
+VN-00376,44,Mekong Delta,Construction Worker,0,1,25.5,None,71.4,83.4,0,1.68,5/16/2024
+VN-00377,42,South Central Coast,Farmer,1,1,22.5,None,88.1,95,0,1.54,2/16/2024
+VN-00378,31,Mekong Delta,Factory Worker,0,0,20.5,None,98.9,95,0,1.32,1/26/2024
+VN-00379,53,Northwest,Factory Worker,0,0,24.5,None,61.2,82,0,1.76,9/11/2024
+VN-00380,52,Northeast,Office Worker,0,1,25.4,Diabetes,144.9,84.9,0,1.64,3/23/2024
+VN-00381,39,North Central,Merchant/Trader,0,1,22.6,None,105.9,95,0,1.18,9/25/2024
+VN-00382,56,Red River Delta,Office Worker,0,1,23.9,None,130.6,85.6,0,1.42,4/15/2024
+VN-00383,49,South Central Coast,Farmer,1,0,27.2,None,73.7,79.5,1,1.78,5/20/2024
+VN-00384,30,South Central Coast,Farmer,1,1,21.4,None,78.4,95,0,1.3,5/12/2024
+VN-00385,47,Red River Delta,Factory Worker,0,1,23.2,None,96,90.1,1,1.54,12/16/2024
+VN-00386,54,Northeast,Farmer,0,1,25.8,None,90.5,79.1,0,1.58,12/11/2024
+VN-00387,45,Red River Delta,Farmer,1,0,25,Hypertension,92.1,88.4,0,2,10/28/2024
+VN-00388,35,Southeast,Service Industry,0,1,22.8,None,76.4,95,1,1.2,5/9/2024
+VN-00389,43,Northwest,Retired,0,0,22.1,None,67,91.6,0,2.26,2/17/2024
+VN-00390,57,Northeast,Retired,1,0,26.1,None,51.5,70,1,2.74,7/30/2024
+VN-00391,31,North Central,Service Industry,1,1,22.5,None,50.1,95,0,1.32,10/18/2024
+VN-00392,57,Red River Delta,Construction Worker,0,0,20.8,Hypertension,59.4,85.4,0,2.34,3/19/2024
+VN-00393,58,Mekong Delta,Office Worker,0,1,23.4,None,113.2,85.2,0,1.46,7/7/2024
+VN-00394,56,Southeast,Service Industry,0,0,24.5,None,100.9,81,0,1.72,1/7/2024
+VN-00395,47,South Central Coast,Factory Worker,0,1,18.4,None,116.5,95,0,1.54,9/13/2024
+VN-00396,36,Mekong Delta,Service Industry,0,0,20.1,None,91.2,95,0,1.32,9/12/2024
+VN-00397,60,Northwest,Farmer,0,0,25.1,Diabetes,74.8,76.1,0,2.1,4/9/2024
+VN-00398,31,Southeast,Farmer,0,1,21.8,None,105,95,0,1.12,11/26/2024
+VN-00399,46,Southeast,Farmer,1,1,23,None,100.9,92.9,0,1.62,10/7/2024
+VN-00400,63,Southeast,Merchant/Trader,0,1,21.1,None,123.4,85.7,1,1.66,5/25/2024
+VN-00401,43,Red River Delta,Merchant/Trader,0,0,21.4,None,98.4,95,1,1.36,12/3/2024
+VN-00402,53,Red River Delta,Farmer,0,1,21,Arthritis,87.4,92.5,0,1.86,8/21/2024
+VN-00403,32,North Central,Farmer,1,1,19.3,None,59.5,95,0,1.34,5/6/2024
+VN-00404,37,North Central,Merchant/Trader,1,1,22.6,Diabetes,67.5,95,1,1.64,12/25/2024
+VN-00405,61,Southeast,Office Worker,0,0,24.3,None,171.9,80.6,0,1.62,7/31/2024
+VN-00406,18,Southeast,Retired,1,1,21.8,None,52.7,95,0,1.86,9/14/2024
+VN-00407,68,Southeast,Construction Worker,0,1,27.6,None,141.2,58.8,0,2.16,2/26/2024
+VN-00408,44,Red River Delta,Construction Worker,0,0,25.9,Heart Disease; Arthritis,71.8,82.4,0,2.38,10/28/2024
+VN-00409,29,North Central,Factory Worker,0,1,17.1,None,99.3,95,0,1.18,9/22/2024
+VN-00410,61,Southeast,Merchant/Trader,1,1,28.5,None,126.9,68.2,0,1.82,6/12/2024
+VN-00411,22,Southeast,Farmer,0,1,22,None,96.5,95,0,0.94,8/12/2024
+VN-00412,38,Northeast,Retired,1,1,22.5,None,93.8,94.5,0,2.26,5/24/2024
+VN-00413,68,Northeast,Merchant/Trader,0,1,25.7,None,148,69.7,0,1.76,8/16/2024
+VN-00414,44,Mekong Delta,Service Industry,0,1,22.3,None,50,95,1,1.38,2/21/2024
+VN-00415,51,Mekong Delta,Construction Worker,1,0,26.4,None,71.7,75.5,0,2.12,4/14/2024
+VN-00416,28,Southeast,Farmer,0,1,23.9,None,93.2,95,1,1.06,8/13/2024
+VN-00417,36,Northeast,Service Industry,1,0,18.5,None,114.8,95,1,1.52,7/5/2024
+VN-00418,66,Mekong Delta,Merchant/Trader,1,0,22.9,None,105.2,78.7,1,2.02,4/22/2024
+VN-00419,41,Central Highlands,Farmer,1,0,21.5,None,95.8,95,0,1.62,11/13/2024
+VN-00420,47,Mekong Delta,Merchant/Trader,0,0,23,None,128.1,93.5,0,1.44,3/23/2024
+VN-00421,41,Southeast,Farmer,1,0,18.4,None,101.6,95,0,1.62,11/22/2024
+VN-00422,28,Red River Delta,Factory Worker,1,0,22.7,None,90,95,0,1.46,6/7/2024
+VN-00423,46,Southeast,Farmer,0,0,25.5,None,93.2,86.3,0,1.52,8/16/2024
+VN-00424,44,South Central Coast,Service Industry,1,1,24.9,None,56.5,89.4,0,1.58,4/1/2024
+VN-00425,46,Southeast,Office Worker,0,0,22.8,None,158.8,95,1,1.32,11/4/2024
+VN-00426,20,Central Highlands,Office Worker,0,1,21.2,None,121.4,95,0,0.7,12/2/2024
+VN-00427,44,Mekong Delta,Construction Worker,0,0,22.3,None,83.3,91.9,1,1.78,11/29/2024
+VN-00428,41,Northwest,Factory Worker,0,1,22.1,None,77.8,95,0,1.42,4/30/2024
+VN-00429,21,Southeast,Service Industry,1,1,21.4,None,68.8,95,0,1.12,8/3/2024
+VN-00430,63,Red River Delta,Factory Worker,0,0,25.2,None,78.5,72.2,0,1.96,5/25/2024
+VN-00431,68,Northeast,Factory Worker,1,0,22.1,None,61,76.2,0,2.26,4/14/2024
+VN-00432,38,Northeast,Farmer,0,1,21.6,None,65.2,95,0,1.26,10/4/2024
+VN-00433,57,Northwest,Office Worker,1,0,22.1,None,131.5,89.4,0,1.74,6/11/2024
+VN-00434,37,Northwest,Office Worker,0,1,20.4,None,121.6,95,0,1.04,2/25/2024
+VN-00435,23,Northwest,Farmer,0,1,25.5,None,79.5,95,0,0.96,5/25/2024
+VN-00436,18,Southeast,Service Industry,1,1,19.8,None,80.4,95,1,1.06,3/2/2024
+VN-00437,42,Mekong Delta,Factory Worker,1,1,22.1,None,65.5,95,0,1.64,7/19/2024
+VN-00438,39,Central Highlands,Service Industry,0,0,18.7,COPD/Asthma,66.1,95,0,1.68,6/10/2024
+VN-00439,32,Northeast,Construction Worker,0,0,21.6,None,74.9,95,0,1.54,4/13/2024
+VN-00440,47,Northeast,Farmer,0,1,26.9,None,50,82,0,1.44,2/2/2024
+VN-00441,57,Northwest,Factory Worker,0,1,24.2,None,83.3,79.4,0,1.74,5/2/2024
+VN-00442,38,Southeast,Merchant/Trader,0,0,22.9,None,131.6,95,0,1.26,8/2/2024
+VN-00443,51,Northeast,Farmer,1,0,25.4,None,54.4,82.8,1,1.82,5/18/2024
+VN-00444,22,Northeast,Retired,1,1,21.6,None,50,95,0,1.94,6/27/2024
+VN-00445,25,Mekong Delta,Office Worker,0,0,23.7,None,130.7,95,0,0.9,10/13/2024
+VN-00446,43,Central Highlands,Construction Worker,1,1,24.8,None,82.5,86.1,0,1.86,11/26/2024
+VN-00447,41,Southeast,Office Worker,0,0,25.6,None,190.1,93.2,0,1.22,5/15/2024
+VN-00448,39,Central Highlands,Construction Worker,0,0,23,None,119.7,94,1,1.68,5/15/2024
+VN-00449,46,Red River Delta,Merchant/Trader,1,0,27.9,None,125.8,81.6,0,1.62,2/8/2024
+VN-00450,47,North Central,Farmer,0,1,23.1,None,111.7,91.9,0,1.44,5/31/2024
+VN-00451,37,Mekong Delta,Farmer,0,1,21.3,Hypertension,81.7,95,0,1.54,10/15/2024
+VN-00452,42,Mekong Delta,Service Industry,0,0,20.5,None,75.9,95,1,1.44,7/8/2024
+VN-00453,48,Red River Delta,Farmer,0,0,24.7,None,64.3,86.9,1,1.56,9/26/2024
+VN-00454,32,Mekong Delta,Factory Worker,0,0,24.3,None,64.3,95,0,1.34,3/16/2024
+VN-00455,28,Red River Delta,Farmer,0,1,24.2,None,62.6,95,0,1.06,5/20/2024
+VN-00456,55,Central Highlands,Factory Worker,0,1,24.8,None,69.6,79.6,0,1.7,8/16/2024
+VN-00457,37,Central Highlands,Office Worker,0,1,23.9,None,109.4,95,0,1.04,1/9/2024
+VN-00458,52,South Central Coast,Farmer,1,0,28.4,COPD/Asthma,84.6,74.1,1,2.14,12/20/2024
+VN-00459,38,Red River Delta,Retired,0,1,23.3,COPD/Asthma,50,92.6,0,2.36,5/31/2024
+VN-00460,18,Central Highlands,Office Worker,1,0,25.4,None,117.7,95,0,0.96,8/18/2024
+VN-00461,24,Red River Delta,Farmer,0,1,23.7,None,83.7,95,0,0.98,4/18/2024
+VN-00462,37,Red River Delta,Office Worker,0,1,21.9,None,113.5,95,0,1.04,10/14/2024
+VN-00463,52,Southeast,Factory Worker,1,0,25.4,None,85.7,80.5,0,1.94,7/10/2024
+VN-00464,50,Central Highlands,Office Worker,0,1,22.4,None,122.6,94.4,1,1.3,3/18/2024
+VN-00465,31,South Central Coast,Service Industry,0,1,20.3,None,70.2,95,0,1.12,12/14/2024
+VN-00466,24,South Central Coast,Factory Worker,1,1,22.9,None,84.1,95,0,1.28,6/13/2024
+VN-00467,40,Red River Delta,Office Worker,0,1,23.7,None,109.3,95,0,1.1,2/7/2024
+VN-00468,32,Southeast,Farmer,1,1,23.5,None,100.9,95,0,1.34,4/22/2024
+VN-00469,40,Red River Delta,Factory Worker,0,1,24.4,None,89.7,92.5,0,1.4,8/9/2024
+VN-00470,29,Southeast,Service Industry,0,0,21.7,None,107.7,95,0,1.18,5/20/2024
+VN-00471,34,Southeast,Factory Worker,0,1,25.3,Hypertension,93.8,95,0,1.58,3/5/2024
+VN-00472,64,Central Highlands,Office Worker,0,0,23.7,None,90.7,79.7,1,1.68,3/29/2024
+VN-00473,44,Central Highlands,Service Industry,0,0,21.6,None,77.5,95,0,1.48,2/19/2024
+VN-00474,39,Southeast,Farmer,0,1,21.2,None,96.3,95,0,1.28,3/29/2024
+VN-00475,26,Southeast,Merchant/Trader,1,1,20.8,None,165.8,95,0,1.12,1/17/2024
+VN-00476,42,South Central Coast,Construction Worker,0,0,22.9,Hypertension,104.9,91.9,0,2.04,6/21/2024
+VN-00477,53,Northeast,Construction Worker,1,1,26.4,None,99.8,73.8,0,2.06,5/5/2024
+VN-00478,65,Central Highlands,Farmer,0,0,22,None,83.5,80.4,0,1.9,10/15/2024
+VN-00479,57,Red River Delta,Farmer,0,0,21.4,Heart Disease,59.5,88.3,0,2.04,9/10/2024
+VN-00480,46,North Central,Farmer,0,1,19.4,None,117.3,95,0,1.42,4/22/2024
+VN-00481,44,Northeast,Office Worker,0,1,21.5,None,113.3,95,0,1.18,2/28/2024
+VN-00482,20,Red River Delta,Service Industry,0,1,22.6,None,62.1,95,0,0.9,5/30/2024
+VN-00483,46,Northeast,Service Industry,0,0,22.2,None,70.9,95,0,1.52,12/18/2024
+VN-00484,43,North Central,Merchant/Trader,0,1,22.8,COPD/Asthma,133.8,95,0,1.56,2/21/2024
+VN-00485,39,South Central Coast,Factory Worker,0,0,20.1,None,109.8,95,1,1.48,9/19/2024
+VN-00486,44,South Central Coast,Service Industry,1,0,21.3,None,93.7,95,0,1.68,6/21/2024
+VN-00487,56,Northwest,Farmer,1,1,24.6,None,104.9,80.8,0,1.82,7/17/2024
+VN-00488,68,Northwest,Factory Worker,1,0,22.9,None,87.8,74,0,2.26,1/20/2024
+VN-00489,50,Southeast,Service Industry,0,1,21.9,None,112.1,92.5,0,1.5,3/11/2024
+VN-00490,51,Southeast,Office Worker,0,1,24.7,Heart Disease,106.9,87.4,0,1.62,12/1/2024
+VN-00491,58,North Central,Merchant/Trader,0,0,25.4,None,114.2,78.5,0,1.66,1/25/2024
+VN-00492,43,Southeast,Construction Worker,0,1,24.4,None,131.2,87.1,0,1.66,5/29/2024
+VN-00493,38,Northwest,Merchant/Trader,0,0,18.5,None,109.1,95,0,1.26,2/8/2024
+VN-00494,53,Central Highlands,Farmer,0,0,25.8,Diabetes,82.7,80.1,0,1.96,4/9/2024
+VN-00495,65,Southeast,Farmer,0,0,23.6,None,109.3,76.2,0,1.9,3/9/2024
+VN-00496,50,South Central Coast,Factory Worker,0,0,22.5,None,105.1,89.5,0,1.7,12/18/2024
+VN-00497,69,South Central Coast,Farmer,0,1,25.7,None,93.3,67.5,0,1.88,4/24/2024
+VN-00498,43,Southeast,Service Industry,0,1,23.1,COPD/Asthma,90.2,95,1,1.66,1/9/2024
+VN-00499,40,Northeast,Factory Worker,0,1,22.1,None,84.7,95,0,1.4,4/16/2024
+VN-00500,31,Southeast,Farmer,1,1,22.7,None,120.7,95,1,1.32,8/10/2024
+VN-00501,37,Central Highlands,Farmer,1,0,17.9,None,63.1,95,0,1.54,3/10/2024
+VN-00502,52,South Central Coast,Farmer,0,0,27,None,82.8,77.6,0,1.64,1/5/2024
+VN-00503,55,Mekong Delta,Office Worker,1,0,21.8,Hypertension,121.3,91.9,0,2,2/2/2024
+VN-00504,37,North Central,Office Worker,1,0,21.1,None,107.7,95,1,1.34,12/22/2024
+VN-00505,56,Northeast,Factory Worker,0,0,23.8,None,97.3,81.4,0,1.82,3/11/2024
+VN-00506,43,Southeast,Factory Worker,0,1,20.8,None,112.6,95,0,1.46,8/16/2024
+VN-00507,18,Northeast,Merchant/Trader,0,0,19.5,None,86.4,95,0,0.86,8/22/2024
+VN-00508,50,Red River Delta,Office Worker,0,0,18.9,Hypertension,106,95,0,1.7,11/19/2024
+VN-00509,69,Southeast,Factory Worker,1,1,29,None,100.5,57.4,0,2.18,11/13/2024
+VN-00510,26,Northeast,Office Worker,0,1,22.9,None,135.8,95,0,0.82,11/28/2024
+VN-00511,34,Northwest,Construction Worker,1,0,22.8,None,90,95,0,1.78,12/14/2024
+VN-00512,60,North Central,Office Worker,1,1,21.9,None,130,87.5,1,1.7,5/6/2024
+VN-00513,65,Northeast,Farmer,0,0,26.1,None,100.2,69.7,0,1.9,7/26/2024
+VN-00514,50,Southeast,Merchant/Trader,1,0,21.2,None,132.3,95,0,1.7,6/2/2024
+VN-00515,39,Northeast,Farmer,0,1,22.4,Diabetes,73.4,95,0,1.58,11/15/2024
+VN-00516,61,Southeast,Merchant/Trader,0,0,20.7,None,153.6,88.5,0,1.72,9/5/2024
+VN-00517,54,Northwest,Construction Worker,1,1,26.2,Hypertension,114.3,73.8,0,2.38,8/23/2024
+VN-00518,47,Southeast,Merchant/Trader,0,1,22.9,None,159.5,93.8,0,1.34,3/1/2024
+VN-00519,49,Red River Delta,Office Worker,0,0,24.2,None,118.7,90.3,0,1.38,1/26/2024
+VN-00520,34,Southeast,Factory Worker,0,1,22.2,None,106.7,95,0,1.28,3/26/2024
+VN-00521,67,Northeast,Service Industry,0,1,26.2,None,111.5,67.9,0,1.84,3/27/2024
+VN-00522,35,Northwest,Office Worker,0,0,21.8,None,129.1,95,0,1.1,11/21/2024
+VN-00523,39,Central Highlands,Retired,0,1,26,None,53.7,84.6,0,2.08,4/24/2024
+VN-00524,40,North Central,Farmer,0,1,17.6,None,75.8,95,0,1.3,3/25/2024
+VN-00525,45,Northwest,Farmer,0,0,21,None,71.2,95,0,1.5,9/21/2024
+VN-00526,44,Southeast,Factory Worker,0,1,23.2,None,99.5,92.4,0,1.48,5/11/2024
+VN-00527,35,Southeast,Factory Worker,0,0,23.9,None,112.7,95,0,1.4,11/16/2024
+VN-00528,38,Southeast,Merchant/Trader,0,0,20.1,None,124.4,95,1,1.26,11/7/2024
+VN-00529,42,Northeast,Construction Worker,1,1,24,None,130.5,89.1,0,1.84,2/4/2024
+VN-00530,51,Mekong Delta,Farmer,0,1,23.2,None,93.2,88.4,0,1.52,10/30/2024
+VN-00531,76,Northwest,Construction Worker,0,1,25.7,Hypertension,100.8,57.3,0,2.62,7/25/2024
+VN-00532,30,Northwest,Office Worker,1,1,22.9,None,115.6,95,0,1.1,11/13/2024
+VN-00533,56,Northeast,Office Worker,0,0,20.2,Diabetes,145.4,95,1,1.82,6/7/2024
+VN-00534,47,South Central Coast,Service Industry,0,0,21.9,None,128.8,94.9,0,1.54,12/21/2024
+VN-00535,42,North Central,Factory Worker,0,0,27.3,None,98,83.5,0,1.54,4/1/2024
+VN-00536,42,Red River Delta,Office Worker,0,0,20.1,None,133.2,95,0,1.24,5/29/2024
+VN-00537,35,North Central,Office Worker,0,1,19.6,None,119.7,95,1,1,10/6/2024
+VN-00538,55,Northeast,Factory Worker,0,1,27.8,None,83.2,71.7,0,1.7,1/17/2024
+VN-00539,59,Southeast,Office Worker,0,0,22.9,None,153.2,85.7,0,1.58,11/21/2024
+VN-00540,55,Northwest,Service Industry,0,0,22.5,Hypertension,100.4,87.1,0,2,3/11/2024
+VN-00541,18,Southeast,Office Worker,1,1,18.2,None,141,95,0,0.86,6/20/2024
+VN-00542,49,Southeast,Construction Worker,0,0,19,None,140.4,95,0,1.88,1/14/2024
+VN-00543,24,Red River Delta,Farmer,0,1,21.4,None,87.5,95,0,0.98,5/10/2024
+VN-00544,59,North Central,Factory Worker,0,0,22.1,Diabetes; COPD/Asthma,105.3,83.4,1,2.48,2/1/2024
+VN-00545,37,Central Highlands,Factory Worker,1,0,22.6,None,93.1,95,0,1.64,12/9/2024
+VN-00546,37,Central Highlands,Merchant/Trader,0,0,23.6,None,104.1,95,0,1.24,9/1/2024
+VN-00547,37,South Central Coast,Construction Worker,0,1,19.1,None,122.3,95,0,1.54,10/27/2024
+VN-00548,57,Northeast,Service Industry,0,0,23.7,None,62.1,82.3,0,1.74,6/3/2024
+VN-00549,30,North Central,Farmer,0,1,19.2,None,73.8,95,0,1.1,12/2/2024
+VN-00550,31,Northeast,Office Worker,0,1,21.8,None,136,95,0,0.92,1/8/2024
+VN-00551,59,Southeast,Office Worker,1,0,22.7,None,171,86.3,0,1.78,7/15/2024
+VN-00552,41,Red River Delta,Service Industry,0,0,23.9,None,87.7,94.6,1,1.42,10/24/2024
+VN-00553,36,Central Highlands,Merchant/Trader,1,0,22.9,None,109.6,95,0,1.42,12/1/2024
+VN-00554,53,North Central,Farmer,0,0,21.2,None,56.1,92,1,1.66,2/18/2024
+VN-00555,37,Southeast,Merchant/Trader,0,1,23.2,COPD/Asthma,136.3,95,0,1.44,10/8/2024
+VN-00556,34,South Central Coast,Merchant/Trader,0,1,20.6,None,116.2,95,0,1.08,5/26/2024
+VN-00557,56,Red River Delta,Office Worker,0,1,23.3,None,137.8,87.2,0,1.42,5/22/2024
+VN-00558,34,Mekong Delta,Factory Worker,0,0,22.1,None,147.6,95,0,1.38,7/4/2024
+VN-00559,47,North Central,Factory Worker,1,1,19.7,None,127.8,95,0,1.74,9/27/2024
+VN-00560,64,Southeast,Farmer,0,0,22.7,None,101,79.4,0,1.88,9/25/2024
+VN-00561,36,Central Highlands,Construction Worker,1,1,24.2,None,96.2,93.4,0,1.72,3/7/2024
+VN-00562,38,Red River Delta,Service Industry,0,1,25.8,None,91.2,92.1,0,1.26,4/10/2024
+VN-00563,34,Southeast,Factory Worker,0,1,24.8,None,99.5,95,0,1.28,1/12/2024
+VN-00564,26,Central Highlands,Office Worker,0,1,22.7,None,111.7,95,1,0.82,1/13/2024
+VN-00565,62,North Central,Factory Worker,0,0,27.9,None,75.5,66,1,1.94,2/23/2024
+VN-00566,32,Mekong Delta,Farmer,1,1,24.7,None,81.1,95,1,1.34,7/31/2024
+VN-00567,41,Red River Delta,Office Worker,0,1,25.5,None,115.4,93.3,0,1.12,10/5/2024
+VN-00568,27,South Central Coast,Merchant/Trader,0,0,20.7,None,146.3,95,0,1.04,8/19/2024
+VN-00569,31,South Central Coast,Merchant/Trader,0,1,21.1,None,82.3,95,1,1.02,1/7/2024
+VN-00570,52,Central Highlands,Construction Worker,0,1,26.3,None,69.4,75,0,1.84,11/13/2024
+VN-00571,50,Northwest,Construction Worker,0,1,26.5,Heart Disease,97,76.1,0,2.1,2/1/2024
+VN-00572,25,Red River Delta,Service Industry,1,0,19.3,None,79,95,0,1.3,8/19/2024
+VN-00573,48,Southeast,Merchant/Trader,0,0,24.3,None,116.6,89.5,0,1.46,10/29/2024
+VN-00574,44,North Central,Farmer,0,1,25.4,None,68.4,88.2,0,1.38,4/4/2024
+VN-00575,36,Central Highlands,Office Worker,0,1,24.3,None,141.6,95,0,1.02,5/19/2024
+VN-00576,43,South Central Coast,Retired,0,0,29.1,None,50,73.4,0,2.26,9/28/2024
+VN-00577,63,Red River Delta,Office Worker,0,1,23.6,None,99.5,80.6,0,1.56,8/15/2024
+VN-00578,59,North Central,Service Industry,1,0,24.9,Heart Disease,50,77.7,0,2.28,6/18/2024
+VN-00579,24,Northwest,Merchant/Trader,0,0,22.6,None,141.1,95,0,0.98,9/27/2024
+VN-00580,18,Northwest,Farmer,0,1,23.8,None,106.8,95,1,0.86,3/18/2024
+VN-00581,48,South Central Coast,Factory Worker,0,0,25.5,None,76.1,83.2,1,1.66,3/1/2024
+VN-00582,42,Southeast,Service Industry,0,1,27.9,None,89.3,83.2,0,1.34,5/17/2024
+VN-00583,49,South Central Coast,Construction Worker,0,0,22.7,None,117.2,86.8,0,1.88,8/24/2024
+VN-00584,36,North Central,Office Worker,0,0,21.7,None,98.3,95,0,1.12,1/26/2024
+VN-00585,58,South Central Coast,Farmer,0,0,23.8,None,88.2,81.2,0,1.76,1/16/2024
+VN-00586,48,Northeast,Merchant/Trader,0,1,21.9,None,125.3,95,0,1.36,7/25/2024
+VN-00587,31,Northwest,Factory Worker,0,1,24.1,None,73.2,95,0,1.22,5/31/2024
+VN-00588,40,Mekong Delta,Farmer,0,0,26.6,None,82.3,88.2,0,1.4,12/30/2024
+VN-00589,35,Southeast,Service Industry,0,1,24.1,None,141.8,95,0,1.2,6/14/2024
+VN-00590,36,Mekong Delta,Factory Worker,0,0,24.7,None,71.1,94.9,0,1.42,10/11/2024
+VN-00591,48,South Central Coast,Office Worker,0,0,22.4,None,129.7,95,0,1.36,3/8/2024
+VN-00592,28,Northeast,Farmer,0,0,24.2,None,76.1,95,0,1.16,4/16/2024
+VN-00593,31,Northeast,Factory Worker,0,0,21.5,None,80.1,95,0,1.32,5/16/2024
+VN-00594,37,Southeast,Merchant/Trader,0,0,24.2,None,176.4,95,1,1.24,3/7/2024
+VN-00595,54,Central Highlands,Service Industry,1,1,25.1,Hypertension,97.5,81.1,0,2.08,6/30/2024
+VN-00596,71,South Central Coast,Office Worker,0,1,22.1,Hypertension,134.4,78.3,1,2.02,8/23/2024
+VN-00597,56,Southeast,Merchant/Trader,0,0,20.8,None,123.5,92.2,0,1.62,4/24/2024
+VN-00598,29,Southeast,Factory Worker,1,1,21.5,None,139.6,95,0,1.38,1/14/2024
+VN-00599,50,Southeast,Farmer,0,0,20.5,None,108.7,95,0,1.6,8/20/2024
+VN-00600,47,Southeast,Office Worker,0,1,30.2,None,164.5,76.5,0,1.24,10/30/2024
+VN-00601,33,Northwest,Farmer,0,1,24.4,None,97.9,95,0,1.16,8/22/2024
+VN-00602,43,Southeast,Factory Worker,0,1,23.7,None,127.9,91.9,0,1.46,7/25/2024
+VN-00603,54,North Central,Merchant/Trader,1,0,25.2,None,121.3,82.3,1,1.78,6/19/2024
+VN-00604,49,Central Highlands,Service Industry,0,1,19.5,None,86.7,95,0,1.48,9/6/2024
+VN-00605,44,Southeast,Factory Worker,0,0,28,None,126.3,80,0,1.58,7/28/2024
+VN-00606,29,Red River Delta,Farmer,0,0,20.9,None,82.6,95,0,1.18,12/16/2024
+VN-00607,51,North Central,Farmer,0,0,21,Hypertension,73.5,94,0,1.92,12/21/2024
+VN-00608,27,Northeast,Office Worker,0,0,21.6,None,100.2,95,0,0.94,2/1/2024
+VN-00609,48,Southeast,Construction Worker,1,0,23.3,None,140.9,86,0,2.06,10/30/2024
+VN-00610,30,South Central Coast,Factory Worker,1,0,22.5,None,84.6,95,0,1.5,1/16/2024
+VN-00611,46,Northeast,Factory Worker,0,1,22.5,Diabetes,88.5,92.8,0,1.82,1/22/2024
+VN-00612,52,Southeast,Farmer,0,0,20.4,None,133.1,94.8,1,1.64,10/30/2024
+VN-00613,45,Red River Delta,Farmer,0,0,25,Hypertension,50,88.4,0,1.8,6/16/2024
+VN-00614,39,South Central Coast,Merchant/Trader,0,1,20.4,None,110.5,95,1,1.18,7/27/2024
+VN-00615,27,South Central Coast,Merchant/Trader,0,1,23.1,None,132.3,95,0,0.94,3/15/2024
+VN-00616,37,Central Highlands,Merchant/Trader,0,1,19.2,None,85.9,95,0,1.14,10/22/2024
+VN-00617,45,Northwest,Construction Worker,1,0,22,None,65.6,91.8,0,2,3/31/2024
+VN-00618,47,Northwest,Office Worker,0,0,20.6,None,115.7,95,0,1.34,1/10/2024
+VN-00619,21,Red River Delta,Farmer,1,1,19.3,None,98.8,95,1,1.12,10/12/2024
+VN-00620,54,South Central Coast,Construction Worker,0,1,22.4,Hypertension,106.1,83.6,1,2.18,1/8/2024
+VN-00621,29,Mekong Delta,Farmer,0,0,24.2,None,108.9,95,0,1.18,6/11/2024
+VN-00622,34,Southeast,Factory Worker,0,0,23.8,None,127.3,95,0,1.38,6/26/2024
+VN-00623,34,Southeast,Farmer,1,1,23.9,None,99.4,95,0,1.38,10/6/2024
+VN-00624,49,South Central Coast,Service Industry,0,0,19.2,None,87.9,95,0,1.58,11/11/2024
+VN-00625,58,South Central Coast,Office Worker,0,1,18.7,None,112.8,95,0,1.46,1/13/2024
+VN-00626,44,Mekong Delta,Factory Worker,1,1,21.7,None,81.6,95,0,1.68,11/2/2024
+VN-00627,58,Southeast,Farmer,0,1,24,Diabetes,106.7,80.7,0,1.96,4/13/2024
+VN-00628,38,Red River Delta,Factory Worker,0,1,25.9,None,98.8,90.4,0,1.36,11/8/2024
+VN-00629,29,South Central Coast,Construction Worker,1,0,23.2,None,87.8,95,0,1.68,8/10/2024
+VN-00630,59,Southeast,Construction Worker,0,1,22.2,None,114,80,0,1.98,9/28/2024
+VN-00631,48,Red River Delta,Merchant/Trader,0,1,23.4,None,100.8,91.7,0,1.36,4/29/2024
+VN-00632,51,Southeast,Factory Worker,0,1,19.6,None,136.5,95,1,1.62,1/27/2024
+VN-00633,43,Central Highlands,Farmer,0,0,22.5,None,79.3,95,0,1.46,10/7/2024
+VN-00634,47,Southeast,Merchant/Trader,0,0,25,None,125.5,88.5,0,1.44,4/5/2024
+VN-00635,50,South Central Coast,Retired,0,0,24.9,Heart Disease,79.2,78.8,1,2.7,9/25/2024
+VN-00636,44,Mekong Delta,Farmer,0,0,21.4,None,87,95,0,1.48,12/7/2024
+VN-00637,62,Southeast,Service Industry,0,1,24.4,None,72.6,76.6,1,1.74,10/22/2024
+VN-00638,56,Southeast,Farmer,0,1,23.5,None,65.6,83.6,0,1.62,8/1/2024
+VN-00639,50,Southeast,Farmer,0,1,24,None,118.7,87,1,1.5,6/12/2024
+VN-00640,48,North Central,Factory Worker,0,1,26.1,Diabetes,125.1,81.6,1,1.86,3/18/2024
+VN-00641,38,Red River Delta,Factory Worker,0,0,21.9,None,75,95,0,1.46,2/14/2024
+VN-00642,38,Red River Delta,Merchant/Trader,1,1,22.1,None,95,95,0,1.36,10/8/2024
+VN-00643,33,Northwest,Merchant/Trader,0,1,21,None,146.2,95,1,1.06,11/12/2024
+VN-00644,48,Northwest,Construction Worker,0,0,25.2,None,105.5,81,0,1.86,12/13/2024
+VN-00645,49,Central Highlands,Farmer,0,1,23,None,75.2,90.5,0,1.48,11/8/2024
+VN-00646,44,North Central,Farmer,0,1,21.6,Diabetes,128.1,95,0,1.68,5/11/2024
+VN-00647,38,Red River Delta,Office Worker,0,1,28.7,None,98.9,87.5,0,1.06,8/28/2024
+VN-00648,53,Mekong Delta,Office Worker,0,1,25.7,COPD/Asthma,105.2,83.2,0,1.66,2/12/2024
+VN-00649,25,Red River Delta,Merchant/Trader,0,1,23.3,None,115,95,0,0.9,12/10/2024
+VN-00650,60,Southeast,Farmer,0,0,25,None,93.2,76.5,1,1.8,5/11/2024
+VN-00651,38,Red River Delta,Retired,0,0,19.8,Diabetes,50,95,1,2.46,10/14/2024
+VN-00652,50,North Central,Merchant/Trader,0,0,20.7,None,128.1,95,0,1.5,12/7/2024
+VN-00653,48,Southeast,Office Worker,0,1,17.7,None,171.6,95,1,1.26,8/26/2024
+VN-00654,58,Southeast,Factory Worker,0,0,22,Hypertension; Diabetes,154.2,84.3,0,2.46,11/28/2024
+VN-00655,51,North Central,Office Worker,0,0,22.9,None,91.2,92.3,0,1.42,7/19/2024
+VN-00656,36,Southeast,Office Worker,0,1,17.7,None,131,95,0,1.02,7/25/2024
+VN-00657,43,Southeast,Factory Worker,0,1,25.9,None,84.2,86.4,1,1.46,3/5/2024
+VN-00658,38,Red River Delta,Service Industry,0,0,20.9,None,92.6,95,1,1.36,6/17/2024
+VN-00659,52,Southeast,Factory Worker,0,0,26.8,None,120.4,76.6,0,1.74,4/15/2024
+VN-00660,31,Southeast,Retired,1,0,25.3,None,93.5,93,0,2.22,10/27/2024
+VN-00661,39,North Central,Farmer,0,1,21.1,None,76,95,0,1.28,10/26/2024
+VN-00662,47,North Central,Service Industry,0,0,26,None,103.3,84.3,0,1.54,9/6/2024
+VN-00663,55,Central Highlands,Merchant/Trader,0,1,22.1,None,111.8,89.5,0,1.5,3/17/2024
+VN-00664,43,Mekong Delta,Merchant/Trader,0,0,23.2,None,102.3,95,0,1.36,8/7/2024
+VN-00665,52,Mekong Delta,Farmer,1,0,21,None,50,93.3,0,1.84,1/23/2024
+VN-00666,40,North Central,Merchant/Trader,0,0,21.1,None,130.5,95,1,1.3,4/17/2024
+VN-00667,33,North Central,Factory Worker,1,0,24.5,None,88.8,95,0,1.56,3/8/2024
+VN-00668,51,Northeast,Construction Worker,0,1,27.5,None,120.2,72.6,0,1.82,6/9/2024
+VN-00669,36,Central Highlands,Office Worker,0,1,25.1,None,131.1,95,0,1.02,1/10/2024
+VN-00670,49,Northeast,Service Industry,1,1,28.4,Diabetes,91.9,76.3,0,1.98,8/11/2024
+VN-00671,24,Central Highlands,Factory Worker,0,1,26.1,None,69.6,95,0,1.08,1/28/2024
+VN-00672,34,Red River Delta,Factory Worker,1,1,18.5,None,107.3,95,0,1.48,8/15/2024
+VN-00673,56,North Central,Factory Worker,0,0,25.8,None,99.3,76,1,1.82,12/7/2024
+VN-00674,43,Southeast,Retired,0,0,19.4,Diabetes,74.6,95,0,2.56,6/15/2024
+VN-00675,65,Mekong Delta,Farmer,1,0,24.5,None,74.7,73.8,0,2.1,9/5/2024
+VN-00676,49,Northeast,Office Worker,1,1,23.3,Heart Disease,131.7,92.6,0,1.78,11/30/2024
+VN-00677,62,South Central Coast,Office Worker,1,1,23.7,None,108.3,81.3,0,1.74,10/7/2024
+VN-00678,44,South Central Coast,Construction Worker,0,0,25.4,None,139.8,83.7,0,1.78,11/15/2024
+VN-00679,44,North Central,Merchant/Trader,1,0,23.3,None,136.5,95,0,1.58,8/31/2024
+VN-00680,46,Northeast,Construction Worker,0,0,19.8,None,95.4,95,1,1.82,1/27/2024
+VN-00681,19,Red River Delta,Farmer,0,0,23.7,None,69.4,95,0,0.98,10/3/2024
+VN-00682,18,Northwest,Factory Worker,0,1,20.7,None,64.7,95,0,0.96,12/20/2024
+VN-00683,37,Southeast,Office Worker,0,0,23.1,None,138.7,95,0,1.14,11/28/2024
+VN-00684,34,Northwest,Service Industry,0,1,25.1,None,55.1,95,0,1.18,1/28/2024
+VN-00685,36,Northwest,Office Worker,0,0,19.6,None,103.4,95,0,1.12,8/31/2024
+VN-00686,50,Mekong Delta,Factory Worker,0,1,25.7,None,91.4,81.1,0,1.6,6/26/2024
+VN-00687,41,North Central,Construction Worker,0,0,23.7,None,115.9,90.5,0,1.72,4/21/2024
+VN-00688,53,Central Highlands,Farmer,0,0,21.8,Diabetes,67.7,90.4,0,1.96,5/14/2024
+VN-00689,39,North Central,Farmer,1,1,22.8,None,73.4,95,0,1.48,9/1/2024
+VN-00690,36,Southeast,Retired,0,1,22.6,None,53.8,95,0,2.02,12/12/2024
+VN-00691,35,Mekong Delta,Farmer,0,0,23.5,None,93.8,95,1,1.3,2/9/2024
+VN-00692,36,South Central Coast,Retired,1,0,24,None,55.6,92.2,0,2.32,12/5/2024
+VN-00693,44,Red River Delta,Merchant/Trader,0,1,21.3,None,99.7,95,0,1.28,7/31/2024
+VN-00694,41,North Central,Merchant/Trader,0,0,18.2,None,133.3,95,0,1.32,12/15/2024
+VN-00695,52,Southeast,Farmer,0,1,20.3,None,106.8,95,0,1.54,6/5/2024
+VN-00696,39,Southeast,Construction Worker,1,1,20.7,None,85.3,95,1,1.78,5/17/2024
+VN-00697,62,Red River Delta,Farmer,0,0,26.4,None,59.6,71.2,0,1.84,7/10/2024
+VN-00698,46,North Central,Factory Worker,0,1,23.4,Hypertension,126.5,90.5,1,1.82,1/3/2024
+VN-00699,42,Southeast,Farmer,0,0,24.2,Hypertension,123.5,93,0,1.74,10/13/2024
+VN-00700,56,South Central Coast,Factory Worker,0,1,28.1,None,97.6,70.1,1,1.72,1/17/2024
+VN-00701,57,Northeast,Farmer,0,0,22.9,None,93.5,84.3,0,1.74,5/11/2024
+VN-00702,35,Red River Delta,Factory Worker,0,1,26.3,None,98.6,91.6,0,1.3,9/2/2024
+VN-00703,75,Northwest,Factory Worker,0,0,20.5,None,96.7,74.6,0,2.2,11/26/2024
+VN-00704,29,Northeast,Factory Worker,1,1,24,None,133.1,95,0,1.38,1/31/2024
+VN-00705,48,North Central,Office Worker,0,1,21.7,None,121,95,0,1.26,3/27/2024
+VN-00706,39,Northwest,Construction Worker,1,0,24.4,None,83.7,90.3,0,1.88,8/15/2024
+VN-00707,29,Southeast,Service Industry,1,1,26.3,None,77.1,95,0,1.28,5/1/2024
+VN-00708,38,North Central,Service Industry,0,0,24.6,None,113.3,95,1,1.36,3/9/2024
+VN-00709,30,Central Highlands,Merchant/Trader,0,1,23.4,None,116.8,95,1,1,3/27/2024
+VN-00710,24,Mekong Delta,Office Worker,0,0,22.9,None,124,95,0,0.88,12/6/2024
+VN-00711,31,Southeast,Factory Worker,1,1,22.3,None,103.6,95,1,1.42,4/14/2024
+VN-00712,48,North Central,Merchant/Trader,0,1,23.9,None,94.4,90.4,0,1.36,10/6/2024
+VN-00713,38,Northwest,Merchant/Trader,0,1,21.3,None,140,95,1,1.16,12/4/2024
+VN-00714,38,Northwest,Farmer,0,1,26.3,None,50.4,90.6,0,1.26,12/26/2024
+VN-00715,39,Northeast,Office Worker,0,1,26.7,None,155.3,91.9,1,1.08,12/18/2024
+VN-00716,27,South Central Coast,Factory Worker,0,1,23.3,None,79.1,95,0,1.14,1/21/2024
+VN-00717,51,North Central,Factory Worker,0,1,24.7,None,94,82.9,0,1.62,9/6/2024
+VN-00718,49,Red River Delta,Farmer,1,0,22.7,Hypertension,75.9,91.3,0,2.08,10/1/2024
+VN-00719,35,Mekong Delta,Farmer,0,1,24.7,None,62.7,95,0,1.2,12/9/2024
+VN-00720,41,Northeast,Construction Worker,0,1,20.8,None,77.1,95,0,1.62,5/31/2024
+VN-00721,27,Central Highlands,Office Worker,0,0,24.2,None,150.2,95,0,0.94,3/9/2024
+VN-00722,23,Mekong Delta,Merchant/Trader,1,1,22.8,None,97.2,95,0,1.06,8/10/2024
+VN-00723,35,Red River Delta,Factory Worker,1,1,18.4,Diabetes,107.9,95,0,1.8,11/2/2024
+VN-00724,47,South Central Coast,Office Worker,0,1,24,None,113.3,92.6,0,1.24,7/8/2024
+VN-00725,54,Mekong Delta,Retired,1,0,19.8,None,67.7,88.9,0,2.68,11/30/2024
+VN-00726,57,Central Highlands,Farmer,0,0,27.6,None,84.1,72.1,1,1.74,1/7/2024
+VN-00727,32,Northeast,Retired,0,1,25.1,None,75.2,92.6,0,1.94,5/30/2024
+VN-00728,19,Northeast,Construction Worker,1,1,20.1,None,89.5,95,0,1.38,7/9/2024
+VN-00729,58,Southeast,Construction Worker,1,0,23.8,None,138.4,76.7,1,2.26,1/17/2024
+VN-00730,58,Southeast,Farmer,1,0,21.8,None,110.3,86.5,0,1.96,12/25/2024
+VN-00731,63,Southeast,Factory Worker,0,0,24.3,None,116.3,74.5,0,1.96,11/9/2024
+VN-00732,37,Southeast,Factory Worker,1,1,21.3,None,142.1,95,0,1.54,6/2/2024
+VN-00733,37,Northeast,Service Industry,0,1,20.9,None,97.3,95,0,1.24,10/13/2024
+VN-00734,22,North Central,Farmer,0,1,20.1,None,96,95,0,0.94,1/18/2024
+VN-00735,46,South Central Coast,Service Industry,1,0,25.6,None,115.9,86.1,0,1.72,9/15/2024
+VN-00736,60,Southeast,Construction Worker,0,0,22.2,Diabetes,114.7,79.2,0,2.4,4/22/2024
+VN-00737,42,South Central Coast,Service Industry,0,1,26.2,None,76.1,87.7,1,1.34,10/11/2024
+VN-00738,52,Northeast,Construction Worker,0,0,20.6,None,83.2,89.8,0,1.94,6/4/2024
+VN-00739,40,Red River Delta,Office Worker,0,1,22.5,None,149.8,95,0,1.1,9/27/2024
+VN-00740,50,North Central,Construction Worker,0,0,20.8,None,112.1,90.8,0,1.9,6/19/2024
+VN-00741,66,Red River Delta,Factory Worker,0,1,29.2,None,62.7,59.3,1,1.92,1/2/2024
+VN-00742,27,Mekong Delta,Factory Worker,1,1,23.6,None,99.3,95,0,1.34,7/28/2024
+VN-00743,36,Southeast,Office Worker,0,1,23,None,201.5,95,0,1.02,1/26/2024
+VN-00744,44,South Central Coast,Farmer,0,1,21.8,None,82.4,95,0,1.38,4/21/2024
+VN-00745,56,Mekong Delta,Merchant/Trader,0,1,28.4,None,112,72.3,1,1.52,3/25/2024
+VN-00746,39,Southeast,Office Worker,0,1,22.6,None,162.3,95,0,1.08,8/29/2024
+VN-00747,30,Red River Delta,Merchant/Trader,0,0,26.5,None,105.6,95,0,1.1,1/16/2024
+VN-00748,36,Red River Delta,Construction Worker,0,0,24.4,None,99.5,92.7,0,1.62,12/20/2024
+VN-00749,31,Southeast,Construction Worker,1,0,18.7,None,163.9,95,0,1.72,9/3/2024
+VN-00750,26,Red River Delta,Office Worker,0,0,23.3,None,129.7,95,1,0.92,4/12/2024
+VN-00751,28,Red River Delta,Merchant/Trader,0,1,17.7,None,83,95,0,0.96,11/11/2024
+VN-00752,30,Central Highlands,Merchant/Trader,0,1,23.4,None,130,95,1,1,1/14/2024
+VN-00753,19,Red River Delta,Service Industry,0,1,24.4,None,64.8,95,0,0.88,5/31/2024
+VN-00754,48,Mekong Delta,Construction Worker,0,0,23.6,None,73.9,85.3,0,1.86,4/6/2024
+VN-00755,54,Red River Delta,Office Worker,0,1,23.9,None,119.6,87.2,0,1.38,9/30/2024
+VN-00756,55,Mekong Delta,Farmer,0,1,23.5,None,58.1,84.5,0,1.6,1/25/2024
+VN-00757,29,Northwest,Factory Worker,0,0,24.9,Diabetes,110.9,95,0,1.58,12/18/2024
+VN-00758,43,North Central,Office Worker,0,0,27.5,None,121.8,86.7,0,1.26,6/3/2024
+VN-00759,32,Mekong Delta,Construction Worker,0,0,21,None,112.6,95,0,1.54,6/24/2024
+VN-00760,46,North Central,Office Worker,1,0,22.4,None,93.3,95,0,1.52,12/15/2024
+VN-00761,53,Mekong Delta,Office Worker,1,0,20,None,146.1,95,0,1.66,9/5/2024
+VN-00762,44,Northeast,Merchant/Trader,0,0,26.3,None,105.8,87.4,1,1.38,2/27/2024
+VN-00763,39,Mekong Delta,Merchant/Trader,0,0,26.2,None,130.6,91.6,0,1.28,3/24/2024
+VN-00764,18,Red River Delta,Retired,0,1,23.8,None,64.9,95,0,1.66,3/29/2024
+VN-00765,37,Red River Delta,Farmer,0,0,23.4,None,73.5,95,0,1.34,7/27/2024
+VN-00766,58,Red River Delta,Office Worker,0,1,23.2,None,131.1,85.8,0,1.46,5/28/2024
+VN-00767,37,Mekong Delta,Office Worker,1,0,21.9,None,67.2,95,1,1.34,7/22/2024
+VN-00768,32,Mekong Delta,Merchant/Trader,0,1,18.4,None,120,95,0,1.04,2/18/2024
+VN-00769,52,Central Highlands,Office Worker,0,0,22,None,103.2,93.7,0,1.44,5/5/2024
+VN-00770,34,Mekong Delta,Merchant/Trader,0,1,24.5,None,122.3,95,0,1.08,6/3/2024
+VN-00771,30,South Central Coast,Factory Worker,1,1,20.9,None,90.3,95,0,1.4,11/20/2024
+VN-00772,40,Southeast,Merchant/Trader,1,1,17.8,None,168.2,95,1,1.4,5/4/2024
+VN-00773,48,North Central,Farmer,0,0,25.2,None,109.2,85.6,1,1.56,1/1/2024
+VN-00774,43,Northwest,Service Industry,1,0,26.5,None,50,86.2,0,1.66,12/7/2024
+VN-00775,42,Northwest,Merchant/Trader,0,0,17.8,None,132,95,0,1.34,2/12/2024
+VN-00776,37,North Central,Retired,1,1,26.1,None,50,85.9,1,2.24,6/14/2024
+VN-00777,25,Northeast,Farmer,1,0,22.9,None,50,95,0,1.3,5/30/2024
+VN-00778,36,Mekong Delta,Farmer,1,0,27.2,None,103.8,90.1,0,1.52,2/22/2024
+VN-00779,21,Northeast,Farmer,0,1,22.7,None,67.1,95,0,0.92,10/18/2024
+VN-00780,53,Southeast,Factory Worker,0,0,24,None,117.4,83.2,0,1.76,8/31/2024
+VN-00781,34,Central Highlands,Retired,0,1,17.9,None,52.5,95,1,1.98,5/2/2024
+VN-00782,37,Southeast,Office Worker,0,0,22.5,None,155,95,1,1.14,6/8/2024
+VN-00783,33,Mekong Delta,Farmer,1,1,26.8,None,89.2,93.5,0,1.36,9/2/2024
+VN-00784,56,Southeast,Office Worker,0,0,26.4,Hypertension,172.7,79.1,0,1.82,4/24/2024
+VN-00785,27,Southeast,Service Industry,0,1,27.2,None,98.6,95,0,1.04,8/22/2024
+VN-00786,56,Northwest,Merchant/Trader,0,1,18.8,None,132,95,0,1.52,3/1/2024
+VN-00787,48,Northwest,Farmer,1,1,28,None,55.3,78.4,0,1.66,12/10/2024
+VN-00788,34,South Central Coast,Retired,0,1,22.6,None,59.6,95,0,1.98,10/4/2024
+VN-00789,49,South Central Coast,Merchant/Trader,0,0,18.4,None,93.5,95,0,1.48,8/5/2024
+VN-00790,45,Southeast,Retired,1,0,24.7,None,103.5,83.3,0,2.5,8/23/2024
+VN-00791,51,Northwest,Farmer,0,1,25.2,None,63.4,83.2,0,1.52,5/31/2024
+VN-00792,44,Northwest,Construction Worker,0,0,22.6,Heart Disease,110.7,91.1,0,2.08,5/5/2024
+VN-00793,29,North Central,Farmer,0,1,23.9,None,73.5,95,0,1.08,8/8/2024
+VN-00794,44,Central Highlands,Retired,0,1,27.2,None,64,77.6,0,2.18,6/8/2024
+VN-00795,40,South Central Coast,Retired,0,0,23.9,None,52.8,89.4,0,2.2,8/13/2024
+VN-00796,39,Southeast,Factory Worker,0,1,18.7,None,83.9,95,0,1.38,12/1/2024
+VN-00797,39,South Central Coast,Factory Worker,0,0,21.9,None,82,95,0,1.48,12/25/2024
+VN-00798,30,Northeast,Office Worker,0,1,18,None,108,95,0,0.9,1/12/2024
+VN-00799,22,North Central,Factory Worker,1,0,23.2,None,63.7,95,0,1.34,1/10/2024
+VN-00800,52,South Central Coast,Office Worker,0,0,19.1,None,128,95,0,1.44,10/5/2024
+VN-00801,46,Northeast,Office Worker,1,1,20.1,None,80,95,1,1.42,3/2/2024
+VN-00802,52,North Central,Construction Worker,0,0,22,None,115.7,86.2,0,1.94,7/5/2024
+VN-00803,46,Southeast,Office Worker,0,1,21.9,None,141.3,95,0,1.22,3/6/2024
+VN-00804,41,Red River Delta,Farmer,0,1,20.7,None,72.3,95,0,1.32,7/22/2024
+VN-00805,48,North Central,Retired,0,1,21.1,None,57.6,90.3,0,2.26,2/19/2024
+VN-00806,58,Mekong Delta,Office Worker,1,1,22.6,None,130.4,87.3,0,1.66,2/10/2024
+VN-00807,50,North Central,Factory Worker,0,0,18.7,Hypertension,74.1,95,0,2,7/15/2024
+VN-00808,21,Southeast,Office Worker,0,1,23.9,None,124.8,95,0,0.72,10/16/2024
+VN-00809,25,Southeast,Merchant/Trader,0,1,17.4,None,140.8,95,0,0.9,11/26/2024
+VN-00810,18,Red River Delta,Office Worker,1,0,21.8,None,125.3,95,0,0.96,6/19/2024
+VN-00811,41,North Central,Farmer,0,1,18.8,None,50,95,1,1.32,1/9/2024
+VN-00812,56,South Central Coast,Office Worker,0,0,21,None,100.8,93,0,1.52,9/21/2024
+VN-00813,29,North Central,Service Industry,0,1,20.2,None,96.9,95,0,1.08,6/17/2024
+VN-00814,49,South Central Coast,Retired,1,1,25.7,Hypertension,50,77.4,1,2.78,6/9/2024
+VN-00815,22,North Central,Merchant/Trader,0,1,21.8,None,121.8,95,0,0.84,12/22/2024
+VN-00816,25,Mekong Delta,Office Worker,1,0,20.5,None,108.4,95,0,1.1,5/2/2024
+VN-00817,48,North Central,Office Worker,0,0,20.5,None,119.3,95,0,1.36,5/15/2024
+VN-00818,28,Red River Delta,Farmer,0,1,22.5,None,69.3,95,0,1.06,9/7/2024
+VN-00819,43,Southeast,Farmer,1,0,22.4,None,64.6,95,0,1.66,12/20/2024
+VN-00820,49,South Central Coast,Office Worker,0,0,23.1,None,110.9,93.4,0,1.38,11/30/2024
+VN-00821,53,North Central,Service Industry,0,1,24.5,None,92,83.3,0,1.56,8/13/2024
+VN-00822,44,Southeast,Office Worker,0,1,21.3,None,138.9,95,0,1.18,5/30/2024
+VN-00823,45,Southeast,Farmer,0,1,18.9,None,140.7,95,0,1.4,12/10/2024
+VN-00824,39,North Central,Factory Worker,0,1,25.1,None,92.1,91.6,0,1.38,7/7/2024
+VN-00825,47,Red River Delta,Office Worker,0,0,17,None,99,95,0,1.34,4/4/2024
+VN-00826,36,North Central,Office Worker,0,0,26,None,66.3,95,0,1.12,11/4/2024
+VN-00827,74,South Central Coast,Merchant/Trader,1,1,20.4,None,142.5,78.7,0,2.08,1/31/2024
+VN-00828,34,Southeast,Merchant/Trader,0,1,22.1,None,151,95,0,1.08,8/4/2024
+VN-00829,40,Red River Delta,Merchant/Trader,1,0,21.9,None,106.5,95,0,1.5,1/21/2024
+VN-00830,53,Mekong Delta,Construction Worker,0,0,27.5,None,133.6,71.1,0,1.96,1/10/2024
+VN-00831,32,Southeast,Factory Worker,0,0,24.5,None,107.6,95,1,1.34,11/3/2024
+VN-00832,41,Southeast,Factory Worker,0,1,26.1,None,128.5,87.2,0,1.42,4/11/2024
+VN-00833,38,Southeast,Office Worker,1,0,21.9,None,157.2,95,0,1.36,4/11/2024
+VN-00834,34,Mekong Delta,Farmer,0,1,26.5,None,69.6,93.4,0,1.18,6/21/2024
+VN-00835,32,Central Highlands,Farmer,0,1,23.6,None,100.8,95,0,1.14,9/2/2024
+VN-00836,33,Red River Delta,Farmer,0,0,21.6,None,98.6,95,1,1.26,10/4/2024
+VN-00837,37,South Central Coast,Office Worker,1,0,21.3,None,140.8,95,0,1.34,4/19/2024
+VN-00838,44,Central Highlands,Farmer,0,0,23.8,None,65.6,92.5,0,1.48,11/3/2024
+VN-00839,37,South Central Coast,Office Worker,1,1,26.6,None,82.5,93.7,1,1.24,3/23/2024
+VN-00840,50,Central Highlands,Construction Worker,0,1,22.1,None,114.3,87.6,0,1.8,1/28/2024
+VN-00841,20,South Central Coast,Service Industry,1,1,21.9,None,87.3,95,0,1.1,11/29/2024
+VN-00842,38,Northeast,Farmer,0,0,19.5,None,71.9,95,1,1.36,6/16/2024
+VN-00843,30,Southeast,Merchant/Trader,0,0,17.3,None,126.7,95,0,1.1,5/17/2024
+VN-00844,38,South Central Coast,Construction Worker,0,1,22.2,COPD/Asthma,98.4,95,0,1.86,10/5/2024
+VN-00845,55,Red River Delta,Construction Worker,0,1,19.2,None,97.5,91.2,0,1.9,9/6/2024
+VN-00846,44,Central Highlands,Merchant/Trader,1,1,22.4,None,109.1,95,1,1.48,9/1/2024
+VN-00847,44,Mekong Delta,Farmer,0,0,26.4,None,97.7,85.6,0,1.48,7/24/2024
+VN-00848,67,Red River Delta,Farmer,0,0,23,None,91.6,76.1,1,1.94,6/20/2024
+VN-00849,47,North Central,Office Worker,0,1,21.1,None,127.9,95,1,1.24,8/29/2024
+VN-00850,54,South Central Coast,Construction Worker,0,1,24.7,None,95,77.6,0,1.88,5/30/2024
+VN-00851,45,Red River Delta,Merchant/Trader,0,0,25.5,None,78.7,88.6,0,1.4,5/4/2024
+VN-00852,29,Northeast,Office Worker,0,1,18.7,None,100.2,95,0,0.88,9/20/2024
+VN-00853,26,Northeast,Construction Worker,0,1,21.6,None,91.2,95,0,1.32,3/14/2024
+VN-00854,29,Central Highlands,Farmer,1,1,20,None,50,95,0,1.28,8/29/2024
+VN-00855,35,Southeast,Service Industry,0,1,22.9,None,117.8,95,0,1.2,8/8/2024
+VN-00856,29,Mekong Delta,Office Worker,0,1,21.9,None,165.6,95,0,0.88,10/23/2024
+VN-00857,48,Northwest,Construction Worker,1,0,24.1,None,91.4,83.9,0,2.06,11/24/2024
+VN-00858,47,Red River Delta,Construction Worker,0,1,20.1,None,99.7,95,0,1.74,6/7/2024
+VN-00859,46,Northeast,Merchant/Trader,1,1,20.9,None,136.5,95,0,1.52,1/2/2024
+VN-00860,63,Red River Delta,Office Worker,0,0,23.8,None,125.8,80.2,0,1.66,5/20/2024
+VN-00861,27,Central Highlands,Farmer,0,1,23.1,None,70.3,95,0,1.04,4/7/2024
+VN-00862,18,Central Highlands,Service Industry,0,1,19.6,None,78.5,95,0,0.86,11/19/2024
+VN-00863,32,Southeast,Farmer,0,1,26.1,None,96.4,95,0,1.14,7/8/2024
+VN-00864,18,North Central,Factory Worker,0,0,22.7,None,82.7,95,0,1.06,6/8/2024
+VN-00865,34,Southeast,Office Worker,0,0,22.6,None,144.7,95,1,1.08,6/10/2024
+VN-00866,24,North Central,Farmer,1,1,20.8,None,79.4,95,1,1.18,11/21/2024
+VN-00867,43,Mekong Delta,Office Worker,1,1,22.1,None,133.1,95,1,1.36,1/21/2024
+VN-00868,39,Mekong Delta,Merchant/Trader,0,1,24.4,None,152.4,95,0,1.18,3/31/2024
+VN-00869,52,Red River Delta,Office Worker,0,1,25.3,None,142.1,85,0,1.34,3/4/2024
+VN-00870,44,South Central Coast,Farmer,0,1,22,None,50,95,0,1.38,11/1/2024
+VN-00871,51,Southeast,Farmer,0,1,24.1,None,105.8,86,0,1.52,6/4/2024
+VN-00872,29,South Central Coast,Farmer,0,1,18.6,None,50,95,1,1.08,10/9/2024
+VN-00873,53,Southeast,Office Worker,0,1,19.8,None,126.8,95,0,1.36,8/27/2024
+VN-00874,21,Red River Delta,Farmer,0,0,21.5,None,100.7,95,0,1.02,9/5/2024
+VN-00875,48,Central Highlands,Farmer,0,1,24,None,70.1,88.8,1,1.46,12/27/2024
+VN-00876,38,Southeast,Office Worker,0,1,25.5,None,175,95,0,1.06,11/30/2024
+VN-00877,36,North Central,Farmer,0,1,17,None,102.9,95,0,1.22,6/5/2024
+VN-00878,68,North Central,Construction Worker,1,1,31.7,Diabetes,123.2,48.3,0,2.66,11/29/2024
+VN-00879,18,Mekong Delta,Factory Worker,0,0,24.2,None,87.1,95,1,1.06,11/13/2024
+VN-00880,59,Mekong Delta,Office Worker,0,0,20.6,None,88.1,91.7,0,1.58,5/9/2024
+VN-00881,23,Mekong Delta,Merchant/Trader,1,0,22.7,None,100.8,95,0,1.16,10/14/2024
+VN-00882,38,Mekong Delta,Factory Worker,0,1,24.6,None,69.8,93.7,0,1.36,6/18/2024
+VN-00883,37,Mekong Delta,Construction Worker,0,0,23.9,None,77.1,93.2,0,1.64,8/29/2024
+VN-00884,31,Red River Delta,Retired,1,1,24.3,None,76.6,95,0,2.12,11/20/2024
+VN-00885,32,South Central Coast,Service Industry,0,1,26.2,None,66,95,0,1.14,4/12/2024
+VN-00886,32,Northeast,Merchant/Trader,0,0,20.1,None,95.1,95,0,1.14,5/21/2024
+VN-00887,42,Mekong Delta,Farmer,0,1,23.6,None,78.5,94.4,0,1.34,4/14/2024
+VN-00888,52,Central Highlands,Construction Worker,0,0,23.6,None,94.5,82,0,1.94,8/14/2024
+VN-00889,41,North Central,Farmer,0,1,21.5,None,80.7,95,0,1.32,2/1/2024
+VN-00890,28,Red River Delta,Merchant/Trader,1,1,20.5,None,123.9,95,0,1.16,10/1/2024
+VN-00891,28,Northwest,Service Industry,0,0,19.5,None,96.9,95,0,1.16,11/4/2024
+VN-00892,45,Northeast,Service Industry,0,1,23.1,None,57.1,93.6,1,1.4,7/30/2024
+VN-00893,55,Southeast,Construction Worker,0,0,25.8,None,128.9,73.8,0,2,3/30/2024
+VN-00894,56,North Central,Service Industry,0,1,25.9,None,83.9,77.3,0,1.62,8/27/2024
+VN-00895,38,Southeast,Office Worker,0,0,20.5,None,128.4,95,0,1.16,2/9/2024
+VN-00896,55,Southeast,Merchant/Trader,0,1,22.1,None,134.7,89.5,0,1.5,3/20/2024
+VN-00897,39,Central Highlands,Factory Worker,0,0,21,Hypertension,90.5,95,0,1.78,8/1/2024
+VN-00898,61,Southeast,Service Industry,1,0,23.2,None,96.4,80.3,1,2.02,2/16/2024
+VN-00899,46,Central Highlands,Farmer,0,1,20.9,Diabetes,80.1,95,0,1.72,2/19/2024
+VN-00900,52,South Central Coast,Merchant/Trader,0,0,24.2,None,112,86.6,0,1.54,11/29/2024
+VN-00901,48,North Central,Office Worker,1,0,23.1,None,115.1,94.1,0,1.56,12/4/2024
+VN-00902,71,Mekong Delta,Farmer,0,1,25.9,Diabetes,50,65.2,0,2.22,1/4/2024
+VN-00903,27,Southeast,Office Worker,0,1,25.7,None,91.1,95,0,0.84,7/5/2024
+VN-00904,61,Northwest,Farmer,1,0,25.5,Diabetes,71.7,74.5,0,2.32,5/25/2024
+VN-00905,26,Southeast,Retired,1,1,23.3,Heart Disease,52.9,95,0,2.32,2/15/2024
+VN-00906,19,Southeast,Office Worker,0,0,24.1,None,168,95,0,0.78,6/19/2024
+VN-00907,35,South Central Coast,Factory Worker,0,1,20.3,None,85.3,95,0,1.3,4/9/2024
+VN-00908,29,Southeast,Merchant/Trader,1,0,18.2,None,101,95,0,1.28,8/15/2024
+VN-00909,45,South Central Coast,Farmer,0,0,24.4,Arthritis,71.6,90.1,0,1.8,9/22/2024
+VN-00910,38,Southeast,Service Industry,0,1,21.7,None,103.6,95,0,1.26,4/28/2024
+VN-00911,36,South Central Coast,Merchant/Trader,0,0,21.5,None,111.8,95,0,1.22,5/5/2024
+VN-00912,28,Red River Delta,Farmer,0,0,19.1,None,130,95,0,1.16,6/27/2024
+VN-00913,49,North Central,Farmer,0,1,22.2,None,134.3,92.5,0,1.48,4/22/2024
+VN-00914,60,Red River Delta,Farmer,0,1,23.9,None,50,79.3,0,1.7,7/17/2024
+VN-00915,64,Northeast,Office Worker,0,1,22.1,None,135.7,83.9,1,1.58,12/8/2024
+VN-00916,35,Mekong Delta,Office Worker,1,1,21.1,None,140.8,95,0,1.2,8/31/2024
+VN-00917,35,South Central Coast,Merchant/Trader,0,0,21,None,119.5,95,0,1.2,4/8/2024
+VN-00918,47,Red River Delta,Farmer,1,1,23.6,None,50,90.6,0,1.64,5/9/2024
+VN-00919,67,Red River Delta,Farmer,0,1,23.3,None,103.5,75.4,0,1.84,5/5/2024
+VN-00920,64,Red River Delta,Merchant/Trader,0,0,26.8,None,128.5,70,1,1.78,1/8/2024
+VN-00921,18,Northeast,Farmer,0,1,20.5,None,50,95,0,0.86,9/4/2024
+VN-00922,38,North Central,Retired,0,0,25.5,Hypertension,72.1,86.8,0,2.46,4/5/2024
+VN-00923,35,Red River Delta,Merchant/Trader,0,1,24.9,None,132.1,95,0,1.1,2/1/2024
+VN-00924,31,Central Highlands,Farmer,1,1,22.8,None,80.9,95,0,1.32,11/26/2024
+VN-00925,56,North Central,Office Worker,0,1,24.4,None,159.9,84.3,1,1.42,7/31/2024
+VN-00926,47,Northeast,Farmer,0,1,17.8,None,77.9,95,0,1.44,8/22/2024
+VN-00927,26,Northwest,Factory Worker,0,1,25.3,None,97.6,95,0,1.12,3/25/2024
+VN-00928,41,North Central,Office Worker,1,0,21.1,None,116.5,95,0,1.42,1/22/2024
+VN-00929,50,Red River Delta,Office Worker,0,1,25.8,None,110,85.4,0,1.3,2/6/2024
+VN-00930,40,North Central,Farmer,1,1,23.7,None,91.4,95,0,1.5,10/30/2024
+VN-00931,51,Northwest,Farmer,0,0,25.4,Heart Disease,73.1,82.8,1,1.92,6/28/2024
+VN-00932,46,North Central,Farmer,0,0,26.6,None,73.4,83.5,0,1.52,1/13/2024
+VN-00933,64,Southeast,Factory Worker,0,0,23.3,None,114.6,76.2,0,1.98,9/10/2024
+VN-00934,49,Northwest,Factory Worker,0,0,28.1,None,104.6,75.6,0,1.68,9/18/2024
+VN-00935,30,Southeast,Merchant/Trader,0,1,17,None,148.6,95,0,1,8/26/2024
+VN-00936,45,Northwest,Construction Worker,0,1,23.2,Hypertension,65.7,88.7,0,2,11/8/2024
+VN-00937,32,Southeast,Retired,0,1,23.4,None,70.5,95,1,1.94,2/28/2024
+VN-00938,34,North Central,Office Worker,0,1,21.5,None,120.2,95,0,0.98,11/23/2024
+VN-00939,38,Central Highlands,Office Worker,0,1,24,None,131.4,95,0,1.06,3/25/2024
+VN-00940,29,Central Highlands,Farmer,0,0,23.5,None,123.7,95,0,1.18,12/11/2024
+VN-00941,28,Northwest,Retired,0,0,27.2,Diabetes; Heart Disease,50,90.3,0,2.56,1/20/2024
+VN-00942,35,South Central Coast,Farmer,1,0,19.5,None,112.1,95,1,1.5,11/9/2024
+VN-00943,59,Red River Delta,Factory Worker,0,1,24.6,None,81.1,76.9,0,1.78,5/12/2024
+VN-00944,28,Northwest,Farmer,1,0,28,None,105.9,94.3,1,1.36,3/2/2024
+VN-00945,56,South Central Coast,Office Worker,0,1,24.7,None,147.2,83.4,0,1.42,6/28/2024
+VN-00946,23,Central Highlands,Office Worker,0,0,22.7,None,159.2,95,0,0.86,8/24/2024
+VN-00947,49,Northeast,Service Industry,0,0,23.7,None,63.2,88.6,1,1.58,11/12/2024
+VN-00948,36,Central Highlands,Merchant/Trader,0,0,22.3,None,107,95,1,1.22,4/12/2024
+VN-00949,50,North Central,Office Worker,0,0,23.1,None,100.4,92.5,0,1.4,11/27/2024
+VN-00950,38,Southeast,Office Worker,0,1,25.7,None,121.3,95,0,1.06,3/27/2024
+VN-00951,34,Central Highlands,Merchant/Trader,1,1,20.9,None,106.4,95,0,1.28,6/4/2024
+VN-00952,48,South Central Coast,Merchant/Trader,0,0,22.8,None,82.4,93.4,0,1.46,1/7/2024
+VN-00953,62,North Central,Factory Worker,1,1,22.4,None,76.5,80,0,2.04,9/7/2024
+VN-00954,56,Central Highlands,Farmer,0,1,23.6,None,99.7,83.4,0,1.62,8/24/2024
+VN-00955,46,Southeast,Farmer,0,1,21.2,None,110.6,95,1,1.42,11/25/2024
+VN-00956,58,Southeast,Farmer,1,0,17.5,None,79.7,95,0,1.96,1/13/2024
+VN-00957,41,Mekong Delta,Farmer,0,0,20.8,None,76,95,0,1.42,7/14/2024
+VN-00958,42,Northwest,Office Worker,0,1,22,None,131,95,0,1.14,9/2/2024
+VN-00959,54,Northeast,Service Industry,1,1,31.1,None,71.8,65.4,0,1.78,11/6/2024
+VN-00960,54,Northeast,Farmer,1,0,23.3,None,67.8,85.8,0,1.88,3/25/2024
+VN-00961,37,Red River Delta,Merchant/Trader,1,1,24.5,None,120,95,0,1.34,12/5/2024
+VN-00962,52,Mekong Delta,Factory Worker,1,1,27.7,None,132.1,74.4,0,1.84,3/16/2024
+VN-00963,35,Mekong Delta,Office Worker,0,1,19.9,None,111,95,0,1,10/4/2024
+VN-00964,57,Southeast,Office Worker,0,1,24.4,None,117.9,83.5,0,1.44,8/15/2024
+VN-00965,47,Mekong Delta,Office Worker,1,0,25.5,None,123.2,88.6,0,1.54,5/18/2024
+VN-00966,40,Red River Delta,Service Industry,0,1,25.5,Heart Disease,78.3,91.2,0,1.6,8/4/2024
+VN-00967,39,North Central,Factory Worker,0,1,20,None,80.9,95,1,1.38,4/24/2024
+VN-00968,23,North Central,Office Worker,0,0,21.3,None,158.6,95,0,0.86,5/17/2024
+VN-00969,34,Northwest,Farmer,0,1,22.5,None,85.4,95,0,1.18,2/25/2024
+VN-00970,29,North Central,Farmer,0,1,22.5,None,82.8,95,0,1.08,10/11/2024
+VN-00971,40,Central Highlands,Farmer,0,0,21,Hypertension,82.7,95,0,1.7,12/23/2024
+VN-00972,34,Red River Delta,Factory Worker,1,0,25.1,None,105.5,95,0,1.58,4/20/2024
+VN-00973,30,Southeast,Merchant/Trader,0,1,19.8,None,146.9,95,0,1,9/9/2024
+VN-00974,34,Northeast,Office Worker,1,0,20.1,None,96,95,0,1.28,7/23/2024
+VN-00975,53,North Central,Construction Worker,1,0,23.1,None,132.5,82.6,1,2.16,8/7/2024
+VN-00976,65,Southeast,Office Worker,0,1,20,None,151.1,88.6,0,1.6,3/29/2024
+VN-00977,43,North Central,Office Worker,1,1,25,None,123.7,93.2,1,1.36,5/18/2024
+VN-00978,26,South Central Coast,Service Industry,0,1,20.7,None,51,95,1,1.02,3/18/2024
+VN-00979,54,Mekong Delta,Farmer,0,0,22.3,None,50,88.4,0,1.68,9/26/2024
+VN-00980,73,North Central,Farmer,0,0,23.3,None,62.1,70.6,0,2.06,10/8/2024
+VN-00981,58,Southeast,Office Worker,0,1,26.3,Arthritis,117.8,77.8,0,1.76,5/31/2024
+VN-00982,57,South Central Coast,Factory Worker,0,0,23.5,None,104.2,81.3,0,1.84,9/13/2024
+VN-00983,27,Mekong Delta,Merchant/Trader,0,1,26,None,115.4,95,0,0.94,7/4/2024
+VN-00984,27,Mekong Delta,Farmer,0,1,24,None,64.2,95,0,1.04,5/13/2024
+VN-00985,42,Northwest,Construction Worker,0,1,22.4,Arthritis,57.4,93.3,0,1.94,10/8/2024
+VN-00986,31,North Central,Construction Worker,0,0,25.8,Heart Disease,55.6,93,0,1.82,12/17/2024
+VN-00987,42,Northeast,Office Worker,0,1,23.6,None,102.3,95,0,1.14,4/13/2024
+VN-00988,50,Northeast,Office Worker,0,1,25.4,None,128.9,86.5,1,1.3,1/9/2024
+VN-00989,44,Northeast,Construction Worker,0,1,24.6,None,119.5,85.8,0,1.68,6/3/2024
+VN-00990,35,Central Highlands,Farmer,1,0,24.6,None,62,95,0,1.5,6/6/2024
+VN-00991,37,North Central,Farmer,0,0,22.3,None,92.9,95,0,1.34,10/31/2024
+VN-00992,45,Mekong Delta,Office Worker,0,1,22.5,None,121.6,95,0,1.2,11/25/2024
+VN-00993,41,Central Highlands,Farmer,1,1,23.4,None,106.2,95,0,1.52,6/13/2024
+VN-00994,23,Red River Delta,Merchant/Trader,1,1,22.3,None,104.9,95,0,1.06,2/26/2024
+VN-00995,35,South Central Coast,Service Industry,0,1,20,None,56.6,95,0,1.2,2/26/2024
+VN-00996,64,Red River Delta,Office Worker,0,0,24.5,None,89.8,77.7,1,1.68,4/22/2024
+VN-00997,34,Central Highlands,Farmer,1,0,17,None,62.5,95,0,1.48,7/19/2024
+VN-00998,42,South Central Coast,Farmer,1,0,25.4,None,58.4,90,0,1.64,7/9/2024
+VN-00999,18,Red River Delta,Farmer,0,0,21.4,None,67.9,95,0,0.96,2/15/2024
+VN-01000,49,Red River Delta,Farmer,0,0,28.1,None,66.2,77.2,0,1.58,10/23/2024
+VN-01001,26,South Central Coast,Farmer,1,1,20.9,None,64.3,95,0,1.22,12/10/2024
+VN-01002,45,Southeast,Merchant/Trader,0,0,26.1,None,148.1,87.2,0,1.4,2/26/2024
+VN-01003,31,Mekong Delta,Construction Worker,0,0,19.5,None,56.4,95,0,1.52,12/30/2024
+VN-01004,37,Central Highlands,Factory Worker,0,1,19.2,None,86.8,95,0,1.34,10/10/2024
+VN-01005,52,Northwest,Farmer,0,0,22.9,Heart Disease,96,88.2,0,1.94,9/3/2024
+VN-01006,31,Mekong Delta,Farmer,0,1,17,None,76.1,95,1,1.12,11/2/2024
+VN-01007,24,Southeast,Office Worker,0,1,17.5,None,197.1,95,0,0.78,9/4/2024
+VN-01008,31,Northeast,Service Industry,0,1,21.7,None,71,95,0,1.12,4/29/2024
+VN-01009,37,Northeast,Factory Worker,1,0,22.6,None,114.7,95,0,1.64,4/16/2024
+VN-01010,32,Red River Delta,Factory Worker,0,1,24.4,None,101.8,95,0,1.24,4/4/2024
+VN-01011,40,Northeast,Office Worker,0,0,23.5,None,156.4,95,0,1.2,10/1/2024
+VN-01012,26,Mekong Delta,Merchant/Trader,1,1,23,None,76.2,95,0,1.12,5/27/2024
+VN-01013,42,Red River Delta,Merchant/Trader,1,1,22.4,None,139.9,95,0,1.44,12/17/2024
+VN-01014,51,North Central,Construction Worker,0,0,23.3,None,124.2,83.7,0,1.92,10/31/2024
+VN-01015,41,Northwest,Office Worker,0,1,19.9,None,122.7,95,0,1.12,8/1/2024
+VN-01016,35,Southeast,Factory Worker,1,1,26.2,None,84.5,91.9,0,1.5,12/30/2024
+VN-01017,44,South Central Coast,Farmer,0,0,22.5,None,126.2,95,0,1.48,8/20/2024
+VN-01018,32,Central Highlands,Merchant/Trader,1,1,23.5,None,91.6,95,0,1.24,10/26/2024
+VN-01019,47,North Central,Factory Worker,1,1,22.8,None,85.6,91.2,1,1.74,2/23/2024
+VN-01020,54,South Central Coast,Service Industry,1,1,18.5,None,80.6,95,0,1.78,10/11/2024
+VN-01021,51,Central Highlands,Factory Worker,0,1,18.6,None,116,95,0,1.62,9/9/2024
+VN-01022,24,Red River Delta,Service Industry,0,1,21.4,None,83.4,95,0,0.98,1/24/2024
+VN-01023,57,Northwest,Construction Worker,1,0,18.6,Hypertension,118,91.1,0,2.54,1/28/2024
+VN-01024,18,North Central,Construction Worker,1,1,18.2,None,101.5,95,0,1.36,4/30/2024
+VN-01025,35,Northeast,Farmer,0,1,26.7,None,78.2,92.1,0,1.2,11/23/2024
+VN-01026,36,South Central Coast,Merchant/Trader,0,0,23.4,None,155.7,95,0,1.22,2/16/2024
+VN-01027,57,Mekong Delta,Farmer,0,0,23.7,None,50.4,82.2,0,1.74,10/29/2024
+VN-01028,43,Southeast,Construction Worker,0,0,22.4,None,83.8,92.3,0,1.76,3/6/2024
+VN-01029,34,North Central,Merchant/Trader,0,0,23.1,None,142.4,95,0,1.18,7/26/2024
+VN-01030,36,Mekong Delta,Factory Worker,1,1,19.7,None,92.3,95,0,1.52,12/3/2024
+VN-01031,43,Central Highlands,Merchant/Trader,0,1,26.8,Heart Disease,104.7,87,1,1.56,5/9/2024
+VN-01032,34,Red River Delta,Farmer,1,1,23.7,None,81.5,95,0,1.38,10/24/2024
+VN-01033,31,Red River Delta,Service Industry,1,1,21.5,None,82.4,95,0,1.32,6/3/2024
+VN-01034,55,Mekong Delta,Factory Worker,0,0,22.6,Diabetes,90.6,85.1,0,2.1,2/20/2024
+VN-01035,38,Northeast,Construction Worker,0,0,20.3,None,73.8,95,0,1.66,7/2/2024
+VN-01036,51,Southeast,Office Worker,0,1,24.1,None,130.2,89,0,1.32,11/25/2024
+VN-01037,25,Mekong Delta,Retired,1,0,22.1,None,50,95,0,2.1,2/12/2024
+VN-01038,48,North Central,Farmer,0,0,19.8,Diabetes,103,95,0,1.86,8/5/2024
+VN-01039,36,Southeast,Service Industry,0,1,22.9,None,97.9,95,0,1.22,7/19/2024
+VN-01040,52,Southeast,Construction Worker,0,0,23.1,None,118.2,83.3,0,1.94,11/26/2024
+VN-01041,57,Southeast,Merchant/Trader,0,0,25.1,None,84.3,80.2,0,1.64,11/14/2024
+VN-01042,40,Central Highlands,Farmer,0,0,25.8,None,118.1,90.5,0,1.4,1/3/2024
+VN-01043,37,Red River Delta,Merchant/Trader,0,0,23.2,None,80.2,95,0,1.24,12/25/2024
+VN-01044,52,Mekong Delta,Factory Worker,0,1,19.4,Arthritis,117.4,95,0,1.94,6/16/2024
+VN-01045,59,Mekong Delta,Office Worker,0,0,22.6,None,123.9,86.4,0,1.58,7/21/2024
+VN-01046,49,Mekong Delta,Office Worker,0,0,24.8,None,153.7,88.9,1,1.38,2/3/2024
+VN-01047,48,Southeast,Construction Worker,1,0,22.3,None,144,88.6,0,2.06,11/9/2024
+VN-01048,24,Red River Delta,Factory Worker,0,0,22.1,None,60,95,0,1.18,4/9/2024
+VN-01049,57,North Central,Service Industry,1,1,22.2,None,85.5,86.2,0,1.84,11/16/2024
+VN-01050,46,Central Highlands,Factory Worker,0,1,21.4,Hypertension,99,95,0,1.82,12/15/2024
+VN-01051,20,Southeast,Factory Worker,0,1,24.4,Hypertension,112.5,95,0,1.3,1/26/2024
+VN-01052,34,Mekong Delta,Farmer,1,0,22.1,None,84.6,95,0,1.48,11/19/2024
+VN-01053,43,Northwest,Farmer,0,0,22.3,None,106.9,95,0,1.46,2/29/2024
+VN-01054,46,Northwest,Service Industry,0,1,20.3,None,85.8,95,0,1.42,10/21/2024
+VN-01055,59,Northwest,Office Worker,0,0,25.2,None,88.1,79.8,0,1.58,9/21/2024
+VN-01056,50,South Central Coast,Office Worker,0,0,21.8,None,115.9,95,0,1.4,2/21/2024
+VN-01057,39,Southeast,Farmer,0,1,24.8,None,110.5,93.9,0,1.28,12/22/2024
+VN-01058,31,Central Highlands,Office Worker,0,1,22.2,None,117.1,95,0,0.92,8/5/2024
+VN-01059,57,Northwest,Farmer,0,1,21.4,None,94.8,88.1,0,1.64,11/18/2024
+VN-01060,21,Southeast,Farmer,0,1,21.3,None,128,95,1,0.92,10/26/2024
+VN-01061,40,Central Highlands,Factory Worker,0,1,25.4,None,91.3,89.9,0,1.4,2/13/2024
+VN-01062,56,South Central Coast,Service Industry,0,1,26.4,Heart Disease,90.1,76,0,1.92,12/7/2024
+VN-01063,23,Northwest,Retired,0,0,21.4,None,74.4,95,0,1.86,4/15/2024
+VN-01064,44,Central Highlands,Office Worker,0,1,24.6,None,136.7,93.3,0,1.18,3/1/2024
+VN-01065,30,Mekong Delta,Merchant/Trader,0,0,20.7,None,132.4,95,0,1.1,7/24/2024
+VN-01066,48,Northeast,Construction Worker,0,1,25,None,118.1,81.6,0,1.76,5/1/2024
+VN-01067,34,North Central,Farmer,1,1,20.7,None,64.4,95,0,1.38,8/20/2024
+VN-01068,26,Southeast,Office Worker,0,1,20.7,None,130.8,95,0,0.82,11/17/2024
+VN-01069,38,Red River Delta,Factory Worker,0,1,29,None,68.2,82.2,0,1.36,2/13/2024
+VN-01070,18,Northeast,Farmer,0,0,21.8,None,136.1,95,0,0.96,3/3/2024
+VN-01071,34,Mekong Delta,Office Worker,0,0,23.2,None,94.7,95,0,1.08,4/7/2024
+VN-01072,64,Southeast,Farmer,0,0,22.8,None,104.7,78.9,0,1.88,8/29/2024
+VN-01073,54,Northeast,Merchant/Trader,0,0,21.6,None,143.6,91.7,1,1.58,2/23/2024
+VN-01074,48,North Central,Office Worker,1,0,24.2,None,142.6,91.1,0,1.56,3/15/2024
+VN-01075,29,Central Highlands,Merchant/Trader,0,1,18.3,None,126.9,95,0,0.98,5/12/2024
+VN-01076,26,Northeast,Merchant/Trader,0,1,21.3,None,136.3,95,0,0.92,2/12/2024
+VN-01077,65,Central Highlands,Factory Worker,0,0,23.4,Hypertension,90.9,75.1,0,2.3,9/13/2024
+VN-01078,24,Central Highlands,Factory Worker,0,1,23.3,None,86.2,95,0,1.08,3/10/2024
+VN-01079,57,Mekong Delta,Retired,1,0,20.3,None,101.1,85.2,0,2.74,4/9/2024
+VN-01080,46,South Central Coast,Office Worker,0,1,24.4,None,121.5,92.3,0,1.22,2/23/2024
+VN-01081,42,Southeast,Farmer,1,1,21,None,143.9,95,1,1.54,3/2/2024
+VN-01082,56,Southeast,Service Industry,0,1,22,Diabetes,80.1,87.6,1,1.92,1/16/2024
+VN-01083,49,Northwest,Factory Worker,0,1,23.5,None,106.4,87.8,0,1.58,1/18/2024
+VN-01084,38,North Central,Office Worker,1,1,25.4,Diabetes,144.1,95,1,1.56,2/27/2024
+VN-01085,61,Mekong Delta,Retired,0,0,21.8,None,86.2,78.1,0,2.62,1/31/2024
+VN-01086,34,Southeast,Merchant/Trader,1,1,20.3,None,130.2,95,1,1.28,1/21/2024
+VN-01087,45,Red River Delta,Service Industry,0,1,26.2,None,84.9,85.5,0,1.4,12/2/2024
+VN-01088,44,North Central,Service Industry,0,1,24.2,None,104.7,91.3,0,1.38,5/9/2024
+VN-01089,42,Southeast,Farmer,0,1,25.5,None,104.3,89.6,0,1.34,10/16/2024
+VN-01090,42,Northeast,Farmer,0,0,24.8,None,97.1,91.5,0,1.44,12/4/2024
+VN-01091,42,South Central Coast,Farmer,0,1,20.4,None,103.5,95,0,1.34,12/23/2024
+VN-01092,47,Northwest,Service Industry,1,1,20.9,None,82.1,95,1,1.64,11/6/2024
+VN-01093,70,Northwest,Farmer,0,0,26.7,None,80.2,64.1,0,2,11/30/2024
+VN-01094,47,Northwest,Farmer,0,1,22.4,Hypertension,50,93.7,0,1.74,2/9/2024
+VN-01095,18,Northwest,Merchant/Trader,0,1,23.6,None,126,95,1,0.76,4/18/2024
+VN-01096,31,Central Highlands,Service Industry,1,0,22.3,None,69.9,95,0,1.42,7/8/2024
+VN-01097,45,South Central Coast,Retired,0,1,26.9,None,57,77.6,0,2.2,7/11/2024
+VN-01098,30,South Central Coast,Office Worker,0,1,23.6,None,132.5,95,0,0.9,9/29/2024
+VN-01099,58,South Central Coast,Office Worker,0,1,23.7,Hypertension,109,84.4,1,1.76,4/7/2024
+VN-01100,41,Southeast,Merchant/Trader,0,0,19.8,None,173.4,95,0,1.32,5/13/2024
+VN-01101,50,Northwest,Construction Worker,0,1,26.1,Hypertension,94.3,77.2,1,2.1,9/2/2024
+VN-01102,39,Southeast,Retired,0,0,26.3,None,97.5,83.9,0,2.18,2/9/2024
+VN-01103,34,Southeast,Office Worker,0,1,24.9,None,139.5,95,0,0.98,12/18/2024
+VN-01104,51,Mekong Delta,Factory Worker,0,0,27.1,None,106.6,76.7,1,1.72,8/7/2024
+VN-01105,36,Mekong Delta,Farmer,0,0,19.2,None,61.5,95,0,1.32,5/25/2024
+VN-01106,42,North Central,Factory Worker,0,0,27.2,None,83.5,83.6,0,1.54,9/15/2024
+VN-01107,23,Northeast,Farmer,0,1,21.1,None,104.8,95,0,0.96,1/17/2024
+VN-01108,37,Southeast,Merchant/Trader,1,1,22.6,None,123.6,95,0,1.34,3/29/2024
+VN-01109,24,Northwest,Office Worker,1,0,26.4,None,136.7,95,0,1.08,4/12/2024
+VN-01110,39,South Central Coast,Construction Worker,0,0,17.6,None,103.5,95,0,1.68,12/26/2024
+VN-01111,30,Northeast,Construction Worker,0,1,22.3,None,67.8,95,0,1.4,12/5/2024
+VN-01112,40,Red River Delta,Merchant/Trader,0,1,26.8,None,102.1,89.4,0,1.2,7/16/2024
+VN-01113,63,Southeast,Office Worker,0,0,27.5,Arthritis,142.9,70.7,0,1.96,11/6/2024
+VN-01114,43,South Central Coast,Construction Worker,1,0,20.5,COPD/Asthma,103.6,95,1,2.26,5/6/2024
+VN-01115,51,Southeast,Farmer,0,1,27,None,55.7,78.6,0,1.52,1/13/2024
+VN-01116,63,North Central,Construction Worker,0,0,20.7,None,103,80.9,0,2.16,10/16/2024
+VN-01117,31,North Central,Merchant/Trader,0,0,24.2,None,90.5,95,0,1.12,6/11/2024
+VN-01118,45,Central Highlands,Factory Worker,1,0,22,None,115.4,94.7,0,1.8,12/19/2024
+VN-01119,51,Southeast,Construction Worker,1,0,25.6,None,121.2,77.8,0,2.12,7/7/2024
+VN-01120,51,North Central,Office Worker,1,0,20.7,None,142.8,95,0,1.62,3/30/2024
+VN-01121,18,Central Highlands,Factory Worker,0,0,20.6,None,50,95,0,1.06,3/1/2024
+VN-01122,43,Red River Delta,Office Worker,0,0,22.7,None,164.8,95,0,1.26,8/26/2024
+VN-01123,33,South Central Coast,Factory Worker,1,1,25.3,None,72,95,0,1.46,9/15/2024
+VN-01124,47,North Central,Factory Worker,1,1,26.2,None,78.7,82.2,0,1.74,7/3/2024
+VN-01125,61,South Central Coast,Office Worker,0,1,25.9,None,125.8,76.4,0,1.52,2/19/2024
+VN-01126,62,North Central,Office Worker,0,0,22.1,None,131,85.5,0,1.64,12/2/2024
+VN-01127,45,Southeast,Office Worker,0,0,17.1,None,145.2,95,0,1.3,10/24/2024
+VN-01128,31,Red River Delta,Merchant/Trader,0,1,26.8,None,117.1,95,1,1.02,1/3/2024
+VN-01129,49,Mekong Delta,Retired,1,0,25.5,Diabetes,50,78,1,2.88,7/31/2024
+VN-01130,42,Southeast,Office Worker,1,0,24.1,None,141.6,95,0,1.44,10/18/2024
+VN-01131,33,Southeast,Farmer,1,1,25.2,None,125.9,95,0,1.36,3/21/2024
+VN-01132,33,Central Highlands,Merchant/Trader,0,0,20.8,None,126.4,95,0,1.16,11/6/2024
+VN-01133,52,Southeast,Factory Worker,0,0,24.3,Diabetes,113.7,83.2,0,2.04,10/27/2024
+VN-01134,20,North Central,Farmer,0,1,24.2,None,60.8,95,0,0.9,7/8/2024
+VN-01135,41,North Central,Retired,0,1,25.6,Arthritis,84.3,84.2,1,2.42,3/20/2024
+VN-01136,54,North Central,Office Worker,1,0,23.1,None,131.3,89.3,0,1.68,8/28/2024
+VN-01137,53,Northwest,Construction Worker,1,1,25.7,None,89.7,75.8,0,2.06,5/14/2024
+VN-01138,44,Mekong Delta,Construction Worker,0,0,22,None,85.1,92.5,0,1.78,5/12/2024
+VN-01139,28,Central Highlands,Service Industry,1,0,20.2,None,71.7,95,0,1.36,3/7/2024
+VN-01140,70,Southeast,Factory Worker,0,0,27.8,None,116.2,59.8,0,2.1,11/22/2024
+VN-01141,53,Northwest,Office Worker,0,1,25.5,None,134.6,83.8,0,1.36,1/16/2024
+VN-01142,48,Northeast,Construction Worker,0,1,25.1,None,113.6,81.5,0,1.76,11/1/2024
+VN-01143,46,Southeast,Factory Worker,0,0,18,None,102.9,95,0,1.62,12/25/2024
+VN-01144,46,Mekong Delta,Farmer,0,1,19.4,None,75.9,95,1,1.42,9/17/2024
+VN-01145,21,Red River Delta,Factory Worker,0,1,19.6,None,85.3,95,0,1.02,12/12/2024
+VN-01146,47,South Central Coast,Farmer,0,1,19.4,None,85.8,95,0,1.44,7/2/2024
+VN-01147,39,North Central,Factory Worker,0,0,18.7,None,72.8,95,0,1.48,2/16/2024
+VN-01148,61,Central Highlands,Service Industry,1,0,24.3,None,99.1,77.6,1,2.02,10/26/2024
+VN-01149,48,Northeast,Construction Worker,0,1,27.6,None,101.7,74.8,0,1.76,10/12/2024
+VN-01150,18,Red River Delta,Office Worker,0,0,23.3,None,122.6,95,0,0.76,4/29/2024
+VN-01151,41,Mekong Delta,Factory Worker,0,1,21.9,Diabetes,76.9,95,0,1.72,4/25/2024
+VN-01152,27,Mekong Delta,Farmer,0,0,19.9,None,56.6,95,0,1.14,6/2/2024
+VN-01153,36,Red River Delta,Office Worker,0,0,22.3,None,126.6,95,0,1.12,1/13/2024
+VN-01154,49,North Central,Construction Worker,0,1,25.8,None,90.1,78.7,0,1.78,9/19/2024
+VN-01155,18,Red River Delta,Construction Worker,1,1,20,None,105.4,95,0,1.36,2/19/2024
+VN-01156,31,Red River Delta,Farmer,1,1,21.6,Hypertension,74,95,0,1.62,7/21/2024
+VN-01157,62,Central Highlands,Merchant/Trader,0,0,24.6,None,94.5,77.6,0,1.74,11/25/2024
+VN-01158,26,North Central,Factory Worker,0,1,23.7,None,81.8,95,0,1.12,12/13/2024
+VN-01159,60,Southeast,Merchant/Trader,0,0,22.9,None,156.8,83.3,0,1.7,2/27/2024
+VN-01160,56,North Central,Retired,0,1,25.2,None,60.8,73.2,0,2.42,6/28/2024
+VN-01161,50,North Central,Factory Worker,1,0,24.2,None,111.8,85.1,0,1.9,9/9/2024
+VN-01162,58,Southeast,Factory Worker,0,1,24.7,None,106.1,77.5,0,1.76,5/3/2024
+VN-01163,39,North Central,Farmer,1,0,25.9,None,82.9,91,1,1.58,4/18/2024
+VN-01164,32,North Central,Office Worker,0,1,22.1,None,95.2,95,0,0.94,9/18/2024
+VN-01165,63,Red River Delta,Retired,0,1,27.2,None,56.5,62.4,1,2.56,10/23/2024
+VN-01166,23,Mekong Delta,Service Industry,0,1,24.7,None,61.4,95,0,0.96,5/26/2024
+VN-01167,41,Mekong Delta,Construction Worker,0,1,22.4,Hypertension,118.3,94,0,1.92,3/17/2024
+VN-01168,58,South Central Coast,Farmer,0,0,21.7,None,51.2,86.7,0,1.76,4/20/2024
+VN-01169,46,Northeast,Office Worker,1,1,29,None,98.3,80.2,0,1.42,11/9/2024
+VN-01170,39,Mekong Delta,Office Worker,0,1,24.2,None,83.8,95,1,1.08,6/6/2024
+VN-01171,34,Red River Delta,Farmer,0,1,21.2,None,58.5,95,1,1.18,6/13/2024
+VN-01172,59,Northeast,Merchant/Trader,1,0,23.1,Hypertension,109.8,83.9,0,2.18,1/2/2024
+VN-01173,53,Red River Delta,Office Worker,0,1,19.9,None,111.2,95,0,1.36,12/11/2024
+VN-01174,32,North Central,Construction Worker,0,0,24.4,None,118.7,95,0,1.54,9/2/2024
+VN-01175,64,Northeast,Merchant/Trader,1,0,24.9,Hypertension,83.4,75,1,2.28,9/17/2024
+VN-01176,46,South Central Coast,Factory Worker,0,0,24.3,None,75.2,88,0,1.62,1/10/2024
+VN-01177,42,Southeast,Construction Worker,1,1,25.8,None,140.8,84.3,0,1.84,12/30/2024
+VN-01178,34,Northeast,Construction Worker,0,1,23.7,None,82.3,95,0,1.48,3/4/2024
+VN-01179,45,Southeast,Merchant/Trader,0,1,21.7,Hypertension,130,95,0,1.6,10/10/2024
+VN-01180,18,Red River Delta,Office Worker,0,1,17.8,None,146.6,95,0,0.66,11/8/2024
+VN-01181,43,Central Highlands,Farmer,0,0,21.3,COPD/Asthma,85.7,95,0,1.76,12/21/2024
+VN-01182,33,Red River Delta,Merchant/Trader,1,0,21.7,None,81.8,95,1,1.36,11/21/2024
+VN-01183,30,Red River Delta,Service Industry,0,1,23.4,None,75,95,0,1.1,2/2/2024
+VN-01184,58,Northeast,Merchant/Trader,0,0,24,None,96.4,82.3,0,1.66,11/24/2024
+VN-01185,55,Northeast,Office Worker,1,1,21.7,None,131,92.1,0,1.6,3/15/2024
+VN-01186,29,Mekong Delta,Office Worker,0,1,22.1,None,112.6,95,0,0.88,2/19/2024
+VN-01187,28,Southeast,Office Worker,0,0,21.8,None,145.6,95,0,0.96,9/19/2024
+VN-01188,56,Central Highlands,Office Worker,0,0,24.1,None,130.1,85.1,0,1.52,2/22/2024
+VN-01189,32,South Central Coast,Farmer,0,0,20.7,None,71,95,0,1.24,2/15/2024
+VN-01190,25,Red River Delta,Factory Worker,0,0,25.8,None,71.5,95,0,1.2,12/5/2024
+VN-01191,46,Southeast,Merchant/Trader,1,1,23.9,None,146.9,92.1,0,1.52,9/4/2024
+VN-01192,46,Southeast,Merchant/Trader,0,0,26,None,116.9,86.6,0,1.42,1/3/2024
+VN-01193,39,Mekong Delta,Office Worker,0,1,20.7,None,128.4,95,0,1.08,4/18/2024
+VN-01194,46,Southeast,Office Worker,0,1,20.9,None,160,95,0,1.22,6/10/2024
+VN-01195,53,Red River Delta,Factory Worker,0,1,20.1,Hypertension,50,93.3,1,1.96,7/7/2024
+VN-01196,48,Red River Delta,Office Worker,0,0,23.5,None,104.5,92.9,0,1.36,4/24/2024
+VN-01197,51,Northwest,Construction Worker,0,1,26.7,None,50,74.8,1,1.82,3/21/2024
+VN-01198,18,Red River Delta,Farmer,0,0,24.3,None,62.7,95,0,0.96,10/22/2024
+VN-01199,58,Mekong Delta,Farmer,1,0,22,None,119.8,85.8,1,1.96,5/20/2024
+VN-01200,28,Central Highlands,Retired,0,1,20.1,None,65.6,95,0,1.86,2/3/2024
+VN-01201,54,Northwest,Merchant/Trader,0,1,20.1,None,130.8,95,0,1.48,2/20/2024
+VN-01202,31,Southeast,Office Worker,0,1,21,None,167.2,95,0,0.92,6/11/2024
+VN-01203,23,Southeast,Retired,0,0,19.6,None,77.4,95,0,1.86,12/24/2024
+VN-01204,39,Mekong Delta,Office Worker,0,1,25.5,None,132.5,95,0,1.08,11/14/2024
+VN-01205,48,Red River Delta,Office Worker,1,0,21.2,None,82.8,95,0,1.56,11/12/2024
+VN-01206,32,Central Highlands,Construction Worker,0,0,24.5,None,111.9,95,0,1.54,2/16/2024
+VN-01207,37,Northwest,Farmer,0,0,23.5,None,81.9,95,1,1.34,3/24/2024
+VN-01208,31,Central Highlands,Office Worker,0,0,25.2,None,120.9,95,0,1.02,1/21/2024
+VN-01209,52,Mekong Delta,Factory Worker,1,1,23.9,None,98.1,84.2,0,1.84,3/13/2024
+VN-01210,29,Southeast,Service Industry,0,1,23.7,None,92.8,95,0,1.08,9/12/2024
+VN-01211,35,Red River Delta,Merchant/Trader,0,1,19.5,None,92.6,95,0,1.1,8/24/2024
+VN-01212,52,Northwest,Office Worker,0,0,21.6,None,106.4,94.7,0,1.44,2/29/2024
+VN-01213,18,Northeast,Office Worker,0,1,21.1,None,109,95,1,0.66,12/7/2024
+VN-01214,33,Red River Delta,Construction Worker,0,0,25.4,None,71.2,92.4,0,1.56,3/19/2024
+VN-01215,29,Red River Delta,Service Industry,0,1,22.2,None,125.5,95,1,1.08,9/19/2024
+VN-01216,59,South Central Coast,Retired,1,0,27.5,Diabetes,50,64.7,0,3.08,10/26/2024
+VN-01217,53,Mekong Delta,Merchant/Trader,0,0,21.4,Heart Disease,122.8,93,0,1.86,3/27/2024
+VN-01218,28,Northeast,Factory Worker,0,1,19.5,None,89.2,95,0,1.16,10/3/2024
+VN-01219,37,Northeast,Farmer,0,1,19.4,None,86.4,95,0,1.24,4/1/2024
+VN-01220,52,Mekong Delta,Merchant/Trader,0,0,25.5,Arthritis,119.7,83.1,0,1.84,8/13/2024
+VN-01221,49,Mekong Delta,Merchant/Trader,0,1,25.4,None,103.8,85.7,0,1.38,10/21/2024
+VN-01222,51,Red River Delta,Merchant/Trader,0,1,20.7,None,107.8,95,0,1.42,5/4/2024
+VN-01223,80,Northeast,Office Worker,0,0,28.6,Heart Disease,134,54.1,0,2.3,6/21/2024
+VN-01224,35,Mekong Delta,Retired,0,1,23.3,None,53.4,94.9,0,2,3/12/2024
+VN-01225,30,Northeast,Factory Worker,0,1,21.8,None,119.7,95,0,1.2,4/23/2024
+VN-01226,42,North Central,Service Industry,0,0,21.3,None,69.8,95,0,1.44,10/26/2024
+VN-01227,40,North Central,Merchant/Trader,0,1,23.4,None,136,95,0,1.2,12/3/2024
+VN-01228,37,Southeast,Merchant/Trader,1,1,23.9,None,150.1,95,0,1.34,9/26/2024
+VN-01229,29,Central Highlands,Factory Worker,1,0,20.4,None,107.4,95,0,1.48,9/30/2024
+VN-01230,55,Mekong Delta,Factory Worker,0,0,21.2,None,111.5,88.9,0,1.8,10/11/2024
+VN-01231,37,Central Highlands,Factory Worker,1,0,21.5,Diabetes,97,95,0,1.94,5/19/2024
+VN-01232,45,Southeast,Merchant/Trader,0,1,21.8,None,99,95,0,1.3,9/27/2024
+VN-01233,36,South Central Coast,Office Worker,0,0,27,None,151.3,93.6,1,1.12,5/5/2024
+VN-01234,46,Red River Delta,Factory Worker,0,0,24.7,Hypertension,86,87,1,1.92,2/25/2024
+VN-01235,57,Northeast,Farmer,0,0,19.9,None,64,92.1,0,1.74,9/14/2024
+VN-01236,58,Mekong Delta,Farmer,0,1,24.9,COPD/Asthma,94.4,78.3,0,1.96,8/23/2024
+VN-01237,63,Northwest,Office Worker,1,1,23.8,None,146.8,80.1,0,1.76,3/11/2024
+VN-01238,55,Mekong Delta,Service Industry,0,0,23.4,Diabetes,111.6,84.6,0,2,2/22/2024
+VN-01239,20,Northwest,Service Industry,0,1,19.6,None,58.6,95,0,0.9,1/27/2024
+VN-01240,36,Northeast,Factory Worker,0,0,24.7,None,106.8,95,1,1.42,6/19/2024
+VN-01241,62,Mekong Delta,Merchant/Trader,1,0,22.6,Diabetes,97,82.7,0,2.24,11/28/2024
+VN-01242,39,Red River Delta,Office Worker,0,1,23.1,None,141.2,95,0,1.08,8/9/2024
+VN-01243,46,Southeast,Merchant/Trader,0,1,25.4,None,136.5,88.2,0,1.32,7/19/2024
+VN-01244,33,Mekong Delta,Construction Worker,1,0,25.2,None,117.4,93.2,0,1.76,3/7/2024
+VN-01245,32,Southeast,Merchant/Trader,0,0,25.2,None,161.6,95,0,1.14,2/11/2024
+VN-01246,43,South Central Coast,Factory Worker,0,0,23.8,None,68.8,91.8,0,1.56,5/14/2024
+VN-01247,50,Northeast,Factory Worker,1,0,20.4,None,87.8,95,0,1.9,3/7/2024
+VN-01248,48,Mekong Delta,Farmer,0,1,18,None,62.2,95,0,1.46,1/10/2024
+VN-01249,52,Northeast,Farmer,0,0,22.5,None,79.7,89.3,0,1.64,5/13/2024
+VN-01250,53,Central Highlands,Factory Worker,0,1,22.6,None,83.6,86.7,0,1.66,3/25/2024
+VN-01251,23,North Central,Farmer,1,1,17.9,None,72.4,95,1,1.16,8/11/2024
+VN-01252,52,Red River Delta,Farmer,0,1,26.1,None,91.3,80,0,1.54,9/15/2024
+VN-01253,24,Mekong Delta,Service Industry,0,0,19.1,None,107.1,95,0,1.08,9/16/2024
+VN-01254,60,Southeast,Service Industry,0,1,26,None,117.5,74,0,1.7,6/6/2024
+VN-01255,35,Red River Delta,Farmer,1,1,23.2,Diabetes,72.7,95,0,1.7,1/11/2024
+VN-01256,35,Central Highlands,Farmer,0,0,27.4,None,79.1,90.4,1,1.3,2/20/2024
+VN-01257,38,Southeast,Farmer,0,0,24.7,None,95.7,94.8,0,1.36,12/9/2024
+VN-01258,34,Red River Delta,Farmer,0,1,24,None,62.5,95,0,1.18,8/6/2024
+VN-01259,38,Mekong Delta,Factory Worker,0,1,17.8,None,83,95,0,1.36,7/5/2024
+VN-01260,52,Red River Delta,Construction Worker,0,1,23.3,None,57.4,82.7,0,1.84,2/23/2024
+VN-01261,35,Northwest,Farmer,0,0,23.7,None,54.3,95,1,1.3,2/2/2024
+VN-01262,46,Mekong Delta,Construction Worker,1,0,26.2,None,57.5,80,0,2.02,7/25/2024
+VN-01263,29,South Central Coast,Office Worker,0,0,23.9,None,153.3,95,0,0.98,3/16/2024
+VN-01264,57,South Central Coast,Farmer,1,0,22.6,Diabetes,65.5,85.2,1,2.24,1/1/2024
+VN-01265,50,Red River Delta,Office Worker,0,0,23.4,None,102.2,91.6,0,1.4,8/3/2024
+VN-01266,49,Northeast,Office Worker,0,1,23.5,None,121.2,92.2,0,1.28,10/25/2024
+VN-01267,31,Mekong Delta,Merchant/Trader,0,1,17,None,104.1,95,0,1.02,7/21/2024
+VN-01268,52,Red River Delta,Merchant/Trader,0,1,17,None,109.6,95,0,1.44,7/7/2024
+VN-01269,32,South Central Coast,Merchant/Trader,1,1,21.7,None,115.5,95,0,1.24,9/29/2024
+VN-01270,32,Northeast,Office Worker,0,0,19.5,None,95.9,95,0,1.04,10/14/2024
+VN-01271,56,Northeast,Service Industry,0,0,22.9,None,60.9,85.3,0,1.72,5/23/2024
+VN-01272,48,Red River Delta,Service Industry,1,0,21.4,None,79.9,95,0,1.76,10/7/2024
+VN-01273,42,Northeast,Office Worker,0,1,26.7,Hypertension,136.1,89.4,1,1.44,3/3/2024
+VN-01274,28,Mekong Delta,Factory Worker,0,1,22.3,None,102.5,95,0,1.16,11/18/2024
+VN-01275,45,Mekong Delta,Construction Worker,0,1,19.2,None,104.6,95,1,1.7,8/25/2024
+VN-01276,51,Mekong Delta,Factory Worker,0,1,22.4,None,70.5,88.9,0,1.62,11/28/2024
+VN-01277,43,Southeast,Farmer,0,1,23.4,None,113,94.1,0,1.36,5/6/2024
+VN-01278,41,Southeast,Merchant/Trader,0,1,25.5,Diabetes,144.9,92,0,1.52,4/13/2024
+VN-01279,50,Northwest,Farmer,1,1,23.8,None,83.2,87.6,1,1.7,10/1/2024
+VN-01280,59,Northeast,Farmer,1,0,20.6,None,75.2,88.9,0,1.98,4/28/2024
+VN-01281,52,Northeast,Merchant/Trader,1,0,21.1,None,139.4,94.4,0,1.74,11/19/2024
+VN-01282,18,Northeast,Merchant/Trader,0,0,22.2,None,91.5,95,0,0.86,8/17/2024
+VN-01283,49,Mekong Delta,Farmer,0,1,20.8,None,87.3,95,0,1.48,10/8/2024
+VN-01284,48,Northeast,Farmer,0,1,22,None,97.9,93.8,0,1.46,12/2/2024
+VN-01285,35,Southeast,Farmer,0,0,23.8,None,94.9,95,0,1.3,2/24/2024
+VN-01286,39,Mekong Delta,Farmer,1,1,19.9,None,54.2,95,0,1.48,3/27/2024
+VN-01287,32,South Central Coast,Farmer,0,0,21.5,None,61.2,95,0,1.24,5/29/2024
+VN-01288,50,Red River Delta,Farmer,0,1,20.8,None,67.9,95,0,1.5,3/24/2024
+VN-01289,50,Mekong Delta,Retired,1,0,24.6,Hypertension,75.3,79.6,1,2.9,9/23/2024
+VN-01290,62,North Central,Farmer,0,0,20.7,None,79.5,86.1,0,1.84,10/5/2024
+VN-01291,37,Northeast,Farmer,0,0,17.5,None,63.4,95,0,1.34,7/11/2024
+VN-01292,45,Northeast,Service Industry,0,1,20.6,None,86.5,95,0,1.4,1/11/2024
+VN-01293,39,Red River Delta,Merchant/Trader,0,1,20.1,None,158.5,95,0,1.18,1/29/2024
+VN-01294,48,Southeast,Farmer,0,0,24.2,None,100.4,88.1,0,1.56,3/22/2024
+VN-01295,54,Red River Delta,Farmer,0,1,23.4,None,91.2,85.4,0,1.58,8/24/2024
+VN-01296,43,North Central,Construction Worker,0,1,22.5,Heart Disease,75.1,92.1,0,1.96,5/14/2024
+VN-01297,38,Mekong Delta,Construction Worker,1,0,25.2,Heart Disease,117.6,89.1,0,2.16,2/11/2024
+VN-01298,38,Southeast,Retired,0,0,25.6,None,65.9,86.6,0,2.16,1/7/2024
+VN-01299,58,Northwest,Farmer,0,1,22.6,Hypertension,58.5,84.4,0,1.96,11/24/2024
+VN-01300,48,Mekong Delta,Merchant/Trader,0,0,21.7,None,128.7,95,0,1.46,3/12/2024
+VN-01301,29,Red River Delta,Service Industry,0,0,22.4,None,108.4,95,0,1.18,1/6/2024
+VN-01302,22,South Central Coast,Service Industry,1,1,20.5,None,50,95,0,1.14,9/27/2024
+VN-01303,31,Southeast,Farmer,0,0,19.2,None,123.8,95,0,1.22,3/27/2024
+VN-01304,38,Central Highlands,Factory Worker,0,0,18.3,None,76.5,95,0,1.46,2/4/2024
+VN-01305,31,Northeast,Office Worker,1,1,25.5,COPD/Asthma,105.4,95,0,1.42,3/27/2024
+VN-01306,46,North Central,Office Worker,0,1,17.2,None,126.3,95,0,1.22,4/5/2024
+VN-01307,35,Southeast,Farmer,0,0,25.3,None,82.3,95,0,1.3,8/21/2024
+VN-01308,38,Southeast,Farmer,1,1,18.7,None,132.2,95,0,1.46,2/27/2024
+VN-01309,42,Red River Delta,Factory Worker,0,0,24.9,None,106.5,89.8,0,1.54,10/26/2024
+VN-01310,35,North Central,Farmer,0,1,24.9,None,88.4,95,0,1.2,1/16/2024
+VN-01311,50,South Central Coast,Merchant/Trader,0,0,21.3,None,135.8,95,0,1.5,1/24/2024
+VN-01312,26,Southeast,Farmer,0,1,17.8,None,59.2,95,0,1.02,12/1/2024
+VN-01313,55,Red River Delta,Office Worker,0,0,22.9,None,99,88.8,0,1.5,1/18/2024
+VN-01314,34,Northeast,Office Worker,0,1,22.3,None,124.7,95,0,0.98,4/21/2024
+VN-01315,26,South Central Coast,Service Industry,0,0,24.5,None,88.9,95,0,1.12,5/18/2024
+VN-01316,53,Central Highlands,Farmer,0,1,23.3,None,103.1,86.6,0,1.56,3/20/2024
+VN-01317,44,Red River Delta,Merchant/Trader,1,0,23.5,None,108.1,94.8,0,1.58,8/24/2024
+VN-01318,33,Northeast,Construction Worker,0,0,25.7,None,128.6,91.8,0,1.56,5/18/2024
+VN-01319,42,Southeast,Farmer,0,0,23.3,None,83.6,95,0,1.44,2/6/2024
+VN-01320,18,Central Highlands,Farmer,1,1,23.4,None,93.2,95,1,1.06,1/2/2024
+VN-01321,32,Northeast,Merchant/Trader,0,0,20.2,None,76.7,95,0,1.14,8/11/2024
+VN-01322,36,Northwest,Merchant/Trader,1,0,22.8,None,123.8,95,0,1.42,1/9/2024
+VN-01323,38,Mekong Delta,Construction Worker,0,0,19.4,None,88.8,95,0,1.66,9/2/2024
+VN-01324,27,Northeast,Service Industry,0,0,19.5,None,91.8,95,0,1.14,12/7/2024
+VN-01325,44,North Central,Farmer,0,1,24.9,None,72.9,89.7,0,1.38,1/23/2024
+VN-01326,41,Mekong Delta,Construction Worker,1,1,27.3,None,96.4,81.2,0,1.82,8/5/2024
+VN-01327,36,Red River Delta,Farmer,1,1,22.2,Hypertension,93.5,95,0,1.72,11/29/2024
+VN-01328,31,Northeast,Merchant/Trader,0,1,22.5,None,85.1,95,0,1.02,12/18/2024
+VN-01329,47,Central Highlands,Farmer,0,1,20.4,None,98.4,95,0,1.44,10/4/2024
+VN-01330,63,Southeast,Office Worker,0,0,20,None,133.9,90.2,0,1.66,12/7/2024
+VN-01331,38,South Central Coast,Service Industry,1,1,26.4,None,77,90.5,0,1.46,7/14/2024
+VN-01332,58,Northwest,Office Worker,0,1,29.5,None,154,69.4,1,1.46,12/5/2024
+VN-01333,47,Northwest,Construction Worker,0,0,17.7,None,113.8,95,1,1.84,1/18/2024
+VN-01334,43,Northeast,Office Worker,0,0,20.8,None,115.6,95,0,1.26,1/12/2024
+VN-01335,44,Red River Delta,Merchant/Trader,1,1,20.7,None,128.1,95,1,1.48,2/12/2024
+VN-01336,55,Southeast,Farmer,1,0,19.6,None,119.3,94.4,0,1.9,12/8/2024
+VN-01337,45,Northeast,Service Industry,0,0,18.6,Heart Disease,75.7,95,0,1.8,2/22/2024
+VN-01338,65,Southeast,Construction Worker,1,1,24.1,None,146.7,70.4,1,2.3,12/25/2024
+VN-01339,36,Northwest,Construction Worker,0,1,19.7,None,84.7,95,0,1.52,10/29/2024
+VN-01340,49,Southeast,Factory Worker,1,0,25.2,None,107.7,83.4,0,1.88,2/3/2024
+VN-01341,42,Southeast,Office Worker,0,1,25.3,None,170.3,93.2,0,1.14,9/10/2024
+VN-01342,24,Red River Delta,Factory Worker,1,0,19.2,None,78.5,95,1,1.38,4/17/2024
+VN-01343,39,South Central Coast,Merchant/Trader,0,0,21.8,None,118.7,95,0,1.28,10/27/2024
+VN-01344,34,Red River Delta,Factory Worker,0,0,18.9,None,94.2,95,0,1.38,11/22/2024
+VN-01345,19,Southeast,Service Industry,0,1,20.8,None,102.9,95,0,0.88,9/18/2024
+VN-01346,42,Southeast,Construction Worker,1,1,24.2,None,165.8,88.5,0,1.84,3/24/2024
+VN-01347,41,Mekong Delta,Retired,1,0,24.3,COPD/Asthma,50,87.4,1,2.72,10/22/2024
+VN-01348,63,Mekong Delta,Construction Worker,0,0,25.3,Diabetes,85.5,68.7,0,2.46,9/26/2024
+VN-01349,45,South Central Coast,Factory Worker,0,1,28.6,None,91.5,77.7,1,1.5,1/19/2024
+VN-01350,40,Mekong Delta,Farmer,0,0,25.7,None,72.7,90.7,1,1.4,9/9/2024
+VN-01351,57,South Central Coast,Farmer,0,1,21.2,None,63.7,88.7,0,1.64,1/5/2024
+VN-01352,34,Mekong Delta,Factory Worker,0,1,22.5,None,91.3,95,1,1.28,4/14/2024
+VN-01353,45,South Central Coast,Office Worker,0,0,19.1,None,147.4,95,0,1.3,11/3/2024
+VN-01354,21,Mekong Delta,Construction Worker,0,1,25.1,None,109.6,95,0,1.22,12/24/2024
+VN-01355,47,Northwest,Farmer,0,1,22.6,None,124.6,93.2,0,1.44,11/14/2024
+VN-01356,37,Mekong Delta,Factory Worker,0,1,27.8,Arthritis,117.3,86,0,1.64,9/16/2024
+VN-01357,39,Southeast,Construction Worker,0,1,20.3,None,107.6,95,0,1.58,3/9/2024
+VN-01358,49,Mekong Delta,Construction Worker,0,0,22.9,None,118.3,86.4,1,1.88,4/6/2024
+VN-01359,61,North Central,Merchant/Trader,1,0,25.9,None,147.6,74.9,0,1.92,9/13/2024
+VN-01360,48,Red River Delta,Farmer,1,0,22,None,50,94,1,1.76,2/13/2024
+VN-01361,50,Northwest,Service Industry,0,0,22.9,None,62,90,0,1.6,7/23/2024
+VN-01362,66,Mekong Delta,Construction Worker,0,0,23.2,Arthritis,106.3,71.9,0,2.52,8/17/2024
+VN-01363,31,Northeast,Farmer,0,0,17,None,54.2,95,0,1.22,4/3/2024
+VN-01364,25,Mekong Delta,Service Industry,0,0,19.2,None,96.3,95,0,1.1,4/24/2024
+VN-01365,42,South Central Coast,Office Worker,0,0,22.7,None,97.7,95,0,1.24,9/28/2024
+VN-01366,33,Northeast,Merchant/Trader,0,1,21.4,None,107.7,95,0,1.06,11/12/2024
+VN-01367,38,Southeast,Farmer,0,0,25,None,100.9,94,0,1.36,3/15/2024
+VN-01368,36,Northeast,Construction Worker,0,0,24.3,None,90.9,93,0,1.62,5/3/2024
+VN-01369,49,Northwest,Merchant/Trader,1,1,29.5,None,114.4,75.2,1,1.58,7/24/2024
+VN-01370,38,Mekong Delta,Retired,0,0,21.7,None,54.1,95,0,2.16,7/30/2024
+VN-01371,54,North Central,Farmer,0,0,24.8,COPD/Asthma,70.1,81.9,0,1.98,1/16/2024
+VN-01372,32,Northeast,Office Worker,0,1,24.7,None,129,95,0,0.94,6/9/2024
+VN-01373,57,Red River Delta,Farmer,1,0,28.6,Hypertension,71.5,69.5,0,2.24,2/26/2024
+VN-01374,34,Northwest,Service Industry,0,1,23.1,None,72.9,95,1,1.18,7/19/2024
+VN-01375,50,Red River Delta,Merchant/Trader,0,1,21.1,Diabetes,102.9,95,0,1.7,6/5/2024
+VN-01376,45,Mekong Delta,Office Worker,0,1,20,None,104.1,95,1,1.2,12/26/2024
+VN-01377,34,Northeast,Factory Worker,0,1,23.7,None,109.7,95,0,1.28,10/13/2024
+VN-01378,45,Northeast,Office Worker,1,1,20.8,None,119.1,95,1,1.4,11/30/2024
+VN-01379,35,South Central Coast,Farmer,1,0,19,None,92.9,95,0,1.5,6/5/2024
+VN-01380,37,Northeast,Service Industry,0,0,21.6,None,78.8,95,0,1.34,9/10/2024
+VN-01381,43,Northeast,Retired,0,0,22.1,None,81.7,91.7,0,2.26,2/13/2024
+VN-01382,55,Southeast,Farmer,0,1,19.6,None,88.5,94.6,0,1.6,5/2/2024
+VN-01383,35,Southeast,Farmer,0,1,22.1,None,103.7,95,1,1.2,5/17/2024
+VN-01384,30,Northeast,Office Worker,0,0,17,None,174.5,95,0,1,4/16/2024
+VN-01385,40,Mekong Delta,Farmer,0,0,27.2,None,50,86.8,0,1.4,12/5/2024
+VN-01386,47,Red River Delta,Construction Worker,1,0,22.8,None,71.2,88,0,2.04,1/7/2024
+VN-01387,54,Red River Delta,Factory Worker,1,1,21,None,85,90.1,0,1.88,9/30/2024
+VN-01388,55,Central Highlands,Office Worker,0,1,25.8,None,162.6,81.3,0,1.4,5/9/2024
+VN-01389,54,North Central,Factory Worker,0,0,26.3,Arthritis,67.6,76.3,0,2.08,5/11/2024
+VN-01390,54,Red River Delta,Farmer,1,1,24,None,103,83.8,0,1.78,3/14/2024
+VN-01391,23,Central Highlands,Office Worker,0,1,26.2,None,100.8,95,0,0.76,11/29/2024
+VN-01392,22,Mekong Delta,Merchant/Trader,0,0,23.5,None,96.7,95,1,0.94,11/9/2024
+VN-01393,51,Northwest,Retired,0,1,18.8,None,59.6,93.9,1,2.32,5/20/2024
+VN-01394,46,Northeast,Office Worker,1,0,18.1,None,116.4,95,0,1.52,7/16/2024
+VN-01395,36,North Central,Construction Worker,1,0,25.6,Hypertension,81,89.7,0,2.12,12/6/2024
+VN-01396,50,Southeast,Factory Worker,0,0,24.8,Diabetes,93.6,83.4,0,2,4/14/2024
+VN-01397,50,Southeast,Farmer,0,1,23.9,None,93.1,87.4,1,1.5,3/19/2024
+VN-01398,39,North Central,Service Industry,0,1,26,None,95.1,90.6,0,1.28,11/14/2024
+VN-01399,47,North Central,Office Worker,0,0,22.5,None,114.5,95,0,1.34,4/14/2024
+VN-01400,41,South Central Coast,Farmer,0,0,23.9,None,113.5,94.7,1,1.42,1/30/2024
+VN-01401,36,Mekong Delta,Merchant/Trader,0,1,22.5,Arthritis,95.2,95,0,1.42,7/22/2024
+VN-01402,36,Southeast,Factory Worker,0,1,27.1,Diabetes; Heart Disease,112,88.6,0,1.92,8/24/2024
+VN-01403,29,South Central Coast,Office Worker,1,1,19,None,103.9,95,0,1.08,12/26/2024
+VN-01404,61,Northeast,Farmer,0,0,23.1,None,83.9,80.6,0,1.82,3/12/2024
+VN-01405,54,Mekong Delta,Farmer,0,1,21.3,None,80.1,90.9,1,1.58,9/13/2024
+VN-01406,45,Northeast,Office Worker,0,1,20.6,None,118.7,95,0,1.2,2/1/2024
+VN-01407,82,Red River Delta,Construction Worker,1,1,24.5,Diabetes,85.4,55.6,0,2.94,8/2/2024
+VN-01408,46,Red River Delta,Merchant/Trader,0,1,24.5,None,110.5,90.6,0,1.32,1/31/2024
+VN-01409,35,Southeast,Service Industry,0,1,27,None,63.8,91.4,0,1.2,3/1/2024
+VN-01410,40,Southeast,Merchant/Trader,0,1,24.2,None,149.3,95,1,1.2,5/27/2024
+VN-01411,37,Mekong Delta,Factory Worker,0,0,20.3,None,91.4,95,0,1.44,10/5/2024
+VN-01412,27,North Central,Merchant/Trader,0,0,19.5,None,119.1,95,1,1.04,5/21/2024
+VN-01413,22,North Central,Merchant/Trader,0,1,20.4,None,124.2,95,0,0.84,12/16/2024
+VN-01414,43,Northwest,Farmer,1,0,19.6,None,50,95,0,1.66,11/11/2024
+VN-01415,50,South Central Coast,Merchant/Trader,0,0,23.7,Hypertension,101.8,89.3,0,1.8,10/29/2024
+VN-01416,60,Northwest,Farmer,0,0,28,None,97.1,68.7,0,1.8,5/4/2024
+VN-01417,58,North Central,Merchant/Trader,0,1,25.7,None,115.3,77.8,0,1.56,3/29/2024
+VN-01418,51,North Central,Office Worker,0,1,20.7,None,113.5,95,0,1.32,5/26/2024
+VN-01419,51,Northeast,Farmer,1,1,22.2,None,50,90.9,0,1.72,12/12/2024
+VN-01420,45,Northwest,Merchant/Trader,0,0,22.7,None,114.9,95,0,1.4,3/26/2024
+VN-01421,38,Southeast,Farmer,1,1,23.2,None,102.7,95,0,1.46,11/23/2024
+VN-01422,41,Red River Delta,Retired,0,1,17.1,None,64.3,95,0,2.12,8/13/2024
+VN-01423,30,Red River Delta,Merchant/Trader,0,1,21.5,None,127.3,95,0,1,9/9/2024
+VN-01424,24,Mekong Delta,Farmer,1,0,20.7,None,134.4,95,0,1.28,1/27/2024
+VN-01425,38,Mekong Delta,Office Worker,0,1,17.9,None,115.9,95,0,1.06,1/26/2024
+VN-01426,48,South Central Coast,Construction Worker,0,1,20,None,56.6,94.5,0,1.76,2/11/2024
+VN-01427,33,North Central,Factory Worker,0,0,20.9,Hypertension,100,95,0,1.66,7/9/2024
+VN-01428,41,South Central Coast,Construction Worker,0,0,25.5,None,114.8,86,0,1.72,11/12/2024
+VN-01429,37,South Central Coast,Farmer,0,1,25,None,69.1,95,0,1.24,9/30/2024
+VN-01430,47,Mekong Delta,Merchant/Trader,1,0,23.6,Hypertension,116.8,92,1,1.94,12/22/2024
+VN-01431,34,Northwest,Factory Worker,0,0,22.7,None,94.9,95,0,1.38,4/2/2024
+VN-01432,51,South Central Coast,Office Worker,0,0,20.9,None,153.9,95,0,1.42,12/5/2024
+VN-01433,50,North Central,Farmer,0,1,24.4,None,70.5,86.1,0,1.5,3/7/2024
+VN-01434,51,North Central,Farmer,1,0,21.1,None,50,93.9,1,1.82,9/1/2024
+VN-01435,65,Northeast,Factory Worker,1,0,22.1,Arthritis,81.5,78.6,0,2.5,10/20/2024
+VN-01436,27,Northeast,Factory Worker,0,1,26.2,None,63.9,95,0,1.14,7/13/2024
+VN-01437,53,Red River Delta,Service Industry,0,0,21.4,None,108,91.3,0,1.66,12/8/2024
+VN-01438,47,Southeast,Factory Worker,1,0,21.8,None,111.1,93.6,1,1.84,5/5/2024
+VN-01439,35,Red River Delta,Retired,0,0,24.4,None,69.8,92,1,2.1,2/17/2024
+VN-01440,37,Northeast,Factory Worker,0,1,22.9,None,92.8,95,0,1.34,12/4/2024
+VN-01441,52,Mekong Delta,Farmer,0,0,26.3,None,76.8,79.6,0,1.64,10/10/2024
+VN-01442,30,Central Highlands,Farmer,1,0,22.2,None,128.6,95,1,1.4,6/16/2024
+VN-01443,26,Mekong Delta,Factory Worker,0,0,23.2,None,62,95,0,1.22,2/27/2024
+VN-01444,48,North Central,Factory Worker,0,0,23.8,None,85.7,87.6,0,1.66,5/12/2024
+VN-01445,41,Central Highlands,Office Worker,0,0,23.1,None,131.4,95,0,1.22,2/7/2024
+VN-01446,30,Southeast,Office Worker,0,0,19.8,None,125.1,95,0,1,1/5/2024
+VN-01447,40,North Central,Farmer,0,1,23.6,None,50,95,0,1.3,2/20/2024
+VN-01448,32,Central Highlands,Factory Worker,0,1,19.3,None,95.4,95,1,1.24,10/4/2024
+VN-01449,53,Southeast,Farmer,0,0,26.6,None,95.4,77.8,0,1.66,8/31/2024
+VN-01450,24,North Central,Office Worker,0,1,21.7,None,154,95,0,0.78,12/22/2024
+VN-01451,70,Northwest,Merchant/Trader,0,1,23.4,None,115.8,74.2,0,1.8,2/3/2024
+VN-01452,47,Red River Delta,Merchant/Trader,0,1,19.4,None,102.4,95,0,1.34,3/5/2024
+VN-01453,50,Central Highlands,Retired,0,0,27.6,None,101.1,71.8,0,2.4,2/6/2024
+VN-01454,42,South Central Coast,Factory Worker,0,1,26.6,Diabetes,107.6,85.1,0,1.74,1/5/2024
+VN-01455,56,Red River Delta,Service Industry,0,0,20.8,None,77.6,90.6,0,1.72,7/23/2024
+VN-01456,29,South Central Coast,Office Worker,0,1,22.8,None,120.1,95,0,0.88,6/27/2024
+VN-01457,34,Red River Delta,Factory Worker,0,0,20.1,None,78.4,95,0,1.38,3/7/2024
+VN-01458,29,Southeast,Factory Worker,0,0,24.6,None,85.7,95,0,1.28,6/15/2024
+VN-01459,40,Northeast,Farmer,0,0,25,None,76.7,92.4,0,1.4,3/4/2024
+VN-01460,50,North Central,Office Worker,0,0,25,None,169.3,87.4,0,1.4,8/1/2024
+VN-01461,32,Red River Delta,Factory Worker,0,1,20.4,None,73,95,0,1.24,2/12/2024
+VN-01462,36,South Central Coast,Farmer,1,0,23.5,None,96.4,95,0,1.52,11/24/2024
+VN-01463,47,Mekong Delta,Service Industry,0,1,22.4,None,64,93.8,0,1.44,8/28/2024
+VN-01464,42,Southeast,Service Industry,1,1,17.3,None,130.9,95,0,1.54,9/27/2024
+VN-01465,46,South Central Coast,Farmer,0,1,23.5,None,64.1,91.6,0,1.42,6/4/2024
+VN-01466,49,Mekong Delta,Farmer,0,0,21,None,77.7,95,0,1.58,4/13/2024
+VN-01467,29,Southeast,Factory Worker,1,1,19.6,None,126.4,95,0,1.38,12/10/2024
+VN-01468,61,South Central Coast,Retired,0,0,24.9,None,51.8,70,0,2.62,11/19/2024
+VN-01469,33,Mekong Delta,Service Industry,0,0,23.1,None,95.9,95,0,1.26,7/29/2024
+VN-01470,23,Red River Delta,Office Worker,1,1,19.6,None,108.2,95,0,0.96,12/20/2024
+VN-01471,39,Central Highlands,Office Worker,0,0,19.8,None,123.1,95,0,1.18,1/17/2024
+VN-01472,65,Mekong Delta,Factory Worker,0,1,25,None,101,70.9,1,1.9,11/5/2024
+VN-01473,49,Mekong Delta,Office Worker,0,0,23.1,None,99.8,93.4,0,1.38,5/13/2024
+VN-01474,33,Central Highlands,Retired,1,0,22.5,None,55.8,95,0,2.26,5/19/2024
+VN-01475,54,North Central,Factory Worker,1,0,24,None,82.9,82.4,0,1.98,1/11/2024
+VN-01476,53,Mekong Delta,Construction Worker,1,0,21.8,None,79.6,85.9,1,2.16,7/28/2024
+VN-01477,35,Northeast,Merchant/Trader,1,0,21.7,None,108,95,0,1.4,9/21/2024
+VN-01478,46,Northwest,Merchant/Trader,0,0,23.2,None,108.5,93.8,0,1.42,1/5/2024
+VN-01479,49,Northwest,Farmer,0,1,24.4,None,99.5,86.9,0,1.48,5/9/2024
+VN-01480,39,Southeast,Office Worker,0,1,23.4,COPD/Asthma,151.8,95,0,1.38,5/26/2024
+VN-01481,31,North Central,Merchant/Trader,0,1,20.3,None,114.4,95,0,1.02,3/25/2024
+VN-01482,39,Northwest,Merchant/Trader,1,1,20.3,None,117.9,95,0,1.38,8/9/2024
+VN-01483,47,Southeast,Farmer,0,0,19.4,None,87.7,95,1,1.54,1/30/2024
+VN-01484,44,Red River Delta,Service Industry,0,1,26.5,None,69.3,85.5,0,1.38,8/7/2024
+VN-01485,40,Central Highlands,Farmer,0,0,24,Heart Disease,114.9,95,0,1.7,9/27/2024
+VN-01486,35,Southeast,Construction Worker,1,1,25.5,None,129.7,90.7,0,1.7,10/13/2024
+VN-01487,67,Southeast,Office Worker,0,1,25.1,Diabetes,166.4,73.6,0,1.94,7/3/2024
+VN-01488,45,Red River Delta,Farmer,0,1,22.1,None,102.2,95,0,1.4,9/25/2024
+VN-01489,35,Northwest,Factory Worker,1,1,23,None,86,95,0,1.5,10/20/2024
+VN-01490,60,Southeast,Merchant/Trader,0,0,26.8,None,152.1,73.2,0,1.7,9/19/2024
+VN-01491,62,South Central Coast,Construction Worker,0,0,23,None,80.9,75.7,0,2.14,6/10/2024
+VN-01492,38,Northeast,Factory Worker,0,0,21,None,91.9,95,0,1.46,4/23/2024
+VN-01493,57,Northeast,Farmer,1,0,24.4,None,91.2,80.6,0,1.94,12/4/2024
+VN-01494,39,Northeast,Service Industry,1,1,23.1,None,64.8,95,0,1.48,12/20/2024
+VN-01495,19,Red River Delta,Service Industry,1,1,25.9,None,89.6,95,0,1.08,3/9/2024
+VN-01496,26,Northeast,Farmer,0,0,21.8,None,60.2,95,0,1.12,1/14/2024
+VN-01497,43,Mekong Delta,Farmer,0,0,24.2,None,67.5,92.2,0,1.46,12/15/2024
+VN-01498,35,South Central Coast,Service Industry,0,1,25.4,COPD/Asthma,84.8,95,0,1.5,4/19/2024
+VN-01499,25,Southeast,Merchant/Trader,0,0,23.2,None,153.6,95,0,1,11/21/2024
+VN-01500,32,Southeast,Office Worker,0,0,19.3,None,144.5,95,0,1.04,4/17/2024
+VN-01501,58,Red River Delta,Farmer,0,0,24.3,None,113.1,80,0,1.76,6/3/2024
+VN-01502,47,Northeast,Factory Worker,0,0,25.5,Arthritis,50,84.1,1,1.94,3/10/2024
+VN-01503,46,South Central Coast,Merchant/Trader,0,0,20.6,None,64.4,95,0,1.42,8/28/2024
+VN-01504,37,Mekong Delta,Farmer,0,1,20.6,None,86.1,95,0,1.24,6/16/2024
+VN-01505,58,Southeast,Farmer,0,0,22.6,None,114,84.3,0,1.76,4/15/2024
+VN-01506,44,Mekong Delta,Merchant/Trader,0,0,25.9,None,92,88.4,0,1.38,5/17/2024
+VN-01507,43,Red River Delta,Office Worker,0,0,22.8,None,112.2,95,1,1.26,8/30/2024
+VN-01508,32,Red River Delta,Service Industry,0,1,23.9,None,105.8,95,0,1.14,10/23/2024
+VN-01509,56,Southeast,Farmer,0,1,20.9,Hypertension,117.8,90.3,0,1.92,1/18/2024
+VN-01510,38,Central Highlands,Service Industry,0,0,21.4,None,75.3,95,0,1.36,1/13/2024
+VN-01511,45,Mekong Delta,Farmer,0,1,24.3,None,127.7,90.3,0,1.4,3/26/2024
+VN-01512,65,Red River Delta,Farmer,0,0,22.9,None,77.4,77.9,0,1.9,6/30/2024
+VN-01513,60,Central Highlands,Office Worker,0,0,20.2,None,127.5,91.9,1,1.6,1/20/2024
+VN-01514,39,Central Highlands,Office Worker,0,1,22.3,None,126.7,95,0,1.08,12/20/2024
+VN-01515,56,Northwest,Factory Worker,0,0,23.3,None,81.4,82.7,0,1.82,6/29/2024
+VN-01516,54,North Central,Office Worker,0,0,23.1,None,127.7,89.4,0,1.48,9/2/2024
+VN-01517,47,Central Highlands,Retired,0,1,19.7,None,62,94.6,1,2.24,2/5/2024
+VN-01518,19,South Central Coast,Construction Worker,0,1,23.7,None,95.9,95,0,1.18,3/20/2024
+VN-01519,62,Northwest,Farmer,0,1,23.4,None,124.2,79.1,0,1.74,11/18/2024
+VN-01520,56,Central Highlands,Office Worker,0,0,22.9,None,129.5,88.2,0,1.52,4/16/2024
+VN-01521,58,Red River Delta,Office Worker,1,0,24.4,None,117.1,82.6,0,1.76,9/3/2024
+VN-01522,41,Southeast,Office Worker,1,0,22.7,None,156.2,95,0,1.42,8/13/2024
+VN-01523,18,Northwest,Factory Worker,1,0,22.8,None,87.3,95,1,1.26,9/30/2024
+VN-01524,34,Southeast,Factory Worker,0,0,22.7,None,91.5,95,0,1.38,8/28/2024
+VN-01525,41,Northeast,Farmer,0,0,24.1,None,68,94,0,1.42,7/23/2024
+VN-01526,29,Northeast,Construction Worker,1,0,20.9,None,92.6,95,0,1.68,1/23/2024
+VN-01527,37,Southeast,Office Worker,0,1,25.6,None,173,95,0,1.04,5/14/2024
+VN-01528,45,Northeast,Farmer,0,0,18.7,None,50,95,0,1.5,9/14/2024
+VN-01529,38,Mekong Delta,Construction Worker,0,0,25.6,None,140.1,87.9,0,1.66,10/26/2024
+VN-01530,21,North Central,Merchant/Trader,0,0,23.9,None,125.8,95,0,0.92,11/4/2024
+VN-01531,35,North Central,Merchant/Trader,0,1,24.8,None,103.2,95,0,1.1,9/28/2024
+VN-01532,32,Central Highlands,Merchant/Trader,0,0,20.2,None,132.7,95,0,1.14,1/29/2024
+VN-01533,50,Southeast,Retired,1,0,26.7,Hypertension,73.9,74.2,0,2.9,9/10/2024
+VN-01534,56,Mekong Delta,Farmer,0,0,24.4,None,54,81.1,0,1.72,3/22/2024
+VN-01535,52,Northeast,Merchant/Trader,1,1,26.5,None,146,80.4,0,1.64,1/23/2024
+VN-01536,36,Southeast,Office Worker,0,0,24.7,None,143.9,95,0,1.12,9/22/2024
+VN-01537,56,Northeast,Retired,1,0,24.6,Arthritis,50,74.6,0,3.02,11/29/2024
+VN-01538,40,South Central Coast,Office Worker,0,0,19.4,None,103.9,95,0,1.2,6/21/2024
+VN-01539,52,South Central Coast,Construction Worker,1,1,23.2,None,95.3,83.1,0,2.04,12/29/2024
+VN-01540,41,Northeast,Construction Worker,0,1,24.5,Arthritis,101.9,88.4,0,1.92,8/21/2024
+VN-01541,41,North Central,Factory Worker,0,0,24.3,None,57.2,92.1,0,1.52,11/9/2024
+VN-01542,18,South Central Coast,Construction Worker,0,1,17.2,None,81.8,95,1,1.16,8/12/2024
+VN-01543,26,Central Highlands,Construction Worker,1,1,20.5,None,69.6,95,0,1.52,9/22/2024
+VN-01544,34,Northeast,Retired,0,0,24.1,Arthritis,50,93.5,0,2.38,9/15/2024
+VN-01545,34,Southeast,Construction Worker,0,1,21.6,None,115.8,95,0,1.48,6/27/2024
+VN-01546,38,Northeast,Farmer,1,0,24.1,None,79.6,95,0,1.56,7/21/2024
+VN-01547,18,Northwest,Farmer,0,1,23.1,None,80.8,95,0,0.86,5/14/2024
+VN-01548,41,Mekong Delta,Factory Worker,0,0,22.3,None,88.2,95,0,1.52,9/14/2024
+VN-01549,52,Northeast,Merchant/Trader,1,1,21.1,None,94.3,94.6,0,1.64,5/4/2024
+VN-01550,49,Red River Delta,Factory Worker,0,0,23.7,None,104.8,87.3,0,1.68,11/10/2024
+VN-01551,57,Northeast,Factory Worker,1,1,25.6,None,114.6,75.9,0,1.94,3/12/2024
+VN-01552,59,Central Highlands,Factory Worker,0,0,24.6,Hypertension,86.2,77,0,2.18,7/10/2024
+VN-01553,58,Mekong Delta,Factory Worker,1,1,28.1,Diabetes,74.9,68.6,0,2.26,9/4/2024
+VN-01554,35,Northeast,Farmer,0,1,25.9,None,85.7,94.3,1,1.2,12/5/2024
+VN-01555,42,South Central Coast,Office Worker,0,0,23.4,None,145.4,95,0,1.24,9/21/2024
+VN-01556,25,Northeast,Farmer,0,1,22.8,None,85.7,95,1,1,11/17/2024
+VN-01557,33,Mekong Delta,Merchant/Trader,0,0,22.4,None,154.8,95,0,1.16,4/2/2024
+VN-01558,63,North Central,Farmer,1,0,20.5,None,75.8,85.7,0,2.06,1/6/2024
+VN-01559,39,Northwest,Office Worker,0,1,24.7,None,121.9,95,0,1.08,7/24/2024
+VN-01560,31,North Central,Farmer,0,1,20.6,None,105.4,95,0,1.12,2/11/2024
+VN-01561,34,Mekong Delta,Farmer,0,1,23.1,None,72.2,95,0,1.18,6/10/2024
+VN-01562,36,North Central,Farmer,0,0,22.4,Heart Disease,108,95,0,1.62,2/11/2024
+VN-01563,20,South Central Coast,Construction Worker,0,1,19.9,None,137.3,95,0,1.2,5/6/2024
+VN-01564,38,Red River Delta,Office Worker,0,0,24.3,None,85.4,95,0,1.16,11/7/2024
+VN-01565,23,Central Highlands,Farmer,0,1,18.9,None,73.5,95,0,0.96,12/11/2024
+VN-01566,43,Northwest,Office Worker,0,1,24.1,None,149.5,95,0,1.16,2/11/2024
+VN-01567,48,South Central Coast,Merchant/Trader,0,1,19.3,None,135.3,95,0,1.36,7/27/2024
+VN-01568,45,Southeast,Service Industry,0,1,24.3,None,92,90.3,0,1.4,9/29/2024
+VN-01569,49,South Central Coast,Farmer,0,0,24.1,None,59.4,87.7,0,1.58,1/7/2024
+VN-01570,19,Mekong Delta,Retired,1,0,24.6,None,51.8,95,0,1.98,11/6/2024
+VN-01571,40,Mekong Delta,Construction Worker,1,1,22.3,None,93.8,95,0,1.8,6/27/2024
+VN-01572,52,Red River Delta,Factory Worker,1,1,24.7,None,77.6,82.1,0,1.84,5/16/2024
+VN-01573,60,South Central Coast,Service Industry,0,0,22.3,Hypertension,98.9,83.5,0,2.1,12/6/2024
+VN-01574,49,South Central Coast,Factory Worker,0,0,22,Hypertension,86.4,91.6,0,1.98,12/2/2024
+VN-01575,53,Mekong Delta,Farmer,1,0,22.5,Diabetes,65.3,88.6,0,2.16,12/24/2024
+VN-01576,50,Red River Delta,Office Worker,0,0,29.3,None,115.7,76.4,0,1.4,6/16/2024
+VN-01577,23,South Central Coast,Retired,0,0,22.3,None,87.1,95,0,1.86,11/29/2024
+VN-01578,40,Southeast,Construction Worker,0,1,23,None,94.9,93.3,0,1.6,7/25/2024
+VN-01579,48,Red River Delta,Farmer,0,1,23.6,Diabetes,131.2,89.7,0,1.76,6/19/2024
+VN-01580,34,Southeast,Service Industry,0,0,22.1,None,95.1,95,0,1.28,1/21/2024
+VN-01581,47,Northwest,Farmer,0,1,22.8,None,50,92.6,0,1.44,4/4/2024
+VN-01582,33,Red River Delta,Office Worker,0,1,20.5,None,76,95,0,0.96,7/14/2024
+VN-01583,45,Central Highlands,Office Worker,1,1,18.3,None,119.4,95,0,1.4,1/29/2024
+VN-01584,33,Mekong Delta,Merchant/Trader,0,1,25.5,None,118.7,95,0,1.06,4/21/2024
+VN-01585,54,Southeast,Farmer,1,1,22.4,None,99.5,88,1,1.78,4/27/2024
+VN-01586,44,South Central Coast,Office Worker,0,0,23.9,None,103.4,95,1,1.28,12/6/2024
+VN-01587,23,North Central,Factory Worker,0,0,23.9,None,78.3,95,0,1.16,5/28/2024
+VN-01588,19,Mekong Delta,Construction Worker,1,1,20.1,None,104.6,95,0,1.38,8/27/2024
+VN-01589,45,South Central Coast,Office Worker,0,0,23.8,None,119.2,94.6,1,1.3,10/3/2024
+VN-01590,36,South Central Coast,Factory Worker,1,0,23,Hypertension,61.8,95,0,1.92,11/30/2024
+VN-01591,23,Central Highlands,Farmer,0,1,21.1,None,82.9,95,0,0.96,3/20/2024
+VN-01592,44,Northeast,Merchant/Trader,1,1,21.1,None,88,95,0,1.48,11/4/2024
+VN-01593,53,North Central,Farmer,0,0,25.3,None,87.6,81.4,0,1.66,4/14/2024
+VN-01594,59,Northeast,Factory Worker,0,1,22.6,None,74.5,82,0,1.78,7/8/2024
+VN-01595,46,Mekong Delta,Farmer,0,0,20.6,None,50,95,0,1.52,2/12/2024
+VN-01596,49,Mekong Delta,Office Worker,1,0,27.8,None,130.3,81,1,1.58,11/29/2024
+VN-01597,36,South Central Coast,Service Industry,0,1,22.6,None,90.6,95,0,1.22,3/13/2024
+VN-01598,37,Southeast,Construction Worker,0,0,22.7,Arthritis,128.7,95,1,1.94,1/24/2024
+VN-01599,69,Red River Delta,Office Worker,0,1,23.4,None,136.6,76.6,1,1.68,4/26/2024
+VN-01600,48,Red River Delta,Construction Worker,0,1,22.8,None,88.1,87.4,1,1.76,7/27/2024
+VN-01601,61,Southeast,Farmer,1,1,25.5,COPD/Asthma,92.1,74.5,1,2.22,7/20/2024
+VN-01602,44,South Central Coast,Merchant/Trader,0,0,23.1,None,98.6,95,0,1.38,1/6/2024
+VN-01603,38,Mekong Delta,Factory Worker,0,1,27,None,119.4,87.4,0,1.36,10/4/2024
+VN-01604,46,South Central Coast,Merchant/Trader,0,1,24.6,None,103.5,90.3,0,1.32,10/19/2024
+VN-01605,35,North Central,Service Industry,0,1,19.4,Hypertension,111.9,95,0,1.5,6/7/2024
+VN-01606,37,Mekong Delta,Factory Worker,1,1,19,None,69.3,95,1,1.54,3/27/2024
+VN-01607,39,Mekong Delta,Merchant/Trader,0,1,21.7,None,112.9,95,0,1.18,7/26/2024
+VN-01608,18,Central Highlands,Farmer,0,1,22.7,None,55.1,95,0,0.86,8/7/2024
+VN-01609,33,Northwest,Farmer,0,0,20.4,None,83.7,95,1,1.26,2/29/2024
+VN-01610,44,North Central,Office Worker,0,1,20.9,None,138.9,95,1,1.18,4/4/2024
+VN-01611,41,Northeast,Office Worker,0,0,24,None,135,95,1,1.22,9/9/2024
+VN-01612,36,Red River Delta,Service Industry,0,1,22.2,None,65.2,95,0,1.22,3/29/2024
+VN-01613,40,Northwest,Service Industry,1,0,21.9,None,67,95,0,1.6,11/23/2024
+VN-01614,28,South Central Coast,Merchant/Trader,0,0,28,None,140.5,95,0,1.06,7/3/2024
+VN-01615,37,Red River Delta,Office Worker,0,0,20.4,None,168.9,95,0,1.14,6/24/2024
+VN-01616,24,Central Highlands,Farmer,1,1,17,None,81.5,95,0,1.18,2/27/2024
+VN-01617,22,Red River Delta,Factory Worker,0,0,20.3,None,116.3,95,0,1.14,9/23/2024
+VN-01618,61,South Central Coast,Merchant/Trader,1,1,24.5,Diabetes,152.9,78.5,0,2.12,2/27/2024
+VN-01619,44,North Central,Office Worker,1,0,24,None,96,94.9,1,1.48,6/30/2024
+VN-01620,31,Central Highlands,Farmer,1,1,25.4,None,70,95,0,1.32,10/4/2024
+VN-01621,31,Central Highlands,Service Industry,1,1,25.6,None,79.5,95,0,1.32,1/26/2024
+VN-01622,59,Red River Delta,Farmer,0,0,25.3,Diabetes,62.9,76.5,0,2.08,8/7/2024
+VN-01623,32,South Central Coast,Service Industry,1,0,25.2,None,109,95,0,1.44,12/28/2024
+VN-01624,41,North Central,Service Industry,0,0,22.1,None,60.3,95,0,1.42,8/29/2024
+VN-01625,40,Red River Delta,Factory Worker,0,1,21.3,None,55.5,95,0,1.4,5/16/2024
+VN-01626,45,North Central,Farmer,1,1,24.5,None,85.8,89.7,0,1.6,5/13/2024
+VN-01627,57,Northeast,Office Worker,0,0,21.3,Diabetes,106.7,91.5,1,1.84,2/2/2024
+VN-01628,22,Southeast,Factory Worker,0,0,24.8,None,125.7,95,0,1.14,2/25/2024
+VN-01629,40,Southeast,Merchant/Trader,0,0,25.3,None,124.5,93.2,0,1.3,5/16/2024
+VN-01630,42,Northwest,Farmer,1,0,28.2,None,91.2,82.6,0,1.64,7/9/2024
+VN-01631,57,North Central,Merchant/Trader,0,0,22.6,None,131.3,86.6,0,1.64,11/28/2024
+VN-01632,48,Red River Delta,Office Worker,0,1,20.1,None,151.3,95,0,1.26,8/17/2024
+VN-01633,45,Northwest,Merchant/Trader,0,1,22.1,None,130.5,95,0,1.3,11/1/2024
+VN-01634,38,North Central,Office Worker,0,0,20.9,None,99.1,95,0,1.16,2/29/2024
+VN-01635,48,North Central,Factory Worker,1,1,21.8,None,121,93,0,1.76,3/22/2024
+VN-01636,44,South Central Coast,Service Industry,0,0,22.5,None,70.5,95,0,1.48,4/16/2024
+VN-01637,33,Northwest,Office Worker,0,1,20.1,None,135.8,95,0,0.96,2/12/2024
+VN-01638,55,Northeast,Farmer,0,0,23.5,None,97.9,84.5,0,1.7,12/18/2024
+VN-01639,52,North Central,Farmer,1,0,19.4,None,56.2,95,1,1.84,3/29/2024
+VN-01640,55,Mekong Delta,Office Worker,0,0,20.5,None,117.3,95,0,1.5,1/11/2024
+VN-01641,30,Red River Delta,Construction Worker,0,1,21.5,None,85.4,95,1,1.4,7/11/2024
+VN-01642,46,Mekong Delta,Office Worker,0,0,20.9,None,106.9,95,1,1.32,7/5/2024
+VN-01643,60,Southeast,Service Industry,0,0,22.1,Diabetes,97.8,84.1,0,2.1,3/30/2024
+VN-01644,25,Red River Delta,Service Industry,0,1,22.2,None,50,95,0,1,9/14/2024
+VN-01645,39,Northwest,Construction Worker,1,1,21.9,None,89.8,95,1,1.78,8/13/2024
+VN-01646,35,Mekong Delta,Farmer,1,0,24.4,None,85.3,95,0,1.5,11/2/2024
+VN-01647,43,Red River Delta,Farmer,0,1,21.9,Hypertension,85.6,95,1,1.66,10/23/2024
+VN-01648,40,Southeast,Merchant/Trader,0,1,20.1,None,138.7,95,0,1.2,1/2/2024
+VN-01649,36,Red River Delta,Office Worker,0,1,25.2,None,81.4,95,0,1.02,3/1/2024
+VN-01650,38,Mekong Delta,Factory Worker,1,0,22.7,None,79.3,95,0,1.66,2/14/2024
+VN-01651,51,Mekong Delta,Office Worker,0,1,23.9,None,118.1,89.5,0,1.32,4/25/2024
+VN-01652,26,Southeast,Merchant/Trader,0,1,19.9,None,156.3,95,0,0.92,8/18/2024
+VN-01653,34,Northeast,Farmer,0,0,25.8,None,109.5,95,0,1.28,12/16/2024
+VN-01654,54,South Central Coast,Office Worker,0,1,21.4,None,114.9,93.7,0,1.38,5/5/2024
+VN-01655,31,Mekong Delta,Farmer,1,1,24.7,None,50,95,0,1.32,11/19/2024
+VN-01656,20,Northwest,Retired,0,0,23.9,None,74.8,95,0,1.8,12/29/2024
+VN-01657,43,Mekong Delta,Farmer,1,0,25.2,None,63.6,89.5,0,1.66,6/14/2024
+VN-01658,18,Southeast,Factory Worker,0,1,27.1,None,77.5,95,0,0.96,3/8/2024
+VN-01659,59,Northeast,Farmer,1,0,21.3,None,50,86.9,0,1.98,10/6/2024
+VN-01660,41,Southeast,Office Worker,1,0,19.6,None,124.1,95,0,1.42,7/7/2024
+VN-01661,53,Southeast,Service Industry,0,0,24,None,99.2,84.8,0,1.66,7/12/2024
+VN-01662,20,Southeast,Construction Worker,0,0,21.8,COPD/Asthma,123.9,95,0,1.6,12/2/2024
+VN-01663,63,Northwest,Merchant/Trader,0,1,22.6,COPD/Asthma,91.3,81.8,0,1.96,7/4/2024
+VN-01664,32,North Central,Factory Worker,0,0,22.1,Hypertension,111.3,95,1,1.64,6/22/2024
+VN-01665,48,Northeast,Factory Worker,0,0,23.5,None,117.9,88.4,0,1.66,10/2/2024
+VN-01666,50,Red River Delta,Merchant/Trader,0,1,21.2,None,89.3,95,0,1.4,7/24/2024
+VN-01667,36,Northwest,Merchant/Trader,0,1,20.2,None,104.6,95,0,1.12,3/25/2024
+VN-01668,37,Mekong Delta,Office Worker,0,1,24.4,None,116.7,95,0,1.04,4/26/2024
+VN-01669,29,Southeast,Factory Worker,0,1,21.1,None,134.8,95,0,1.18,1/29/2024
+VN-01670,37,Southeast,Service Industry,0,0,19.5,None,106.3,95,0,1.34,3/27/2024
+VN-01671,43,Red River Delta,Merchant/Trader,0,1,21.3,Diabetes,75.8,95,1,1.56,9/25/2024
+VN-01672,57,Mekong Delta,Office Worker,0,0,18.3,None,97.2,95,0,1.54,10/9/2024
+VN-01673,29,Southeast,Farmer,0,0,17.6,None,76,95,0,1.18,6/16/2024
+VN-01674,20,Central Highlands,Merchant/Trader,1,1,19,None,126.4,95,0,1,7/1/2024
+VN-01675,57,Red River Delta,Farmer,1,1,28,None,62.3,71.2,0,1.84,11/30/2024
+VN-01676,42,Northeast,Farmer,0,1,21.9,None,68.4,95,0,1.34,1/25/2024
+VN-01677,35,Southeast,Merchant/Trader,0,1,19.9,None,141.2,95,0,1.1,7/4/2024
+VN-01678,33,Southeast,Farmer,0,1,23,None,97.1,95,0,1.16,7/31/2024
+VN-01679,18,Northwest,Farmer,0,1,24.1,None,60.9,95,1,0.86,7/28/2024
+VN-01680,27,Red River Delta,Office Worker,0,1,26.7,None,144,95,0,0.84,9/17/2024
+VN-01681,38,Red River Delta,Farmer,1,1,23,None,83.1,95,0,1.46,3/23/2024
+VN-01682,35,Red River Delta,Construction Worker,0,1,22.2,None,72.4,95,0,1.5,4/23/2024
+VN-01683,36,Central Highlands,Factory Worker,1,0,22,None,96.5,95,1,1.62,9/4/2024
+VN-01684,38,Southeast,Factory Worker,0,0,21.5,None,75.2,95,0,1.46,6/30/2024
+VN-01685,28,Northwest,Farmer,0,1,25.2,None,87.5,95,0,1.06,12/26/2024
+VN-01686,48,North Central,Factory Worker,1,1,24,Hypertension,102.8,87.2,1,2.06,5/14/2024
+VN-01687,56,Northeast,Office Worker,0,1,24.3,Hypertension,158,84.6,0,1.72,1/12/2024
+VN-01688,41,Central Highlands,Office Worker,1,1,24.4,None,83.6,95,0,1.32,10/29/2024
+VN-01689,51,Red River Delta,Merchant/Trader,0,0,19.4,Diabetes,113.4,95,0,1.82,11/27/2024
+VN-01690,44,South Central Coast,Office Worker,0,1,20,None,150.1,95,0,1.18,7/30/2024
+VN-01691,47,Southeast,Office Worker,1,0,21.2,None,182,95,0,1.54,5/18/2024
+VN-01692,29,Mekong Delta,Construction Worker,1,0,20.8,None,115.8,95,1,1.68,4/16/2024
+VN-01693,41,Red River Delta,Farmer,1,0,27.3,None,80.9,85.8,0,1.62,2/6/2024
+VN-01694,22,Southeast,Retired,1,0,21.7,None,86.4,95,0,2.04,6/29/2024
+VN-01695,46,Mekong Delta,Factory Worker,1,1,27.9,Arthritis,84.9,78.6,0,2.02,5/22/2024
+VN-01696,59,Northeast,Construction Worker,1,0,27.6,None,136.2,66.1,1,2.28,6/14/2024
+VN-01697,32,South Central Coast,Merchant/Trader,0,0,17.5,None,100.6,95,0,1.14,12/11/2024
+VN-01698,18,Southeast,Farmer,0,1,22.5,None,89.4,95,0,0.86,11/10/2024
+VN-01699,60,Southeast,Farmer,0,0,22.5,None,119.8,83,0,1.8,6/3/2024
+VN-01700,43,Red River Delta,Merchant/Trader,0,0,24,None,119.7,94.1,0,1.36,9/3/2024
+VN-01701,31,Central Highlands,Merchant/Trader,0,0,20,None,136.1,95,0,1.12,6/8/2024
+VN-01702,46,Southeast,Service Industry,0,0,20.2,None,110.4,95,1,1.52,8/11/2024
+VN-01703,40,Southeast,Office Worker,1,1,23,None,125.6,95,0,1.3,12/15/2024
+VN-01704,30,North Central,Construction Worker,1,1,25.1,None,79.3,95,0,1.6,7/16/2024
+VN-01705,40,South Central Coast,Merchant/Trader,0,1,23.9,None,141.5,95,0,1.2,8/20/2024
+VN-01706,33,North Central,Construction Worker,0,0,26,None,127.4,91,1,1.56,9/25/2024
+VN-01707,55,Red River Delta,Farmer,0,0,27.6,Heart Disease,79.9,73.6,1,2,8/7/2024
+VN-01708,59,Mekong Delta,Farmer,0,0,23.2,None,95.3,82,1,1.78,9/27/2024
+VN-01709,68,Mekong Delta,Merchant/Trader,0,0,22.6,None,84.5,77.8,0,1.86,3/18/2024
+VN-01710,25,Red River Delta,Service Industry,1,0,24.8,None,65,95,0,1.3,2/4/2024
+VN-01711,53,Mekong Delta,Farmer,1,0,24.8,Diabetes,75.5,82.6,0,2.16,8/15/2024
+VN-01712,50,Northwest,Merchant/Trader,0,0,21,None,110.3,95,0,1.5,5/7/2024
+VN-01713,64,Red River Delta,Merchant/Trader,0,1,23.8,None,119.2,77.9,0,1.68,3/14/2024
+VN-01714,30,Mekong Delta,Office Worker,0,1,28.2,None,119.6,95,0,0.9,1/18/2024
+VN-01715,43,Red River Delta,Merchant/Trader,0,0,24.2,None,148.3,93.6,0,1.36,10/19/2024
+VN-01716,52,Southeast,Retired,1,0,21.1,Heart Disease,111.5,86.9,1,2.94,11/25/2024
+VN-01717,35,Red River Delta,Office Worker,0,0,25.4,None,110.1,95,0,1.1,5/28/2024
+VN-01718,43,Red River Delta,Office Worker,0,0,24.7,Diabetes,136.7,93.8,0,1.56,11/29/2024
+VN-01719,42,South Central Coast,Service Industry,0,0,25.1,None,91,90.6,0,1.44,11/25/2024
+VN-01720,37,Northeast,Merchant/Trader,0,0,23.4,None,113.6,95,0,1.24,5/27/2024
+VN-01721,44,Northeast,Factory Worker,0,0,23.3,None,112.1,92.3,0,1.58,11/29/2024
+VN-01722,73,Red River Delta,Office Worker,0,0,29.5,COPD/Asthma,137.7,57.5,0,2.16,10/17/2024
+VN-01723,47,Southeast,Farmer,0,0,23.6,None,101.5,90.7,1,1.54,11/24/2024
+VN-01724,35,Southeast,Farmer,0,0,22.6,None,92.2,95,0,1.3,9/21/2024
+VN-01725,48,Mekong Delta,Factory Worker,0,1,24.5,None,75.8,85.8,0,1.56,2/16/2024
+VN-01726,44,South Central Coast,Farmer,1,1,22,Diabetes,61.4,95,0,1.88,3/16/2024
+VN-01727,57,North Central,Farmer,0,0,25.1,None,74.4,78.7,1,1.74,3/29/2024
+VN-01728,48,North Central,Office Worker,0,0,21.8,None,160.7,95,0,1.36,8/5/2024
+VN-01729,48,Southeast,Farmer,0,1,24.3,None,123.8,87.8,0,1.46,11/19/2024
+VN-01730,61,Red River Delta,Farmer,1,0,20.9,None,94.9,86.4,0,2.02,3/22/2024
+VN-01731,27,Southeast,Farmer,0,1,20.4,None,104.1,95,0,1.04,2/6/2024
+VN-01732,44,Southeast,Office Worker,0,0,25.8,None,108.3,90.3,1,1.28,7/5/2024
+VN-01733,35,Southeast,Service Industry,0,1,20.6,None,96.2,95,0,1.2,7/30/2024
+VN-01734,44,Southeast,Farmer,0,1,19.4,None,106.1,95,0,1.38,12/26/2024
+VN-01735,46,South Central Coast,Merchant/Trader,0,0,21.8,None,130.3,95,0,1.42,6/17/2024
+VN-01736,52,Southeast,Office Worker,0,0,23.2,COPD/Asthma,159.1,90.6,0,1.74,12/3/2024
+VN-01737,32,Central Highlands,Office Worker,0,1,19.3,None,105.4,95,0,0.94,8/16/2024
+VN-01738,36,Northwest,Factory Worker,0,1,26.7,Heart Disease,77.1,89.8,1,1.62,8/21/2024
+VN-01739,54,Red River Delta,Farmer,1,0,24.8,None,91.9,81.9,0,1.88,8/7/2024
+VN-01740,44,Red River Delta,Factory Worker,0,0,22.8,None,76.7,93.6,0,1.58,11/16/2024
+VN-01741,37,South Central Coast,Factory Worker,0,0,22.3,None,96,95,0,1.44,3/15/2024
+VN-01742,21,Red River Delta,Factory Worker,0,0,22.1,None,51.7,95,0,1.12,6/22/2024
+VN-01743,31,Red River Delta,Farmer,0,0,24.7,None,80.9,95,0,1.22,3/12/2024
+VN-01744,45,Southeast,Merchant/Trader,0,0,22.5,None,153.6,95,1,1.4,1/18/2024
+VN-01745,24,Mekong Delta,Merchant/Trader,1,1,21.7,None,136.9,95,0,1.08,10/28/2024
+VN-01746,25,North Central,Office Worker,0,1,27.1,None,132.4,95,1,0.8,3/21/2024
+VN-01747,43,Northwest,Farmer,0,0,22.4,None,93.1,95,1,1.46,7/18/2024
+VN-01748,53,North Central,Office Worker,0,1,23.7,None,127.3,88.5,0,1.36,7/27/2024
+VN-01749,42,Northwest,Service Industry,0,1,20.9,None,70.8,95,0,1.34,6/16/2024
+VN-01750,46,North Central,Farmer,0,1,24.9,None,83.9,88.1,0,1.42,9/23/2024
+VN-01751,45,Southeast,Construction Worker,0,1,22.7,Arthritis,109.4,90,0,2,11/15/2024
+VN-01752,39,Red River Delta,Office Worker,1,0,27.2,None,108,90.6,0,1.38,6/1/2024
+VN-01753,39,Southeast,Farmer,1,1,20,None,78.9,95,1,1.48,8/2/2024
+VN-01754,21,North Central,Farmer,0,1,21.4,None,71.6,95,0,0.92,11/24/2024
+VN-01755,37,Red River Delta,Factory Worker,0,0,18,None,76.2,95,0,1.44,9/8/2024
+VN-01756,60,Mekong Delta,Service Industry,0,1,24.3,None,92,78.2,0,1.7,3/24/2024
+VN-01757,39,Northeast,Retired,0,0,21.1,None,51.7,95,0,2.18,9/10/2024
+VN-01758,26,Central Highlands,Merchant/Trader,1,1,17.4,None,117.4,95,0,1.12,6/24/2024
+VN-01759,49,Mekong Delta,Office Worker,1,1,26.9,None,139.4,83.3,0,1.48,9/18/2024
+VN-01760,42,Southeast,Service Industry,1,1,20.8,None,96.9,95,0,1.54,4/2/2024
+VN-01761,29,Northeast,Factory Worker,0,0,27.5,Heart Disease,104.4,93.3,0,1.58,5/19/2024
+VN-01762,39,Central Highlands,Farmer,0,1,24,None,94.1,95,0,1.28,11/1/2024
+VN-01763,43,North Central,Retired,0,1,27.3,None,59.3,78.2,0,2.16,12/3/2024
+VN-01764,43,Red River Delta,Office Worker,0,0,24.2,None,144.4,95,0,1.26,12/24/2024
+VN-01765,43,Southeast,Farmer,1,0,24.3,None,114.9,91.9,0,1.66,11/28/2024
+VN-01766,54,Southeast,Office Worker,0,0,23.2,None,150.3,89.1,0,1.48,8/19/2024
+VN-01767,55,Southeast,Office Worker,0,0,19.5,None,153.6,95,0,1.5,3/27/2024
+VN-01768,39,Red River Delta,Construction Worker,0,0,23.5,None,107.2,92.6,0,1.68,2/28/2024
+VN-01769,22,Mekong Delta,Farmer,0,0,20.9,None,59.2,95,0,1.04,4/7/2024
+VN-01770,65,Northeast,Farmer,0,1,26.6,None,107.4,68.4,0,1.8,3/27/2024
+VN-01771,51,South Central Coast,Merchant/Trader,1,0,18.2,Hypertension,148.3,95,1,2.02,10/5/2024
+VN-01772,34,Central Highlands,Merchant/Trader,0,1,19.3,None,149.1,95,0,1.08,7/22/2024
+VN-01773,42,Central Highlands,Office Worker,0,0,25.1,None,128.5,93.6,0,1.24,1/15/2024
+VN-01774,69,Northeast,Construction Worker,0,0,24.4,Diabetes,105.7,66.4,1,2.58,9/10/2024
+VN-01775,45,Southeast,Office Worker,0,0,23.6,None,133.3,95,0,1.3,10/25/2024
+VN-01776,65,South Central Coast,Construction Worker,0,1,22.7,None,87.3,74,1,2.1,7/26/2024
+VN-01777,40,Southeast,Farmer,1,1,24.1,Diabetes,99.9,94.7,0,1.8,1/18/2024
+VN-01778,21,Red River Delta,Factory Worker,0,1,24.5,None,67.1,95,0,1.02,7/3/2024
+VN-01779,47,Southeast,Construction Worker,1,0,19.7,None,101,95,0,2.04,3/25/2024
+VN-01780,26,Southeast,Service Industry,1,1,19.9,None,120.5,95,0,1.22,5/23/2024
+VN-01781,47,Southeast,Farmer,0,1,23,None,92.1,92.2,0,1.44,5/22/2024
+VN-01782,30,Southeast,Factory Worker,1,0,25.5,None,117.1,95,1,1.5,11/18/2024
+VN-01783,28,Northeast,Merchant/Trader,0,0,20.6,None,132,95,0,1.06,7/1/2024
+VN-01784,44,Mekong Delta,Merchant/Trader,0,1,21.9,Diabetes; Arthritis,85.4,95,0,1.88,8/12/2024
+VN-01785,68,North Central,Construction Worker,0,0,24.3,Heart Disease,50,67.5,0,2.56,10/7/2024
+VN-01786,49,Red River Delta,Service Industry,0,0,27.9,None,91.8,77.8,0,1.58,12/17/2024
+VN-01787,52,Northeast,Farmer,0,0,23.9,None,69,85.9,0,1.64,5/9/2024
+VN-01788,33,Northwest,Farmer,1,1,23.7,None,87.7,95,0,1.36,12/23/2024
+VN-01789,38,Northwest,Factory Worker,1,0,22.1,None,121.3,95,1,1.66,8/26/2024
+VN-01790,57,Southeast,Farmer,0,1,27,Heart Disease,80.9,73.8,0,1.94,10/28/2024
+VN-01791,55,Central Highlands,Farmer,0,0,25.1,None,60.7,80.2,0,1.7,7/27/2024
+VN-01792,44,Northeast,Farmer,1,0,18,None,58.3,95,0,1.68,2/8/2024
+VN-01793,37,Northeast,Factory Worker,0,1,19.5,None,75.8,95,0,1.34,8/24/2024
+VN-01794,39,Red River Delta,Farmer,1,1,23.1,None,60.6,95,1,1.48,5/20/2024
+VN-01795,58,Southeast,Merchant/Trader,1,0,24.4,None,150.1,81.1,0,1.86,8/23/2024
+VN-01796,25,Mekong Delta,Farmer,1,1,26,None,95.6,95,0,1.2,6/5/2024
+VN-01797,18,Southeast,Service Industry,1,0,21.3,None,105.8,95,0,1.16,10/12/2024
+VN-01798,57,Southeast,Retired,0,0,20.2,None,61.7,85.3,1,2.54,1/10/2024
+VN-01799,25,Southeast,Farmer,0,0,23.5,None,113.3,95,0,1.1,3/23/2024
+VN-01800,35,Northeast,Office Worker,0,1,23.7,None,117.5,95,0,1,11/12/2024
+VN-01801,37,Southeast,Service Industry,0,0,18.1,None,77.3,95,0,1.34,9/28/2024
+VN-01802,25,Central Highlands,Service Industry,0,1,19.2,None,70.5,95,0,1,11/29/2024
+VN-01803,47,North Central,Merchant/Trader,0,1,22.2,Hypertension,102.2,95,0,1.64,3/25/2024
+VN-01804,33,Northeast,Merchant/Trader,1,1,26.2,None,124.1,95,0,1.26,12/7/2024
+VN-01805,37,Southeast,Office Worker,0,1,24.5,None,145,95,1,1.04,1/9/2024
+VN-01806,29,Mekong Delta,Farmer,0,1,23.2,None,51.3,95,1,1.08,4/29/2024
+VN-01807,65,Northwest,Merchant/Trader,0,1,26.5,None,128.7,70.2,1,1.7,2/5/2024
+VN-01808,47,Southeast,Merchant/Trader,0,1,23,None,118.8,93.5,0,1.34,1/17/2024
+VN-01809,20,Northwest,Factory Worker,0,0,24,None,101.9,95,1,1.1,8/30/2024
+VN-01810,31,South Central Coast,Farmer,0,1,22.3,None,57.3,95,0,1.12,6/21/2024
+VN-01811,29,Red River Delta,Construction Worker,0,1,20.7,None,91.7,95,0,1.38,5/28/2024
+VN-01812,48,Mekong Delta,Retired,0,1,25.2,COPD/Asthma,78.5,79.5,0,2.56,2/21/2024
+VN-01813,46,Red River Delta,Merchant/Trader,0,1,17,Hypertension,104.9,95,1,1.62,5/8/2024
+VN-01814,33,Northeast,Farmer,0,0,24.1,COPD/Asthma,71.5,95,1,1.56,3/30/2024
+VN-01815,30,South Central Coast,Factory Worker,0,1,20.7,None,84.1,95,0,1.2,2/7/2024
+VN-01816,34,Northeast,Service Industry,0,0,19.8,None,75,95,1,1.28,1/23/2024
+VN-01817,35,Mekong Delta,Farmer,1,1,22,None,59.9,95,0,1.4,3/22/2024
+VN-01818,49,Northwest,Office Worker,0,1,30,None,110.6,75.4,0,1.28,12/7/2024
+VN-01819,69,Mekong Delta,Office Worker,0,0,25.1,None,111.4,71.9,0,1.78,1/27/2024
+VN-01820,45,Red River Delta,Office Worker,1,0,18.3,None,145.8,95,0,1.5,8/15/2024
+VN-01821,39,Central Highlands,Office Worker,0,0,18.5,None,124.6,95,0,1.18,6/27/2024
+VN-01822,24,Northwest,Factory Worker,0,1,22.7,None,101.2,95,0,1.08,9/26/2024
+VN-01823,36,North Central,Merchant/Trader,0,1,18.8,None,113.6,95,0,1.12,5/30/2024
+VN-01824,36,South Central Coast,Farmer,0,1,20.9,None,57.5,95,0,1.22,10/6/2024
+VN-01825,44,Southeast,Merchant/Trader,1,1,23.8,None,129.6,94,1,1.48,9/6/2024
+VN-01826,56,Red River Delta,Farmer,0,0,23.8,None,115.5,82.8,0,1.72,6/9/2024
+VN-01827,38,Northwest,Farmer,0,0,18.3,None,97.4,95,0,1.36,9/19/2024
+VN-01828,21,Northeast,Office Worker,0,1,22.7,None,135.4,95,0,0.72,12/24/2024
+VN-01829,47,North Central,Merchant/Trader,0,0,23.3,None,113.7,92.8,0,1.44,10/27/2024
+VN-01830,37,South Central Coast,Factory Worker,0,1,21.2,None,64.6,95,0,1.34,5/5/2024
+VN-01831,67,Central Highlands,Farmer,0,1,22.8,None,50,76.5,0,1.84,5/8/2024
+VN-01832,68,Red River Delta,Factory Worker,0,0,23.7,None,116.9,72,1,2.06,3/3/2024
+VN-01833,35,Red River Delta,Merchant/Trader,0,0,21.2,None,114.9,95,0,1.2,4/14/2024
+VN-01834,19,Mekong Delta,Service Industry,0,0,21,None,74.2,95,1,0.98,4/12/2024
+VN-01835,63,South Central Coast,Factory Worker,0,0,25.5,Diabetes,100.7,71.3,0,2.26,9/17/2024
+VN-01836,48,Mekong Delta,Service Industry,0,0,23.4,None,75.8,90.3,0,1.56,1/3/2024
+VN-01837,63,Red River Delta,Factory Worker,0,0,20.7,None,79.6,83.7,0,1.96,9/3/2024
+VN-01838,40,Central Highlands,Retired,0,1,26,None,58.4,84,0,2.1,10/25/2024
+VN-01839,44,Mekong Delta,Merchant/Trader,1,1,21.6,None,102.9,95,0,1.48,3/4/2024
+VN-01840,42,Southeast,Office Worker,1,1,20.6,None,177.7,95,1,1.34,8/31/2024
+VN-01841,45,Southeast,Service Industry,0,1,21.1,None,122.6,95,1,1.4,9/9/2024
+VN-01842,37,Southeast,Construction Worker,1,0,25.2,Hypertension,91.7,89.9,0,2.14,3/8/2024
+VN-01843,49,Red River Delta,Office Worker,1,0,21.6,None,127.2,95,1,1.58,9/27/2024
+VN-01844,25,Red River Delta,Factory Worker,1,0,24.8,None,99.4,95,0,1.4,11/12/2024
+VN-01845,41,Southeast,Factory Worker,0,1,19.9,None,99.3,95,1,1.42,10/26/2024
+VN-01846,51,South Central Coast,Service Industry,0,1,27.7,None,73.8,76.8,0,1.52,11/17/2024
+VN-01847,39,Northwest,Merchant/Trader,0,0,20,None,104.5,95,0,1.28,6/2/2024
+VN-01848,36,Southeast,Merchant/Trader,0,1,28.4,None,142.3,88.5,0,1.12,7/9/2024
+VN-01849,60,South Central Coast,Office Worker,0,1,24.7,None,140,80.4,1,1.5,12/25/2024
+VN-01850,39,Northwest,Office Worker,0,1,21,None,113.5,95,0,1.08,7/21/2024
+VN-01851,47,North Central,Farmer,0,1,22.8,None,77,92.6,0,1.44,3/18/2024
+VN-01852,46,Mekong Delta,Farmer,0,1,24.8,None,96.3,88.2,0,1.42,8/1/2024
+VN-01853,46,Southeast,Construction Worker,1,0,24.3,None,135.1,84.9,0,2.02,10/3/2024
+VN-01854,64,Red River Delta,Farmer,0,1,22.6,Hypertension,112.7,79.5,1,2.08,6/17/2024
+VN-01855,38,Mekong Delta,Factory Worker,0,0,27.8,None,72.5,85.3,0,1.46,12/26/2024
+VN-01856,65,Northwest,Farmer,0,0,22.7,None,107.3,78.5,0,1.9,2/15/2024
+VN-01857,45,Northeast,Service Industry,0,1,24,None,83.4,91,1,1.4,8/29/2024
+VN-01858,37,North Central,Merchant/Trader,0,0,18.1,None,119.5,95,0,1.24,12/26/2024
+VN-01859,46,Northeast,Farmer,0,0,25.1,None,87.8,87.4,1,1.52,12/19/2024
+VN-01860,47,Central Highlands,Factory Worker,0,0,25.3,None,102.9,84.7,0,1.64,3/3/2024
+VN-01861,50,South Central Coast,Farmer,0,1,20.5,None,104.7,95,0,1.5,10/23/2024
+VN-01862,68,Mekong Delta,Office Worker,0,0,22.3,None,122.3,80.1,0,1.76,11/12/2024
+VN-01863,53,Central Highlands,Service Industry,0,0,28.5,None,64.6,72.9,0,1.66,7/18/2024
+VN-01864,42,Central Highlands,Service Industry,1,1,22.1,None,78.9,95,0,1.54,9/1/2024
+VN-01865,45,Red River Delta,Service Industry,1,0,22.8,Hypertension,117.3,94.2,0,2,10/13/2024
+VN-01866,49,Central Highlands,Farmer,0,1,24.2,None,68.7,87.3,0,1.48,8/16/2024
+VN-01867,48,Mekong Delta,Construction Worker,0,1,27.4,None,137.5,75.3,1,1.76,1/2/2024
+VN-01868,32,Northwest,Farmer,1,1,24.9,None,57,95,0,1.34,2/26/2024
+VN-01869,46,Central Highlands,Factory Worker,1,1,27.2,None,98.2,80.4,0,1.72,7/12/2024
+VN-01870,18,North Central,Merchant/Trader,1,1,20.4,None,130.2,95,0,0.96,3/8/2024
+VN-01871,19,Mekong Delta,Service Industry,0,1,20.3,None,50,95,0,0.88,7/17/2024
+VN-01872,49,Southeast,Factory Worker,0,0,22.4,Diabetes,103.1,90.6,0,1.98,11/30/2024
+VN-01873,30,South Central Coast,Farmer,1,0,25.2,None,59.3,95,0,1.4,8/6/2024
+VN-01874,40,Northeast,Factory Worker,0,0,22.7,None,112.8,95,0,1.5,3/24/2024
+VN-01875,22,South Central Coast,Farmer,0,0,17.4,None,50,95,0,1.04,1/10/2024
+VN-01876,49,Southeast,Office Worker,0,0,18.9,None,143.2,95,0,1.38,12/20/2024
+VN-01877,28,Red River Delta,Farmer,0,0,22.4,None,62.1,95,0,1.16,5/4/2024
+VN-01878,36,Mekong Delta,Farmer,0,1,21,None,74.6,95,0,1.22,8/5/2024
+VN-01879,40,Southeast,Farmer,1,1,22.2,None,90.4,95,0,1.5,6/25/2024
+VN-01880,45,North Central,Office Worker,0,0,21.6,None,111,95,0,1.3,12/7/2024
+VN-01881,38,Central Highlands,Factory Worker,1,1,22.5,None,102.6,95,1,1.56,5/8/2024
+VN-01882,46,Red River Delta,Farmer,0,1,26.8,Heart Disease,79.3,83.1,0,1.72,11/1/2024
+VN-01883,55,Central Highlands,Construction Worker,0,1,27.3,None,81.7,69.9,0,1.9,3/24/2024
+VN-01884,43,Mekong Delta,Merchant/Trader,0,1,23,None,135,95,0,1.26,4/4/2024
+VN-01885,45,Red River Delta,Farmer,0,0,23.3,Diabetes,62.5,92.9,0,1.8,5/2/2024
+VN-01886,31,Southeast,Office Worker,1,1,21,None,182,95,0,1.12,8/10/2024
+VN-01887,47,Northwest,Service Industry,1,1,24.8,None,101.7,87.5,0,1.64,4/9/2024
+VN-01888,51,Southeast,Farmer,1,0,25,None,100.5,83.7,0,1.82,9/15/2024
+VN-01889,37,Red River Delta,Office Worker,0,1,22.4,None,126.7,95,0,1.04,10/7/2024
+VN-01890,61,Southeast,Office Worker,1,1,26,None,138,76.1,0,1.72,10/28/2024
+VN-01891,48,Mekong Delta,Office Worker,0,0,22.9,Heart Disease,128.1,94.6,0,1.66,2/13/2024
+VN-01892,61,Southeast,Farmer,0,0,24.4,None,68.8,77.3,1,1.82,2/18/2024
+VN-01893,44,Red River Delta,Office Worker,0,1,24,None,119.2,94.8,0,1.18,4/18/2024
+VN-01894,38,Northeast,Office Worker,1,0,19.6,None,148.3,95,0,1.36,6/10/2024
+VN-01895,43,Southeast,Construction Worker,0,0,19.2,None,96,95,0,1.76,4/29/2024
+VN-01896,41,Central Highlands,Factory Worker,0,0,20.4,None,75.8,95,0,1.52,11/5/2024
+VN-01897,38,Northeast,Factory Worker,1,1,27.4,None,76.9,86.4,0,1.56,10/11/2024
+VN-01898,32,Northwest,Service Industry,0,0,23.5,None,93.5,95,0,1.24,11/4/2024
+VN-01899,47,North Central,Office Worker,0,0,21.1,None,143.5,95,0,1.34,12/7/2024
+VN-01900,36,South Central Coast,Farmer,1,0,25.8,None,76.3,93.6,0,1.52,6/24/2024
+VN-01901,28,Northwest,Merchant/Trader,0,1,22.1,None,92.2,95,0,0.96,4/11/2024
+VN-01902,26,Central Highlands,Farmer,0,1,19.8,None,50,95,0,1.02,4/13/2024
+VN-01903,55,Northwest,Office Worker,0,1,27.9,None,111.4,75.8,0,1.4,1/18/2024
+VN-01904,52,South Central Coast,Office Worker,0,1,27.2,None,100.8,80.3,0,1.34,3/2/2024
+VN-01905,51,North Central,Merchant/Trader,0,0,23.7,None,101.1,88.6,0,1.52,10/22/2024
+VN-01906,51,Mekong Delta,Factory Worker,1,1,25.1,None,87.7,81.8,1,1.82,5/18/2024
+VN-01907,47,South Central Coast,Farmer,0,0,21.8,None,65.8,95,0,1.54,7/29/2024
+VN-01908,42,North Central,Retired,0,1,24.5,Diabetes,50,86.3,0,2.44,6/20/2024
+VN-01909,52,Southeast,Farmer,0,1,20.6,None,96.7,94.4,0,1.54,3/9/2024
+VN-01910,39,South Central Coast,Service Industry,0,0,23.8,None,66.6,95,1,1.38,5/3/2024
+VN-01911,36,North Central,Service Industry,0,1,21.4,None,112.3,95,0,1.22,10/23/2024
+VN-01912,58,Red River Delta,Office Worker,1,0,23.1,None,161.8,85.9,0,1.76,7/17/2024
+VN-01913,29,North Central,Construction Worker,1,0,20.6,None,106.9,95,0,1.68,12/12/2024
+VN-01914,43,South Central Coast,Factory Worker,0,0,24.5,None,72.2,89.8,0,1.56,11/24/2024
+VN-01915,34,Northwest,Office Worker,0,1,22.2,None,120.9,95,0,0.98,1/25/2024
+VN-01916,42,Mekong Delta,Merchant/Trader,1,0,20.8,None,104.3,95,0,1.54,6/10/2024
+VN-01917,25,Mekong Delta,Office Worker,0,1,20.1,None,128.2,95,0,0.8,1/8/2024
+VN-01918,39,Mekong Delta,Farmer,0,1,21.3,None,61,95,0,1.28,12/2/2024
+VN-01919,38,Northeast,Merchant/Trader,0,1,24.4,None,104.5,95,0,1.16,2/15/2024
+VN-01920,32,Northeast,Retired,1,0,21.8,None,58.3,95,0,2.24,4/6/2024
+VN-01921,34,Red River Delta,Merchant/Trader,0,0,25.4,None,125.7,95,0,1.18,11/7/2024
+VN-01922,38,Southeast,Farmer,1,1,24.8,None,104.2,94.7,0,1.46,8/25/2024
+VN-01923,26,Northeast,Construction Worker,0,0,20.7,None,100.3,95,0,1.42,6/16/2024
+VN-01924,20,Red River Delta,Farmer,1,1,20.2,None,90.1,95,0,1.1,5/20/2024
+VN-01925,49,Northeast,Office Worker,0,1,25.7,Hypertension,102.8,86.5,0,1.58,4/30/2024
+VN-01926,34,Mekong Delta,Farmer,1,1,22.5,None,76,95,0,1.38,8/23/2024
+VN-01927,36,Red River Delta,Merchant/Trader,0,1,25.8,None,121.6,95,0,1.12,11/15/2024
+VN-01928,54,Central Highlands,Farmer,1,0,22.1,None,89,88.9,0,1.88,7/29/2024
+VN-01929,34,Mekong Delta,Farmer,0,0,27.8,None,102.8,90,1,1.28,3/11/2024
+VN-01930,36,Southeast,Construction Worker,0,0,20.1,None,137.1,95,0,1.62,6/28/2024
+VN-01931,31,Red River Delta,Service Industry,1,1,23.3,None,106.6,95,0,1.32,11/28/2024
+VN-01932,41,Central Highlands,Service Industry,0,0,24.8,None,91.6,92.2,0,1.42,11/21/2024
+VN-01933,36,Central Highlands,Retired,1,1,21.5,None,50,95,0,2.22,6/10/2024
+VN-01934,30,Mekong Delta,Retired,1,0,24.7,None,63.9,95,0,2.2,10/16/2024
+VN-01935,46,Northwest,Farmer,1,0,25.2,Diabetes,68.6,87.3,0,2.02,7/6/2024
+VN-01936,44,Northeast,Factory Worker,1,1,26,None,72,85.1,0,1.68,4/9/2024
+VN-01937,40,Mekong Delta,Construction Worker,0,0,24.1,None,76.5,90.2,0,1.7,4/7/2024
+VN-01938,54,Southeast,Merchant/Trader,0,0,22.3,Hypertension,158.4,89.7,0,1.88,1/23/2024
+VN-01939,49,Northeast,Office Worker,0,0,23,None,98.8,93.5,0,1.38,1/19/2024
+VN-01940,20,Southeast,Office Worker,1,1,20.2,None,129,95,0,0.9,12/19/2024
+VN-01941,28,Central Highlands,Service Industry,0,1,20.9,None,84.7,95,0,1.06,5/14/2024
+VN-01942,51,South Central Coast,Farmer,1,0,20.2,None,75.8,95,1,1.82,6/6/2024
+VN-01943,51,Central Highlands,Merchant/Trader,0,1,21,None,137.8,95,0,1.42,4/30/2024
+VN-01944,43,Red River Delta,Construction Worker,0,0,23.3,None,91.6,89.9,0,1.76,6/7/2024
+VN-01945,46,South Central Coast,Farmer,0,0,20.6,None,76.7,95,0,1.52,10/22/2024
+VN-01946,28,Red River Delta,Retired,0,1,22.4,COPD/Asthma,69.3,95,1,2.16,5/22/2024
+VN-01947,35,Red River Delta,Farmer,0,1,24.2,None,71.5,95,0,1.2,4/9/2024
+VN-01948,55,Northeast,Office Worker,0,1,21.2,Heart Disease,123.6,93.5,0,1.7,12/24/2024
+VN-01949,44,South Central Coast,Factory Worker,1,1,20.1,None,78,95,0,1.68,3/28/2024
+VN-01950,23,Northeast,Service Industry,0,1,19.5,None,52.1,95,1,0.96,10/17/2024
+VN-01951,43,Northeast,Farmer,1,1,26.5,None,82.1,86.3,0,1.56,3/14/2024
+VN-01952,28,Mekong Delta,Factory Worker,0,1,20.2,None,99.3,95,0,1.16,5/27/2024
+VN-01953,62,South Central Coast,Factory Worker,0,0,24.3,None,82.7,75.1,1,1.94,5/17/2024
+VN-01954,41,Red River Delta,Service Industry,0,0,24.4,Arthritis,84.3,93.3,0,1.72,2/24/2024
+VN-01955,44,Red River Delta,Farmer,1,1,24.3,None,102.9,91.1,0,1.58,4/17/2024
+VN-01956,48,Southeast,Merchant/Trader,0,0,25.1,None,150.1,87.3,0,1.46,4/4/2024
+VN-01957,50,Red River Delta,Construction Worker,0,1,22,None,99.4,87.8,0,1.8,6/3/2024
+VN-01958,33,Southeast,Office Worker,1,1,22.2,None,165,95,0,1.16,2/28/2024
+VN-01959,32,Red River Delta,Factory Worker,0,1,24.3,None,62.5,95,0,1.24,8/14/2024
+VN-01960,42,Red River Delta,Service Industry,0,0,25.3,Hypertension,103.7,90.1,0,1.74,1/6/2024
+VN-01961,38,Southeast,Merchant/Trader,0,0,18.7,None,155.8,95,1,1.26,3/11/2024
+VN-01962,48,Northeast,Farmer,0,0,27.7,None,73.4,79,0,1.56,3/30/2024
+VN-01963,35,Mekong Delta,Factory Worker,1,1,24.5,None,123.6,95,0,1.5,10/14/2024
+VN-01964,52,Central Highlands,Construction Worker,0,1,23.4,None,123.7,82.5,0,1.84,3/28/2024
+VN-01965,31,North Central,Merchant/Trader,0,0,21.7,None,108.7,95,0,1.12,11/15/2024
+VN-01966,43,Mekong Delta,Farmer,0,1,24.4,None,109.6,91.7,0,1.36,12/12/2024
+VN-01967,36,Northeast,Construction Worker,0,1,24,None,84.3,93.7,0,1.52,3/12/2024
+VN-01968,39,Southeast,Merchant/Trader,0,0,17,None,147.9,95,0,1.28,7/12/2024
+VN-01969,43,South Central Coast,Office Worker,0,1,19.2,None,152.3,95,0,1.16,2/25/2024
+VN-01970,56,North Central,Farmer,1,0,19.6,None,64.4,93.7,1,1.92,3/15/2024
+VN-01971,57,Northeast,Factory Worker,0,1,24,None,96.1,80,0,1.74,5/24/2024
+VN-01972,39,Southeast,Farmer,1,0,27.4,None,100.1,87.1,0,1.58,12/14/2024
+VN-01973,31,Mekong Delta,Farmer,0,0,24.6,None,84.2,95,0,1.22,10/30/2024
+VN-01974,27,Mekong Delta,Farmer,1,1,20.3,None,95.7,95,0,1.24,12/2/2024
+VN-01975,35,Southeast,Farmer,0,1,24.2,None,81.6,95,0,1.2,8/18/2024
+VN-01976,55,Northeast,Merchant/Trader,1,0,22.2,None,69.8,89.3,0,1.8,1/26/2024
+VN-01977,49,Northeast,Office Worker,0,1,23.4,COPD/Asthma,122.1,92.5,0,1.58,4/27/2024
+VN-01978,57,South Central Coast,Farmer,0,1,25,Diabetes,66.4,78.9,0,1.94,8/22/2024
+VN-01979,42,Red River Delta,Merchant/Trader,1,0,26.1,None,126.9,89.7,0,1.54,1/2/2024
+VN-01980,41,North Central,Service Industry,1,1,23.3,None,104.7,95,0,1.52,2/27/2024
+VN-01981,18,Northwest,Service Industry,0,0,21.2,None,87.2,95,0,0.96,6/10/2024
+VN-01982,45,Southeast,Farmer,1,0,24.4,Arthritis,67.2,90.1,0,2,10/6/2024
+VN-01983,39,Southeast,Factory Worker,0,1,19,None,80.4,95,0,1.38,8/1/2024
+VN-01984,44,Central Highlands,Construction Worker,1,0,23.3,None,127.7,89.2,0,1.98,12/10/2024
+VN-01985,29,Northeast,Retired,1,0,22.9,Diabetes,66.4,95,1,2.48,12/9/2024
+VN-01986,56,Mekong Delta,Service Industry,1,0,24.6,None,61.6,80.7,0,1.92,6/14/2024
+VN-01987,48,Northeast,Construction Worker,1,0,21.7,None,94.8,90.2,0,2.06,12/18/2024
+VN-01988,18,Northwest,Factory Worker,0,1,23.7,None,76.7,95,1,0.96,11/9/2024
+VN-01989,57,Central Highlands,Service Industry,0,0,22.8,None,100.6,84.7,1,1.74,9/16/2024
+VN-01990,37,Southeast,Merchant/Trader,1,0,22.9,None,134.5,95,0,1.44,12/24/2024
+VN-01991,38,Northeast,Farmer,0,1,22.2,None,81.1,95,0,1.26,2/21/2024
+VN-01992,43,Red River Delta,Merchant/Trader,1,0,20.7,None,86,95,0,1.56,9/6/2024
+VN-01993,33,Central Highlands,Farmer,1,0,19.5,None,89,95,0,1.46,3/23/2024
+VN-01994,48,Southeast,Farmer,1,1,25.5,None,121,84.8,0,1.66,8/14/2024
+VN-01995,26,Southeast,Farmer,1,1,20.2,None,50,95,0,1.22,8/16/2024
+VN-01996,25,Southeast,Farmer,0,1,19.1,None,132.6,95,0,1,8/13/2024
+VN-01997,34,Southeast,Office Worker,0,0,26.2,None,176.8,95,1,1.08,7/27/2024
+VN-01998,51,Southeast,Office Worker,0,1,22.9,None,154,92.2,0,1.32,3/14/2024
+VN-01999,27,South Central Coast,Farmer,0,0,20.4,None,91.6,95,1,1.14,2/5/2024
+VN-02000,45,Southeast,Retired,0,0,23.3,None,80.9,86.8,0,2.3,7/22/2024
