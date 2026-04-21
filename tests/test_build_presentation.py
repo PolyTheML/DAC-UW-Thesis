@@ -3,10 +3,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 from pptx import Presentation
 
 SCRIPT = Path("thesis/auto/build_presentation.py")
-OUTPUT = Path("thesis/auto/auto_defense_presentation.pptx")
+OUTPUT = Path(__file__).parent.parent / "thesis/auto/auto_defense_presentation.pptx"
 
 
 def _run_build():
@@ -18,16 +19,21 @@ def _run_build():
     assert result.returncode == 0, f"Script failed:\n{result.stderr}"
 
 
-def test_generates_20_slides():
+@pytest.fixture(scope="session")
+def built_presentation():
     OUTPUT.unlink(missing_ok=True)
     _run_build()
-    assert OUTPUT.exists()
-    prs = Presentation(str(OUTPUT))
+    return OUTPUT
+
+
+def test_generates_20_slides(built_presentation):
+    assert built_presentation.exists()
+    prs = Presentation(str(built_presentation))
     assert len(prs.slides) == 20, f"Expected 20 slides, got {len(prs.slides)}"
 
 
-def test_title_slide_has_presenter_name():
-    prs = Presentation(str(OUTPUT))
+def test_title_slide_has_presenter_name(built_presentation):
+    prs = Presentation(str(built_presentation))
     texts = [
         shape.text_frame.text
         for shape in prs.slides[0].shapes
@@ -37,8 +43,8 @@ def test_title_slide_has_presenter_name():
     assert "LUN CHANPOLY" in combined, f"Presenter name missing. Got: {combined}"
 
 
-def test_slide_titles_present():
-    prs = Presentation(str(OUTPUT))
+def test_slide_titles_present(built_presentation):
+    prs = Presentation(str(built_presentation))
     expected = [
         ("Population Stability", 0),
         ("Agenda",               1),
