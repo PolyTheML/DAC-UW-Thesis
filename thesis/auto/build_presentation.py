@@ -111,6 +111,58 @@ def _table(slide, headers: list, rows: list,
     return tbl
 
 
+# ── Slide functions ────────────────────────────────────────────────────────
+
+def slide_01_title(prs):
+    """Slide 1: Title slide with thesis title and presenter info."""
+    s = _blank(prs)
+    txb = s.shapes.add_textbox(ML, Inches(1.40), CNTW, Inches(2.80))
+    tf = txb.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    run = p.add_run()
+    run.text = (
+        "Validating Population Stability Metrics for\n"
+        "Dynamic Auto Insurance Pricing with Telematics Data"
+    )
+    run.font.name = "Calibri"
+    run.font.bold = True
+    run.font.size = Pt(30)
+    run.font.color.rgb = BLUE
+
+    for label, value, top_in in [
+        ("Presenter:", "LUN CHANPOLY", 4.40),
+        ("Advisor:",   "HAS SOTHEA",  4.95),
+        ("Date:",      "",            5.50),
+    ]:
+        _body(s, label, Inches(4.20), Inches(top_in), Inches(2.20), Inches(0.45),
+              size=16, bold=True, color=BLUE, align=PP_ALIGN.RIGHT)
+        _body(s, value, Inches(6.55), Inches(top_in), Inches(4.00), Inches(0.45),
+              size=16, color=DARK)
+
+
+def slide_02_agenda(prs):
+    """Slide 2: Agenda slide with 6 chapters."""
+    s = _blank(prs)
+    _title(s, "Agenda")
+    chapters = [
+        ("Chapter 1", "Introduction — Why auto insurance telematics?"),
+        ("Chapter 2", "Background — PSI, telematics features, prior work"),
+        ("Chapter 3", "Methodology — Synthetic data & experiment design"),
+        ("Chapter 4", "Results — EXP-001 through EXP-004"),
+        ("Chapter 5", "Discussion — Framework & limitations"),
+        ("Chapter 6", "Conclusion — Findings & future work"),
+    ]
+    top = Inches(1.50)
+    for ch, desc in chapters:
+        _body(s, ch,   ML,           top, Inches(1.80), Inches(0.50),
+              size=16, bold=True, color=BLUE)
+        _body(s, desc, Inches(2.55), top, Inches(9.80), Inches(0.50),
+              size=16, color=DARK)
+        top += Inches(0.80)
+
+
 # ── Build entry point ──────────────────────────────────────────────────────
 
 def build():
@@ -118,7 +170,8 @@ def build():
     prs.slide_width  = SLIDE_W
     prs.slide_height = SLIDE_H
 
-    # Slide functions will be added in subsequent tasks
+    slide_01_title(prs)
+    slide_02_agenda(prs)
 
     prs.save(OUT)
     print(f"Saved {len(prs.slides)} slides -> {OUT}")
