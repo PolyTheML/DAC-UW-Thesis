@@ -163,6 +163,58 @@ def slide_02_agenda(prs):
         top += Inches(0.80)
 
 
+def slide_03_why_telematics(prs):
+    """Slide 3: Why Auto Insurance Telematics? — Cambodia context & problem statement."""
+    s = _blank(prs)
+    _title(s, "Why Auto Insurance Telematics?")
+
+    _body(s, "Cambodia Market Context",
+          ML, Inches(1.35), CNTW, Inches(0.45), size=18, bold=True, color=BLUE)
+    _bullets(s, [
+        "4.8 million motorcycles — dense, under-insured fleet",
+        "Claim frequency: 8–15% annually, highly seasonal",
+        "Monsoon season (Jul–Sep): hard braking events spike 150–250%",
+        "Emerging market: limited historical actuarial data",
+    ], ML, Inches(1.85), CNTW, Inches(1.80), size=16)
+
+    _body(s, "The Problem",
+          ML, Inches(3.80), CNTW, Inches(0.45), size=18, bold=True, color=BLUE)
+    _bullets(s, [
+        "Existing drift detection assumes static batch data",
+        "Telematics pricing updates continuously — distributions shift every repricing cycle",
+        "No established method for monitoring PSI stability under continuous repricing",
+    ], ML, Inches(4.30), CNTW, Inches(1.60), size=16)
+
+
+def slide_04_research_claim(prs):
+    """Slide 4: Research Claim — thesis statement and scope."""
+    s = _blank(prs)
+    _title(s, "Research Claim")
+
+    txb = s.shapes.add_textbox(Inches(1.20), Inches(1.60), Inches(10.93), Inches(1.60))
+    tf = txb.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    run = p.add_run()
+    run.text = (
+        "Single-metric PSI monitoring is insufficient\n"
+        "for continuous dynamic auto insurance pricing."
+    )
+    run.font.name = "Calibri"
+    run.font.bold = True
+    run.font.size = Pt(22)
+    run.font.color.rgb = BLUE
+
+    _body(s, "This thesis:",
+          ML, Inches(3.50), CNTW, Inches(0.45), size=18, bold=True, color=BLUE)
+    _bullets(s, [
+        "Identifies 3 specific PSI failure modes under dynamic pricing",
+        "Demonstrates that temporal comparison strategy matters as much as metric choice",
+        "Proposes a temporal multi-metric monitoring framework as the solution",
+    ], ML, Inches(4.00), CNTW, Inches(1.80), size=16)
+
+
 # ── Build entry point ──────────────────────────────────────────────────────
 
 def build():
@@ -172,6 +224,8 @@ def build():
 
     slide_01_title(prs)
     slide_02_agenda(prs)
+    slide_03_why_telematics(prs)
+    slide_04_research_claim(prs)
 
     prs.save(OUT)
     print(f"Saved {len(prs.slides)} slides -> {OUT}")
