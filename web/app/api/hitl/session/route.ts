@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 import { getHitlSession } from "@/lib/hitl-store";
 import { computePsiForFeature } from "@/lib/psi";

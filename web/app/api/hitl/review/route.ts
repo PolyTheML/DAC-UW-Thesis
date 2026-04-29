@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 import {
   computeExpectedRewards,
@@ -28,6 +28,13 @@ export async function POST(req: Request) {
     if (!sessionId || !reviewId || overrideAction === undefined) {
       return new Response(
         JSON.stringify({ error: "Missing sessionId, reviewId, or overrideAction" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (![0, 1, 2].includes(overrideAction)) {
+      return new Response(
+        JSON.stringify({ error: "overrideAction must be 0 (STANDARD), 1 (RATED), or 2 (DECLINE)" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }

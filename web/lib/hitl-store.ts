@@ -203,11 +203,11 @@ export function resolveReview(
   session.cumulativeRegret += regret;
   session.cumulativeHumanCost += 35; // $35 review cost
 
-  // Update alignment: did the bandit eventually agree?
-  // We measure alignment as: if the bandit had to decide again now,
-  // would it choose the same action the human chose?
-  // For simplicity, we track whether the original bandit action matched human
-  const agreed = review.banditRecommendedAction === overrideAction ? 1 : 0;
+  // Alignment: compare bandit's best non-REFER choice against human's decision.
+  // banditRecommendedAction is always REFER (3) here, so we use qValues instead.
+  const nonReferQValues = review.qValues.slice(0, 3);
+  const banditBestNonRefer = nonReferQValues.indexOf(Math.max(...nonReferQValues));
+  const agreed = banditBestNonRefer === overrideAction ? 1 : 0;
   session.alignmentWindow.push(agreed);
   if (session.alignmentWindow.length > 50) {
     session.alignmentWindow.shift();
