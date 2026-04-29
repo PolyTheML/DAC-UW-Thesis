@@ -43,7 +43,7 @@ function generateApplicant(
   // Base distributions from cambodia_dataset.csv
   // Drift factor: 0 = baseline, 1 = full drift
   const age = Math.round(
-    Math.max(18, Math.min(85, sampleNormal(rng, 42.6 + driftFactor * 12, 11.2)))
+    Math.max(18, Math.min(85, sampleNormal(rng, 42.6 - driftFactor * 12, 11.2)))
   );
   const bmi = Math.max(
     16,

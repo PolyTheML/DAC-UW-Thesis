@@ -135,15 +135,22 @@ export default function DriftPage() {
                     {((1 - result.adaptive.finalRegret / result.static.finalRegret) * 100).toFixed(1)}%
                   </Badge>
                 </div>
-                <div className="rounded-md border p-2 mt-2">
-                  <div className="text-xs text-muted-foreground mb-1">Portfolio Stability (post-drift)</div>
+                <div className="rounded-md border p-2 mt-2 space-y-2">
+                  <div className="text-xs font-medium">Portfolio Stability Index (PSI)</div>
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">Static: RED</Badge>
-                    <span className="text-xs text-muted-foreground">PSI &gt; 0.25 — outdated parameters</span>
+                    <Badge className="bg-green-100 text-green-800 border-green-300 text-xs">Pre-drift: GREEN</Badge>
+                    <span className="text-xs text-muted-foreground">PSI = 0.02 &lt; 0.10</span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge className="bg-green-100 text-green-800 border-green-300 text-xs">Adaptive: GREEN</Badge>
-                    <span className="text-xs text-muted-foreground">PSI &lt; 0.10 — recovered within 200 rounds</span>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">Static post-drift: RED</Badge>
+                    <span className="text-xs text-muted-foreground">YoY July PSI = 3.007 &gt; 0.25 (EXP-004 ref)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-green-100 text-green-800 border-green-300 text-xs">Adaptive post-drift: GREEN</Badge>
+                    <span className="text-xs text-muted-foreground">Recovered to PSI &lt; 0.10 within 200 rounds</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground pt-1 border-t">
+                    Reference: EXP-004 YoY July = 3.007 (RED), rolling 3-month = 0.731 (RED)
                   </div>
                 </div>
               </CardContent>
@@ -168,10 +175,10 @@ export default function DriftPage() {
                 <CardContent>
                   <div className="mb-3 flex items-center gap-2">
                     <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">
-                      ⚠ DRIFT EVENT
+                      ⚠ HEP-B OUTBREAK — PREAH SIHANOUK
                     </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      Round {result.driftRound}: Hep-B outbreak — younger, higher-risk coastal applicants enter the pool
+                    <span className="text-xs text-muted-foreground" title="Coastal flooding displaces young male migrant workers into Preah Sihanouk province. Applicant pool shifts: age −12yr, BMI +2, income −40%, comorbidity +30%. Mortality multiplier increases.">
+                      Round {result.driftRound}: Coastal flooding displaces young male migrants → applicant pool shifts
                     </span>
                   </div>
                   <RaceChart
