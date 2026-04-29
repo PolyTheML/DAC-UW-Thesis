@@ -6,13 +6,13 @@ import { Slider } from "@/components/ui/slider";
 import type { AlgoName } from "@/lib/bandits";
 
 interface AlgorithmSelectorProps {
-  algo: AlgoName;
-  onAlgoChange: (algo: AlgoName) => void;
+  algo: Exclude<AlgoName, "discountedLinUCB">;
+  onAlgoChange: (algo: Exclude<AlgoName, "discountedLinUCB">) => void;
   paramValue: number;
   onParamChange: (val: number) => void;
 }
 
-const ALGO_META: Record<AlgoName, { label: string; paramLabel: string; min: number; max: number; step: number }> = {
+const ALGO_META: Record<Exclude<AlgoName, "discountedLinUCB">, { label: string; paramLabel: string; min: number; max: number; step: number }> = {
   linucb: { label: "LinUCB", paramLabel: "Alpha (exploration)", min: 0.01, max: 5, step: 0.01 },
   linTS: { label: "Thompson Sampling", paramLabel: "v² (posterior scale)", min: 0.01, max: 5, step: 0.01 },
   epsilonGreedy: { label: "ε-Greedy", paramLabel: "Epsilon", min: 0, max: 1, step: 0.01 },
@@ -33,7 +33,7 @@ export default function AlgorithmSelector({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
-          {(Object.keys(ALGO_META) as AlgoName[]).map((key) => (
+          {(Object.keys(ALGO_META) as Array<keyof typeof ALGO_META>).map((key) => (
             <button
               key={key}
               type="button"

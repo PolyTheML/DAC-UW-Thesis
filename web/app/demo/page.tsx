@@ -7,6 +7,7 @@ import LearningCharts from "@/components/LearningCharts";
 import PSIMonitor from "@/components/PSIMonitor";
 import AlgorithmSelector from "@/components/AlgorithmSelector";
 import type { AlgoName } from "@/lib/bandits";
+type DemoAlgoName = Exclude<AlgoName, "discountedLinUCB">;
 
 interface DecisionPoint {
   round: number;
@@ -17,7 +18,7 @@ interface DecisionPoint {
 }
 
 export default function DemoPage() {
-  const [algo, setAlgo] = useState<AlgoName>("linucb");
+  const [algo, setAlgo] = useState<DemoAlgoName>("linucb");
   const [paramValue, setParamValue] = useState(1.0);
   const [sessionId, setSessionId] = useState<string>("");
   const [latestDecision, setLatestDecision] = useState<DecisionData | null>(null);

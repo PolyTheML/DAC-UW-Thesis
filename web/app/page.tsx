@@ -54,6 +54,11 @@ export default function HomePage() {
             Human-in-the-Loop Demo
           </Button>
         </Link>
+        <Link href="/drift">
+          <Button size="lg" variant="outline">
+            Drift Detection Demo
+          </Button>
+        </Link>
       </div>
 
       <footer className="mt-12 text-xs text-muted-foreground">

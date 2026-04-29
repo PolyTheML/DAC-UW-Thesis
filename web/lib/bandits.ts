@@ -21,7 +21,7 @@ import {
   sampleMultivariateNormal,
 } from "./math";
 
-export type AlgoName = "linucb" | "linTS" | "epsilonGreedy";
+export type AlgoName = "linucb" | "linTS" | "epsilonGreedy" | "discountedLinUCB";
 
 export interface BanditState {
   A: number[][][]; // [action][feature][feature]
@@ -31,6 +31,7 @@ export interface BanditState {
   v2?: number; // LinTS
   epsilon?: number; // EpsilonGreedy
   rngSeed?: number;
+  lambda?: number; // DiscountedLinUCB forgetting factor
 }
 
 export interface DecisionResult {
@@ -92,6 +93,48 @@ export function linucbUpdate(
   context: number[],
   reward: number
 ): void {
+  state.A[action] = addMat(state.A[action], outerProduct(context, context));
+  state.b[action] = addVec(state.b[action], context.map((c) => c * reward));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Discounted LinUCB (Non-stationary adaptation)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function createDiscountedLinUCBState(
+  nActions: number,
+  _nFeatures: number,
+  alpha: number,
+  lambda: number
+): BanditState {
+  return {
+    A: Array.from({ length: nActions }, () => eye(_nFeatures)),
+    b: Array.from({ length: nActions }, () => zeros(_nFeatures)),
+    theta: Array.from({ length: nActions }, () => zeros(_nFeatures)),
+    alpha,
+    lambda,
+  };
+}
+
+export function discountedLinUCBDecide(
+  state: BanditState,
+  context: number[]
+): DecisionResult {
+  // Decision logic is identical to standard LinUCB
+  return linucbDecide(state, context);
+}
+
+export function discountedLinUCBUpdate(
+  state: BanditState,
+  action: number,
+  context: number[],
+  reward: number
+): void {
+  const lam = state.lambda ?? 0.995;
+  // Forget old information: A = λ * A, b = λ * b
+  state.A[action] = scaleMat(state.A[action], lam);
+  state.b[action] = state.b[action].map((v) => v * lam);
+  // Then add new observation
   state.A[action] = addMat(state.A[action], outerProduct(context, context));
   state.b[action] = addVec(state.b[action], context.map((c) => c * reward));
 }
@@ -231,7 +274,7 @@ export function epsilonGreedyUpdate(
 export function createBanditState(
   algo: AlgoName,
   nFeatures: number,
-  params?: { alpha?: number; v2?: number; epsilon?: number }
+  params?: { alpha?: number; v2?: number; epsilon?: number; lambda?: number }
 ): BanditState {
   const nActions = 4;
   switch (algo) {
@@ -244,6 +287,13 @@ export function createBanditState(
         nActions,
         nFeatures,
         params?.epsilon ?? 0.15
+      );
+    case "discountedLinUCB":
+      return createDiscountedLinUCBState(
+        nActions,
+        nFeatures,
+        params?.alpha ?? 1.0,
+        params?.lambda ?? 0.995
       );
     default:
       throw new Error(`Unknown algorithm: ${algo}`);
@@ -262,6 +312,8 @@ export function banditDecide(
       return linTSDecide(state, context);
     case "epsilonGreedy":
       return epsilonGreedyDecide(state, context);
+    case "discountedLinUCB":
+      return discountedLinUCBDecide(state, context);
     default:
       throw new Error(`Unknown algorithm: ${algo}`);
   }
@@ -283,6 +335,9 @@ export function banditUpdate(
       break;
     case "epsilonGreedy":
       epsilonGreedyUpdate(state, action, context, reward);
+      break;
+    case "discountedLinUCB":
+      discountedLinUCBUpdate(state, action, context, reward);
       break;
     default:
       throw new Error(`Unknown algorithm: ${algo}`);
