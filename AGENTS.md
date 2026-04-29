@@ -22,11 +22,13 @@ The repository was migrated from `C:\DAC-UW-Agent` (the DAC HealthPrice platform
 | Language | Python 3.11 |
 | Data & ML | numpy, pandas, xgboost, shap, statsmodels |
 | Telematics / Geo | googlemaps, polyline |
-| Reporting | python-pptx |
+| Frontend (Demo) | React 19, Vite |
+| Frontend (Web) | Next.js 14, TypeScript, Tailwind CSS |
+| Reporting | python-pptx, matplotlib |
 | Testing | pytest |
 | Env config | python-dotenv |
 
-**Note**: There is no `pyproject.toml`, `requirements.txt`, `setup.py`, or virtual environment inside this repo. Dependencies are installed globally in the system Python environment.
+**Note**: There is no `pyproject.toml`, `requirements.txt`, `setup.py`, or virtual environment inside this repo. Dependencies are installed globally in the system Python environment. A `.gitignore` is present at repo root.
 
 ---
 
@@ -75,10 +77,48 @@ C:\DAC-UW-Thesis\
   thesis/
     archive-life-insurance-2026-04-19/  # Archived life insurance chapters 1-5
     auto/
-      build_presentation.py            # Generates 20-slide defense PPTX (ARCHIVED auto version)
-      auto_defense_presentation.pptx   # Generated output (gitignored)
-    health_rl/                         # NEW thesis drafts (adaptive underwriting)
+      build_presentation.py            # Generates 20-slide defense PPTX (ARCHIVED auto version — COMPLETE)
+      auto_defense_presentation.pptx   # Generated output
+      figures/                         # 4 matplotlib charts for auto presentation
+    health_rl/                         # CURRENT thesis drafts (adaptive underwriting)
+      chapter1_introduction.md         # ~1,450 words, COMPLETE
+      chapter2_literature_review.md    # ~2,200 words, COMPLETE
+      chapter3_methodology.md          # Skeleton only
+      chapter4_results.md              # Skeleton only
+      chapter5_conclusion.md           # Skeleton only
+      chapterI_*.md .. chapterIV_*.md  # ITC internship-report template versions
+      build_presentation.py            # Generates 20-slide health/RL defense PPTX (COMPLETE)
+      build_thesis_docx.py             # Converts Markdown chapters → ITC-formatted Word doc
+      health_rl_defense_presentation.pptx  # Generated output
+      ITC_Thesis_Draft.docx            # Generated Word draft
+      ITC_STYLE_GUIDE.md               # Formatting reference extracted from ITC template
+      template_extract_full.txt        # Raw OCR text from official ITC thesis template DOCX
+      figures/                         # 6 matplotlib charts (regret, reward, fairness, framework)
     vietnam_case_study.html            # Vietnam demo HTML (ARCHIVED)
+
+  demo/                                # React + Vite SPA (backend-dependent demo)
+    src/components/
+      SimulatorTab.jsx                 # Single-algorithm simulation
+      BenchmarkTab.jsx                 # Multi-algorithm benchmark
+      FairnessTab.jsx                  # Fairness audit visualization
+      ApplicantTab.jsx                 # Applicant browser + decision viewer
+    # Proxies all bandit logic to DAC HealthPrice API on Render
+
+  web/                                 # Next.js 14 full-stack app (self-contained)
+    app/api/decide/route.ts            # Edge Runtime: context → bandit decision + PSI
+    app/api/session/route.ts           # Edge Runtime: history + PSI on demand
+    lib/bandits.ts                     # Pure-TS LinUCB / LinTS / ε-Greedy
+    lib/math.ts                        # Matrix inversion, Cholesky, MVN sampling
+    lib/psi.ts                         # PSI computation with GREEN/AMBER/RED thresholds
+    lib/session-store.ts               # In-memory per-session bandit state & history
+    config/underwriting-features.ts    # Feature definitions, context vector builder, hyperparams
+    components/
+      ApplicantForm.tsx                # Config-driven input form
+      AlgorithmSelector.tsx            # Algorithm toggle + parameter slider
+      DecisionOutput.tsx               # Action badge, risk score, Q-values, regret
+      LearningCharts.tsx               # SVG cumulative reward/regret curves
+      PSIMonitor.tsx                   # SVG PSI bar chart per feature
+    # Zero external backend dependency — all bandit math runs server-side
 
   tests/
     test_build_presentation.py         # pytest: validates 20 slides, presenter name, key titles
@@ -89,7 +129,7 @@ C:\DAC-UW-Thesis\
       specs/                           # Design specifications
 
   wiki/
-    sources/                           # Thesis templates (cover, formatting, etc.)
+    sources/                           # Thesis templates (abstract, acknowledgement, cover, etc.)
     topics/                            # Research topic pages & guides
 ```
 
@@ -132,10 +172,19 @@ python stress_testing/auto_insurance/real_route_telematics_generator.py
 #   --stream
 ```
 
-### Generate defense presentation
+### Generate defense presentations
 ```powershell
+# CURRENT — health/RL thesis (20 slides)
+python thesis/health_rl/build_presentation.py
+# Output: thesis/health_rl/health_rl_defense_presentation.pptx
+
+# ARCHIVED — auto insurance thesis (20 slides)
 python thesis/auto/build_presentation.py
 # Output: thesis/auto/auto_defense_presentation.pptx
+
+# Generate Word draft from Markdown chapters
+python thesis/health_rl/build_thesis_docx.py
+# Output: thesis/health_rl/ITC_Thesis_Draft.docx
 ```
 
 ### Run tests
@@ -155,6 +204,24 @@ python case-study/train_cambodia_models.py
 ```powershell
 python case-study/generate_vietnam_dataset.py
 python case-study/train_models.py
+```
+
+### Run web demo (self-contained Next.js)
+```powershell
+cd web
+npm install
+npm run dev
+# Opens at http://localhost:3000
+# /demo — interactive underwriting dashboard
+```
+
+### Run React demo (backend-dependent)
+```powershell
+cd demo
+npm install
+npm run dev
+# Opens at http://localhost:5173
+# Requires DAC HealthPrice API reachable at https://dac-healthprice-api.onrender.com
 ```
 
 ---
@@ -194,11 +261,38 @@ These modules are **archived** for reference. They depend on external packages i
 ### Vietnam Case Study (`case-study/`)
 **Archived**. `generate_vietnam_dataset.py` and `train_models.py` produce 2,000 synthetic Vietnam health/life insurance records and train GLM + XGBoost models.
 
-### Presentation Builder (`thesis/auto/build_presentation.py`)
-- Uses `python-pptx` to generate a 20-slide widescreen deck (13.33" × 7.5").
-- One function per slide (`slide_01_title`, `slide_02_agenda`, …).
-- Shared style helpers (`_blank`, `_title`, `_body`, `_bullets`, `_table`).
+### Health/RL Presentation Builder (`thesis/health_rl/build_presentation.py`)
+- Uses `python-pptx` + `matplotlib` to generate a 20-slide widescreen deck (13.33" × 7.5").
+- One function per slide (`slide_01_title` through `slide_20_thank_you`).
+- Generates 6 matplotlib figures on-the-fly into `thesis/health_rl/figures/`.
+- Content: title/agenda, Cambodia market context, research claim, bandit framework, dataset, algorithms, reward design, EXP-005/006/007 results, PSI guardrails, implementation, social impact, discussion, conclusion.
 - Style: white background, muted blue (`#2E5FA3`) headers, Calibri font, alternating gray table rows.
+
+### Auto Presentation Builder (`thesis/auto/build_presentation.py`)
+- ARCHIVED but complete. Generates 20-slide auto-insurance telematics deck.
+- Same style helpers as health/RL version.
+- Generates 4 matplotlib figures into `thesis/auto/figures/`.
+
+### Thesis DOCX Builder (`thesis/health_rl/build_thesis_docx.py`)
+- Converts Markdown chapter drafts into ITC-formatted `.docx`.
+- Builds complete front matter: Khmer + French/English title pages, acknowledgement, abstracts, auto-generated TOC, list of figures/tables/abbreviations.
+- Handles inline markdown (`**bold**`, `*italic*`, `$math$`), bullet/numbered lists, code blocks with gray shading, markdown tables, and placeholders like `[FIGURE: ...]`, `[TABLE: ...]`, `[CITATION: ...]`.
+- Font: Times New Roman, 1.5 line spacing, justified body, 16pt bold ALL CAPS chapter headings.
+
+### React Demo (`demo/`)
+- Client-only React 19 + Vite SPA.
+- Proxies all computation to the remote DAC HealthPrice API on Render.
+- Four tabs: Simulator (single algorithm), Benchmark (all 4 algorithms), Fairness (regional/occupational parity), Applicant (browse + single decision).
+
+### Next.js Web App (`web/`)
+- Self-contained full-stack Next.js 14 (App Router) application.
+- Ports the Python bandit experiments directly into TypeScript — zero external backend dependency.
+- **Bandit Engine** (`lib/bandits.ts` + `lib/math.ts`): LinUCB, LinTS, ε-Greedy with custom linear algebra (Gauss-Jordan, Cholesky, MVN sampling) for 27×27 matrices.
+- **PSI Monitor** (`lib/psi.ts`): Population Stability Index matching Python fairness audit.
+- **Session Store** (`lib/session-store.ts`): In-memory per-session state (A/b matrices, history, cumulative metrics, approved-portfolio distributions).
+- **API Routes** (`app/api/decide/route.ts`, `app/api/session/route.ts`): Edge Runtime endpoints that build context vectors, run decisions, update matrices, and return PSI values.
+- **Config** (`config/underwriting-features.ts`): Single source of truth — 9 input features, 27-dim context vector builder with z-score normalization, action space, reward oracle, PSI reference distributions, hyperparameters.
+- **UI Components**: 100% config-driven form (`ApplicantForm`), algorithm toggle (`AlgorithmSelector`), decision output with Q-values (`DecisionOutput`), SVG learning curves (`LearningCharts`), SVG PSI monitor (`PSIMonitor`).
 
 ---
 
@@ -263,18 +357,19 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 
 ## Deployment & Output Targets
 
-- **Defense presentation**: `thesis/auto/auto_defense_presentation.pptx` (generated locally, not deployed).
-- **Thesis demo platform** (planned): A new "Auto Insurance" tab on the DAC HealthPrice frontend, or a standalone SPA.
-  - Frontend target: `https://dac-auto-insurance.vercel.app`
-  - Backend target: Same Render instance as DAC HealthPrice (`/api/v1/telematics/*`)
-- **Vietnam demo HTML**: `thesis/vietnam_case_study.html` (static HTML, May 1 deadline).
+- **Defense presentation**: `thesis/health_rl/health_rl_defense_presentation.pptx` (generated locally, not deployed). Archived auto version at `thesis/auto/auto_defense_presentation.pptx`.
+- **Thesis Word draft**: `thesis/health_rl/ITC_Thesis_Draft.docx` (generated locally).
+- **React demo** (`demo/`): Deployed to Vercel. Thin SPA that delegates all computation to the DAC HealthPrice API on Render.
+- **Next.js web app** (`web/`): Self-contained full-stack app deployable to Vercel with zero external backend dependencies. All bandit logic runs server-side in Edge Runtime.
+- **Vietnam demo HTML**: `thesis/vietnam_case_study.html` (static HTML, archived).
 
 ---
 
 ## Security Considerations
 
-- `stress_testing/auto_insurance/.env` contains `GOOGLE_MAPS_API_KEY`. It is marked as a sensitive file and should never be committed. The repo's `.gitignore` does not explicitly mention `.env`; verify before committing.
-- The repo is **not** a sandbox. It operates on the local filesystem and writes to `case-study/`, `thesis/auto/`, etc.
+- `stress_testing/auto_insurance/.env` contains `GOOGLE_MAPS_API_KEY`. It is marked as a sensitive file and should never be committed.
+- `.gitignore` is now present and excludes `.env`, `node_modules/`, `__pycache__/`, `.next/`, `.vercel/`, `.claude/`, and large data files (`phnom_penh_pings.csv`).
+- The repo is **not** a sandbox. It operates on the local filesystem and writes to `case-study/`, `thesis/health_rl/`, `thesis/auto/`, etc.
 - No secrets or credentials should be added to generated `.pptx`, `.csv`, `.html`, or markdown files.
 
 ---
@@ -282,10 +377,13 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 ## Current Status Snapshot (as of latest commit)
 
 - **Experiments**: ALL 3 RL underwriting experiments (EXP-005 through EXP-007) are complete and passing. Auto insurance experiments (EXP-001 through EXP-004) are archived and passing.
-- **Presentation**: Skeleton exists for auto version (slides 1–4 implemented). Needs rebuilding for health/RL thesis.
-- **Chapters**: None written yet for the health RL thesis. Life insurance chapters (Chs 1–5) and auto thesis materials are archived for reference.
+- **Chapters**: Chapters 1 & 2 are **complete drafts** (~1,450 and ~2,200 words). Chapters 3, 4, and 5 are **skeletons only** (section headers + placeholders). ITC internship-report template versions (`chapterI`–`chapterIV`) also exist.
+- **Defense presentation**: **COMPLETE** — `thesis/health_rl/build_presentation.py` generates a full 20-slide deck. Output `health_rl_defense_presentation.pptx` already generated. Auto version (`thesis/auto/`) is also complete but archived.
+- **Thesis DOCX**: **COMPLETE** — `build_thesis_docx.py` converts Markdown chapters to ITC-formatted Word. Output `ITC_Thesis_Draft.docx` already generated (contains Ch1–2 body + Ch3–5 skeletons).
+- **Figures**: 6 PNGs generated in `thesis/health_rl/figures/` (regret curves, reward curves, action evolution, fairness region, fairness occupation, framework).
 - **Cambodia dataset & models**: Complete (`case-study/models/` populated with `cambodia_*.pkl`, `.json`, `.csv`).
 - **Vietnam dataset & models**: Archived (`case-study/models/` health_* / life_* retained for reference).
+- **Demo apps**: BOTH built — `demo/` (React+Vite, backend-dependent) and `web/` (Next.js 14 full-stack, self-contained).
 
 ---
 
