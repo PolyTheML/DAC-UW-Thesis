@@ -45,9 +45,14 @@ export default function HomePage() {
         </CardContent>
       </Card>
 
-      <div className="mt-8">
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link href="/demo">
-          <Button size="lg">Start Demo</Button>
+          <Button size="lg">Standard Demo</Button>
+        </Link>
+        <Link href="/hitl">
+          <Button size="lg" variant="outline">
+            Human-in-the-Loop Demo
+          </Button>
         </Link>
       </div>
 

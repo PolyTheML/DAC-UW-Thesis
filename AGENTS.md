@@ -22,8 +22,6 @@ The repository was migrated from `C:\DAC-UW-Agent` (the DAC HealthPrice platform
 | Language | Python 3.11 |
 | Data & ML | numpy, pandas, xgboost, shap, statsmodels |
 | Telematics / Geo | googlemaps, polyline |
-| Frontend (Demo) | React 19, Vite |
-| Frontend (Web) | Next.js 14, TypeScript, Tailwind CSS |
 | Reporting | python-pptx, matplotlib |
 | Testing | pytest |
 | Env config | python-dotenv |
@@ -96,30 +94,6 @@ C:\DAC-UW-Thesis\
       figures/                         # 6 matplotlib charts (regret, reward, fairness, framework)
     vietnam_case_study.html            # Vietnam demo HTML (ARCHIVED)
 
-  demo/                                # React + Vite SPA (backend-dependent demo)
-    src/components/
-      SimulatorTab.jsx                 # Single-algorithm simulation
-      BenchmarkTab.jsx                 # Multi-algorithm benchmark
-      FairnessTab.jsx                  # Fairness audit visualization
-      ApplicantTab.jsx                 # Applicant browser + decision viewer
-    # Proxies all bandit logic to DAC HealthPrice API on Render
-
-  web/                                 # Next.js 14 full-stack app (self-contained)
-    app/api/decide/route.ts            # Edge Runtime: context → bandit decision + PSI
-    app/api/session/route.ts           # Edge Runtime: history + PSI on demand
-    lib/bandits.ts                     # Pure-TS LinUCB / LinTS / ε-Greedy
-    lib/math.ts                        # Matrix inversion, Cholesky, MVN sampling
-    lib/psi.ts                         # PSI computation with GREEN/AMBER/RED thresholds
-    lib/session-store.ts               # In-memory per-session bandit state & history
-    config/underwriting-features.ts    # Feature definitions, context vector builder, hyperparams
-    components/
-      ApplicantForm.tsx                # Config-driven input form
-      AlgorithmSelector.tsx            # Algorithm toggle + parameter slider
-      DecisionOutput.tsx               # Action badge, risk score, Q-values, regret
-      LearningCharts.tsx               # SVG cumulative reward/regret curves
-      PSIMonitor.tsx                   # SVG PSI bar chart per feature
-    # Zero external backend dependency — all bandit math runs server-side
-
   tests/
     test_build_presentation.py         # pytest: validates 20 slides, presenter name, key titles
 
@@ -147,6 +121,9 @@ python stress_testing/rl/experiments/exp_006_fairness_audit.py
 
 # EXP-007: Benchmark comparison + regret analysis
 python stress_testing/rl/experiments/exp_007_benchmark_comparison.py
+
+# EXP-008: Human-in-the-loop underwriting
+python stress_testing/rl/experiments/exp_008_human_in_the_loop.py
 ```
 
 ### Run archived experiments (auto insurance)
@@ -206,24 +183,6 @@ python case-study/generate_vietnam_dataset.py
 python case-study/train_models.py
 ```
 
-### Run web demo (self-contained Next.js)
-```powershell
-cd web
-npm install
-npm run dev
-# Opens at http://localhost:3000
-# /demo — interactive underwriting dashboard
-```
-
-### Run React demo (backend-dependent)
-```powershell
-cd demo
-npm install
-npm run dev
-# Opens at http://localhost:5173
-# Requires DAC HealthPrice API reachable at https://dac-healthprice-api.onrender.com
-```
-
 ---
 
 ## Code Organization & Module Divisions
@@ -278,21 +237,6 @@ These modules are **archived** for reference. They depend on external packages i
 - Builds complete front matter: Khmer + French/English title pages, acknowledgement, abstracts, auto-generated TOC, list of figures/tables/abbreviations.
 - Handles inline markdown (`**bold**`, `*italic*`, `$math$`), bullet/numbered lists, code blocks with gray shading, markdown tables, and placeholders like `[FIGURE: ...]`, `[TABLE: ...]`, `[CITATION: ...]`.
 - Font: Times New Roman, 1.5 line spacing, justified body, 16pt bold ALL CAPS chapter headings.
-
-### React Demo (`demo/`)
-- Client-only React 19 + Vite SPA.
-- Proxies all computation to the remote DAC HealthPrice API on Render.
-- Four tabs: Simulator (single algorithm), Benchmark (all 4 algorithms), Fairness (regional/occupational parity), Applicant (browse + single decision).
-
-### Next.js Web App (`web/`)
-- Self-contained full-stack Next.js 14 (App Router) application.
-- Ports the Python bandit experiments directly into TypeScript — zero external backend dependency.
-- **Bandit Engine** (`lib/bandits.ts` + `lib/math.ts`): LinUCB, LinTS, ε-Greedy with custom linear algebra (Gauss-Jordan, Cholesky, MVN sampling) for 27×27 matrices.
-- **PSI Monitor** (`lib/psi.ts`): Population Stability Index matching Python fairness audit.
-- **Session Store** (`lib/session-store.ts`): In-memory per-session state (A/b matrices, history, cumulative metrics, approved-portfolio distributions).
-- **API Routes** (`app/api/decide/route.ts`, `app/api/session/route.ts`): Edge Runtime endpoints that build context vectors, run decisions, update matrices, and return PSI values.
-- **Config** (`config/underwriting-features.ts`): Single source of truth — 9 input features, 27-dim context vector builder with z-score normalization, action space, reward oracle, PSI reference distributions, hyperparameters.
-- **UI Components**: 100% config-driven form (`ApplicantForm`), algorithm toggle (`AlgorithmSelector`), decision output with Q-values (`DecisionOutput`), SVG learning curves (`LearningCharts`), SVG PSI monitor (`PSIMonitor`).
 
 ---
 
@@ -359,9 +303,8 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 
 - **Defense presentation**: `thesis/health_rl/health_rl_defense_presentation.pptx` (generated locally, not deployed). Archived auto version at `thesis/auto/auto_defense_presentation.pptx`.
 - **Thesis Word draft**: `thesis/health_rl/ITC_Thesis_Draft.docx` (generated locally).
-- **React demo** (`demo/`): Deployed to Vercel. Thin SPA that delegates all computation to the DAC HealthPrice API on Render.
-- **Next.js web app** (`web/`): Self-contained full-stack app deployable to Vercel with zero external backend dependencies. All bandit logic runs server-side in Edge Runtime.
 - **Vietnam demo HTML**: `thesis/vietnam_case_study.html` (static HTML, archived).
+- **Next.js web app** (`web/`): Self-contained full-stack app with standard demo (`/demo`) and Human-in-the-Loop underwriting demo (`/hitl`). Run with `cd web && npm install && npm run dev`.
 
 ---
 
@@ -376,14 +319,14 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 
 ## Current Status Snapshot (as of latest commit)
 
-- **Experiments**: ALL 3 RL underwriting experiments (EXP-005 through EXP-007) are complete and passing. Auto insurance experiments (EXP-001 through EXP-004) are archived and passing.
+- **Experiments**: ALL 4 RL underwriting experiments (EXP-005 through EXP-008) are complete and passing. Auto insurance experiments (EXP-001 through EXP-004) are archived and passing.
 - **Chapters**: Chapters 1 & 2 are **complete drafts** (~1,450 and ~2,200 words). Chapters 3, 4, and 5 are **skeletons only** (section headers + placeholders). ITC internship-report template versions (`chapterI`–`chapterIV`) also exist.
 - **Defense presentation**: **COMPLETE** — `thesis/health_rl/build_presentation.py` generates a full 20-slide deck. Output `health_rl_defense_presentation.pptx` already generated. Auto version (`thesis/auto/`) is also complete but archived.
 - **Thesis DOCX**: **COMPLETE** — `build_thesis_docx.py` converts Markdown chapters to ITC-formatted Word. Output `ITC_Thesis_Draft.docx` already generated (contains Ch1–2 body + Ch3–5 skeletons).
 - **Figures**: 6 PNGs generated in `thesis/health_rl/figures/` (regret curves, reward curves, action evolution, fairness region, fairness occupation, framework).
 - **Cambodia dataset & models**: Complete (`case-study/models/` populated with `cambodia_*.pkl`, `.json`, `.csv`).
 - **Vietnam dataset & models**: Archived (`case-study/models/` health_* / life_* retained for reference).
-- **Demo apps**: BOTH built — `demo/` (React+Vite, backend-dependent) and `web/` (Next.js 14 full-stack, self-contained).
+- **Demo apps**: RESTORED. Next.js (`web/`) frontend is back with a new Human-in-the-Loop underwriting demo (`/hitl`). React+Vite (`demo/`) restored from git for reference.
 
 ---
 
@@ -394,6 +337,7 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 | EXP-005 | `stress_testing/rl/experiments/exp_005_underwriting_convergence.py` | LinUCB cumulative reward $58,642 vs Static XGB $35,032 (+67%); avg regret $5.35 vs $10.66 in last 500 rounds |
 | EXP-006 | `stress_testing/rl/experiments/exp_006_fairness_audit.py` | No region/occupation approval rate < 50% of max; Region PSI=0.0057 GREEN, Occupation PSI=0.0095 GREEN |
 | EXP-007 | `stress_testing/rl/experiments/exp_007_benchmark_comparison.py` | LinTS lowest regret ($5,641), followed by LinUCB ($12,954), EpsilonGreedy ($24,273), StaticXGB ($35,067) |
+| EXP-008 | `stress_testing/rl/experiments/exp_008_human_in_the_loop.py` | HITL reward $61,176 vs baseline $58,642 (+4.3%); alignment 56%; human cost $3,080 (5% of reward) |
 | EXP-001 | `stress_testing/auto_insurance/exp_001_baseline.py` | (ARCHIVED) PSI = 0.000 baseline (all GREEN) |
 | EXP-002 | `stress_testing/auto_insurance/exp_002_responsiveness.py` | (ARCHIVED) PSI monotonic: GREEN to AMBER to RED at 0% to 30% to 50% distortion |
 | EXP-003 | `stress_testing/auto_insurance/exp_003_failure_modes.py` | (ARCHIVED) 3/3 failure modes caught |
@@ -403,4 +347,4 @@ Several files in `stress_testing/` (root level) import modules that live in `C:\
 
 ## Relationship to DAC Platform
 
-This thesis demo is planned as a standalone health insurance underwriting dashboard. The backend may be shared with the existing Render deployment at `C:\DAC-UW-Agent`. The auto insurance frontend concept (`https://dac-auto-insurance.vercel.app`) is archived.
+The auto insurance frontend concept (`https://dac-auto-insurance.vercel.app`) is archived.
