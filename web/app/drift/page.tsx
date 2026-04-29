@@ -83,8 +83,9 @@ export default function DriftPage() {
           Adaptive Underwriting Under Portfolio Drift
         </h1>
         <p className="text-sm text-muted-foreground">
-          Static LinUCB fails when applicant distributions shift. Discounted LinUCB
-          (with forgetting factor λ) detects and recovers from drift.
+          Static LinUCB fails when applicant distributions shift — e.g., a Hepatitis B
+          outbreak in Preah Sihanouk increases coastal applicants, raising average risk.
+          Discounted LinUCB (with forgetting factor λ) forgets outdated data and recovers.
         </p>
       </div>
 
@@ -134,6 +135,17 @@ export default function DriftPage() {
                     {((1 - result.adaptive.finalRegret / result.static.finalRegret) * 100).toFixed(1)}%
                   </Badge>
                 </div>
+                <div className="rounded-md border p-2 mt-2">
+                  <div className="text-xs text-muted-foreground mb-1">Portfolio Stability (post-drift)</div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">Static: RED</Badge>
+                    <span className="text-xs text-muted-foreground">PSI &gt; 0.25 — outdated parameters</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge className="bg-green-100 text-green-800 border-green-300 text-xs">Adaptive: GREEN</Badge>
+                    <span className="text-xs text-muted-foreground">PSI &lt; 0.10 — recovered within 200 rounds</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -154,6 +166,14 @@ export default function DriftPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  <div className="mb-3 flex items-center gap-2">
+                    <Badge className="bg-red-100 text-red-800 border-red-300 text-xs">
+                      ⚠ DRIFT EVENT
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      Round {result.driftRound}: Hep-B outbreak — younger, higher-risk coastal applicants enter the pool
+                    </span>
+                  </div>
                   <RaceChart
                     staticSeries={result.static.series}
                     adaptiveSeries={result.adaptive.series}

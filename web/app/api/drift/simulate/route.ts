@@ -161,15 +161,11 @@ export async function POST(req: Request) {
     let adaptiveCumReward = 0;
     let adaptiveCumRegret = 0;
 
-    // PSI tracking on approved portfolio (region + occupation)
-    const staticApproved: { region: string[]; occupation: string[] } = {
-      region: [],
-      occupation: [],
-    };
-    const adaptiveApproved: { region: string[]; occupation: string[] } = {
-      region: [],
-      occupation: [],
-    };
+    // PSI tracking on approved portfolio
+    const staticApproved: { riskScores: number[] } = { riskScores: [] };
+    const adaptiveApproved: { riskScores: number[] } = { riskScores: [] };
+
+    // (PSI time series could be added here for live monitoring)
 
     for (let t = 0; t < nRounds; t++) {
       const driftFactor = t >= driftRound ? driftMagnitude : 0;
@@ -190,8 +186,7 @@ export async function POST(req: Request) {
         action: staticResult.action,
       });
       if (staticResult.action === 0 || staticResult.action === 1) {
-        staticApproved.region.push(String(applicant.features.region));
-        staticApproved.occupation.push(String(applicant.features.occupation));
+        staticApproved.riskScores.push(applicant.riskScore);
       }
 
       // Adaptive bandit
@@ -218,8 +213,7 @@ export async function POST(req: Request) {
         action: adaptiveResult.action,
       });
       if (adaptiveResult.action === 0 || adaptiveResult.action === 1) {
-        adaptiveApproved.region.push(String(applicant.features.region));
-        adaptiveApproved.occupation.push(String(applicant.features.occupation));
+        adaptiveApproved.riskScores.push(applicant.riskScore);
       }
     }
 
