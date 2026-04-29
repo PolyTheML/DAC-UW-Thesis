@@ -1,0 +1,128 @@
+{
+  "health_model": {
+    "target": "health_score",
+    "description": "Predicts health risk score (15-95). Lower = higher claim risk.",
+    "glm": {
+      "model": "GLM (OLS)",
+      "rmse": 2.5779,
+      "mae": 2.0421,
+      "r2": 0.9257
+    },
+    "xgboost": {
+      "model": "XGBoost",
+      "rmse": 0.8976,
+      "mae": 0.6717,
+      "r2": 0.991
+    },
+    "top_features": [
+      {
+        "feature": "age",
+        "label": "Age",
+        "importance": 5.1364
+      },
+      {
+        "feature": "bmi",
+        "label": "BMI",
+        "importance": 3.9268
+      },
+      {
+        "feature": "occupation_enc",
+        "label": "Occupation",
+        "importance": 1.2899
+      },
+      {
+        "feature": "has_tb",
+        "label": "TB",
+        "importance": 0.4071
+      },
+      {
+        "feature": "has_hepatitis_b",
+        "label": "Hepatitis B",
+        "importance": 0.2895
+      }
+    ],
+    "train_size": 1600,
+    "test_size": 400
+  },
+  "mortality_model": {
+    "target": "mortality_multiplier",
+    "description": "Predicts mortality risk multiplier. 1.0 = standard rate.",
+    "glm": {
+      "model": "GLM (Gamma/log)",
+      "rmse": 0.2302,
+      "mae": 0.1792,
+      "r2": 0.6578
+    },
+    "xgboost": {
+      "model": "XGBoost",
+      "rmse": 0.0348,
+      "mae": 0.0214,
+      "r2": 0.9922
+    },
+    "top_features": [
+      {
+        "feature": "occupation_enc",
+        "label": "Occupation",
+        "importance": 0.1621
+      },
+      {
+        "feature": "age",
+        "label": "Age",
+        "importance": 0.1589
+      },
+      {
+        "feature": "condition_count",
+        "label": "# Pre-existing Conditions",
+        "importance": 0.1269
+      },
+      {
+        "feature": "is_smoking",
+        "label": "Smoker",
+        "importance": 0.0905
+      },
+      {
+        "feature": "is_exercise",
+        "label": "Exercises Regularly",
+        "importance": 0.0557
+      }
+    ],
+    "train_size": 1600,
+    "test_size": 400
+  },
+  "feature_names": [
+    "age",
+    "bmi",
+    "is_smoking",
+    "is_exercise",
+    "has_family_history",
+    "monthly_income_usd",
+    "condition_count",
+    "has_hypertension",
+    "has_diabetes",
+    "has_heart_disease",
+    "has_copd_asthma",
+    "has_arthritis",
+    "has_tb",
+    "has_hepatitis_b",
+    "region_enc",
+    "occupation_enc"
+  ],
+  "feature_labels": {
+    "age": "Age",
+    "bmi": "BMI",
+    "is_smoking": "Smoker",
+    "is_exercise": "Exercises Regularly",
+    "has_family_history": "Family History",
+    "monthly_income_usd": "Monthly Income (USD)",
+    "condition_count": "# Pre-existing Conditions",
+    "has_hypertension": "Hypertension",
+    "has_diabetes": "Diabetes",
+    "has_heart_disease": "Heart Disease",
+    "has_copd_asthma": "COPD/Asthma",
+    "has_arthritis": "Arthritis",
+    "has_tb": "TB",
+    "has_hepatitis_b": "Hepatitis B",
+    "region_enc": "Region",
+    "occupation_enc": "Occupation"
+  }
+}

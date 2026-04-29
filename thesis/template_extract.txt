@@ -1,0 +1,160 @@
+Total paragraphs: 364
+================================================================================
+[1] [Normal] ​
+[6] [Normal] គម្រោងសញ្ញាបត្រវិស្វករ
+[8] [Normal] ថ្ងៃទី     ខែ        ឆ្នាំ ២០២៦
+[10] [Normal] ថ្ងៃទី	ខែ	ឆ្នាំ ២០២៦
+[12] [Normal] ប្រធានបទ:
+[14] [Normal] សហគ្រាស: ក្រុមហ៊ុន ឬក្រសួង......................
+[15] [Normal] ប្រធានដេប៉ាតឺម៉ង់:	បណ្ឌិត លិន មង្គលសិរី
+[16] [Normal] សាស្រ្តាចារ្យដឹកនាំគម្រោង:	លោក​​
+[17] [Normal] អ្នកទទួលខុសត្រូវក្នុងសហគ្រាស:	លោក
+[20] [Normal] រាជធានីភ្នំពេញ
+[46] [Normal] DEPARTMENT DE MATHEMATIQUES APPLIQUEES ET STATISTIQUES
+[48] [Normal] MEMOIRE DE FIN D’ETUDES
+[49] [Normal] DE M./Mlle. ……………….
+[50] [Normal] Date de soutenance : le         	        2026
+[51] [Normal] « Autorise la soutenance du mémoire »
+[52] [Normal] Directeur de l’Institut:
+[53] [Normal] Phnom Penh, le              2026
+[56] [Normal] Titre: :
+[58] [Normal] Etablissement du stage:	………………………….……………
+[59] [Normal] Chef du département:	Dr.​ LIN Mongkolsery
+[60] [Normal] Tuteur de stage:	M.
+[61] [Normal] Responsable de l’établissement:	M.
+[63] [Normal] PHNOM PENH
+[64] [Normal] ACKNOWLEDGEMENT
+[66] [Normal] I would like to express my sincere gratitude to my academic advisor, Dr. [Advisor’s Full Name], and co-advisor, [Co-advisor’s Name], for their continuous guidance, encouragement, and invaluable support throughout this thesis. Their expertise and insights have been essential to the completion of this
+[69] [Normal] អត្ថបទសង្ខេប
+[70] [Normal] ABSTRACT
+[72] [Normal] An abstract is a summary of the content of your report.
+[73] [Normal] It should be included:
+[74] [Normal] Present your Project / Topic.
+[75] [Normal] Briefly explain the problems and objectives of your project.
+[76] [Normal] Briefly explain the solution for those problems.
+[77] [Normal] Give a short conclusion and discussion.
+[83] [Normal] TABLE OF CONTENTS
+[85] [Normal] ACKNOWLEDGEMENT	I អត្ថបទសង្ខេប	II
+[86] [Normal] SUMMARY	III
+[87] [Normal] ABSTRACT	IV
+[88] [Normal] TABLE OF CONTENTS	V
+[89] [Normal] LIST OF FIGURES	VII
+[90] [Normal] LIST OF TABLES	VIII
+[91] [Normal] LIST OF ABBREVIATIONS	IX
+[92] [List Paragraph] INTRODUCTION	1
+[93] [Normal] 1.1. 	Presentation of Internship	1
+[94] [Normal] Objective of Internship	1
+[95] [Normal] Duration of Internship	1
+[96] [Normal] 1.2. 	Presentation of Organization	1
+[97] [Normal] General Information of Company	1
+[98] [Normal] Services of Company	1
+[99] [Normal] Vision & Mission	1
+[100] [Normal] Organization Chart	1
+[101] [Normal] Address & Contact	1
+[102] [List Paragraph] PRESENTATION OF THE PROJECT	2
+[103] [Normal] General Presentation of Project	2
+[104] [Normal] Problematic	2
+[105] [Normal] Objective………………………………………………………………………………………………………………………………………. 2
+[106] [Normal] Planning of Project………………………………………………………………………………………………………………………… 2
+[107] [Normal] LITERATURE REVIEW…………………………………………………………………………………………………………………………. 3
+[108] [Normal] PROJECT ANALYSIS AND CONCEPTS………………………………………………………………………………………………….. 4
+[109] [Normal] 4.1. 	FUNCTIONAL REQUIREMENTS	4
+[110] [Normal] NON-FUNCTIONAL REQUIREMENTS……………………………………………………………………………………………….4
+[111] [Normal] TOOL AND TECHNOLOGY REQUIREMENTS……………………………………………………………………………………. 4
+[112] [Normal] DETAIL CONCEPT	5
+[113] [Normal] IMPLEMENTATION	6
+[114] [Normal] Project Topology	6
+[115] [Normal] Steps of Implementation………………………………………………………………………………………………………………. 6
+[116] [Normal] Configuration	6
+[117] [List Paragraph] CONCLUSION	7
+[118] [Normal] Completed Functions	7
+[119] [Normal] Uncompleted Function	7
+[120] [Normal] Difficulties	7
+[121] [Normal] Perspective	7
+[122] [Normal] REFERENCES	8
+[123] [Normal] Appendices	9
+[124] [Normal] Report Format	10
+[129] [Normal] LIST OF FIGURES
+[133] [Normal] LIST OF TABLES
+[153] [Normal] LIST OF ABBREVIATIONS
+[154] [Normal] An abbreviation is a shortened version of a term or phrase, e.g. kg for kilogram or Dr. for doctor.
+[157] [Heading 1] I.	INTRODUCTION
+[158] [Heading 4] 1.1. 	Presentation of Internship
+[159] [Normal] Describe overall your internship. It should be included:
+[160] [Normal] The duration of your internship (4 or 6 months)
+[161] [Normal] Your workplace (Ex: (CADT) which is located at 2nd bridge…)
+[162] [Normal] Your Role (Ex: IT support, Research assistant,...)
+[163] [Normal] Your Project (Ex: My project is to build a redundant web server,...)
+[164] [Normal] Your responsibility (Ex: your responsibility for that project)
+[165] [Heading 3] 1.1.1. Objective of Internship
+[166] [Normal] Describe the benefits or pros of the Internship (Paragraph).
+[167] [Heading 3] 1.1.2. Duration of Internship
+[168] [Normal] Indicate the duration of your internship (the day of starting and ending of your internship) and your working schedule should be included in this part.
+[169] [Heading 4] 1.2. Presentation of Organization
+[170] [Heading 5] 1.2.1. General Information of Company
+[171] [Normal] Describe the overall of your company in which you have taken internship. The company’s Logo should be put in this part.
+[172] [Heading 5] 1.2.2. Services of Company
+[173] [Normal] It can be found on the website of the company or ask your supervisor.
+[174] [Normal] 1.2.3. Vision & Mission
+[175] [Normal] It can be found on the website of the company or ask your supervisor.
+[176] [Normal] 1.2.4. Organization Chart
+[177] [Heading 3] It can be found on the website of the company or ask your supervisor.
+[178] [Normal] 1.2.5. Address & Contact
+[179] [Normal] It can be found on the website of the company or ask your supervisor.
+[184] [Heading 1] II. PRESENTATION OF THE PROJECT
+[186] [Heading 2] 2.1. General Presentation of Project
+[187] [Normal] Describe the project overview. One of the most important sections is where you need to clearly explain the problem(s) and objective(s) of your project.
+[188] [Heading 2] 2.2. Problematic
+[189] [Normal] Portray the existing issues that bring you the project.
+[190] [Heading 2] 2.3. Objective
+[191] [Normal] The purposes or core value of the project or what we want because of the project.
+[192] [Heading 2] 2.4. Planning of Project
+[193] [Normal] Planning of a project describes the whole process starting from the beginning of the internship till the end. To keep track of your work progress, it should be a table to show your schedule.
+[210] [Heading 1] III.	LITERATURE REVIEW
+[211] [Normal] Related Work
+[212] [Normal] Describe the existing system or research paper.
+[213] [Normal] What is the unique point of the system or research?
+[214] [Normal] How can you improve from the existing research or system?
+[215] [Normal] (Example: Can be existing apps, websites, software, or technologies reviews, previous work reviews)
+[237] [Heading 1] IV.	PROJECT ANALYSIS AND CONCEPTS
+[238] [Normal] In this section, you need to give the details about the main functionalities/features of the project to fulfill your objective or to solve those problems.
+[239] [Normal] To determine the functions of the project you need to do the  case study of requirements based on the Problems and Objectives.
+[240] [Heading 2] 4.1. FUNCTIONAL REQUIREMENTS
+[241] [Normal] The most important functionalities and/or features that you need to complete for solving the problems of your project.
+[242] [Heading 2] 4.2. NON-FUNCTIONAL REQUIREMENTS
+[243] [Normal] The additional requirements that​​ requirements are also important for your project.
+[244] [Heading 2] 4.3. TOOL AND TECHNOLOGY REQUIREMENTS
+[245] [Normal] List the tools and technology (with a brief description) which are used in the project.
+[250] [Heading 1] V.	DETAIL CONCEPT
+[251] [Normal] Describe in detail(s) about the technology which is used in your project. It should be detail about:
+[252] [Normal] ⮚ What is that?
+[253] [Normal] ⮚ How does it work? (Process)
+[254] [Normal] ⮚ The architecture of that technology.
+[255] [Normal] ⮚ The essential points of the technology which made you choose this technology to implement in the project.
+[282] [Heading 1] VI.	IMPLEMENTATION
+[283] [Heading 2] 6.1. Project Topology
+[284] [Normal] It is very important to start with your project infrastructure. And in this section, you need to explain clearly about what you have done in this infrastructure.
+[286] [Heading 2] 6.2. Steps of Implementation
+[287] [Normal] You need to list down the important steps of installation and configuration.
+[289] [Heading 2] 6.3. Configuration
+[290] [Normal] In this section, you are recommended to input only the main configurations or only the result of the configuration.
+[311] [Heading 1] VII.	CONCLUSION
+[312] [Heading 2] 7.1.  Completed Functions
+[313] [Normal] You just need to list down the finished functional and non-functional requirements.
+[315] [Heading 2] 7.2.  Uncompleted Function
+[316] [Normal] You need to list down the functions which were not accomplished.
+[318] [Heading 2] 7.3.  Difficulties
+[319] [Normal] Technical difficulties from your project. (The difficulties which were faced during you implemented the project.)
+[321] [Heading 2] 7.4.  Perspective
+[322] [Normal] Perspective is about what you want to do next for improving your project.
+[326] [Heading 1] REFERENCES
+[327] [Normal] A reference is a referral to another text or information and can refer to written sources (books, reports, articles).
+[328] [Normal] Note: References should be written or generated in a website by following APA citation style. (APA7 is recommended).
+[329] [Normal] Website:
+[330] [List Paragraph] https://www.citefast.com/?s=APA7#_Webpage
+[331] [List Paragraph] https://scholar.google.com/
+[332] [List Paragraph] etc.
+[356] [Normal] Appendices
+[357] [Normal] The full configurations of your project can be included in this section.
+[360] [Heading 1] Report Format
+[361] [Normal] Margin, Line Space, Font Size

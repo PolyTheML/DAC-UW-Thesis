@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from pptx import Presentation
 
-SCRIPT = Path("thesis/auto/build_presentation.py")
-OUTPUT = Path(__file__).parent.parent / "thesis/auto/auto_defense_presentation.pptx"
+SCRIPT = Path("thesis/health_rl/build_presentation.py")
+OUTPUT = Path(__file__).parent.parent / "thesis/health_rl/health_rl_defense_presentation.pptx"
 
 
 def _run_build():
@@ -46,17 +46,26 @@ def test_title_slide_has_presenter_name(built_presentation):
 def test_slide_titles_present(built_presentation):
     prs = Presentation(str(built_presentation))
     expected = [
-        ("Population Stability", 0),
-        ("Agenda",               1),
-        ("Cambodia",             2),
-        ("Research Claim",       3),
-        ("PSI",                  4),
-        ("Telematics",           5),
-        ("Baseline",             9),
-        ("Responsiveness",      10),
-        ("Failure Modes",       11),
-        ("Temporal",            14),
-        ("Thank You",           19),
+        ("Adaptive Underwriting", 0),
+        ("Agenda",                1),
+        ("Cambodia",              2),
+        ("Research Claim",        3),
+        ("Bandit",                4),
+        ("Dataset",               5),
+        ("Algorithms",            6),
+        ("Reward",                7),
+        ("Methodology",           8),
+        ("EXP-005",               9),
+        ("Learning Curves",      10),
+        ("Fairness",             11),
+        ("EXP-007",              12),
+        ("PSI",                  13),
+        ("Proposed Adaptive",    14),
+        ("Implementation",       15),
+        ("Social Impact",        16),
+        ("Discussion",           17),
+        ("Conclusion",           18),
+        ("Thank You",            19),
     ]
     for keyword, idx in expected:
         texts = [

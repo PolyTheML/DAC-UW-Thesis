@@ -1,0 +1,167 @@
+﻿=== FULL TEXT ===
+ΓÇï
+ß₧éß₧ÿßƒÆß₧Üßƒäß₧äß₧ƒß₧ëßƒÆß₧ëß₧╢ß₧öß₧ÅßƒÆß₧Üß₧£ß₧╖ß₧ƒßƒÆß₧£ß₧Çß₧Ü
+ß₧ÉßƒÆß₧äßƒâß₧æß₧╕     ß₧üßƒé        ß₧åßƒÆß₧ôß₧╢ßƒå ßƒóßƒáßƒóßƒª
+ß₧ÉßƒÆß₧äßƒâß₧æß₧╕	ß₧üßƒé	ß₧åßƒÆß₧ôß₧╢ßƒå ßƒóßƒáßƒóßƒª
+ß₧ößƒÆß₧Üß₧Æß₧╢ß₧ôß₧öß₧æ:
+ß₧ƒß₧áß₧éßƒÆß₧Üß₧╢ß₧ƒ: ß₧ÇßƒÆß₧Üß₧╗ß₧ÿß₧áßƒèß₧╗ß₧ô ß₧¼ß₧ÇßƒÆß₧Üß₧ƒß₧╜ß₧ä......................
+ß₧ößƒÆß₧Üß₧Æß₧╢ß₧ôß₧èßƒüß₧ößƒëß₧╢ß₧Åß₧║ß₧ÿßƒëß₧äßƒï:	ß₧öß₧ÄßƒÆß₧îß₧╖ß₧Å ß₧¢ß₧╖ß₧ô ß₧ÿß₧äßƒÆß₧éß₧¢ß₧ƒß₧╖ß₧Üß₧╕
+ß₧ƒß₧╢ß₧ƒßƒÆß₧ÜßƒÆß₧Åß₧╢ß₧àß₧╢ß₧ÜßƒÆß₧Öß₧èß₧╣ß₧Çß₧ôß₧╢ßƒåß₧éß₧ÿßƒÆß₧Üßƒäß₧ä:	ß₧¢ßƒäß₧ÇΓÇïΓÇï
+ß₧óßƒÆß₧ôß₧Çß₧æß₧æß₧╜ß₧¢ß₧üß₧╗ß₧ƒß₧ÅßƒÆß₧Üß₧╝ß₧£ß₧ÇßƒÆß₧ôß₧╗ß₧äß₧ƒß₧áß₧éßƒÆß₧Üß₧╢ß₧ƒ:	ß₧¢ßƒäß₧Ç
+ß₧Üß₧╢ß₧çß₧Æß₧╢ß₧ôß₧╕ß₧ùßƒÆß₧ôßƒåß₧ûßƒüß₧ë
+DEPARTMENT DE MATHEMATIQUES APPLIQUEES ET STATISTIQUES
+MEMOIRE DE FIN DΓÇÖETUDES
+DE M./Mlle. ΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª.
+Date de soutenance┬á: le         	        2026
+┬½ Autorise la soutenance du m├⌐moire ┬╗
+Directeur de lΓÇÖInstitut:
+Phnom Penh, le              2026
+Titre: :
+Etablissement du stage:	ΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª.ΓÇªΓÇªΓÇªΓÇªΓÇª
+Chef du d├⌐partement:	Dr.ΓÇï LIN Mongkolsery
+Tuteur de stage:	M.
+Responsable de lΓÇÖ├⌐tablissement:	M.
+PHNOM PENH
+ACKNOWLEDGEMENT
+I would like to express my sincere gratitude to my academic advisor, Dr. [AdvisorΓÇÖs Full Name], and co-advisor, [Co-advisorΓÇÖs Name], for their continuous guidance, encouragement, and invaluable support throughout this thesis. Their expertise and insights have been essential to the completion of this work. I also extend my thanks to my industry supervisor, [SupervisorΓÇÖs Name], at [Company Name], for their practical guidance and technical support during my internship/research period. 
+
+My heartfelt appreciation goes to the members of the thesis committee and reviewers for taking the time to evaluate my work and provide constructive feedback. Their comments have helped me improve the quality and rigor of this research .
+
+I would also like to express my gratitude to the Department of Applied Mathematics and Statistics (AMS) at the Institute of Technology of Cambodia, particularly to Dr. LIN Mongkolsery, and lecturers in AMS who have taught and guided me throughout the program.  I am also thankful to department secretary, Ms. CHHEANG Sreypich, for her administrative and academic support. I would like to extend my deepest gratitude to the rector of ITC, Dr. PO Kimtho, for leading an institution that fosters academic excellence and research.
+
+I gratefully acknowledge the financial support received from [Name of Scholarship or Funding Organization], which enabled me to focus on my studies and complete this research. (if there exist)
+
+Last but not least, I would like to thank my beloved family and friends for their unwavering support, encouragement, and understanding. Their presence has been a constant source of motivation throughout my academic journey."
+ß₧óß₧ÅßƒÆß₧Éß₧öß₧æß₧ƒß₧äßƒÆß₧üßƒüß₧ö
+ABSTRACT
+An abstract is a summary of the content of your report.
+It should be included:
+Present your Project / Topic.
+Briefly explain the problems and objectives of your project.
+Briefly explain the solution for those problems.
+Give a short conclusion and discussion.
+TABLE OF CONTENTS
+ACKNOWLEDGEMENT	I ß₧óß₧ÅßƒÆß₧Éß₧öß₧æß₧ƒß₧äßƒÆß₧üßƒüß₧ö	II
+SUMMARY	III
+ABSTRACT	IV
+TABLE OF CONTENTS	V
+LIST OF FIGURES	VII
+LIST OF TABLES	VIII
+LIST OF ABBREVIATIONS	IX
+INTRODUCTION	1
+1.1. 	Presentation of Internship	1
+Objective of Internship	1
+Duration of Internship	1
+1.2. 	Presentation of Organization	1
+General Information of Company	1
+Services of Company	1
+Vision & Mission	1
+Organization Chart	1
+Address & Contact	1
+PRESENTATION OF THE PROJECT	2
+General Presentation of Project	2
+Problematic	2
+ObjectiveΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª. 2
+Planning of ProjectΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª 2
+LITERATURE REVIEWΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª. 3
+PROJECT ANALYSIS AND CONCEPTSΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª.. 4
+4.1. 	FUNCTIONAL REQUIREMENTS	4
+NON-FUNCTIONAL REQUIREMENTSΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª.4
+TOOL AND TECHNOLOGY REQUIREMENTSΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª. 4
+DETAIL CONCEPT	5
+IMPLEMENTATION	6
+Project Topology	6
+Steps of ImplementationΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇªΓÇª. 6
+Configuration	6
+CONCLUSION	7
+Completed Functions	7
+Uncompleted Function	7
+Difficulties	7
+Perspective	7
+REFERENCES	8
+Appendices	9
+Report Format	10
+LIST OF FIGURES
+LIST OF TABLES
+LIST OF ABBREVIATIONS
+An abbreviation is a shortened version of a term or phrase, e.g. kg for kilogram or Dr. for doctor.
+I.	INTRODUCTION
+1.1. 	Presentation of Internship
+Describe overall your internship. It should be included:
+The duration of your internship (4 or 6 months)
+Your workplace (Ex: (CADT) which is located at 2nd bridgeΓÇª)
+Your Role (Ex: IT support, Research assistant,...)
+Your Project (Ex: My project is to build a redundant web server,...)
+Your responsibility (Ex: your responsibility for that project)
+1.1.1. Objective of Internship
+Describe the benefits or pros of the Internship (Paragraph).
+1.1.2. Duration of Internship
+Indicate the duration of your internship (the day of starting and ending of your internship) and your working schedule should be included in this part.
+1.2. Presentation of Organization
+1.2.1. General Information of Company
+Describe the overall of your company in which you have taken internship. The companyΓÇÖs Logo should be put in this part.
+1.2.2. Services of Company
+It can be found on the website of the company or ask your supervisor.
+1.2.3. Vision & Mission
+It can be found on the website of the company or ask your supervisor.
+1.2.4. Organization Chart
+It can be found on the website of the company or ask your supervisor.
+1.2.5. Address & Contact
+It can be found on the website of the company or ask your supervisor.
+II. PRESENTATION OF THE PROJECT
+2.1. General Presentation of Project
+Describe the project overview. One of the most important sections is where you need to clearly explain the problem(s) and objective(s) of your project.
+2.2. Problematic
+Portray the existing issues that bring you the project.
+2.3. Objective
+The purposes or core value of the project or what we want because of the project.
+2.4. Planning of Project
+Planning of a project describes the whole process starting from the beginning of the internship till the end. To keep track of your work progress, it should be a table to show your schedule.
+III.	LITERATURE REVIEW
+Related Work
+Describe the existing system or research paper.
+What is the unique point of the system or research?
+How can you improve from the existing research or system?
+(Example: Can be existing apps, websites, software, or technologies reviews, previous work reviews)
+IV.	PROJECT ANALYSIS AND CONCEPTS
+In this section, you need to give the details about the main functionalities/features of the project to fulfill your objective or to solve those problems.
+To determine the functions of the project you need to do the  case study of requirements based on the Problems and Objectives.
+4.1. FUNCTIONAL REQUIREMENTS
+The most important functionalities and/or features that you need to complete for solving the problems of your project.
+4.2. NON-FUNCTIONAL REQUIREMENTS
+The additional requirements thatΓÇïΓÇï requirements are also important for your project.
+4.3. TOOL AND TECHNOLOGY REQUIREMENTS
+List the tools and technology (with a brief description) which are used in the project.
+V.	DETAIL CONCEPT
+Describe in detail(s) about the technology which is used in your project. It should be detail about:
+Γ«Ü What is that?
+Γ«Ü How does it work? (Process)
+Γ«Ü The architecture of that technology.
+Γ«Ü The essential points of the technology which made you choose this technology to implement in the project.
+VI.	IMPLEMENTATION
+6.1. Project Topology
+It is very important to start with your project infrastructure. And in this section, you need to explain clearly about what you have done in this infrastructure.
+6.2. Steps of Implementation
+You need to list down the important steps of installation and configuration.
+6.3. Configuration
+In this section, you are recommended to input only the main configurations or only the result of the configuration.
+VII.	CONCLUSION
+7.1.  Completed Functions
+You just need to list down the finished functional and non-functional requirements.
+7.2.  Uncompleted Function
+You need to list down the functions which were not accomplished.
+7.3.  Difficulties
+Technical difficulties from your project. (The difficulties which were faced during you implemented the project.)
+7.4.  Perspective
+Perspective is about what you want to do next for improving your project.
+REFERENCES
+A reference is a referral to another text or information and can refer to written sources (books, reports, articles).
+Note: References should be written or generated in a website by following APA citation style. (APA7 is recommended).
+Website:
+https://www.citefast.com/?s=APA7#_Webpage
+https://scholar.google.com/
+etc.
+Appendices
+The full configurations of your project can be included in this section.
+Report Format
+Margin, Line Space, Font Size
