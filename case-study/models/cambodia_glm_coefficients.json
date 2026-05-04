@@ -1,32 +1,35 @@
 {
   "health_ols": {
-    "intercept": 152.39388406202426,
+    "intercept": 141.55404531917705,
     "params": {
-      "age": -0.5488158246333216,
-      "bmi": -1.9121020030374951,
-      "is_smoking": -0.5607510063175345,
-      "is_exercise": 0.23290570371691244,
-      "has_family_history": -0.5931383736737086,
-      "condition_count": -1.7197697180298426,
-      "monthly_income_usd": 0.004859021382688525
+      "age": -0.5756224999880422,
+      "gender_female": 1.1036007139915531,
+      "bmi": -1.5951951636897632,
+      "is_smoking": -1.8982711569804862,
+      "is_exercise": 0.17417427262208485,
+      "has_family_history": -0.11325187831756045,
+      "condition_count": -1.346713705410965,
+      "monthly_income_usd": 0.004680044139402485
     },
     "method": "OLS (Gaussian, identity link)"
   },
   "mortality_gamma": {
-    "intercept": 0.1377365005384546,
+    "intercept": 0.18393689415763026,
     "params": {
-      "age": 0.00886513411424003,
-      "bmi": 0.0024644499936867033,
-      "is_smoking": 0.160289292238963,
-      "is_exercise": -0.07504687511302159,
-      "has_family_history": 0.03327696007539078,
-      "condition_count": 0.15986644827963295,
-      "monthly_income_usd": -0.0003907089050851629
+      "age": 0.011331908571159918,
+      "gender_female": -0.1384960547841134,
+      "bmi": 0.0020452284827276036,
+      "is_smoking": 0.15839401480826631,
+      "is_exercise": -0.0669048462784145,
+      "has_family_history": 0.0019030160632656015,
+      "condition_count": 0.1681894915436699,
+      "monthly_income_usd": -0.0005012095378127621
     },
     "method": "GLM (Gamma, log link) \u2014 predict = exp(X @ params)"
   },
   "feature_order": [
     "age",
+    "gender_female",
     "bmi",
     "is_smoking",
     "is_exercise",

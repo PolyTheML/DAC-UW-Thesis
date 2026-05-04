@@ -4,41 +4,41 @@
     "description": "Predicts health risk score (15-95). Lower = higher claim risk.",
     "glm": {
       "model": "GLM (OLS)",
-      "rmse": 2.5779,
-      "mae": 2.0421,
-      "r2": 0.9257
+      "rmse": 2.6892,
+      "mae": 2.1883,
+      "r2": 0.8819
     },
     "xgboost": {
       "model": "XGBoost",
-      "rmse": 0.8976,
-      "mae": 0.6717,
-      "r2": 0.991
+      "rmse": 0.9154,
+      "mae": 0.6473,
+      "r2": 0.9863
     },
     "top_features": [
       {
-        "feature": "age",
-        "label": "Age",
-        "importance": 5.1364
-      },
-      {
         "feature": "bmi",
         "label": "BMI",
-        "importance": 3.9268
+        "importance": 3.8783
+      },
+      {
+        "feature": "age",
+        "label": "Age",
+        "importance": 3.813
       },
       {
         "feature": "occupation_enc",
         "label": "Occupation",
-        "importance": 1.2899
+        "importance": 1.0262
       },
       {
-        "feature": "has_tb",
-        "label": "TB",
-        "importance": 0.4071
+        "feature": "is_smoking",
+        "label": "Smoker",
+        "importance": 0.4691
       },
       {
         "feature": "has_hepatitis_b",
         "label": "Hepatitis B",
-        "importance": 0.2895
+        "importance": 0.3327
       }
     ],
     "train_size": 1600,
@@ -49,41 +49,41 @@
     "description": "Predicts mortality risk multiplier. 1.0 = standard rate.",
     "glm": {
       "model": "GLM (Gamma/log)",
-      "rmse": 0.2302,
-      "mae": 0.1792,
-      "r2": 0.6578
+      "rmse": 0.1931,
+      "mae": 0.1534,
+      "r2": 0.7303
     },
     "xgboost": {
       "model": "XGBoost",
-      "rmse": 0.0348,
-      "mae": 0.0214,
-      "r2": 0.9922
+      "rmse": 0.0308,
+      "mae": 0.0203,
+      "r2": 0.9931
     },
     "top_features": [
       {
         "feature": "occupation_enc",
         "label": "Occupation",
-        "importance": 0.1621
+        "importance": 0.1571
       },
       {
         "feature": "age",
         "label": "Age",
-        "importance": 0.1589
+        "importance": 0.1311
       },
       {
         "feature": "condition_count",
         "label": "# Pre-existing Conditions",
-        "importance": 0.1269
+        "importance": 0.1164
       },
       {
         "feature": "is_smoking",
         "label": "Smoker",
-        "importance": 0.0905
+        "importance": 0.0973
       },
       {
-        "feature": "is_exercise",
-        "label": "Exercises Regularly",
-        "importance": 0.0557
+        "feature": "gender_female",
+        "label": "Female",
+        "importance": 0.0485
       }
     ],
     "train_size": 1600,
@@ -91,6 +91,7 @@
   },
   "feature_names": [
     "age",
+    "gender_female",
     "bmi",
     "is_smoking",
     "is_exercise",
@@ -109,6 +110,7 @@
   ],
   "feature_labels": {
     "age": "Age",
+    "gender_female": "Female",
     "bmi": "BMI",
     "is_smoking": "Smoker",
     "is_exercise": "Exercises Regularly",

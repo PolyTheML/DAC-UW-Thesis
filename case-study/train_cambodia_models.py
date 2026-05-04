@@ -42,8 +42,13 @@ le_occ = LabelEncoder().fit(df["occupation"])
 df["region_enc"] = le_region.transform(df["region"])
 df["occupation_enc"] = le_occ.transform(df["occupation"])
 
+# gender_female: 1 = female, 0 = male
+# Added in GPC-2019 re-synthesis; captures male excess mortality (~8%) and
+# occupation-gender correlations (garment 85% female, moto 85% male).
+df["gender_female"] = (df["gender"].str.lower() == "female").astype(int)
+
 FEATURES = [
-    "age", "bmi", "is_smoking", "is_exercise", "has_family_history",
+    "age", "gender_female", "bmi", "is_smoking", "is_exercise", "has_family_history",
     "monthly_income_usd", "condition_count",
     "has_hypertension", "has_diabetes", "has_heart_disease",
     "has_copd_asthma", "has_arthritis", "has_tb", "has_hepatitis_b",
@@ -51,7 +56,7 @@ FEATURES = [
 ]
 
 FEATURE_LABELS = {
-    "age": "Age", "bmi": "BMI", "is_smoking": "Smoker",
+    "age": "Age", "gender_female": "Female", "bmi": "BMI", "is_smoking": "Smoker",
     "is_exercise": "Exercises Regularly", "has_family_history": "Family History",
     "monthly_income_usd": "Monthly Income (USD)",
     "condition_count": "# Pre-existing Conditions",
@@ -82,7 +87,7 @@ def metrics(y_true, y_pred, name):
 print("Training health models...")
 glm_df = X_train.copy()
 glm_df["health_score"] = yh_train
-formula = "health_score ~ age + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd"
+formula = "health_score ~ age + gender_female + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd"
 glm_health = smf.ols(formula, data=glm_df).fit()
 glm_health_pred = glm_health.predict(X_test.assign(health_score=0))
 health_glm_metrics = metrics(yh_test, glm_health_pred, "GLM (OLS)")
@@ -104,7 +109,7 @@ print("Training mortality models...")
 glm_df2 = X_train.copy()
 glm_df2["mortality_multiplier"] = ym_train
 glm_life = smf.glm(
-    "mortality_multiplier ~ age + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd",
+    "mortality_multiplier ~ age + gender_female + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd",
     data=glm_df2,
     family=__import__("statsmodels").genmod.families.family.Gamma(
         link=__import__("statsmodels").genmod.families.links.Log()
@@ -190,8 +195,8 @@ glm_coeff_export = {
         "params": {k: v for k, v in gamma_params.items() if k != "Intercept"},
         "method": "GLM (Gamma, log link) — predict = exp(X @ params)",
     },
-    "feature_order": ["age", "bmi", "is_smoking", "is_exercise", "has_family_history",
-                      "condition_count", "monthly_income_usd"],
+    "feature_order": ["age", "gender_female", "bmi", "is_smoking", "is_exercise",
+                      "has_family_history", "condition_count", "monthly_income_usd"],
 }
 with open(MODELS_DIR / "cambodia_glm_coefficients.json", "w") as f:
     json.dump(glm_coeff_export, f, indent=2)
