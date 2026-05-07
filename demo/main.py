@@ -181,6 +181,24 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/debug")
+async def debug() -> dict[str, Any]:
+    import os, sys
+    from pathlib import Path
+    demo_dir = Path(__file__).parent
+    return {
+        "cwd": os.getcwd(),
+        "file": str(Path(__file__).resolve()),
+        "sys_path": sys.path[:5],
+        "demo_dir_exists": demo_dir.exists(),
+        "templates_dir": str(demo_dir / "templates"),
+        "templates_dir_exists": (demo_dir / "templates").exists(),
+        "index_html_exists": (demo_dir / "templates" / "index.html").exists(),
+        "static_dir_exists": (demo_dir / "static").exists(),
+        "case_study_exists": (demo_dir.parent / "case-study" / "cambodia_dataset.csv").exists(),
+    }
+
+
 @app.get("/api/applicant/random")
 async def random_applicant() -> dict[str, Any]:
     """Return a random applicant from the Cambodia dataset."""
