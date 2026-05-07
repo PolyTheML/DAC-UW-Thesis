@@ -122,29 +122,57 @@ async function loadRandomApplicant() {
 async function simulateApplicant() {
   const body = getFormData();
   try {
-    const data = await apiPost('/api/simulate', body);
-    currentExpected = data.expected_rewards;
+    const simData = await apiPost('/api/simulate', body);
+    currentExpected = simData.expected_rewards;
 
-    const actions = ['STANDARD', 'RATED', 'DECLINE', 'REFER'];
-    const colors = ['#10b981', '#f59e0b', '#ef4444', '#6366f1'];
+    let pricingData = null;
+    try {
+      pricingData = await apiPost('/api/pricing/optimize', body);
+    } catch (e) {
+      console.warn('Pricing optimisation failed:', e);
+    }
+
+    const legacyBest = Math.max(...Object.values(simData.expected_rewards));
+    const optimisedProfit = pricingData ? pricingData.optimal_expected_profit : null;
+    const trueBestIsOptimised = pricingData && optimisedProfit > legacyBest;
+
+    const actions = ['OPTIMISED', 'STANDARD', 'RATED', 'DECLINE', 'REFER'];
+    const colors = ['#2E5FA3', '#10b981', '#f59e0b', '#ef4444', '#6366f1'];
+    const values = {
+      OPTIMISED: pricingData ? pricingData.optimal_expected_profit : null,
+      STANDARD: simData.expected_rewards.STANDARD,
+      RATED: simData.expected_rewards.RATED,
+      DECLINE: simData.expected_rewards.DECLINE,
+      REFER: simData.expected_rewards.REFER,
+    };
+
     const cardContainer = document.getElementById('reward-cards');
     cardContainer.innerHTML = '';
 
     actions.forEach((act, i) => {
-      const val = data.expected_rewards[act];
-      const isOpt = data.optimal_action === act;
+      const val = values[act];
+      if (val === null) return;
+      const isOpt = act === 'OPTIMISED' ? trueBestIsOptimised : (simData.optimal_action === act && !trueBestIsOptimised);
       const card = document.createElement('div');
       card.className = `action-card bg-white rounded-xl border ${isOpt ? 'border-thesis-400 ring-1 ring-thesis-200' : 'border-gray-200'} p-4 relative overflow-hidden`;
+
+      let label = act;
+      let sublabel = isOpt ? 'Optimal action' : 'Expected value';
+      if (act === 'OPTIMISED') {
+        label = `Optimised (${fmtNum(pricingData.optimal_multiplier, 2)}×)`;
+        sublabel = `Premium ${fmtMoney(pricingData.optimal_premium_usd)} · P(accept) ${(pricingData.optimal_p_accept * 100).toFixed(1)}%`;
+      }
+
       card.innerHTML = `
         <div class="absolute top-0 right-0 w-16 h-16 opacity-10" style="background:${colors[i]}; border-radius: 0 0 0 100%"></div>
-        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">${act}${isOpt ? ' ★' : ''}</div>
+        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">${label}${isOpt ? ' ★' : ''}</div>
         <div class="text-2xl font-bold mt-1 ${val >= 0 ? 'text-gray-900' : 'text-red-600'}">${fmtMoney(val)}</div>
-        <div class="text-xs text-gray-400 mt-1">${isOpt ? 'Optimal action' : 'Expected value'}</div>
+        <div class="text-xs text-gray-400 mt-1">${sublabel}</div>
       `;
       cardContainer.appendChild(card);
     });
 
-    renderRewardChart(data.expected_rewards);
+    renderRewardChart(values);
   } catch (e) {
     alert('Simulation failed: ' + e.message);
   }
@@ -175,11 +203,11 @@ async function runStochastic() {
   }
 }
 
-function renderRewardChart(expected) {
+function renderRewardChart(values) {
   const ctx = document.getElementById('reward-chart').getContext('2d');
-  const labels = ['Standard', 'Rated (+25%)', 'Decline', 'Refer'];
-  const values = [expected.STANDARD, expected.RATED, expected.DECLINE, expected.REFER];
-  const colors = ['#10b981', '#f59e0b', '#ef4444', '#6366f1'];
+  const labels = ['Optimised', 'Standard', 'Rated (+25%)', 'Decline', 'Refer'];
+  const dataValues = [values.OPTIMISED, values.STANDARD, values.RATED, values.DECLINE, values.REFER];
+  const colors = ['#2E5FA3', '#10b981', '#f59e0b', '#ef4444', '#6366f1'];
 
   if (charts.reward) charts.reward.destroy();
   charts.reward = new Chart(ctx, {
@@ -188,10 +216,10 @@ function renderRewardChart(expected) {
       labels,
       datasets: [{
         label: 'Expected Reward (USD)',
-        data: values,
+        data: dataValues,
         backgroundColor: colors,
         borderRadius: 6,
-        barThickness: 60,
+        barThickness: 40,
       }]
     },
     options: {
