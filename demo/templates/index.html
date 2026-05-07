@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actuarial Reward Simulator — Cambodia Health Underwriting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            thesis: {
+              50: '#eff4fb',
+              100: '#d6e3f5',
+              200: '#b3cbeb',
+              300: '#84abde',
+              400: '#5685cd',
+              500: '#2E5FA3',
+              600: '#254e88',
+              700: '#1f3f6f',
+              800: '#1c355c',
+              900: '#1a2e4d',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .tab-active { border-bottom: 3px solid #2E5FA3; color: #2E5FA3; font-weight: 600; }
+    .tab-inactive { border-bottom: 3px solid transparent; color: #6b7280; }
+    .tab-inactive:hover { color: #374151; }
+    .action-card { transition: all 0.2s ease; }
+    .action-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    input[type="range"] { accent-color: #2E5FA3; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-thesis-500 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">Actuarial Reward Simulator</h1>
+        <p class="text-thesis-100 text-sm mt-0.5">Contextual Bandits for Adaptive Health Insurance Underwriting in Cambodia</p>
+      </div>
+      <div class="hidden md:block text-right text-xs text-thesis-100">
+        <div>Lun Chanpoly — MSc Thesis, ITC Cambodia</div>
+        <div>CDHS 2021-22 Anchored Dataset</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex space-x-8">
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-active py-3 text-sm transition-colors">
+          Applicant Simulator
+        </button>
+        <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-inactive py-3 text-sm transition-colors">
+          Pricing Engine
+        </button>
+        <button onclick="switchTab('arena')" id="tab-arena" class="tab-inactive py-3 text-sm transition-colors">
+          Bandit Arena
+        </button>
+        <button onclick="switchTab('benchmark')" id="tab-benchmark" class="tab-inactive py-3 text-sm transition-colors">
+          Benchmark Race
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- ==================== TAB 1: APPLICANT SIMULATOR ==================== -->
+    <section id="panel-simulator" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Input Form -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-gray-900">Applicant Profile</h2>
+            <button onclick="loadRandomApplicant()" class="text-xs bg-thesis-50 text-thesis-600 px-2.5 py-1.5 rounded-md hover:bg-thesis-100 transition font-medium">
+              🎲 Random
+            </button>
+          </div>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Simulator Mode</label>
+            <select id="sim-mode" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition" onchange="simulateApplicant()">
+              <option value="simple" selected>Simple (default)</option>
+              <option value="realistic">Realistic (expenses + lapse + CLV)</option>
+            </select>
+            <p class="text-xs text-gray-400 mt-1" id="mode-desc">Base model: premium &minus; claims. No expenses, no lapse.</p>
+          </div>
+          <form id="applicant-form" class="space-y-3 text-sm">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Age</label>
+                <input type="number" id="age" value="35" min="18" max="85" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Gender</label>
+                <select id="gender" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                  <option value="Male">Male</option>
+                  <option value="Female" selected>Female</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">BMI</label>
+                <input type="number" id="bmi" value="24.5" step="0.1" min="10" max="60" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Monthly Income (USD)</label>
+                <input type="number" id="monthly_income_usd" value="320" min="50" max="5000" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Region</label>
+                <select id="region" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                  <option>Battambang</option>
+                  <option>Kampong Cham</option>
+                  <option>Kandal</option>
+                  <option>Other Provinces</option>
+                  <option>Phnom Penh</option>
+                  <option>Preah Sihanouk</option>
+                  <option>Prey Veng</option>
+                  <option selected>Siem Reap</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Occupation</label>
+                <select id="occupation" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                  <option>Civil Servant</option>
+                  <option>Construction Worker</option>
+                  <option>Garment Worker</option>
+                  <option>Market Vendor</option>
+                  <option>Monk/Retired</option>
+                  <option>Moto/Tuk-tuk Driver</option>
+                  <option selected>Rice Farmer</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Education</label>
+                <select id="education" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                  <option>No education</option>
+                  <option selected>Primary</option>
+                  <option>Secondary</option>
+                  <option>Higher</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Wealth Quintile</label>
+                <select id="wealth_quintile" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                  <option>Poorest</option>
+                  <option>Poorer</option>
+                  <option selected>Middle</option>
+                  <option>Richer</option>
+                  <option>Richest</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Self-Reported Health</label>
+              <select id="self_reported_health" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+                <option>Poor</option>
+                <option selected>Fair</option>
+                <option>Good</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" id="is_smoking" class="w-4 h-4 text-thesis-500 rounded border-gray-300 focus:ring-thesis-400">
+                <label for="is_smoking" class="text-xs text-gray-600">Smoking</label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" id="alcohol_use" class="w-4 h-4 text-thesis-500 rounded border-gray-300 focus:ring-thesis-400">
+                <label for="alcohol_use" class="text-xs text-gray-600">Alcohol use</label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" id="is_exercise" class="w-4 h-4 text-thesis-500 rounded border-gray-300 focus:ring-thesis-400" checked>
+                <label for="is_exercise" class="text-xs text-gray-600">Exercises</label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <input type="checkbox" id="has_family_history" class="w-4 h-4 text-thesis-500 rounded border-gray-300 focus:ring-thesis-400">
+                <label for="has_family_history" class="text-xs text-gray-600">Family history</label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Pre-existing Conditions</label>
+              <div class="grid grid-cols-2 gap-1.5 text-xs">
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="Hypertension"><span>Hypertension</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="Diabetes"><span>Diabetes</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="Heart Disease"><span>Heart Disease</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="COPD/Asthma"><span>COPD/Asthma</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="Arthritis"><span>Arthritis</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="TB"><span>TB</span></label>
+                <label class="flex items-center space-x-1.5"><input type="checkbox" class="cond-check w-3.5 h-3.5 rounded" value="Hepatitis B"><span>Hepatitis B</span></label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Mortality Multiplier</label>
+              <input type="range" id="mortality_multiplier" min="0.5" max="5.0" step="0.1" value="1.2" oninput="document.getElementById('mort-label').innerText = this.value" class="w-full">
+              <div class="text-xs text-gray-500 text-right" id="mort-label">1.2</div>
+            </div>
+
+            <button type="button" onclick="simulateApplicant()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm">
+              Calculate Expected Rewards
+            </button>
+          </form>
+        </div>
+
+        <!-- Results -->
+        <div class="lg:col-span-2 space-y-5">
+
+          <!-- Expected Rewards Cards -->
+          <div>
+            <h2 class="font-semibold text-gray-900 mb-3">Expected Rewards (Deterministic)</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="reward-cards">
+              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
+                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Standard</div>
+                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
+                <div class="text-xs text-gray-400 mt-1">base premium</div>
+              </div>
+              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
+                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Rated (+25%)</div>
+                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
+                <div class="text-xs text-gray-400 mt-1">higher premium</div>
+              </div>
+              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
+                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Decline</div>
+                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
+                <div class="text-xs text-gray-400 mt-1">opportunity cost</div>
+              </div>
+              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
+                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Refer</div>
+                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
+                <div class="text-xs text-gray-400 mt-1">manual review</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900 mb-3">Reward Comparison</h2>
+            <div class="h-64">
+              <canvas id="reward-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Stochastic Simulation -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-semibold text-gray-900">Stochastic Realisation</h2>
+              <button onclick="runStochastic()" class="text-xs bg-thesis-50 text-thesis-600 px-3 py-1.5 rounded-md hover:bg-thesis-100 transition font-medium">
+                ▶ Run Simulation
+              </button>
+            </div>
+            <div id="stochastic-results" class="text-sm text-gray-500 italic">
+              Press "Run Simulation" to see a single random draw for each action.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: PRICING ENGINE ==================== -->
+    <section id="panel-pricing" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
+          <h2 class="font-semibold text-gray-900">Premium Optimiser</h2>
+          <p class="text-xs text-gray-500">Grid-search multipliers 0.5×–3.0× (0.05 steps) with adverse-selection curve.</p>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Simulator Mode</label>
+            <select id="pricing-mode" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition" onchange="runPricingOptimize()">
+              <option value="simple" selected>Simple (default)</option>
+              <option value="realistic">Realistic (expenses + lapse + CLV)</option>
+            </select>
+          </div>
+
+          <div class="bg-thesis-50 rounded-lg p-3 border border-thesis-100">
+            <div class="text-xs font-medium text-thesis-700 mb-1">Current Applicant</div>
+            <div class="text-sm text-thesis-900" id="pricing-applicant-summary">—</div>
+          </div>
+
+          <button onclick="loadRandomApplicant(); setTimeout(() => runPricingOptimize(), 300);" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
+            🎲 Load Random Applicant
+          </button>
+          <button onclick="copyApplicantFromSimulator()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
+            📋 Copy from Simulator
+          </button>
+
+          <button onclick="runPricingOptimize()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm flex items-center justify-center gap-2">
+            <span id="pricing-spinner" class="hidden">⟳</span>
+            <span id="pricing-btn-text">Optimise Premium</span>
+          </button>
+        </div>
+
+        <!-- Results -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- Optimal summary cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="pricing-summary">
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Optimal Multiplier</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Premium (USD/yr)</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Expected Profit</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">P(Accept)</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+          </div>
+
+          <!-- Profit curve -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900 mb-3">Profit Curve vs Multiplier</h2>
+            <div class="h-64">
+              <canvas id="pricing-curve-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Legacy comparison -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900 mb-3">Legacy 4-Action Comparison</h2>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+                  <tr>
+                    <th class="px-4 py-3 text-left">Metric</th>
+                    <th class="px-4 py-3 text-right">Standard</th>
+                    <th class="px-4 py-3 text-right">Rated (+25%)</th>
+                    <th class="px-4 py-3 text-right">Decline</th>
+                    <th class="px-4 py-3 text-right">Refer</th>
+                  </tr>
+                </thead>
+                <tbody id="pricing-legacy-body" class="divide-y divide-gray-100">
+                  <tr>
+                    <td colspan="5" class="px-4 py-6 text-center text-gray-400 italic">Run optimisation to see legacy comparison.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Portfolio -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+          <div>
+            <h2 class="font-semibold text-gray-900">Batch Portfolio Optimisation</h2>
+            <p class="text-sm text-gray-500">Run premium optimisation on 100 random applicants and analyse the distribution.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-0.5">Seed</label>
+              <input type="number" id="pricing-batch-seed" value="42" class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-thesis-300 outline-none">
+            </div>
+            <button onclick="runPricingBatch()" class="mt-4 bg-thesis-500 hover:bg-thesis-600 text-white font-medium px-4 py-1.5 rounded-md transition shadow-sm flex items-center gap-2">
+              <span id="batch-spinner" class="hidden">⟳</span>
+              <span id="batch-btn-text">Run Batch</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Batch summary -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5" id="batch-summary">
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Avg Multiplier</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Median</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Std Dev</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Min / Max</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Avg Profit</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+        </div>
+
+        <!-- Batch charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Multiplier Histogram</h3>
+            <div class="h-56"><canvas id="batch-histogram-chart"></canvas></div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Portfolio Comparison Table</h3>
+            <div class="overflow-x-auto max-h-56">
+              <table class="min-w-full text-xs">
+                <thead class="bg-gray-50 text-gray-600 uppercase font-semibold sticky top-0">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Age</th>
+                    <th class="px-3 py-2 text-left">Region</th>
+                    <th class="px-3 py-2 text-left">Occupation</th>
+                    <th class="px-3 py-2 text-right">Multiplier</th>
+                    <th class="px-3 py-2 text-right">Premium</th>
+                    <th class="px-3 py-2 text-right">Profit</th>
+                    <th class="px-3 py-2 text-right">P(Acc)</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body" class="divide-y divide-gray-100">
+                  <tr>
+                    <td colspan="7" class="px-3 py-6 text-center text-gray-400 italic">Run batch to populate.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PSI Drift Monitor -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="font-semibold text-gray-900">Live PSI Drift Monitor</h2>
+            <p class="text-sm text-gray-500">Population Stability Index compares the batch portfolio distribution against the full 2,000-applicant reference dataset.</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> &lt;0.10</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 0.10–0.25</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> &gt;0.25</span>
+          </div>
+        </div>
+
+        <!-- PSI cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5" id="psi-cards">
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Region</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Occupation</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Age Bin</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+          <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <div class="text-xs font-medium text-gray-500 uppercase">Wealth Quintile</div>
+            <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+          </div>
+        </div>
+
+        <!-- PSI chart -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2">PSI by Feature</h3>
+          <div class="h-56"><canvas id="psi-chart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: BANDIT ARENA ==================== -->
+    <section id="panel-arena" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
+          <h2 class="font-semibold text-gray-900">Bandit Arena</h2>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Algorithm</label>
+            <select id="arena-algo" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+              <option value="LinUCB" selected>LinUCB</option>
+              <option value="LinTS">Linear Thompson Sampling</option>
+              <option value="EpsilonGreedy">Epsilon-Greedy</option>
+              <option value="StaticXGB">Static XGBoost Rule</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Rounds</label>
+            <input type="range" id="arena-rounds" min="500" max="5000" step="500" value="2000" oninput="document.getElementById('arena-rounds-label').innerText = this.value" class="w-full">
+            <div class="text-xs text-gray-500 text-right" id="arena-rounds-label">2000</div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Seed</label>
+            <input type="number" id="arena-seed" value="42" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+          </div>
+
+          <div id="arena-param-alpha" class="">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Alpha (UCB)</label>
+            <input type="number" id="arena-alpha" value="1.0" step="0.1" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+          </div>
+
+          <div id="arena-param-epsilon" class="hidden">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Epsilon</label>
+            <input type="number" id="arena-epsilon" value="0.1" step="0.05" min="0" max="1" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+          </div>
+
+          <div id="arena-param-v2" class="hidden">
+            <label class="block text-xs font-medium text-gray-500 mb-1">v² (TS)</label>
+            <input type="number" id="arena-v2" value="1.0" step="0.1" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+          </div>
+
+          <button onclick="runArena()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm flex items-center justify-center gap-2">
+            <span id="arena-spinner" class="hidden">⟳</span>
+            <span id="arena-btn-text">Run Bandit</span>
+          </button>
+        </div>
+
+        <!-- Results -->
+        <div class="lg:col-span-3 space-y-5">
+          <!-- Summary -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="arena-summary">
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Cumulative Reward</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Cumulative Regret</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Avg Regret (last 500)</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Action Entropy</div>
+              <div class="text-xl font-bold text-gray-900 mt-1">—</div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 class="text-sm font-semibold text-gray-700 mb-2">Cumulative Reward</h3>
+              <div class="h-56"><canvas id="arena-chart-reward"></canvas></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 class="text-sm font-semibold text-gray-700 mb-2">Cumulative Regret</h3>
+              <div class="h-56"><canvas id="arena-chart-regret"></canvas></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 class="text-sm font-semibold text-gray-700 mb-2">Action Distribution (All Rounds)</h3>
+              <div class="h-56"><canvas id="arena-chart-pie"></canvas></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 class="text-sm font-semibold text-gray-700 mb-2">Early vs Late Action Distribution</h3>
+              <div class="h-56"><canvas id="arena-chart-compare"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: BENCHMARK RACE ==================== -->
+    <section id="panel-benchmark" class="hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+          <div>
+            <h2 class="font-semibold text-gray-900">Algorithm Benchmark Race</h2>
+            <p class="text-sm text-gray-500">Run all four algorithms with identical seeds and compare performance.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-0.5">Rounds</label>
+              <input type="number" id="bench-rounds" value="2000" min="500" max="5000" step="500" class="w-24 border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-thesis-300 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-0.5">Seed</label>
+              <input type="number" id="bench-seed" value="42" class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-thesis-300 outline-none">
+            </div>
+            <button onclick="runBenchmark()" class="mt-4 bg-thesis-500 hover:bg-thesis-600 text-white font-medium px-4 py-1.5 rounded-md transition shadow-sm flex items-center gap-2">
+              <span id="bench-spinner" class="hidden">⟳</span>
+              <span id="bench-btn-text">Run Race</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+              <tr>
+                <th class="px-4 py-3 text-left">Algorithm</th>
+                <th class="px-4 py-3 text-right">Cumulative Reward</th>
+                <th class="px-4 py-3 text-right">Cumulative Regret</th>
+                <th class="px-4 py-3 text-right">Avg Regret (last 500)</th>
+                <th class="px-4 py-3 text-center">Standard</th>
+                <th class="px-4 py-3 text-center">Rated</th>
+                <th class="px-4 py-3 text-center">Decline</th>
+                <th class="px-4 py-3 text-center">Refer</th>
+              </tr>
+            </thead>
+            <tbody id="bench-table-body" class="divide-y divide-gray-100">
+              <tr>
+                <td colspan="8" class="px-4 py-8 text-center text-gray-400 italic">Click "Run Race" to generate results.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Benchmark Charts -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2">Cumulative Reward — All Algorithms</h3>
+          <div class="h-64"><canvas id="bench-chart-reward"></canvas></div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2">Cumulative Regret — All Algorithms</h3>
+          <div class="h-64"><canvas id="bench-chart-regret"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-gray-200 bg-white mt-10">
+    <div class="max-w-7xl mx-auto px-4 py-4 text-xs text-gray-400 flex justify-between">
+      <span>Adaptive Health Insurance Underwriting via Contextual Bandits</span>
+      <span>Lun Chanpoly · ITC Cambodia · 2026</span>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

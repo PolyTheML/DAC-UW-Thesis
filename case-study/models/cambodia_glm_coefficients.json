@@ -1,29 +1,37 @@
 {
   "health_ols": {
-    "intercept": 141.55404531917705,
+    "intercept": 136.76842060408575,
     "params": {
-      "age": -0.5756224999880422,
-      "gender_female": 1.1036007139915531,
-      "bmi": -1.5951951636897632,
-      "is_smoking": -1.8982711569804862,
-      "is_exercise": 0.17417427262208485,
-      "has_family_history": -0.11325187831756045,
-      "condition_count": -1.346713705410965,
-      "monthly_income_usd": 0.004680044139402485
+      "age": -0.5762445439741868,
+      "gender_female": 1.0225398781314403,
+      "bmi": -1.6486375903392572,
+      "is_smoking": -2.1781137492547056,
+      "alcohol_use": -2.0902358403882104,
+      "is_exercise": 1.1903309974236018,
+      "has_family_history": -0.2701867531552433,
+      "condition_count": -1.3534242260931668,
+      "monthly_income_usd": 0.006066625150280633,
+      "education_enc": 1.1413249202547666,
+      "wealth_enc": 0.24193748735230514,
+      "health_status_enc": 0.9715986170715905
     },
     "method": "OLS (Gaussian, identity link)"
   },
   "mortality_gamma": {
-    "intercept": 0.18393689415763026,
+    "intercept": 0.2721595969111726,
     "params": {
-      "age": 0.011331908571159918,
-      "gender_female": -0.1384960547841134,
-      "bmi": 0.0020452284827276036,
-      "is_smoking": 0.15839401480826631,
-      "is_exercise": -0.0669048462784145,
-      "has_family_history": 0.0019030160632656015,
-      "condition_count": 0.1681894915436699,
-      "monthly_income_usd": -0.0005012095378127621
+      "age": 0.01013457284821848,
+      "gender_female": -0.11671914890286055,
+      "bmi": 0.0003298163491928965,
+      "is_smoking": 0.14411784797474464,
+      "alcohol_use": 0.09464936287654233,
+      "is_exercise": -0.0644909600712664,
+      "has_family_history": 0.021838501735200234,
+      "condition_count": 0.15025089006307119,
+      "monthly_income_usd": -0.0004634463288359586,
+      "education_enc": 0.014355482368603218,
+      "wealth_enc": -0.00452516752795281,
+      "health_status_enc": -0.02419534060197489
     },
     "method": "GLM (Gamma, log link) \u2014 predict = exp(X @ params)"
   },
@@ -32,9 +40,13 @@
     "gender_female",
     "bmi",
     "is_smoking",
+    "alcohol_use",
     "is_exercise",
     "has_family_history",
     "condition_count",
-    "monthly_income_usd"
+    "monthly_income_usd",
+    "education_enc",
+    "wealth_enc",
+    "health_status_enc"
   ]
 }

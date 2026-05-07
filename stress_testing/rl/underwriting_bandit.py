@@ -7,7 +7,7 @@ Implements contextual bandit algorithms for adaptive health insurance underwriti
 - Epsilon-Greedy
 
 Also includes:
-- Cambodia dataset preprocessor
+- Cambodia dataset preprocessor (CDHS 2021-22 anchored features)
 - Actuarial reward simulator (4 actions: standard, rated, decline, refer)
 - Static XGBoost baseline for benchmarking
 """
@@ -38,7 +38,12 @@ ACTION_NAMES = ["STANDARD", "RATED", "DECLINE", "REFER"]
 # ── Data preprocessor ──────────────────────────────────────────────────────
 
 def preprocess_cambodia_data() -> tuple[np.ndarray, pd.DataFrame, list[str]]:
-    """Load Cambodia dataset and return feature matrix X, raw DataFrame, feature names."""
+    """Load Cambodia dataset and return feature matrix X, raw DataFrame, feature names.
+
+    Feature engineering mirrors the training script (train_cambodia_models.py)
+    but uses one-hot encoding for region and occupation (better for linear bandits).
+    Ordinal encodings are used for education, wealth, and self-reported health.
+    """
     df = pd.read_csv(DATA_PATH)
 
     conditions = ["Hypertension", "Diabetes", "Heart Disease", "COPD/Asthma", "Arthritis", "TB", "Hepatitis B"]
@@ -53,9 +58,16 @@ def preprocess_cambodia_data() -> tuple[np.ndarray, pd.DataFrame, list[str]]:
     occ_dummies = pd.get_dummies(df["occupation"], prefix="occ")
     df = pd.concat([df, region_dummies, occ_dummies], axis=1)
 
+    # Ordinal encodings for CDHS social-determinant features
+    df["gender_female"] = (df["gender"].str.lower() == "female").astype(int)
+    df["education_enc"] = df["education"].map({"No education": 0, "Primary": 1, "Secondary": 2, "Higher": 3})
+    df["wealth_enc"] = df["wealth_quintile"].map({"Poorest": 0, "Poorer": 1, "Middle": 2, "Richer": 3, "Richest": 4})
+    df["health_status_enc"] = df["self_reported_health"].map({"Poor": 0, "Fair": 1, "Good": 2})
+
     features = (
-        ["age", "bmi", "is_smoking", "is_exercise", "has_family_history",
-         "monthly_income_usd", "condition_count"]
+        ["age", "gender_female", "bmi", "is_smoking", "alcohol_use", "is_exercise",
+         "has_family_history", "monthly_income_usd", "condition_count",
+         "education_enc", "wealth_enc", "health_status_enc"]
         + [f"has_{c.lower().replace('/', '_').replace(' ', '_')}" for c in conditions]
         + list(region_dummies.columns)
         + list(occ_dummies.columns)
@@ -70,79 +82,248 @@ def preprocess_cambodia_data() -> tuple[np.ndarray, pd.DataFrame, list[str]]:
     return X.values, df, features
 
 
+# ── Reward simulator configuration ───────────────────────────────────────────
+
+@dataclass(frozen=True)
+class RewardConfig:
+    """Actuarial parameters for the underwriting reward simulator.
+
+    Defaults reproduce the original simple model.  Use ``RewardConfig.realistic()``
+    for a richer model that includes expense loadings, lapse probability, and
+    customer-lifetime-value scaling.
+    """
+
+    # Revenue & risk
+    base_premium_rate: float = 200.0
+    expected_claims_rate: float = 150.0
+
+    # Expense loading
+    expense_fixed: float = 0.0          # fixed acquisition/admin cost per accepted policy
+    expense_ratio: float = 0.0          # variable expense as fraction of premium
+
+    # Persistency / CLV
+    lapse_prob: float = 0.0             # probability of mid-year cancellation
+    lapse_premium_factor: float = 0.5   # fraction of premium collected if lapse
+    lapse_claims_factor: float = 0.5    # fraction of claims paid if lapse
+    clv_multiplier: float = 1.0         # expected policy lifetime multiplier
+
+    # Adverse selection
+    adverse_threshold: float = 2.0
+    adverse_factor: float = 1.35
+
+    # Customer acceptance
+    acceptance_intercept: float = 0.95
+    acceptance_slope: float = 3.5
+    min_acceptance: float = 0.05
+
+    # Stochastic claims noise
+    claims_noise_low: float = 0.92
+    claims_noise_high: float = 1.08
+
+    # Action costs
+    decline_cost: float = -10.0
+    refer_efficiency: float = 0.70
+    refer_admin_cost: float = 35.0
+    walk_cost: float = -20.0            # cost when customer walks in stochastic sim
+    processing_cost: float = -25.0      # cost used in expected-value calculations
+
+    @classmethod
+    def realistic(cls) -> "RewardConfig":
+        """Return a config with expense loading, lapse, and CLV enabled."""
+        return cls(
+            expense_fixed=25.0,
+            expense_ratio=0.05,
+            lapse_prob=0.08,
+            clv_multiplier=2.5,
+        )
+
+
 # ── Reward simulator ───────────────────────────────────────────────────────
 
-def make_reward_simulator(rng: np.random.Generator) -> Callable:
-    """Return a function reward(action, row) that computes stochastic reward."""
-
-    def reward(action: int, row: pd.Series) -> float:
-        mort = row["mortality_multiplier"]
-        income = row["monthly_income_usd"]
-
-        # Annual premium and expected claims (USD)
-        base_premium = 200 * mort
-        expected_claims = 150 * mort
-
-        # Adverse selection: high-risk applicants underpriced at standard terms
-        adverse_factor = 1.0 if mort <= 2.0 else 1.35
-
-        # Customer acceptance probability (premium-to-income ratio)
-        def p_accept(premium: float) -> float:
-            ratio = (premium / 12) / income  # monthly premium / monthly income
-            return max(0.05, 0.95 - 3.5 * ratio)
-
-        p_std = p_accept(base_premium)
-        p_rtd = p_accept(base_premium * 1.25)
-
-        if action == ACTION_STANDARD:
-            claims = expected_claims * adverse_factor * rng.uniform(0.92, 1.08)
-            if rng.random() < p_std:
-                return base_premium - claims
-            return -20.0  # processing cost if customer walks
-
-        if action == ACTION_RATED:
-            claims = expected_claims * rng.uniform(0.92, 1.08)
-            if rng.random() < p_rtd:
-                return base_premium * 1.25 - claims
-            return -20.0
-
-        if action == ACTION_DECLINE:
-            return -10.0  # small opportunity cost
-
-        if action == ACTION_REFER:
-            # Manual underwriter captures 70% of optimal value minus $35 admin
-            r_std = p_std * (base_premium - expected_claims * adverse_factor) + (1 - p_std) * (-25)
-            r_rtd = p_rtd * (base_premium * 1.25 - expected_claims) + (1 - p_rtd) * (-25)
-            r_dcl = -10.0
-            optimal = max(r_std, r_rtd, r_dcl)
-            return 0.70 * optimal - 35.0
-
-        raise ValueError(f"Unknown action: {action}")
-
-    return reward
-
-
-def expected_rewards(row: pd.Series) -> np.ndarray:
-    """Compute expected rewards for all 4 actions (deterministic, for oracle/baseline)."""
+def _compute_reward(
+    action: int,
+    row: pd.Series,
+    config: RewardConfig,
+    rng: np.random.Generator | None,
+    customer_accepted: bool | None,
+) -> float:
+    """Shared reward computation for stochastic and deterministic modes."""
     mort = row["mortality_multiplier"]
     income = row["monthly_income_usd"]
 
-    base_premium = 200 * mort
-    expected_claims = 150 * mort
-    adverse_factor = 1.0 if mort <= 2.0 else 1.35
+    base_premium = config.base_premium_rate * mort
+    expected_claims = config.expected_claims_rate * mort
+    adverse_factor = 1.0 if mort <= config.adverse_threshold else config.adverse_factor
 
     def p_accept(premium: float) -> float:
         ratio = (premium / 12) / income
-        return max(0.05, 0.95 - 3.5 * ratio)
+        return max(config.min_acceptance, config.acceptance_intercept - config.acceptance_slope * ratio)
 
     p_std = p_accept(base_premium)
     p_rtd = p_accept(base_premium * 1.25)
 
-    r_std = p_std * (base_premium - expected_claims * adverse_factor) + (1 - p_std) * (-25)
-    r_rtd = p_rtd * (base_premium * 1.25 - expected_claims) + (1 - p_rtd) * (-25)
-    r_dcl = -10.0
+    def _claims_noise() -> float:
+        if rng is not None:
+            return rng.uniform(config.claims_noise_low, config.claims_noise_high)
+        return 1.0
+
+    def _expenses(premium: float) -> float:
+        return config.expense_fixed + config.expense_ratio * premium
+
+    def _net(premium: float, claims: float, expenses: float) -> float:
+        if rng is not None:
+            # Stochastic lapse draw
+            if rng.random() < config.lapse_prob:
+                return (
+                    config.lapse_premium_factor * premium
+                    - config.lapse_claims_factor * claims
+                    - expenses
+                ) * config.clv_multiplier
+        elif config.lapse_prob > 0:
+            # Expected-value mode for lapse (no rng)
+            return (
+                premium * (1 - config.lapse_prob * (1 - config.lapse_premium_factor))
+                - claims * (1 - config.lapse_prob * (1 - config.lapse_claims_factor))
+                - expenses
+            ) * config.clv_multiplier
+        return (premium - claims - expenses) * config.clv_multiplier
+
+    if action == ACTION_STANDARD:
+        claims = expected_claims * adverse_factor * _claims_noise()
+        expenses = _expenses(base_premium)
+        if customer_accepted is not None:
+            accepted = customer_accepted
+        elif rng is not None:
+            accepted = rng.random() < p_std
+        else:
+            raise ValueError("Need rng or customer_accepted for STANDARD action")
+        if accepted:
+            return _net(base_premium, claims, expenses)
+        return config.walk_cost
+
+    if action == ACTION_RATED:
+        claims = expected_claims * _claims_noise()
+        premium = base_premium * 1.25
+        expenses = _expenses(premium)
+        if customer_accepted is not None:
+            accepted = customer_accepted
+        elif rng is not None:
+            accepted = rng.random() < p_rtd
+        else:
+            raise ValueError("Need rng or customer_accepted for RATED action")
+        if accepted:
+            return _net(premium, claims, expenses)
+        return config.walk_cost
+
+    if action == ACTION_DECLINE:
+        return config.decline_cost
+
+    if action == ACTION_REFER:
+        # REFER computes expected-value of sub-actions (deterministic)
+        expenses_std = _expenses(base_premium)
+        if config.lapse_prob > 0:
+            net_std = (
+                base_premium * (1 - config.lapse_prob * (1 - config.lapse_premium_factor))
+                - expected_claims * adverse_factor * (1 - config.lapse_prob * (1 - config.lapse_claims_factor))
+                - expenses_std
+            ) * config.clv_multiplier
+        else:
+            net_std = (base_premium - expected_claims * adverse_factor - expenses_std) * config.clv_multiplier
+
+        premium_rtd = base_premium * 1.25
+        expenses_rtd = _expenses(premium_rtd)
+        if config.lapse_prob > 0:
+            net_rtd = (
+                premium_rtd * (1 - config.lapse_prob * (1 - config.lapse_premium_factor))
+                - expected_claims * (1 - config.lapse_prob * (1 - config.lapse_claims_factor))
+                - expenses_rtd
+            ) * config.clv_multiplier
+        else:
+            net_rtd = (premium_rtd - expected_claims - expenses_rtd) * config.clv_multiplier
+
+        r_std = p_std * net_std + (1 - p_std) * config.processing_cost
+        r_rtd = p_rtd * net_rtd + (1 - p_rtd) * config.processing_cost
+        r_dcl = config.decline_cost
+        optimal = max(r_std, r_rtd, r_dcl)
+        return config.refer_efficiency * optimal - config.refer_admin_cost
+
+    raise ValueError(f"Unknown action: {action}")
+
+
+def make_reward_simulator(
+    rng: np.random.Generator,
+    config: RewardConfig | None = None,
+) -> Callable[[int, pd.Series], float]:
+    """Return a function reward(action, row) that computes stochastic reward."""
+    cfg = config if config is not None else RewardConfig()
+
+    def reward(action: int, row: pd.Series) -> float:
+        return _compute_reward(action, row, cfg, rng, customer_accepted=None)
+
+    return reward
+
+
+def compute_reward_with_outcome(
+    action: int,
+    row: pd.Series,
+    customer_accepted: bool,
+    config: RewardConfig | None = None,
+    rng: np.random.Generator | None = None,
+) -> float:
+    """Compute reward for a known customer acceptance outcome.
+
+    Use this in backend / feedback endpoints where the acceptance is observed
+    rather than sampled.  If *rng* is provided, claims are still noisy;
+    if *rng* is None, expected claims are used.
+    """
+    cfg = config if config is not None else RewardConfig()
+    return _compute_reward(action, row, cfg, rng, customer_accepted)
+
+
+def expected_rewards(
+    row: pd.Series,
+    config: RewardConfig | None = None,
+) -> np.ndarray:
+    """Compute expected rewards for all 4 actions (deterministic, for oracle/baseline)."""
+    cfg = config if config is not None else RewardConfig()
+    mort = row["mortality_multiplier"]
+    income = row["monthly_income_usd"]
+
+    base_premium = cfg.base_premium_rate * mort
+    expected_claims = cfg.expected_claims_rate * mort
+    adverse_factor = 1.0 if mort <= cfg.adverse_threshold else cfg.adverse_factor
+
+    def p_accept(premium: float) -> float:
+        ratio = (premium / 12) / income
+        return max(cfg.min_acceptance, cfg.acceptance_intercept - cfg.acceptance_slope * ratio)
+
+    p_std = p_accept(base_premium)
+    p_rtd = p_accept(base_premium * 1.25)
+
+    def _expenses(premium: float) -> float:
+        return cfg.expense_fixed + cfg.expense_ratio * premium
+
+    def _net(premium: float, claims: float, expenses: float) -> float:
+        if cfg.lapse_prob > 0:
+            return (
+                premium * (1 - cfg.lapse_prob * (1 - cfg.lapse_premium_factor))
+                - claims * (1 - cfg.lapse_prob * (1 - cfg.lapse_claims_factor))
+                - expenses
+            ) * cfg.clv_multiplier
+        return (premium - claims - expenses) * cfg.clv_multiplier
+
+    expenses_std = _expenses(base_premium)
+    net_std = _net(base_premium, expected_claims * adverse_factor, expenses_std)
+
+    premium_rtd = base_premium * 1.25
+    expenses_rtd = _expenses(premium_rtd)
+    net_rtd = _net(premium_rtd, expected_claims, expenses_rtd)
+
+    r_std = p_std * net_std + (1 - p_std) * cfg.processing_cost
+    r_rtd = p_rtd * net_rtd + (1 - p_rtd) * cfg.processing_cost
+    r_dcl = cfg.decline_cost
     optimal = max(r_std, r_rtd, r_dcl)
-    r_ref = 0.70 * optimal - 35.0
+    r_ref = cfg.refer_efficiency * optimal - cfg.refer_admin_cost
 
     return np.array([r_std, r_rtd, r_dcl, r_ref])
 
@@ -230,23 +411,44 @@ class EpsilonGreedy:
 # ── Static baseline ────────────────────────────────────────────────────────
 
 class StaticXGBBaseline:
-    """Pre-trained XGBoost model + deterministic rule baseline."""
+    """Pre-trained XGBoost model + deterministic rule baseline.
+
+    Produces the exact 21 features the XGB model was trained on:
+      age, gender_female, bmi, is_smoking, alcohol_use, is_exercise,
+      has_family_history, monthly_income_usd, condition_count,
+      has_hypertension, has_diabetes, has_heart_disease,
+      has_copd_asthma, has_arthritis, has_tb, has_hepatitis_b,
+      region_enc, occupation_enc, education_enc, wealth_enc, health_status_enc
+    """
 
     def __init__(self):
         with open(MODELS_DIR / "cambodia_life_xgb.pkl", "rb") as f:
             self.model = pickle.load(f)
-        # Precompute label encodings to match training script
-        df = pd.read_csv(DATA_PATH)
-        self.region_map = {r: i for i, r in enumerate(sorted(df["region"].unique()))}
-        self.occ_map = {o: i for i, o in enumerate(sorted(df["occupation"].unique()))}
+
+        # Load saved encoders to guarantee exact mapping consistency
+        with open(MODELS_DIR / "cambodia_encoders.pkl", "rb") as f:
+            encoders = pickle.load(f)
+        self.region_le = encoders["region"]
+        self.occ_le = encoders["occupation"]
+        self.edu_map = encoders["edu_order"]
+        self.wealth_map = encoders["wealth_order"]
+        self.health_map = encoders["health_order"]
 
     def _preprocess_row(self, row: pd.Series) -> np.ndarray:
-        """Create the original 16 features the XGB model was trained on."""
+        """Create the original 21 features the XGB model was trained on."""
         conds = str(row.get("pre_existing_conditions", ""))
         cond_count = sum(1 for c in ["Hypertension", "Diabetes", "Heart Disease", "COPD/Asthma", "Arthritis", "TB", "Hepatitis B"] if c in conds)
+
         x = np.array([
-            row["age"], row["bmi"], row["is_smoking"], row["is_exercise"],
-            row["has_family_history"], row["monthly_income_usd"], cond_count,
+            row["age"],
+            1 if str(row.get("gender", "")).lower() == "female" else 0,
+            row["bmi"],
+            row["is_smoking"],
+            row["alcohol_use"],
+            row["is_exercise"],
+            row["has_family_history"],
+            row["monthly_income_usd"],
+            cond_count,
             int("Hypertension" in conds),
             int("Diabetes" in conds),
             int("Heart Disease" in conds),
@@ -254,8 +456,11 @@ class StaticXGBBaseline:
             int("Arthritis" in conds),
             int("TB" in conds),
             int("Hepatitis B" in conds),
-            self.region_map.get(row["region"], 0),
-            self.occ_map.get(row["occupation"], 0),
+            self.region_le.transform([row["region"]])[0],
+            self.occ_le.transform([row["occupation"]])[0],
+            self.edu_map.get(row.get("education", "Primary"), 1),
+            self.wealth_map.get(row.get("wealth_quintile", "Middle"), 2),
+            self.health_map.get(row.get("self_reported_health", "Fair"), 1),
         ], dtype=float)
         return x.reshape(1, -1)
 

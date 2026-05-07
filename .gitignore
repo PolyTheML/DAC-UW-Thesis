@@ -63,3 +63,9 @@ case-study/phnom_penh_pings.csv
 
 # Logs
 *.log
+
+# Temporary analysis scripts
+analyze*.py
+# Old backend API (superseded by demo/)
+backend/
+

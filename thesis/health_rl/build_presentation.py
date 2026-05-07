@@ -386,7 +386,7 @@ def slide_06_dataset_features(prs):
     s = _blank(prs)
     _title(s, "Dataset & Feature Engineering")
 
-    _body(s, "Synthetic Cambodia Health Insurance Dataset",
+    _body(s, "Synthetic Cambodia Health Insurance Dataset (CDHS 2021–22 Anchored)",
           ML, Inches(1.30), CNTW, Inches(0.40), size=16, bold=False, color=DARK)
 
     _table(s,

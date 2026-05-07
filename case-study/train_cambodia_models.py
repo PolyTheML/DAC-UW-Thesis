@@ -4,6 +4,14 @@ Trains two models:
   1. health_xgb  — predicts health risk score (higher = healthier, 15-95 scale)
   2. life_xgb    — predicts mortality multiplier (1.0 = standard)
 Each paired with a GLM baseline.
+
+Feature set anchored on CDHS 2021-22:
+  - Demographics: age, gender, region, occupation
+  - Social determinants: education, wealth_quintile (CDHS Tables 3.2, 2.10)
+  - Behaviours: smoking, alcohol_use (CDHS/STEPS 2023), exercise
+  - Health: BMI (CDHS mean 22.9, SD 3.9), self_reported_health (CDHS Table 3.1)
+  - Clinical: 7 pre-existing conditions, condition_count, family_history
+
 Outputs: models/cambodia_*.pkl, cambodia_shap_values.pkl, cambodia_model_results.json
 """
 import json
@@ -37,33 +45,48 @@ for cond in CONDITIONS:
 
 df["condition_count"] = df[[f"has_{c.lower().replace('/', '_').replace(' ', '_')}" for c in CONDITIONS]].sum(axis=1)
 
+# Categorical encodings — preserve LabelEncoder objects for downstream use
 le_region = LabelEncoder().fit(df["region"])
 le_occ = LabelEncoder().fit(df["occupation"])
 df["region_enc"] = le_region.transform(df["region"])
 df["occupation_enc"] = le_occ.transform(df["occupation"])
 
 # gender_female: 1 = female, 0 = male
-# Added in GPC-2019 re-synthesis; captures male excess mortality (~8%) and
-# occupation-gender correlations (garment 85% female, moto 85% male).
 df["gender_female"] = (df["gender"].str.lower() == "female").astype(int)
 
+# education: ordinal encoding (CDHS progression)
+edu_order = {'No education': 0, 'Primary': 1, 'Secondary': 2, 'Higher': 3}
+df["education_enc"] = df["education"].map(edu_order)
+
+# wealth_quintile: ordinal encoding (poorest → richest)
+wealth_order = {'Poorest': 0, 'Poorer': 1, 'Middle': 2, 'Richer': 3, 'Richest': 4}
+df["wealth_enc"] = df["wealth_quintile"].map(wealth_order)
+
+# self_reported_health: ordinal (poor=0, fair=1, good=2)
+health_order = {'Poor': 0, 'Fair': 1, 'Good': 2}
+df["health_status_enc"] = df["self_reported_health"].map(health_order)
+
 FEATURES = [
-    "age", "gender_female", "bmi", "is_smoking", "is_exercise", "has_family_history",
-    "monthly_income_usd", "condition_count",
+    "age", "gender_female", "bmi", "is_smoking", "alcohol_use", "is_exercise",
+    "has_family_history", "monthly_income_usd", "condition_count",
     "has_hypertension", "has_diabetes", "has_heart_disease",
     "has_copd_asthma", "has_arthritis", "has_tb", "has_hepatitis_b",
     "region_enc", "occupation_enc",
+    "education_enc", "wealth_enc", "health_status_enc",
 ]
 
 FEATURE_LABELS = {
-    "age": "Age", "gender_female": "Female", "bmi": "BMI", "is_smoking": "Smoker",
-    "is_exercise": "Exercises Regularly", "has_family_history": "Family History",
+    "age": "Age", "gender_female": "Female", "bmi": "BMI",
+    "is_smoking": "Smoker", "alcohol_use": "Alcohol Use", "is_exercise": "Exercises Regularly",
+    "has_family_history": "Family History",
     "monthly_income_usd": "Monthly Income (USD)",
     "condition_count": "# Pre-existing Conditions",
     "has_hypertension": "Hypertension", "has_diabetes": "Diabetes",
     "has_heart_disease": "Heart Disease", "has_copd_asthma": "COPD/Asthma",
     "has_arthritis": "Arthritis", "has_tb": "TB", "has_hepatitis_b": "Hepatitis B",
     "region_enc": "Region", "occupation_enc": "Occupation",
+    "education_enc": "Education", "wealth_enc": "Wealth Quintile",
+    "health_status_enc": "Self-Reported Health",
 }
 
 X = df[FEATURES]
@@ -87,7 +110,11 @@ def metrics(y_true, y_pred, name):
 print("Training health models...")
 glm_df = X_train.copy()
 glm_df["health_score"] = yh_train
-formula = "health_score ~ age + gender_female + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd"
+formula = (
+    "health_score ~ age + gender_female + bmi + is_smoking + alcohol_use + is_exercise"
+    " + has_family_history + condition_count + monthly_income_usd"
+    " + education_enc + wealth_enc + health_status_enc"
+)
 glm_health = smf.ols(formula, data=glm_df).fit()
 glm_health_pred = glm_health.predict(X_test.assign(health_score=0))
 health_glm_metrics = metrics(yh_test, glm_health_pred, "GLM (OLS)")
@@ -109,7 +136,9 @@ print("Training mortality models...")
 glm_df2 = X_train.copy()
 glm_df2["mortality_multiplier"] = ym_train
 glm_life = smf.glm(
-    "mortality_multiplier ~ age + gender_female + bmi + is_smoking + is_exercise + has_family_history + condition_count + monthly_income_usd",
+    "mortality_multiplier ~ age + gender_female + bmi + is_smoking + alcohol_use + is_exercise"
+    " + has_family_history + condition_count + monthly_income_usd"
+    " + education_enc + wealth_enc + health_status_enc",
     data=glm_df2,
     family=__import__("statsmodels").genmod.families.family.Gamma(
         link=__import__("statsmodels").genmod.families.links.Log()
@@ -162,6 +191,16 @@ with open(MODELS_DIR / "cambodia_health_glm.pkl", "wb") as f:
 with open(MODELS_DIR / "cambodia_life_glm.pkl", "wb") as f:
     pickle.dump(glm_life, f)
 
+# Save label encoders for downstream use
+with open(MODELS_DIR / "cambodia_encoders.pkl", "wb") as f:
+    pickle.dump({
+        "region": le_region,
+        "occupation": le_occ,
+        "edu_order": edu_order,
+        "wealth_order": wealth_order,
+        "health_order": health_order,
+    }, f)
+
 shap_output = {
     "health": {
         "values": shap_health.values.tolist(),
@@ -195,8 +234,11 @@ glm_coeff_export = {
         "params": {k: v for k, v in gamma_params.items() if k != "Intercept"},
         "method": "GLM (Gamma, log link) — predict = exp(X @ params)",
     },
-    "feature_order": ["age", "gender_female", "bmi", "is_smoking", "is_exercise",
-                      "has_family_history", "condition_count", "monthly_income_usd"],
+    "feature_order": [
+        "age", "gender_female", "bmi", "is_smoking", "alcohol_use", "is_exercise",
+        "has_family_history", "condition_count", "monthly_income_usd",
+        "education_enc", "wealth_enc", "health_status_enc",
+    ],
 }
 with open(MODELS_DIR / "cambodia_glm_coefficients.json", "w") as f:
     json.dump(glm_coeff_export, f, indent=2)

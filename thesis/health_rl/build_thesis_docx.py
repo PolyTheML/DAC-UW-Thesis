@@ -530,7 +530,7 @@ def add_english_abstract(doc):
         "demographic segments. This thesis investigates whether contextual bandits — a class of online learning algorithms for sequential "
         "decision-making under uncertainty — can replace static rules in emerging-market health insurance underwriting.\n\n"
         "The research designs and implements a contextual bandit framework with three algorithms (LinUCB, LinTS, and Epsilon-Greedy) "
-        "and compares them against a static XGBoost rule baseline on a synthetic dataset of 2,000 Cambodian health insurance applicants. "
+        "and compares them against a static XGBoost rule baseline on a synthetic dataset of 2,000 Cambodian health insurance applicants anchored on the Cambodia Demographic and Health Survey (CDHS) 2021–22 (National Institute of Statistics / ICF, 2023). "
         "A profit-based actuarial reward simulator evaluates four underwriting actions (standard, rated, decline, refer), while Population "
         "Stability Index (PSI) guardrails monitor regional and occupational fairness.\n\n"
         "Three controlled experiments validate the framework. EXP-005 demonstrates that LinUCB achieves 67% higher cumulative reward than "

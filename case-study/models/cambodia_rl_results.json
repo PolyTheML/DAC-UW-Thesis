@@ -1,0 +1,90 @@
+{
+  "environment": {
+    "n_applicants": 2000,
+    "n_arms": 3,
+    "arm_labels": {
+      "0": "Standard",
+      "1": "Rated",
+      "2": "Decline"
+    },
+    "feature_dim_with_bias": 18,
+    "reward_params": {
+      "P_std": 35.0,
+      "P_rated": 43.4,
+      "claims_coeff": 20.0,
+      "c_acq": 3.0,
+      "conv_std": 0.9,
+      "noise_base": 2.0,
+      "noise_slope": 1.5,
+      "acceptance_curve": "p = clip(-0.30 + 0.55*m, 0.05, 0.85)",
+      "s_to_r_boundary_mortality": 1.34,
+      "r_to_d_boundary_mortality": 2.05
+    },
+    "oracle_action_dist": {
+      "standard_pct": 20.6,
+      "rated_pct": 59.1,
+      "decline_pct": 20.4
+    },
+    "oracle_total_expected_reward": 5601.85
+  },
+  "algorithms": [
+    {
+      "algorithm": "LinTS",
+      "final_cumulative_regret": {
+        "mean": 1913.89,
+        "std": 153.27,
+        "min": 1678.77,
+        "max": 2267.3
+      },
+      "final_cumulative_reward": {
+        "mean": 3617.39,
+        "std": 231.91
+      },
+      "converged_action_dist": {
+        "standard_pct": 9.1,
+        "rated_pct": 77.3,
+        "decline_pct": 13.6
+      },
+      "n_seeds": 10
+    },
+    {
+      "algorithm": "LinUCB",
+      "final_cumulative_regret": {
+        "mean": 1905.38,
+        "std": 275.87,
+        "min": 1394.31,
+        "max": 2464.15
+      },
+      "final_cumulative_reward": {
+        "mean": 3639.6,
+        "std": 313.09
+      },
+      "converged_action_dist": {
+        "standard_pct": 9.7,
+        "rated_pct": 76.5,
+        "decline_pct": 13.8
+      },
+      "n_seeds": 10
+    },
+    {
+      "algorithm": "EpsilonGreedy",
+      "final_cumulative_regret": {
+        "mean": 2272.75,
+        "std": 179.43,
+        "min": 2047.08,
+        "max": 2674.96
+      },
+      "final_cumulative_reward": {
+        "mean": 3313.95,
+        "std": 154.17
+      },
+      "converged_action_dist": {
+        "standard_pct": 13.4,
+        "rated_pct": 69.8,
+        "decline_pct": 16.8
+      },
+      "n_seeds": 10
+    }
+  ],
+  "regret_reduction_ts_vs_eg_pct": 15.8
+}
