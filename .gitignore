@@ -64,6 +64,9 @@ case-study/phnom_penh_pings.csv
 # Logs
 *.log
 
+# SQLite databases (generated at runtime)
+*.db
+
 # Temporary analysis scripts
 analyze*.py
 # Old backend API (superseded by demo/)

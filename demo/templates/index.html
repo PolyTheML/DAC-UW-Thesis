@@ -74,6 +74,9 @@
         <button onclick="switchTab('benchmark')" id="tab-benchmark" class="tab-inactive py-3 text-sm transition-colors">
           Benchmark Race
         </button>
+        <button onclick="switchTab('hitl')" id="tab-hitl" class="tab-inactive py-3 text-sm transition-colors">
+          Underwriter Review
+        </button>
       </div>
     </div>
   </nav>
@@ -648,6 +651,149 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <h3 class="text-sm font-semibold text-gray-700 mb-2">Cumulative Regret — All Algorithms</h3>
           <div class="h-64"><canvas id="bench-chart-regret"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: UNDERWRITER REVIEW (HITL) ==================== -->
+    <section id="panel-hitl" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
+          <h2 class="font-semibold text-gray-900">Human-in-the-Loop Review</h2>
+          <p class="text-xs text-gray-500">Bandit recommends → underwriter confirms/overrides → bandit learns.</p>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Underwriter Name</label>
+            <input type="text" id="hitl-underwriter" value="Senior Underwriter" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition">
+          </div>
+
+          <button onclick="hitlNextApplicant()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm flex items-center justify-center gap-2">
+            <span id="hitl-spinner" class="hidden">⟳</span>
+            <span id="hitl-btn-text">Next Applicant</span>
+          </button>
+
+          <div class="border-t border-gray-100 pt-3">
+            <div class="text-xs font-medium text-gray-500 mb-2">Bandit Recommendation</div>
+            <div id="hitl-recommendation" class="bg-gray-50 rounded-lg border border-gray-100 p-3 text-sm text-gray-500 italic">
+              Click "Next Applicant" to generate a case.
+            </div>
+          </div>
+
+          <div id="hitl-override-buttons" class="hidden space-y-2">
+            <div class="text-xs font-medium text-gray-500">Override Decision</div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="hitlSubmitReview(0)" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-medium py-2 rounded-md transition text-sm">
+                STANDARD
+              </button>
+              <button onclick="hitlSubmitReview(1)" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-medium py-2 rounded-md transition text-sm">
+                RATED (+25%)
+              </button>
+              <button onclick="hitlSubmitReview(2)" class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-medium py-2 rounded-md transition text-sm">
+                DECLINE
+              </button>
+            </div>
+            <p class="text-xs text-gray-400">REFER is the recommendation; choose STANDARD, RATED, or DECLINE as final.</p>
+          </div>
+
+          <button onclick="hitlExportCSV()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
+            📥 Export Review Log (CSV)
+          </button>
+        </div>
+
+        <!-- Applicant + Metrics -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- Applicant card -->
+          <div id="hitl-applicant-card" class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hidden">
+            <h3 class="font-semibold text-gray-900 mb-3">Applicant Profile</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm" id="hitl-applicant-details">
+              <!-- populated by JS -->
+            </div>
+          </div>
+
+          <!-- Metrics -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="hitl-metrics">
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Total Reviews</div>
+              <div class="text-xl font-bold text-gray-900 mt-1" id="hitl-m-total">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Override Rate</div>
+              <div class="text-xl font-bold text-gray-900 mt-1" id="hitl-m-override">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Alignment Rate</div>
+              <div class="text-xl font-bold text-gray-900 mt-1" id="hitl-m-align">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Avg Reward</div>
+              <div class="text-xl font-bold text-gray-900 mt-1" id="hitl-m-avg">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Cumulative Reward</div>
+              <div class="text-xl font-bold text-gray-900 mt-1" id="hitl-m-cum">—</div>
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+              <div class="text-xs font-medium text-gray-500 uppercase">Human Cost</div>
+              <div class="text-xl font-bold text-red-600 mt-1" id="hitl-m-cost">—</div>
+            </div>
+          </div>
+
+          <!-- Reward trend chart -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Reward Trend (Last 50 Reviews)</h3>
+            <div class="h-56"><canvas id="hitl-chart-reward"></canvas></div>
+          </div>
+
+          <!-- PSI Monitor -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-gray-700">Approved Pool PSI Monitor</h3>
+              <span class="text-xs text-gray-400">Approved = STANDARD + RATED overrides vs. reference</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3" id="hitl-psi-cards">
+              <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+                <div class="text-xs font-medium text-gray-500 uppercase">Region</div>
+                <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+                <div class="text-xs font-medium text-gray-500 uppercase">Occupation</div>
+                <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+                <div class="text-xs font-medium text-gray-500 uppercase">Age Bin</div>
+                <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg border border-gray-100 p-3">
+                <div class="text-xs font-medium text-gray-500 uppercase">Wealth Quintile</div>
+                <div class="text-lg font-bold text-gray-900 mt-1">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review history table -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Recent Reviews</h3>
+            <div class="overflow-x-auto max-h-64">
+              <table class="min-w-full text-xs">
+                <thead class="bg-gray-50 text-gray-600 uppercase font-semibold sticky top-0">
+                  <tr>
+                    <th class="px-3 py-2 text-left">#</th>
+                    <th class="px-3 py-2 text-left">Bandit</th>
+                    <th class="px-3 py-2 text-left">Human</th>
+                    <th class="px-3 py-2 text-right">Reward</th>
+                    <th class="px-3 py-2 text-left">Region</th>
+                    <th class="px-3 py-2 text-left">Occupation</th>
+                  </tr>
+                </thead>
+                <tbody id="hitl-history-body" class="divide-y divide-gray-100">
+                  <tr>
+                    <td colspan="6" class="px-3 py-6 text-center text-gray-400 italic">No reviews yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </section>

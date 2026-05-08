@@ -41,12 +41,19 @@ from stress_testing.rl.underwriting_bandit import (  # noqa: E402
     run_bandit,
 )
 from demo.pricing_engine import optimize_premium, batch_optimize  # noqa: E402
+from demo import hitl_db  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Load data once at startup
 # ---------------------------------------------------------------------------
 X, DF_RAW, FEATURES = preprocess_cambodia_data()
 N_FEATURES = X.shape[1]
+
+# ---------------------------------------------------------------------------
+# HITL state (single underwriter, in-memory bandit that learns from overrides)
+# ---------------------------------------------------------------------------
+HITL_BANDIT = LinUCB(n_actions=4, n_features=N_FEATURES, alpha=1.0)
+HITL_REWARD_CFG = RewardConfig()  # simple deterministic config
 
 # ---------------------------------------------------------------------------
 # FastAPI app
@@ -161,6 +168,38 @@ class PricingBatchResponse(BaseModel):
     summary: dict[str, Any]
     histogram: dict[str, Any]
     psi: dict[str, Any]
+
+
+class HITLRecommendResponse(BaseModel):
+    applicant: dict[str, Any]
+    index: int
+    bandit_action: int
+    bandit_action_name: str
+    expected_rewards: dict[str, float]
+
+
+class HITLReviewRequest(BaseModel):
+    index: int = Field(..., ge=0, lt=len(DF_RAW))
+    bandit_action: int = Field(..., ge=0, le=3)
+    override_action: int = Field(..., ge=0, le=2)
+    underwriter: str = Field(default="Underwriter")
+
+
+class HITLReviewResponse(BaseModel):
+    reward: float
+    saved: bool
+    metrics: dict[str, Any]
+
+
+class HITLMetricsResponse(BaseModel):
+    total_reviews: int
+    override_rate: float | None
+    alignment_rate: float | None
+    avg_reward: float | None
+    cumulative_reward: float
+    human_cost: float
+    recent_rewards: list[float]
+    psi: dict[str, Any] | None
 
 
 # ---------------------------------------------------------------------------
@@ -378,6 +417,99 @@ async def pricing_batch(payload: BanditRunIn) -> PricingBatchResponse:
     config = RewardConfig()
     result = batch_optimize(DF_RAW, n_samples=100, config=config, seed=payload.seed)
     return PricingBatchResponse(**result)
+
+
+# ---------------------------------------------------------------------------
+# HITL (Human-in-the-Loop) Underwriter Review
+# ---------------------------------------------------------------------------
+
+@app.get("/api/hitl/recommend")
+async def hitl_recommend() -> HITLRecommendResponse:
+    """Generate a random applicant and bandit recommendation for underwriter review."""
+    rng = np.random.default_rng()
+    idx = int(rng.integers(len(DF_RAW)))
+    row = DF_RAW.iloc[idx]
+    applicant = _row_to_applicant(row)
+    context = np.asarray(X[idx], dtype=float)
+
+    bandit_action = int(HITL_BANDIT.select_action(context))
+    exp = expected_rewards(row, HITL_REWARD_CFG)
+
+    expected = {
+        ACTION_NAMES[i]: round(float(exp[i]), 2) for i in range(len(ACTION_NAMES))
+    }
+
+    return HITLRecommendResponse(
+        applicant=applicant,
+        index=idx,
+        bandit_action=bandit_action,
+        bandit_action_name=ACTION_NAMES[bandit_action],
+        expected_rewards=expected,
+    )
+
+
+@app.post("/api/hitl/review")
+async def hitl_review(payload: HITLReviewRequest) -> HITLReviewResponse:
+    """Record a human override, compute reward, update the bandit, and return metrics."""
+    idx = payload.index
+    if idx < 0 or idx >= len(DF_RAW):
+        raise ValueError(f"Index {idx} out of range [0, {len(DF_RAW)})")
+
+    override_action = payload.override_action
+    if override_action not in (0, 1, 2):
+        raise ValueError("override_action must be 0 (STANDARD), 1 (RATED), or 2 (DECLINE)")
+
+    row = DF_RAW.iloc[idx]
+    applicant = _row_to_applicant(row)
+    context = np.asarray(X[idx], dtype=float)
+
+    # Compute deterministic reward for the human's chosen action
+    exp = expected_rewards(row, HITL_REWARD_CFG)
+    reward = float(exp[override_action])
+
+    # Update bandit on the human's decision
+    HITL_BANDIT.update(override_action, context, reward)
+
+    # Persist to sqlite
+    row_id = hitl_db.save_review(
+        applicant=applicant,
+        bandit_action=payload.bandit_action,
+        override_action=override_action,
+        reward=reward,
+        underwriter=payload.underwriter,
+    )
+
+    metrics = hitl_db.get_metrics(window=50)
+
+    return HITLReviewResponse(
+        reward=round(reward, 2),
+        saved=row_id is not None,
+        metrics=metrics,
+    )
+
+
+@app.get("/api/hitl/metrics")
+async def hitl_metrics() -> HITLMetricsResponse:
+    """Return current HITL metrics including PSI on the approved pool."""
+    metrics = hitl_db.get_metrics(window=50)
+    psi = hitl_db.compute_approved_psi(DF_RAW)
+    return HITLMetricsResponse(
+        total_reviews=metrics["total_reviews"],
+        override_rate=metrics["override_rate"],
+        alignment_rate=metrics["alignment_rate"],
+        avg_reward=metrics["avg_reward"],
+        cumulative_reward=metrics["cumulative_reward"],
+        human_cost=metrics["human_cost"],
+        recent_rewards=metrics["recent_rewards"],
+        psi=psi,
+    )
+
+
+@app.get("/api/hitl/export")
+async def hitl_export() -> dict[str, str]:
+    """Return the review log as a CSV string."""
+    csv_data = hitl_db.export_csv()
+    return {"csv": csv_data}
 
 
 # ---------------------------------------------------------------------------

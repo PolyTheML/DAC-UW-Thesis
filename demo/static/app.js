@@ -51,7 +51,7 @@ async function apiGet(path) {
 // Tabs
 // ---------------------------------------------------------------------------
 function switchTab(name) {
-  ['simulator', 'pricing', 'arena', 'benchmark'].forEach(t => {
+  ['simulator', 'pricing', 'arena', 'benchmark', 'hitl'].forEach(t => {
     document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== name);
     const btn = document.getElementById(`tab-${t}`);
     if (t === name) {
@@ -855,6 +855,231 @@ function renderMultiLineChart(canvasId, label, rounds, datasets) {
 }
 
 // ---------------------------------------------------------------------------
+// HITL (Human-in-the-Loop) Underwriter Review
+// ---------------------------------------------------------------------------
+let hitlCurrent = null;  // { index, applicant, bandit_action, bandit_action_name, expected_rewards }
+let hitlHistory = [];    // local cache of reviews
+
+async function hitlNextApplicant() {
+  document.getElementById('hitl-spinner').classList.remove('hidden');
+  document.getElementById('hitl-btn-text').textContent = 'Loading...';
+  try {
+    const data = await apiGet('/api/hitl/recommend');
+    hitlCurrent = data;
+
+    // Show applicant card
+    const card = document.getElementById('hitl-applicant-card');
+    card.classList.remove('hidden');
+    const a = data.applicant;
+    const details = document.getElementById('hitl-applicant-details');
+    details.innerHTML = `
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Age</div><div class="font-semibold">${a.age}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Gender</div><div class="font-semibold">${a.gender}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">BMI</div><div class="font-semibold">${a.bmi}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Income</div><div class="font-semibold">$${a.monthly_income_usd}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Region</div><div class="font-semibold">${a.region}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Occupation</div><div class="font-semibold">${a.occupation}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Wealth</div><div class="font-semibold">${a.wealth_quintile}</div></div>
+      <div class="bg-gray-50 rounded p-2"><div class="text-xs text-gray-500">Mortality</div><div class="font-semibold">${a.mortality_multiplier}×</div></div>
+    `;
+
+    // Show recommendation
+    const rec = data.expected_rewards;
+    const recDiv = document.getElementById('hitl-recommendation');
+    const actionColor = data.bandit_action_name === 'STANDARD' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' :
+                        data.bandit_action_name === 'RATED' ? 'text-amber-700 bg-amber-50 border-amber-200' :
+                        data.bandit_action_name === 'DECLINE' ? 'text-red-700 bg-red-50 border-red-200' :
+                        'text-indigo-700 bg-indigo-50 border-indigo-200';
+    recDiv.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium text-gray-500">Bandit Recommends</span>
+        <span class="text-xs font-bold px-2 py-0.5 rounded border ${actionColor}">${data.bandit_action_name}</span>
+      </div>
+      <div class="grid grid-cols-4 gap-2 text-xs">
+        <div>STANDARD: <span class="font-mono">${fmtMoney(rec.STANDARD)}</span></div>
+        <div>RATED: <span class="font-mono">${fmtMoney(rec.RATED)}</span></div>
+        <div>DECLINE: <span class="font-mono">${fmtMoney(rec.DECLINE)}</span></div>
+        <div>REFER: <span class="font-mono">${fmtMoney(rec.REFER)}</span></div>
+      </div>
+    `;
+
+    // Show override buttons
+    document.getElementById('hitl-override-buttons').classList.remove('hidden');
+
+    // Refresh metrics
+    await hitlRefreshMetrics();
+  } catch (e) {
+    alert('Failed to load applicant: ' + e.message);
+  } finally {
+    document.getElementById('hitl-spinner').classList.add('hidden');
+    document.getElementById('hitl-btn-text').textContent = 'Next Applicant';
+  }
+}
+
+async function hitlSubmitReview(overrideAction) {
+  if (!hitlCurrent) {
+    alert('No applicant loaded. Click "Next Applicant" first.');
+    return;
+  }
+  const underwriter = document.getElementById('hitl-underwriter').value || 'Underwriter';
+  try {
+    const data = await apiPost('/api/hitl/review', {
+      index: hitlCurrent.index,
+      bandit_action: hitlCurrent.bandit_action,
+      override_action: overrideAction,
+      underwriter: underwriter,
+    });
+
+    // Cache review locally for history display
+    hitlHistory.push({
+      bandit: hitlCurrent.bandit_action_name,
+      override: ['STANDARD', 'RATED', 'DECLINE'][overrideAction],
+      reward: data.reward,
+      region: hitlCurrent.applicant.region,
+      occupation: hitlCurrent.applicant.occupation,
+    });
+
+    // Update metrics display
+    hitlRenderMetrics(data.metrics);
+
+    // Show history
+    hitlRenderHistory();
+
+    // Clear current applicant so user must click Next
+    hitlCurrent = null;
+    document.getElementById('hitl-override-buttons').classList.add('hidden');
+    document.getElementById('hitl-recommendation').innerHTML = '<span class="italic text-gray-500">Review submitted. Click "Next Applicant" to continue.</span>';
+
+    // Refresh full metrics + PSI
+    await hitlRefreshMetrics();
+  } catch (e) {
+    alert('Review submission failed: ' + e.message);
+  }
+}
+
+async function hitlRefreshMetrics() {
+  try {
+    const data = await apiGet('/api/hitl/metrics');
+    hitlRenderMetrics(data);
+    if (data.psi) {
+      renderPSIToContainer(data.psi, 'hitl-psi-cards');
+    }
+    hitlRenderRewardChart(data.recent_rewards);
+  } catch (e) {
+    console.warn('Metrics refresh failed:', e);
+  }
+}
+
+function hitlRenderMetrics(m) {
+  document.getElementById('hitl-m-total').textContent = m.total_reviews;
+  document.getElementById('hitl-m-override').textContent = m.override_rate !== null ? (m.override_rate * 100).toFixed(1) + '%' : '—';
+  document.getElementById('hitl-m-align').textContent = m.alignment_rate !== null ? (m.alignment_rate * 100).toFixed(1) + '%' : '—';
+  document.getElementById('hitl-m-avg').textContent = m.avg_reward !== null ? fmtMoney(m.avg_reward) : '—';
+  document.getElementById('hitl-m-cum').textContent = fmtMoney(m.cumulative_reward);
+  document.getElementById('hitl-m-cost').textContent = fmtMoney(m.human_cost);
+}
+
+function hitlRenderHistory() {
+  const tbody = document.getElementById('hitl-history-body');
+  if (hitlHistory.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-6 text-center text-gray-400 italic">No reviews yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = '';
+  hitlHistory.slice().reverse().slice(0, 20).forEach((r, i) => {
+    const row = document.createElement('tr');
+    row.className = 'hover:bg-gray-50 transition';
+    row.innerHTML = `
+      <td class="px-3 py-2 text-gray-500">${hitlHistory.length - i}</td>
+      <td class="px-3 py-2 text-gray-700">${r.bandit}</td>
+      <td class="px-3 py-2 font-medium ${r.override === 'DECLINE' ? 'text-red-600' : 'text-emerald-600'}">${r.override}</td>
+      <td class="px-3 py-2 text-right font-mono ${r.reward >= 0 ? 'text-gray-900' : 'text-red-600'}">${fmtMoney(r.reward)}</td>
+      <td class="px-3 py-2 text-gray-700">${r.region}</td>
+      <td class="px-3 py-2 text-gray-700">${r.occupation}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderPSIToContainer(psiData, containerId) {
+  const container = document.getElementById(containerId);
+  const colorMap = {
+    GREEN:  { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+    AMBER:  { bg: 'bg-amber-50',  border: 'border-amber-200',  text: 'text-amber-700',  dot: 'bg-amber-500'  },
+    RED:    { bg: 'bg-red-50',    border: 'border-red-200',    text: 'text-red-700',    dot: 'bg-red-500'    },
+  };
+  const order = ['region', 'occupation', 'age_bin', 'wealth_quintile'];
+  container.innerHTML = '';
+  order.forEach(key => {
+    const item = psiData[key];
+    if (!item) return;
+    const c = colorMap[item.status] || colorMap.GREEN;
+    const card = document.createElement('div');
+    card.className = `${c.bg} rounded-lg border ${c.border} p-3`;
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-medium text-gray-500 uppercase">${item.label}</div>
+        <span class="w-2 h-2 rounded-full ${c.dot}"></span>
+      </div>
+      <div class="text-lg font-bold ${c.text} mt-1">${item.psi.toFixed(4)}</div>
+      <div class="text-xs ${c.text} mt-0.5 opacity-80">${item.status}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function hitlRenderRewardChart(rewards) {
+  const ctx = document.getElementById('hitl-chart-reward').getContext('2d');
+  if (charts.hitlReward) charts.hitlReward.destroy();
+  if (!rewards || rewards.length === 0) return;
+  const labels = rewards.map((_, i) => i + 1);
+  charts.hitlReward = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Reward (USD)',
+        data: rewards,
+        borderColor: '#2E5FA3',
+        backgroundColor: '#2E5FA315',
+        fill: true,
+        pointRadius: 2,
+        tension: 0.3,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: false },
+        y: { grid: { color: '#f3f4f6' } },
+      }
+    }
+  });
+}
+
+async function hitlExportCSV() {
+  try {
+    const data = await apiGet('/api/hitl/export');
+    if (!data.csv) {
+      alert('No reviews to export.');
+      return;
+    }
+    const blob = new Blob([data.csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `hitl_reviews_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Export failed: ' + e.message);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
 document.getElementById('sim-mode').addEventListener('change', function() {
@@ -870,4 +1095,5 @@ document.getElementById('sim-mode').addEventListener('change', function() {
 document.addEventListener('DOMContentLoaded', () => {
   simulateApplicant();
   updatePricingApplicantSummary();
+  hitlRefreshMetrics();
 });
