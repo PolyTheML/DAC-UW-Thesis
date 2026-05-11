@@ -1,8 +1,8 @@
-# CHAPTER V. CONCLUSION
+# CHAPTER VI. CONCLUSION
 
 ---
 
-## 5.1 Summary of Findings
+## 6.1 Summary of Findings
 
 This thesis investigated whether contextual bandit algorithms can replace static underwriting rules for health insurance in Cambodia, and whether Population Stability Index guardrails can ensure the resulting portfolio remains actuarially sound. Four experiments, conducted on a synthetic 2,000-applicant Cambodia dataset (SEED = 42, N = 5,000 rounds), yield four principal findings.
 
@@ -16,7 +16,7 @@ This thesis investigated whether contextual bandit algorithms can replace static
 
 Taken together, these findings support the central thesis claim: **contextual bandits with PSI portfolio monitoring represent a viable, fair, and operationally feasible path to adaptive health insurance underwriting in emerging markets**.
 
-## 5.2 Limitations
+## 6.2 Limitations
 
 Several limitations bound the generalisability of these findings.
 
@@ -28,9 +28,9 @@ Several limitations bound the generalisability of these findings.
 
 **Sample size.** 2,000 applicants is sufficient to demonstrate convergence on this synthetic problem but is small relative to the hundreds of thousands of policies held by even mid-sized emerging-market insurers. Bandit convergence rates scale with context dimensionality; the 25-feature space used here may require substantially more rounds to converge in a live setting with richer feature sets.
 
-## 5.3 Future Work
+## 6.3 Future Work
 
-### 5.3.1 Non-Stationary Drift and Adaptive Monitoring
+### 6.3.1 Non-Stationary Drift and Adaptive Monitoring
 
 The most pressing extension is equipping the bandit with explicit mechanisms to detect and adapt to distributional drift in the applicant population. Cambodia's disease landscape is subject to predictable seasonal shocks — monsoon-season TB spikes in highland provinces, Hepatitis B outbreaks in coastal areas following flooding — that can shift the feature distribution and invalidate the bandit's learned reward coefficients within weeks.
 
@@ -44,19 +44,19 @@ Critically, drift detection must precede algorithmic adaptation: an insurer cann
 
 The recommended monitoring architecture combines both signals: PSI computed on a rolling 3-month ingestion window triggers an alert when it exceeds 0.25; the alert initiates a DiscountedLinUCB warm restart with $\lambda = 0.90$ applied to the current sufficient statistics, rather than a full cold restart from $A = I, b = 0$. This preserves the bandit's prior knowledge of stable subpopulations while accelerating adaptation to the drifted subgroup. The interactive drift detection demo (available at `/drift`) illustrates the divergence between a static LinUCB ($\lambda = 1.0$) and a discounted variant ($\lambda = 0.95$) under a simulated mid-run outbreak, showing the static bandit's reward curve flattening while the adaptive bandit recovers within approximately 200 rounds.
 
-### 5.3.2 Neural Bandit Extensions
+### 6.3.2 Neural Bandit Extensions
 
 The linear reward model underlying LinUCB and LinTS assumes that the expected reward is a linear function of the context features. For a 25-feature dataset, this assumption is reasonable and produces strong empirical performance. However, real-world applicant data — including telematics, claims history, and social network signals — may exhibit non-linear feature interactions that linear models cannot capture. NeuralUCB and NeuralTS replace the linear estimator with a deep network while preserving the UCB or Thompson Sampling exploration strategy, at the cost of substantially increased computational overhead. A hybrid neural-linear architecture, in which a neural network learns a low-dimensional embedding and a linear bandit operates in the embedding space, offers a practical middle ground for deployment on the compute budgets typical of emerging-market insurers.
 
-### 5.3.3 Live Deployment and A/B Testing
+### 6.3.3 Live Deployment and A/B Testing
 
 Translating the present results into a live deployment requires a controlled A/B testing protocol in which the bandit policy is applied to a randomised subset of incoming applicants while the static rule applies to the remainder. This design allows regret to be measured against a known baseline in production, rather than against a synthetic oracle. The key operational challenge is delayed reward feedback: health insurance claims typically emerge 6–24 months after policy issuance, creating a reward delay that violates the standard bandit assumption of immediate feedback. Survival analysis models or proxy rewards based on early claims indicators would be required to close this feedback loop on a commercially viable timescale.
 
-### 5.3.4 Multi-Period Customer Value
+### 6.3.4 Multi-Period Customer Value
 
 The reward function used in this thesis captures single-period underwriting profit. A richer model would incorporate customer lifetime value: the expected net present value of all future premiums minus claims, conditioned on the customer remaining in the portfolio. Retention probability, cross-selling opportunity (life, motor), and churn risk are all contextual signals that could be incorporated into the bandit's feature vector without changing the algorithm architecture, extending the framework from a pure underwriting tool to a full customer relationship optimisation engine.
 
-## 5.4 Final Remarks
+## 6.4 Final Remarks
 
 This thesis has demonstrated that contextual bandit algorithms — specifically LinUCB, LinTS, and their human-in-the-loop extension — can learn actuarially sound underwriting policies from interaction data, outperforming static rule-based baselines by 67% in cumulative reward while maintaining demographic parity across Cambodia's regional and occupational subgroups. PSI monitoring provides a lightweight, interpretable guardrail that signals when the approved portfolio has drifted too far from the reference distribution, triggering the human or algorithmic intervention required to keep the policy current.
 

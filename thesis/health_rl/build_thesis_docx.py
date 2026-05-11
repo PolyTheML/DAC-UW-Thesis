@@ -23,23 +23,27 @@ from docx.oxml import OxmlElement
 # Paths
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).parent
-OUT_PATH = ROOT / "ITC_Thesis_Draft.docx"
+OUT_PATH = Path(r"C:\DAC-UW-Thesis\thesis\I5_ITC_Thesis_Template_Guideline-AMS_BACKUP_CLEAN.docx")
 
 CHAPTERS = [
     ("chapter1_introduction.md", "CHAPTER I. INTRODUCTION"),
     ("chapter2_literature_review.md", "CHAPTER II. LITERATURE REVIEW"),
     ("chapter3_methodology.md", "CHAPTER III. METHODOLOGY"),
-    ("chapter4_results.md", "CHAPTER IV. RESULTS AND DISCUSSION"),
-    ("chapter5_conclusion.md", "CHAPTER V. CONCLUSION"),
+    ("chapter4_project_analysis.md", "CHAPTER IV. PROJECT ANALYSIS AND CONCEPTS"),
+    ("chapter4_results.md", "CHAPTER V. RESULTS AND DISCUSSION"),
+    ("chapter5_conclusion.md", "CHAPTER VI. CONCLUSION"),
 ]
 
 FIGURES = [
-    ("fig_framework.png", "System architecture of the adaptive underwriting framework."),
-    ("fig_reward_curves.png", "Cumulative reward curves for LinUCB and Static XGB baseline."),
-    ("fig_regret_curves.png", "Cumulative regret curves across all four algorithms."),
-    ("fig_action_evolution.png", "Evolution of action distribution over 5,000 rounds."),
-    ("fig_fairness_region.png", "Approval rates by region with parity threshold."),
-    ("fig_fairness_occupation.png", "Approval rates by occupation with parity threshold."),
+    ("fig_framework.png", "Figure 3.1. System architecture of the adaptive underwriting framework."),
+    ("fig_ch4_architecture.png", "Figure 4.1. System architecture of the demonstration system."),
+    ("fig_ch4_bandit_loop.png", "Figure 4.2. Contextual bandit decision loop."),
+    ("fig_reward_curves.png", "Figure 5.1. Cumulative reward curves for LinUCB and Static XGB baseline."),
+    ("fig_action_evolution.png", "Figure 5.2. Evolution of action distribution over 5,000 rounds."),
+    ("fig_fairness_region.png", "Figure 5.3. Approval rates by region with parity threshold."),
+    ("fig_fairness_occupation.png", "Figure 5.4. Approval rates by occupation with parity threshold."),
+    ("fig_regret_curves.png", "Figure 5.5. Cumulative regret curves across all four algorithms."),
+    ("fig_hitl_experiment.png", "Figure 5.5.1. EXP-008 four-panel HITL diagnostic."),
 ]
 
 TABLES = [
@@ -181,6 +185,51 @@ def add_citation_paragraph(doc, text):
     return para
 
 
+def extract_figure_label(caption: str) -> tuple[str | None, str]:
+    """Extract leading figure label like 'Figure 3.1.' or 'Fig. 4.5.1:' from caption.
+    Returns (normalized_label, cleaned_caption)."""
+    m = re.match(r'^(Figure\s+\d+(\.\d+)*\.?\s|Fig\.\s+\d+(\.\d+)*:\s*)(.*)$', caption)
+    if m:
+        label = m.group(1).strip()
+        label = label.replace("Fig.", "Figure").replace(":", ".")
+        if not label.endswith("."):
+            label += "."
+        return label, m.group(4)
+    return None, caption
+
+
+def add_embedded_figure(doc, image_path: str, caption_text: str, figure_label: str | None = None):
+    """Embed an image with a centered caption."""
+    full_path = Path(image_path)
+    if not full_path.exists():
+        full_path = ROOT / image_path
+    if not full_path.exists():
+        full_path = ROOT / "figures" / image_path
+    if full_path.exists():
+        para = doc.add_paragraph()
+        run = para.add_run()
+        run.add_picture(str(full_path), width=Inches(6))
+        set_paragraph_format(para, space_after=Pt(6), line_spacing=1.5,
+                             alignment=WD_ALIGN_PARAGRAPH.CENTER)
+    else:
+        add_placeholder_paragraph(doc, f"{caption_text} (image not found: {image_path})", kind="FIGURE")
+
+    # Normalize caption with figure label
+    extracted_label, cleaned_caption = extract_figure_label(caption_text)
+    if figure_label is None:
+        figure_label = extracted_label
+    if figure_label:
+        full_caption = f"{figure_label} {cleaned_caption}"
+    else:
+        full_caption = caption_text
+
+    para = doc.add_paragraph()
+    run = para.add_run(full_caption)
+    set_run_font(run, size_pt=11, italic=True)
+    set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5,
+                         alignment=WD_ALIGN_PARAGRAPH.CENTER)
+
+
 # ---------------------------------------------------------------------------
 # Markdown parser
 # ---------------------------------------------------------------------------
@@ -270,10 +319,25 @@ def parse_markdown(doc, md_text: str):
             i += 1
             continue
 
-        # Placeholders
+        # Embedded figures — new syntax: [FIGURE 4.1: caption. Source: `path`.]
+        fig_embed_match = re.search(r'\[FIGURE\s+([\d\.]+):\s*(.*?)\s+Source:\s*`?([^`]+)`?\.\]', stripped)
+        if fig_embed_match:
+            figure_label = f"Figure {fig_embed_match.group(1)}."
+            caption = fig_embed_match.group(2).strip()
+            img_path = fig_embed_match.group(3).strip()
+            add_embedded_figure(doc, img_path, caption, figure_label=figure_label)
+            i += 1
+            continue
+
+        # Embedded figures — old syntax: [FIGURE: path — caption]
         fig_match = re.search(r'\[FIGURE:\s*(.*?)\]', stripped)
         if fig_match:
-            add_placeholder_paragraph(doc, fig_match.group(1).strip(), kind="FIGURE")
+            content = fig_match.group(1).strip()
+            if ' — ' in content:
+                path_part, caption_part = content.split(' — ', 1)
+                add_embedded_figure(doc, path_part.strip(), caption_part.strip())
+            else:
+                add_placeholder_paragraph(doc, content, kind="FIGURE")
             i += 1
             continue
 
@@ -579,7 +643,7 @@ def add_list_of_figures(doc):
     add_heading_paragraph(doc, "LIST OF FIGURES", level="chapter")
     for fname, caption in FIGURES:
         para = doc.add_paragraph()
-        run = para.add_run(f"Figure {FIGURES.index((fname, caption)) + 1}.  {caption}")
+        run = para.add_run(caption)
         set_run_font(run, size_pt=12)
         set_paragraph_format(para, space_after=Pt(6), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
                              first_line_indent=Cm(1.27))
@@ -709,7 +773,15 @@ def main():
         "Fairness and machine learning. fairmlbook.org.\n\n"
         "[CITATION: Ensign et al. 2018] Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & Venkatasubramanian, S. (2018). "
         "Runaway feedback loops in predictive policing. Proceedings of the 1st Conference on Fairness, Accountability and Transparency.\n\n"
-        "[CITATION: Siddiqi 2012] Siddiqi, N. (2012). Credit risk scorecards: Developing and implementing intelligent credit scoring (2nd ed.). Wiley."
+        "[CITATION: Lewis 1994] Lewis, E. M. (1994). An introduction to credit scoring. Athena Press, London.\n\n"
+        "[CITATION: Thomas et al. 2002] Thomas, L. C., Edelman, D. B., & Crook, J. N. (2002). Credit scoring and its applications. "
+        "SIAM monographs on mathematical modeling and computation. Philadelphia: SIAM. ISBN 978-0-89871-483-8.\n\n"
+        "[CITATION: Siddiqi 2006] Siddiqi, N. (2006). Credit risk scorecards: Developing and implementing intelligent credit scoring. "
+        "Hoboken, NJ: John Wiley & Sons. ISBN 978-0-471-75451-0. (Reprinted 2012, DOI:10.1002/9781119201731).\n\n"
+        "[CITATION: Yurdakul & Naranjo 2020] Yurdakul, B., & Naranjo, J. (2020). Statistical properties of the population stability index. "
+        "Journal of Risk Model Validation, 14(4), 89–100. DOI:10.21314/JRMV.2020.227.\n\n"
+        "[CITATION: Lin 1991] Lin, J. (1991). Divergence measures based on the Shannon entropy. "
+        "IEEE Transactions on Information Theory, 37(1), 145–151. DOI:10.1109/18.61115."
     )
     for para_text in ref_text.split("\n\n"):
         add_body_paragraph(doc, para_text.strip())

@@ -80,7 +80,7 @@ The remainder of this thesis is structured as follows:
 
 **Chapter III: Methodology** describes the research design in detail. It covers the synthetic Cambodia dataset generation process, the four-action policy space, the profit-based reward simulator, the three bandit algorithms and the static baseline, the PSI fairness guardrails, and the design of experiments EXP-005 through EXP-007.
 
-**Chapter IV: Results and Discussion** presents the empirical findings. EXP-005 validates convergence and learning; EXP-006 validates fairness; EXP-007 provides the benchmark comparison. The discussion interprets the results in the context of Cambodian insurance practice and connects them to the broader dynamic pricing literature.
+**Chapter V: Results and Discussion** presents the empirical findings. EXP-005 validates convergence and learning; EXP-006 validates fairness; EXP-007 provides the benchmark comparison. The discussion interprets the results in the context of Cambodian insurance practice and connects them to the broader dynamic pricing literature.
 
 **Chapter V: Conclusion** synthesizes the findings, restates the contributions, acknowledges limitations (synthetic data, stationary environment, single-period rewards), and proposes directions for future work including non-stationary drift, neural bandit extensions, and live A/B testing with a Cambodian insurer.
 
