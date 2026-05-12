@@ -1,3 +1,4 @@
+import io
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 from scripts.thesis_scorer import ComplianceReport, Violation
@@ -99,3 +100,18 @@ def test_warn_status_when_max_iter_exhausted(mock_score, mock_rewrite, tmp_path)
     from scripts.thesis_loop import _run_chapter
     result = _run_chapter(chapter)
     assert result.status == "WARN"
+
+
+def test_print_summary_shows_all_columns(capsys):
+    from scripts.thesis_loop import ChapterResult, _print_summary
+    results = [
+        ChapterResult(Path("thesis/health_rl/chapter1_introduction.md"), 62, 91, 2, "PASS"),
+        ChapterResult(Path("thesis/health_rl/chapter3_methodology.md"), 55, 83, 3, "WARN"),
+    ]
+    _print_summary(results)
+    captured = capsys.readouterr().out
+    assert "chapter1_introduction.md" in captured
+    assert "PASS" in captured
+    assert "WARN" in captured
+    assert "62" in captured
+    assert "91" in captured

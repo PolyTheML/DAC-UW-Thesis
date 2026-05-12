@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -60,3 +62,60 @@ def _run_chapter(
 
     status = "PASS" if best_report.passed else "WARN"
     return ChapterResult(path, score_before, best_report.score, iterations_used, status)
+
+
+def _print_summary(results: list[ChapterResult]) -> None:
+    header = f"{'Chapter':<45} {'Before':>6} {'After':>5} {'Iter':>4} {'Status':>6}"
+    print(f"\n{header}")
+    print("-" * len(header))
+    for r in results:
+        print(
+            f"{r.path.name:<45} {r.score_before:>6} {r.score_after:>5} "
+            f"{r.iterations:>4} {r.status:>6}"
+        )
+
+
+def _commit_changes(changed: list[Path]) -> None:
+    if not changed:
+        return
+    for p in changed:
+        subprocess.run(["git", "add", str(p)], check=True)
+    subprocess.run(
+        [
+            "git", "commit", "-m",
+            "style: auto-fix ITC compliance violations\n\n"
+            "Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>",
+        ],
+        check=True,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="ITC thesis style compliance loop — autoresearch-style chapter rewriter"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Score and report violations without writing any files",
+    )
+    args = parser.parse_args()
+
+    results: list[ChapterResult] = []
+    changed: list[Path] = []
+
+    for chapter in CHAPTERS:
+        print(f"Processing {chapter.name}...")
+        result = _run_chapter(chapter, dry_run=args.dry_run)
+        results.append(result)
+        if not args.dry_run and result.score_after > result.score_before:
+            changed.append(chapter)
+
+    _print_summary(results)
+
+    if not args.dry_run:
+        _commit_changes(changed)
+
+
+if __name__ == "__main__":
+    main()
