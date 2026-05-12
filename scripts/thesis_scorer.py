@@ -1,8 +1,29 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Literal
+
+import anthropic
+
+_STYLE_GUIDE_PATH = Path(__file__).parent.parent / "thesis" / "health_rl" / "ITC_STYLE_GUIDE.md"
+_STYLE_GUIDE: str = _STYLE_GUIDE_PATH.read_text(encoding="utf-8")
+
+_SCORER_SYSTEM = (
+    "You are an ITC thesis style compliance checker.\n"
+    "Score the chapter from 0 to 100 based on these rules:\n"
+    "- Heading hierarchy (25 pts): markdown # → ## → ### never skips a level\n"
+    "- Citation placeholders (25 pts): factual or statistical claims have [CITATION: Author Year]\n"
+    "- Figure/Table placeholders (20 pts): [FIGURE: caption] where figures are referenced; "
+    "[TABLE: caption] where tables are referenced\n"
+    "- ITC section structure (20 pts): correct sections present per the ITC structure mapping\n"
+    "- APA 7 format (10 pts): reference list entries follow APA 7th edition\n\n"
+    "Return ONLY valid JSON, no prose, no markdown fences:\n"
+    '{"score": <int 0-100>, "violations": [{"section": "<heading>", "rule": "<rule>", '
+    '"description": "<what is wrong>", "severity": "<error|warning>"}]}'
+)
 
 
 @dataclass
@@ -58,3 +79,24 @@ def _parse_response(json_str: str) -> ComplianceReport:
                 )
             ],
         )
+
+
+def score_chapter(content: str, *, model: str = "claude-opus-4-7") -> ComplianceReport:
+    """Score a chapter for ITC thesis style compliance using Claude API.
+
+    Args:
+        content: Chapter content in markdown format
+        model: Claude model to use (default: claude-opus-4-7)
+
+    Returns:
+        ComplianceReport with score and violations
+    """
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    user_message = f"ITC Style Guide:\n\n{_STYLE_GUIDE}\n\n---\n\nChapter to score:\n\n{content}"
+    response = client.messages.create(
+        model=model,
+        max_tokens=2048,
+        system=_SCORER_SYSTEM,
+        messages=[{"role": "user", "content": user_message}],
+    )
+    return _parse_response(response.content[0].text)

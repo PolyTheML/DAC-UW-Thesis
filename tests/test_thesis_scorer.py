@@ -1,4 +1,8 @@
+import os
+from unittest.mock import MagicMock, patch
+
 import pytest
+
 from scripts.thesis_scorer import Violation, ComplianceReport, _parse_response
 
 
@@ -66,3 +70,47 @@ def test_parse_missing_score_returns_zero():
     report = _parse_response('{"violations": []}')
     assert report.score == 0
     assert report.violations[0].rule == "parse_error"
+
+
+@patch("scripts.thesis_scorer.anthropic.Anthropic")
+def test_score_chapter_returns_report(mock_class, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.return_value = MagicMock(
+        content=[MagicMock(text='{"score": 80, "violations": []}')]
+    )
+    from scripts.thesis_scorer import score_chapter
+
+    report = score_chapter("# I. INTRODUCTION\n\nSome text.")
+    assert report.score == 80
+    assert mock_client.messages.create.called
+
+
+@patch("scripts.thesis_scorer.anthropic.Anthropic")
+def test_score_chapter_passes_style_guide_in_prompt(mock_class, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.return_value = MagicMock(
+        content=[MagicMock(text='{"score": 70, "violations": []}')]
+    )
+    from scripts.thesis_scorer import score_chapter
+
+    score_chapter("# Chapter")
+    user_content = mock_client.messages.create.call_args.kwargs["messages"][0]["content"]
+    assert "ITC Style Guide" in user_content
+
+
+@patch("scripts.thesis_scorer.anthropic.Anthropic")
+def test_score_chapter_uses_configured_model(mock_class, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.return_value = MagicMock(
+        content=[MagicMock(text='{"score": 70, "violations": []}')]
+    )
+    from scripts.thesis_scorer import score_chapter
+
+    score_chapter("# Chapter", model="claude-haiku-4-5-20251001")
+    assert mock_client.messages.create.call_args.kwargs["model"] == "claude-haiku-4-5-20251001"
