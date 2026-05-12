@@ -65,3 +65,4 @@ def test_parse_malformed_json_returns_zero():
 def test_parse_missing_score_returns_zero():
     report = _parse_response('{"violations": []}')
     assert report.score == 0
+    assert report.violations[0].rule == "parse_error"
