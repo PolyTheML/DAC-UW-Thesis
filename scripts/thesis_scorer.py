@@ -93,7 +93,7 @@ def score_chapter(content: str, *, model: str = "claude-opus-4-7") -> Compliance
         try:
             response = client.messages.create(
                 model=model,
-                max_tokens=2048,
+                max_tokens=4096,
                 system=_SCORER_SYSTEM,
                 messages=[{"role": "user", "content": user_message}],
             )
