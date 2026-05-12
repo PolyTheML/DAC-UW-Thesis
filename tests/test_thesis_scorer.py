@@ -144,5 +144,6 @@ def test_score_chapter_returns_zero_after_two_failures(mock_class, mock_sleep, m
     )
     from scripts.thesis_scorer import score_chapter
     report = score_chapter("# Chapter")
+    assert mock_client.messages.create.call_count == 2
     assert report.score == 0
     assert report.violations[0].rule == "parse_error"

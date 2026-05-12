@@ -69,3 +69,5 @@ def test_rewrite_falls_back_to_original_after_two_failures(mock_class, mock_slee
     violations = [Violation("1.1", "citation_placeholder", "Missing", "warning")]
     result = rewrite_chapter("# Original content", violations)
     assert result == "# Original content"
+    assert mock_client.messages.create.call_count == 2
+    mock_sleep.assert_called_once_with(2)
