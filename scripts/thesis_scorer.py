@@ -56,6 +56,9 @@ def _parse_response(json_str: str) -> ComplianceReport:
         ComplianceReport with parsed data, or score=0 with parse_error on failure
     """
     try:
+        json_str = json_str.strip()
+        if json_str.startswith("```"):
+            json_str = json_str.split("\n", 1)[1].rsplit("```", 1)[0]
         data = json.loads(json_str)
         score = int(data["score"])
         violations = [
