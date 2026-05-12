@@ -92,7 +92,7 @@ def _commit_changes(changed: list[Path]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="ITC thesis style compliance loop — autoresearch-style chapter rewriter"
+        description="ITC thesis style compliance loop - autoresearch-style chapter rewriter"
     )
     parser.add_argument(
         "--dry-run",
