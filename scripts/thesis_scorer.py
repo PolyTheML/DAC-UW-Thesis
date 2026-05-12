@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 
 @dataclass
@@ -8,7 +9,7 @@ class Violation:
     section: str
     rule: str
     description: str
-    severity: str  # "error" | "warning"
+    severity: Literal["error", "warning"]
 
 
 @dataclass
