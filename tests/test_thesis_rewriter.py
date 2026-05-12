@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+import anthropic as anthropic_lib
 from scripts.thesis_scorer import Violation
 
 
@@ -53,3 +54,18 @@ def test_rewrite_uses_configured_model(mock_class, monkeypatch):
     violations = [Violation("1.1", "citation_placeholder", "Missing", "warning")]
     rewrite_chapter("content", violations, model="claude-haiku-4-5-20251001")
     assert mock_client.messages.create.call_args.kwargs["model"] == "claude-haiku-4-5-20251001"
+
+
+@patch("scripts.thesis_rewriter.time.sleep")
+@patch("scripts.thesis_rewriter.anthropic.Anthropic")
+def test_rewrite_falls_back_to_original_after_two_failures(mock_class, mock_sleep, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.side_effect = anthropic_lib.APIError(
+        "error", request=MagicMock(), body={}
+    )
+    from scripts.thesis_rewriter import rewrite_chapter
+    violations = [Violation("1.1", "citation_placeholder", "Missing", "warning")]
+    result = rewrite_chapter("# Original content", violations)
+    assert result == "# Original content"

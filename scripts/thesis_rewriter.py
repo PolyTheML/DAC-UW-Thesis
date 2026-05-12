@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 
 import anthropic
 
@@ -34,10 +35,16 @@ def rewrite_chapter(
         for v in violations
     )
     user_message = f"Violations to fix:\n{violations_text}\n\n---\n\nChapter:\n\n{content}"
-    response = client.messages.create(
-        model=model,
-        max_tokens=8192,
-        system=_REWRITER_SYSTEM,
-        messages=[{"role": "user", "content": user_message}],
-    )
-    return response.content[0].text
+    for attempt in range(2):
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=8192,
+                system=_REWRITER_SYSTEM,
+                messages=[{"role": "user", "content": user_message}],
+            )
+            return response.content[0].text
+        except anthropic.APIError:
+            if attempt == 0:
+                time.sleep(2)
+    return content  # fall back to original on repeated failure

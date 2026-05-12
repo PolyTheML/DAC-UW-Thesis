@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -85,10 +86,26 @@ def score_chapter(content: str, *, model: str = "claude-opus-4-7") -> Compliance
     """Score a chapter against ITC style guide. Requires ANTHROPIC_API_KEY env var."""
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     user_message = f"ITC Style Guide:\n\n{_STYLE_GUIDE}\n\n---\n\nChapter to score:\n\n{content}"
-    response = client.messages.create(
-        model=model,
-        max_tokens=2048,
-        system=_SCORER_SYSTEM,
-        messages=[{"role": "user", "content": user_message}],
+    for attempt in range(2):
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=2048,
+                system=_SCORER_SYSTEM,
+                messages=[{"role": "user", "content": user_message}],
+            )
+            return _parse_response(response.content[0].text)
+        except anthropic.APIError:
+            if attempt == 0:
+                time.sleep(2)
+    return ComplianceReport(
+        score=0,
+        violations=[
+            Violation(
+                section="",
+                rule="parse_error",
+                description="API call failed after retry",
+                severity="error",
+            )
+        ],
     )
-    return _parse_response(response.content[0].text)

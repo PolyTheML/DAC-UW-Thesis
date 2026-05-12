@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+import anthropic as anthropic_lib
 
 import pytest
 
@@ -113,3 +114,35 @@ def test_score_chapter_uses_configured_model(mock_class, monkeypatch):
 
     score_chapter("# Chapter", model="claude-haiku-4-5-20251001")
     assert mock_client.messages.create.call_args.kwargs["model"] == "claude-haiku-4-5-20251001"
+
+
+@patch("scripts.thesis_scorer.time.sleep")
+@patch("scripts.thesis_scorer.anthropic.Anthropic")
+def test_score_chapter_retries_once_on_api_error(mock_class, mock_sleep, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.side_effect = [
+        anthropic_lib.APIError("rate limit", request=MagicMock(), body={}),
+        MagicMock(content=[MagicMock(text='{"score": 75, "violations": []}')]),
+    ]
+    from scripts.thesis_scorer import score_chapter
+    report = score_chapter("# Chapter")
+    assert report.score == 75
+    assert mock_client.messages.create.call_count == 2
+    mock_sleep.assert_called_once_with(2)
+
+
+@patch("scripts.thesis_scorer.time.sleep")
+@patch("scripts.thesis_scorer.anthropic.Anthropic")
+def test_score_chapter_returns_zero_after_two_failures(mock_class, mock_sleep, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    mock_client = MagicMock()
+    mock_class.return_value = mock_client
+    mock_client.messages.create.side_effect = anthropic_lib.APIError(
+        "error", request=MagicMock(), body={}
+    )
+    from scripts.thesis_scorer import score_chapter
+    report = score_chapter("# Chapter")
+    assert report.score == 0
+    assert report.violations[0].rule == "parse_error"
