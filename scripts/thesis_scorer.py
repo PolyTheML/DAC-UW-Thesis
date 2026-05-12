@@ -82,15 +82,7 @@ def _parse_response(json_str: str) -> ComplianceReport:
 
 
 def score_chapter(content: str, *, model: str = "claude-opus-4-7") -> ComplianceReport:
-    """Score a chapter for ITC thesis style compliance using Claude API.
-
-    Args:
-        content: Chapter content in markdown format
-        model: Claude model to use (default: claude-opus-4-7)
-
-    Returns:
-        ComplianceReport with score and violations
-    """
+    """Score a chapter against ITC style guide. Requires ANTHROPIC_API_KEY env var."""
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     user_message = f"ITC Style Guide:\n\n{_STYLE_GUIDE}\n\n---\n\nChapter to score:\n\n{content}"
     response = client.messages.create(
