@@ -211,6 +211,13 @@ async def index(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "index.html")
 
 
+@app.get("/defense", response_class=HTMLResponse)
+async def defense() -> HTMLResponse:
+    """Serve the thesis defense demo deck."""
+    defense_path = Path(__file__).parent / "static" / "defense.html"
+    return HTMLResponse(content=defense_path.read_text(encoding="utf-8"))
+
+
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}

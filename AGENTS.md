@@ -234,6 +234,7 @@ All experiments, the demo API, and the backend support an optional `config` argu
 | EXP-006 | `stress_testing/rl/experiments/exp_006_fairness_audit.py` | No region/occupation approval rate < 50% of max; Region PSI=0.0041 GREEN, Occupation PSI=0.0104 GREEN |
 | EXP-007 | `stress_testing/rl/experiments/exp_007_benchmark_comparison.py` | LinUCB lowest regret ($14,840), followed by LinTS ($17,036), EpsilonGreedy ($31,760), StaticXGB ($42,052) |
 | EXP-008 | `stress_testing/rl/experiments/exp_008_human_in_the_loop.py` | HITL reward $101,646 vs baseline $99,706 (+1.9%); late-stage alignment 46%; human cost $2,555 (2.5% of reward) |
+| EXP-013 | `stress_testing/rl/experiments/exp_013_loglog_regret_validation.py` | Log-log slope 0.572 (R²=0.992); converges to 0.511 at burn-in=1000, empirically validating O(√T) bound |
 
 ---
 

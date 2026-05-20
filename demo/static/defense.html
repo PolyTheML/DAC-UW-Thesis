@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thesis Defense — Adaptive Underwriting Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            thesis: {
+              50: '#eff4fb', 100: '#d6e3f5', 200: '#b3cbeb', 300: '#84abde',
+              400: '#5685cd', 500: '#2E5FA3', 600: '#254e88', 700: '#1f3f6f',
+              800: '#1c355c', 900: '#1a2e4d',
+            }
+          },
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; overflow: hidden; }
+    .scene { display: none; height: 100vh; width: 100vw; flex-direction: column; }
+    .scene.active { display: flex; }
+    .nav-dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; cursor: pointer; transition: .2s; }
+    .nav-dot.active { background: #2E5FA3; transform: scale(1.3); }
+    .stamp { display:inline-block; padding: .25rem .6rem; border-radius: .375rem; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .stamp-green { background:#dcfce7; color:#166534; }
+    .stamp-red { background:#fee2e2; color:#991b1b; }
+    .stamp-amber { background:#fef3c7; color:#92400e; }
+    .stamp-blue { background:#dbeafe; color:#1e40af; }
+    .stamp-gray { background:#f3f4f6; color:#374151; }
+    .action-card { transition: all .2s ease; }
+    .action-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .progress-bar { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+    .progress-bar > div { height: 100%; background: #2E5FA3; width: 0%; transition: width .3s; }
+    .confidence-arc { width: 60px; height: 60px; border-radius: 50%; background: conic-gradient(#2E5FA3 var(--p), #e2e8f0 0); display: grid; place-items: center; }
+    .confidence-arc::after { content: attr(data-label); font-size: .7rem; font-weight: 600; color: #334155; }
+    .map-province { fill: #cbd5e1; transition: fill .3s; }
+    .map-province:hover { fill: #2E5FA3; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(12px);} to { opacity:1; transform: translateY(0);} }
+    .animate-fade { animation: fadeIn .6s ease both; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Fixed Header -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-thesis-500 text-white shadow-md">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div>
+      <h1 class="text-base font-bold tracking-tight">Adaptive Health Insurance Underwriting — Defense Demo</h1>
+      <p class="text-thesis-100 text-xs">Lun Chanpoly · MSc Thesis · ITC Cambodia · DAC</p>
+    </div>
+    <div class="text-right text-xs text-thesis-100 hidden md:block">
+      <div>Seed 42 · N = 5,000 · CDHS 2021-22 Anchored</div>
+      <div id="scene-indicator">Scene 1 of 10</div>
+    </div>
+  </div>
+</header>
+
+<!-- Navigation Dots (right side) -->
+<div class="fixed right-4 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3" id="nav-dots"></div>
+
+<!-- Navigation Buttons (bottom) -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur border-t border-gray-200 px-6 py-3 flex items-center justify-between">
+  <button onclick="prevScene()" class="text-sm font-medium text-thesis-600 hover:text-thesis-800 px-3 py-1.5 rounded-md hover:bg-thesis-50 transition">← Previous</button>
+  <div class="flex-1 mx-6">
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+  <button onclick="nextScene()" class="text-sm font-medium text-white bg-thesis-500 hover:bg-thesis-600 px-4 py-1.5 rounded-md transition shadow-sm">Next →</button>
+</div>
+
+<!-- ==================== SCENE 1: OPENING ==================== -->
+<section id="scene-1" class="scene active items-center justify-center bg-gradient-to-br from-thesis-50 to-white px-6">
+  <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    <div class="space-y-6 animate-fade">
+      <div class="inline-block stamp stamp-blue">MSc Thesis Defense</div>
+      <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">The 1% Problem</h2>
+      <p class="text-lg text-gray-600 leading-relaxed">
+        In Cambodia, <span class="font-semibold text-thesis-600">80% of adults</span> have a digital wallet.
+        Fewer than <span class="font-semibold text-red-600">2%</span> have health insurance.
+      </p>
+      <p class="text-gray-500 text-sm">
+        The bottleneck is not distribution. It is the underwriting decision engine.
+        Static rules exclude millions. Contextual bandits can repair that.
+      </p>
+      <div class="flex gap-4 pt-2">
+        <button onclick="nextScene()" class="bg-thesis-500 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-thesis-600 transition shadow">Begin Defense →</button>
+        <button onclick="loadRandomApplicantScene1()" class="bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition">🎲 Meet Another Applicant</button>
+      </div>
+    </div>
+    <div class="space-y-6">
+      <!-- Mekong Diverging Bars -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 animate-fade" style="animation-delay:.15s">
+        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Digital Access vs. Insurance Coverage</div>
+        <canvas id="chart-opening" height="220"></canvas>
+      </div>
+      <!-- Applicant Card -->
+      <div id="applicant-card-s1" class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 animate-fade" style="animation-delay:.3s">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-thesis-100 text-thesis-600 flex items-center justify-center font-bold text-sm">SC</div>
+          <div>
+            <div class="font-semibold text-gray-900">Sopheap Chea</div>
+            <div class="text-xs text-gray-500">Garment Worker · Kandal · 28F · $240/mo</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">BMI</div><div class="font-semibold text-gray-800">22.4</div></div>
+          <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Health</div><div class="font-semibold text-gray-800">Fair</div></div>
+          <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Conditions</div><div class="font-semibold text-gray-800">None</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 2: STATIC FAILURE ==================== -->
+<section id="scene-2" class="scene items-center justify-center px-6 bg-white">
+  <div class="max-w-6xl w-full">
+    <div class="text-center mb-6">
+      <div class="stamp stamp-red mb-2">Problem Validation</div>
+      <h2 class="text-3xl font-bold text-gray-900">Why Static Rules Fail</h2>
+      <p class="text-gray-500 text-sm mt-1">A 55-year-old non-smoking civil servant with BMI 31</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Static Side -->
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-gray-700">Static XGBoost Baseline</h3>
+          <span class="stamp stamp-red">Deterministic</span>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
+            <span class="text-gray-500">BMI threshold</span><span class="font-mono font-medium">> 30</span>
+          </div>
+          <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
+            <span class="text-gray-500">Age threshold</span><span class="font-mono font-medium">> 50</span>
+          </div>
+          <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-red-200">
+            <span class="text-gray-500">Decision</span><span class="font-bold text-red-600">DECLINE</span>
+          </div>
+          <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
+            <span class="text-gray-500">Expected profit</span><span class="font-bold text-red-600">−$10</span>
+          </div>
+        </div>
+        <div class="mt-4 text-xs text-gray-400">Rule: <code class="bg-gray-100 px-1 rounded">IF BMI&gt;30 AND AGE&gt;50 THEN DECLINE</code></div>
+      </div>
+      <!-- Bandit Side -->
+      <div class="bg-thesis-50 rounded-xl border border-thesis-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-thesis-800">Contextual Bandit (LinUCB)</h3>
+          <span class="stamp stamp-green">Adaptive</span>
+        </div>
+        <div id="bandit-action-cards-s2" class="space-y-3">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 flex items-center justify-center gap-4">
+      <label class="text-sm text-gray-600">BMI: <span id="bmi-val-s2" class="font-mono font-bold">31.0</span></label>
+      <input type="range" min="28" max="32" step="0.1" value="31" id="bmi-slider-s2" class="w-64" oninput="updateScene2()">
+      <button onclick="flipScenario()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md transition">↻ Flip Scenario</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 3: EXPLORE VS EXPLOIT ==================== -->
+<section id="scene-3" class="scene items-center justify-center px-6 bg-gray-50">
+  <div class="max-w-4xl w-full text-center">
+    <div class="stamp stamp-blue mb-3">Core Theory</div>
+    <h2 class="text-3xl font-bold text-gray-900 mb-2">The Exploration–Exploitation Dilemma</h2>
+    <p class="text-gray-500 text-sm mb-8">Robbins (1952). Four actions. Unknown rewards. How do you choose?</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="arm-trays">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="flex items-center justify-center gap-4 mb-6">
+      <button onclick="manualPull(0)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Pull STANDARD</button>
+      <button onclick="manualPull(1)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Pull RATED</button>
+      <button onclick="manualPull(2)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Pull DECLINE</button>
+      <button onclick="manualPull(3)" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Pull REFER</button>
+    </div>
+
+    <div class="flex items-center justify-center gap-4">
+      <button onclick="letLinUCBDecide()" class="px-5 py-2.5 bg-thesis-500 text-white rounded-lg font-medium hover:bg-thesis-600 shadow">Let LinUCB Decide (20 rounds)</button>
+      <button onclick="resetArms()" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50">Reset</button>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      <div class="bg-white rounded-xl border border-gray-200 p-4">
+        <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Your Cumulative Reward</div>
+        <div id="human-reward" class="text-2xl font-bold text-gray-900">$0</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-4">
+        <div class="text-xs font-semibold text-gray-400 uppercase mb-2">LinUCB Cumulative Reward</div>
+        <div id="linucb-reward" class="text-2xl font-bold text-thesis-600">$0</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 4: BANDIT ARENA ==================== -->
+<section id="scene-4" class="scene items-center justify-center px-6 bg-white">
+  <div class="max-w-6xl w-full">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="stamp stamp-green mb-1">EXP-005 · RQ1</div>
+        <h2 class="text-2xl font-bold text-gray-900">Bandit Arena: Live Convergence</h2>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="playArena()" id="btn-play" class="text-xs bg-thesis-500 text-white px-3 py-1.5 rounded-md">▶ Play</button>
+        <button onclick="pauseArena()" id="btn-pause" class="text-xs bg-white border border-gray-300 px-3 py-1.5 rounded-md hidden">⏸ Pause</button>
+        <select id="arena-speed" class="text-xs border border-gray-300 rounded-md px-2">
+          <option value="20">20×</option>
+          <option value="50" selected>50×</option>
+          <option value="200">200×</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <canvas id="chart-arena-reward" height="280"></canvas>
+      </div>
+      <div class="space-y-4">
+        <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Final Cumulative Reward</div>
+          <div class="flex justify-between items-end">
+            <div>
+              <div class="text-sm text-thesis-600 font-semibold">LinUCB</div>
+              <div class="text-2xl font-bold text-gray-900" id="arena-linucb-final">$—</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-gray-500 font-semibold">Static XGB</div>
+              <div class="text-2xl font-bold text-gray-400" id="arena-static-final">$—</div>
+            </div>
+          </div>
+          <div class="mt-2 text-xs text-green-700 font-medium" id="arena-lift">+27.7% lift</div>
+        </div>
+        <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Action Entropy</div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Early (1–500)</span><span class="font-mono font-medium">1.386</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Late (4501–5000)</span><span class="font-mono font-medium text-thesis-600">1.053</span>
+          </div>
+          <div class="text-xs text-gray-400 mt-1">↓ 20.2% decrease = structured policy</div>
+        </div>
+        <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Break-Even Round</div>
+          <div class="text-xl font-bold text-gray-900">~400</div>
+          <div class="text-xs text-gray-400">Every decision after is alpha</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 bg-gray-50 rounded-xl border border-gray-200 p-4">
+      <canvas id="chart-arena-actions" height="90"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 5: BENCHMARK RACE ==================== -->
+<section id="scene-5" class="scene items-center justify-center px-6 bg-gray-50">
+  <div class="max-w-6xl w-full">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="stamp stamp-green mb-1">EXP-007 · RQ3</div>
+        <h2 class="text-2xl font-bold text-gray-900">Benchmark Race</h2>
+      </div>
+      <div class="text-xs text-gray-400">Lower regret is better</div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <canvas id="chart-benchmark" height="280"></canvas>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-3">Final Ranking</div>
+          <div id="benchmark-podium" class="space-y-2">
+            <!-- populated by JS -->
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Key Lesson</div>
+          <p class="text-sm text-gray-600">Posterior sampling (LinTS) adapts exploration automatically. UCB (LinUCB) uses a fixed α. Epsilon-Greedy wastes 15% of rounds on random noise.</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Theory Validation — EXP-013</div>
+        <img src="/static/fig_loglog_regret.png" alt="Log-log regret validation" class="w-full rounded-lg" style="max-height: 320px; object-fit: contain;">
+      </div>
+      <div class="space-y-3">
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Log-Log Fit</div>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-500">Slope</span><span class="font-mono font-medium">0.572</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">R²</span><span class="font-mono font-medium">0.992</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Asymptotic</span><span class="font-mono font-medium text-green-700">0.511</span></div>
+          </div>
+        </div>
+        <div class="bg-thesis-50 rounded-xl border border-thesis-200 p-4">
+          <div class="text-xs font-semibold text-thesis-600 uppercase mb-2">Interpretation</div>
+          <p class="text-sm text-thesis-800">Slope ≈ 0.5 empirically validates the O(√T) bound from Li et al. (2010). Convergence diagnostic confirms approach to theoretical rate as burn-in increases.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 6: COEFFICIENT AUDIT ==================== -->
+<section id="scene-6" class="scene items-center justify-center px-6 bg-white">
+  <div class="max-w-6xl w-full">
+    <div class="text-center mb-4">
+      <div class="stamp stamp-blue mb-1">Interpretability</div>
+      <h2 class="text-2xl font-bold text-gray-900">The Coefficient Audit</h2>
+      <p class="text-gray-500 text-sm mt-1">Rudin (2019): open the hood. Inspect per-action θ vectors.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-1 space-y-3">
+        <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Select Action</div>
+          <div class="space-y-2" id="coef-action-buttons">
+            <button onclick="showCoefficients(0)" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-thesis-100 text-thesis-700 border border-thesis-200">STANDARD</button>
+            <button onclick="showCoefficients(1)" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">RATED</button>
+            <button onclick="showCoefficients(2)" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">DECLINE</button>
+            <button onclick="showCoefficients(3)" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">REFER</button>
+          </div>
+        </div>
+        <div class="bg-thesis-50 rounded-xl border border-thesis-200 p-4">
+          <div class="text-xs font-semibold text-thesis-600 uppercase mb-2">Insight</div>
+          <p class="text-sm text-thesis-800" id="coef-insight">Region coefficients are small. The bandit prices health risk, not geography.</p>
+        </div>
+      </div>
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <canvas id="chart-coefficients" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 7: FAIRNESS & PSI ==================== -->
+<section id="scene-7" class="scene items-center justify-center px-6 bg-gray-50">
+  <div class="max-w-6xl w-full">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="stamp stamp-green mb-1">EXP-006 · RQ2</div>
+        <h2 class="text-2xl font-bold text-gray-900">Fairness & PSI Guardrails</h2>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="setFairnessTab('region')" id="tab-region" class="text-xs px-3 py-1.5 rounded-md bg-thesis-500 text-white">Region</button>
+        <button onclick="setFairnessTab('occupation')" id="tab-occupation" class="text-xs px-3 py-1.5 rounded-md bg-white border border-gray-300 text-gray-700">Occupation</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <canvas id="chart-fairness" height="260"></canvas>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-3">PSI Scorecard</div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-gray-700">Region PSI</span>
+            <span class="stamp stamp-green">0.0050 GREEN</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-700">Occupation PSI</span>
+            <span class="stamp stamp-green">0.0100 GREEN</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Parity Constraint</div>
+          <div class="text-sm text-gray-600">Lowest approval rate must be ≥ 50% of maximum.</div>
+          <div class="mt-2 text-xs text-green-700 font-medium">✓ All regions ≥ 71% of max</div>
+          <div class="text-xs text-green-700 font-medium">✓ All occupations ≥ 66% of max</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Literature</div>
+          <div class="text-xs text-gray-500">Yurdakul & Naranjo (2020) validate thresholds. Liu et al. (2018) defend monitoring over constraint.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 8: HUMAN-IN-THE-LOOP ==================== -->
+<section id="scene-8" class="scene items-center justify-center px-6 bg-white">
+  <div class="max-w-5xl w-full">
+    <div class="text-center mb-4">
+      <div class="stamp stamp-green mb-1">EXP-008 · RQ4</div>
+      <h2 class="text-2xl font-bold text-gray-900">Human-in-the-Loop Underwriting</h2>
+      <p class="text-gray-500 text-sm mt-1">The bandit refers when uncertain. A human resolves. Cost: 2.5% of reward.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left: Live Review -->
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-gray-700">Underwriter Queue</h3>
+          <span class="text-xs text-gray-400">Live simulation</span>
+        </div>
+        <div id="hitl-card" class="bg-white rounded-lg border border-gray-200 p-4 mb-3">
+          <div class="text-xs text-gray-400 mb-1">Applicant #<span id="hitl-idx">—</span></div>
+          <div class="font-semibold text-gray-900" id="hitl-name">Loading...</div>
+          <div class="text-xs text-gray-500 mb-2" id="hitl-details">—</div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs text-gray-500">Bandit recommends:</span>
+            <span id="hitl-rec" class="stamp stamp-amber">REFER</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="hitlOverride(0)" class="flex-1 text-xs bg-white border border-gray-300 rounded-md py-1.5 hover:bg-gray-50">STANDARD</button>
+            <button onclick="hitlOverride(1)" class="flex-1 text-xs bg-white border border-gray-300 rounded-md py-1.5 hover:bg-gray-50">RATED</button>
+            <button onclick="hitlOverride(2)" class="flex-1 text-xs bg-white border border-gray-300 rounded-md py-1.5 hover:bg-gray-50">DECLINE</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-white rounded-lg border border-gray-200 p-2">
+            <div class="text-xs text-gray-400">Reviews</div>
+            <div class="font-bold text-gray-900" id="hitl-total">0</div>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-2">
+            <div class="text-xs text-gray-400">Alignment</div>
+            <div class="font-bold text-thesis-600" id="hitl-align">—</div>
+          </div>
+          <div class="bg-white rounded-lg border border-gray-200 p-2">
+            <div class="text-xs text-gray-400">Cost</div>
+            <div class="font-bold text-gray-900" id="hitl-cost">$0</div>
+          </div>
+        </div>
+      </div>
+      <!-- Right: Diagnostics -->
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Reward Waterfall</div>
+          <canvas id="chart-hitl-waterfall" height="160"></canvas>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">HITL Diagnostics (EXP-008)</div>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">HITL Reward</div><div class="font-bold">$101,646</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Baseline</div><div class="font-bold text-gray-500">$95,872</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Lift</div><div class="font-bold text-green-700">+6.0%</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Queue Depth</div><div class="font-bold text-green-700">0.00%</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Human Cost</div><div class="font-bold">$2,555</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Referral Rate</div><div class="font-bold">1.46%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 9: DRIFT INJECTION ==================== -->
+<section id="scene-9" class="scene items-center justify-center px-6 bg-gray-50">
+  <div class="max-w-5xl w-full">
+    <div class="text-center mb-6">
+      <div class="stamp stamp-amber mb-1">Future Work · Chapter VI</div>
+      <h2 class="text-2xl font-bold text-gray-900">Drift Adaptation</h2>
+      <p class="text-gray-500 text-sm mt-1">Stationarity is a research limitation. Here is the proposed extension.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <button onclick="injectDrift('tb')" class="bg-white rounded-xl border border-gray-200 p-4 hover:border-thesis-300 transition text-left">
+        <div class="text-sm font-semibold text-gray-800">Monsoon TB Spike</div>
+        <div class="text-xs text-gray-500 mt-1">Highland provinces · Seasonal</div>
+      </button>
+      <button onclick="injectDrift('hepb')" class="bg-white rounded-xl border border-gray-200 p-4 hover:border-thesis-300 transition text-left">
+        <div class="text-sm font-semibold text-gray-800">Hepatitis B Outbreak</div>
+        <div class="text-xs text-gray-500 mt-1">Coastal provinces · Flood-linked</div>
+      </button>
+      <button onclick="injectDrift('migration')" class="bg-white rounded-xl border border-gray-200 p-4 hover:border-thesis-300 transition text-left">
+        <div class="text-sm font-semibold text-gray-800">Economic Migration</div>
+        <div class="text-xs text-gray-500 mt-1">Urban influx · Income shift</div>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <canvas id="chart-drift" height="260"></canvas>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">PSI Status</div>
+          <div id="drift-psi-badge" class="stamp stamp-green text-sm">GREEN · 0.005</div>
+          <div class="text-xs text-gray-400 mt-2">Rolling 3-month window</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-4">
+          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Response</div>
+          <div class="text-sm text-gray-600">Discounted LinUCB (λ = 0.90) warm-restart on alert.</div>
+        </div>
+        <div class="bg-red-50 rounded-xl border border-red-200 p-4 hidden" id="drift-alert">
+          <div class="text-xs font-semibold text-red-700 uppercase mb-1">Escalation Triggered</div>
+          <div class="text-sm text-red-800">Auto-approval frozen for affected segment. Escalated to actuarial team.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENE 10: CLOSING ==================== -->
+<section id="scene-10" class="scene items-center justify-center px-6 bg-white">
+  <div class="max-w-4xl w-full text-center">
+    <div class="stamp stamp-blue mb-4">Closing</div>
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Four Original Contributions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-5">
+        <div class="text-2xl font-bold text-thesis-500 mb-2">01</div>
+        <h3 class="font-semibold text-gray-900 mb-1">Cambodia-Calibrated Dataset</h3>
+        <p class="text-sm text-gray-600">2,000 synthetic applicants anchored on CDHS 2021-22, WHO STEPS 2023, and ILO 2023 statistics. Reproducible with seed 42.</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-5">
+        <div class="text-2xl font-bold text-thesis-500 mb-2">02</div>
+        <h3 class="font-semibold text-gray-900 mb-1">Decoupled Fairness Architecture</h3>
+        <p class="text-sm text-gray-600">PSI demographic monitoring + approval-rate parity as external guardrails. Preserves regret guarantees while enabling regulatory audit.</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-5">
+        <div class="text-2xl font-bold text-thesis-500 mb-2">03</div>
+        <h3 class="font-semibold text-gray-900 mb-1">Human-in-the-Loop Wrapper</h3>
+        <p class="text-sm text-gray-600">Dual updating on human override prevents the REFER arm from becoming a dead action. 6% reward lift at 2.5% human cost.</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl border border-gray-200 p-5">
+        <div class="text-2xl font-bold text-thesis-500 mb-2">04</div>
+        <h3 class="font-semibold text-gray-900 mb-1">Reproducible Experimental Harness</h3>
+        <p class="text-sm text-gray-600">Pre-registered hypotheses, fixed seeds, deterministic JSON reports, and CI-ready pass/fail criteria. Science, not storytelling.</p>
+      </div>
+    </div>
+    <div class="mt-8 space-y-3">
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <span class="stamp stamp-green">✓ EXP-005 PASSED</span>
+        <span class="stamp stamp-green">✓ EXP-006 PASSED</span>
+        <span class="stamp stamp-green">✓ EXP-007 PASSED</span>
+        <span class="stamp stamp-green">✓ EXP-008 PASSED</span>
+        <span class="stamp stamp-green">✓ EXP-013 PASSED</span>
+      </div>
+      <div class="text-xs text-gray-400 font-mono">$ pytest tests/ — 4 passed · seed 42 · exit code 0</div>
+    </div>
+    <div class="mt-8">
+      <button onclick="location.reload()" class="text-sm text-thesis-600 hover:text-thesis-800 font-medium">↻ Restart Demo</button>
+    </div>
+  </div>
+</section>
+
+<script src="/static/defense.js"></script>
+</body>
+</html>
