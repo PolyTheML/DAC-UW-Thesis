@@ -37,14 +37,23 @@ ACTION_NAMES = ["STANDARD", "RATED", "DECLINE", "REFER"]
 
 # ── Data preprocessor ──────────────────────────────────────────────────────
 
-def preprocess_cambodia_data() -> tuple[np.ndarray, pd.DataFrame, list[str]]:
+def preprocess_cambodia_data(
+    df: pd.DataFrame | None = None,
+    stats: dict[str, tuple[float, float]] | None = None,
+) -> tuple[np.ndarray, pd.DataFrame, list[str]]:
     """Load Cambodia dataset and return feature matrix X, raw DataFrame, feature names.
 
     Feature engineering mirrors the training script (train_cambodia_models.py)
     but uses one-hot encoding for region and occupation (better for linear bandits).
     Ordinal encodings are used for education, wealth, and self-reported health.
+
+    Args:
+        df: Optional DataFrame to process instead of loading from CSV.
+        stats: Optional dict of {feature: (mean, std)} for consistent
+               normalization across multiple datasets (e.g., drift experiments).
     """
-    df = pd.read_csv(DATA_PATH)
+    if df is None:
+        df = pd.read_csv(DATA_PATH)
 
     conditions = ["Hypertension", "Diabetes", "Heart Disease", "COPD/Asthma", "Arthritis", "TB", "Hepatitis B"]
     for cond in conditions:
@@ -76,7 +85,10 @@ def preprocess_cambodia_data() -> tuple[np.ndarray, pd.DataFrame, list[str]]:
     # Normalize all features to mean 0, std 1 for linear bandits
     X = df[features].copy().astype(float)
     for col in features:
-        mean, std = X[col].mean(), X[col].std()
+        if stats is not None:
+            mean, std = stats[col]
+        else:
+            mean, std = X[col].mean(), X[col].std()
         X[col] = (X[col] - mean) / (std if std > 0 else 1)
 
     return X.values, df, features
@@ -146,8 +158,15 @@ def _compute_reward(
     config: RewardConfig,
     rng: np.random.Generator | None,
     customer_accepted: bool | None,
+    acceptance_draw: float | None = None,
+    claims_noise_mult: float | None = None,
 ) -> float:
-    """Shared reward computation for stochastic and deterministic modes."""
+    """Shared reward computation for stochastic and deterministic modes.
+
+    Optional *acceptance_draw* and *claims_noise_mult* enable common random
+    numbers: the caller pre-generates these arrays so that multiple algorithm
+    runs see identical noise conditioned on the round index.
+    """
     mort = row["mortality_multiplier"]
     income = row["monthly_income_usd"]
 
@@ -163,6 +182,8 @@ def _compute_reward(
     p_rtd = p_accept(base_premium * 1.25)
 
     def _claims_noise() -> float:
+        if claims_noise_mult is not None:
+            return claims_noise_mult
         if rng is not None:
             return rng.uniform(config.claims_noise_low, config.claims_noise_high)
         return 1.0
@@ -193,10 +214,12 @@ def _compute_reward(
         expenses = _expenses(base_premium)
         if customer_accepted is not None:
             accepted = customer_accepted
+        elif acceptance_draw is not None:
+            accepted = acceptance_draw < p_std
         elif rng is not None:
             accepted = rng.random() < p_std
         else:
-            raise ValueError("Need rng or customer_accepted for STANDARD action")
+            raise ValueError("Need rng, acceptance_draw, or customer_accepted for STANDARD action")
         if accepted:
             return _net(base_premium, claims, expenses)
         return config.walk_cost
@@ -207,10 +230,12 @@ def _compute_reward(
         expenses = _expenses(premium)
         if customer_accepted is not None:
             accepted = customer_accepted
+        elif acceptance_draw is not None:
+            accepted = acceptance_draw < p_rtd
         elif rng is not None:
             accepted = rng.random() < p_rtd
         else:
-            raise ValueError("Need rng or customer_accepted for RATED action")
+            raise ValueError("Need rng, acceptance_draw, or customer_accepted for RATED action")
         if accepted:
             return _net(premium, claims, expenses)
         return config.walk_cost
@@ -253,9 +278,52 @@ def _compute_reward(
 def make_reward_simulator(
     rng: np.random.Generator,
     config: RewardConfig | None = None,
+    acceptance_draws: np.ndarray | None = None,
+    claims_noise: np.ndarray | None = None,
 ) -> Callable[[int, pd.Series], float]:
-    """Return a function reward(action, row) that computes stochastic reward."""
+    """Return a function reward(action, row) that computes stochastic reward.
+
+    If *acceptance_draws* and *claims_noise* are provided, they are consumed
+    sequentially (one per call) instead of drawing fresh random numbers. This
+    enables common random numbers across multiple algorithm runs for fair
+    comparison.
+    """
     cfg = config if config is not None else RewardConfig()
+
+    if acceptance_draws is not None and claims_noise is not None:
+        class _PrecomputedReward:
+            def __init__(self) -> None:
+                self.t = 0
+
+            def __call__(self, action: int, row: pd.Series) -> float:
+                t = self.t
+                self.t += 1
+
+                # Compute acceptance probability for this action
+                if action in (ACTION_STANDARD, ACTION_RATED):
+                    mort = row["mortality_multiplier"]
+                    income = row["monthly_income_usd"]
+                    base_premium = cfg.base_premium_rate * mort
+
+                    def p_accept(premium: float) -> float:
+                        ratio = (premium / 12) / income
+                        return max(cfg.min_acceptance, cfg.acceptance_intercept - cfg.acceptance_slope * ratio)
+
+                    if action == ACTION_STANDARD:
+                        p = p_accept(base_premium)
+                    else:
+                        p = p_accept(base_premium * 1.25)
+
+                    accepted = acceptance_draws[t] < p
+                else:
+                    accepted = None
+
+                return _compute_reward(
+                    action, row, cfg, None, accepted,
+                    acceptance_draw=None, claims_noise_mult=claims_noise[t],
+                )
+
+        return _PrecomputedReward()
 
     def reward(action: int, row: pd.Series) -> float:
         return _compute_reward(action, row, cfg, rng, customer_accepted=None)
@@ -331,7 +399,11 @@ def expected_rewards(
 # ── Bandit algorithms ──────────────────────────────────────────────────────
 
 class LinUCB:
-    """Linear Upper Confidence Bound for contextual bandits."""
+    """Linear Upper Confidence Bound for contextual bandits.
+
+    Uses the Sherman-Morrison formula to maintain A^{-1} in O(d^2) time
+    per update rather than recomputing the full matrix inverse.
+    """
 
     def __init__(self, n_actions: int, n_features: int, alpha: float = 1.0):
         self.n_actions = n_actions
@@ -339,66 +411,98 @@ class LinUCB:
         self.alpha = alpha
         # One A matrix and b vector per action
         self.A = [np.eye(n_features) for _ in range(n_actions)]
+        self.A_inv = [np.eye(n_features) for _ in range(n_actions)]
         self.b = [np.zeros(n_features) for _ in range(n_actions)]
         self.theta = [np.zeros(n_features) for _ in range(n_actions)]
 
     def select_action(self, context: np.ndarray) -> int:
         p = np.zeros(self.n_actions)
         for a in range(self.n_actions):
-            A_inv = np.linalg.inv(self.A[a])
+            A_inv = self.A_inv[a]
             self.theta[a] = A_inv @ self.b[a]
             p[a] = self.theta[a] @ context + self.alpha * np.sqrt(context @ A_inv @ context)
         return int(np.argmax(p))
 
     def update(self, action: int, context: np.ndarray, reward: float) -> None:
+        # Rank-one update of A and b
         self.A[action] += np.outer(context, context)
         self.b[action] += reward * context
+        # Sherman-Morrison update of A_inv: O(d^2)
+        A_inv = self.A_inv[action]
+        Ax = A_inv @ context
+        denom = 1.0 + context @ Ax
+        self.A_inv[action] = A_inv - np.outer(Ax, Ax) / denom
 
 
 class LinTS:
-    """Linear Thompson Sampling with Gaussian priors."""
+    """Linear Thompson Sampling with Gaussian priors.
 
-    def __init__(self, n_actions: int, n_features: int, v2: float = 1.0):
+    Uses Sherman-Morrison to maintain A^{-1} in O(d^2) time per update,
+    and caches the Cholesky factor of the posterior covariance so that
+    sampling avoids the expensive SVD used by multivariate_normal.
+    """
+
+    def __init__(self, n_actions: int, n_features: int, v2: float = 1.0, seed: int = 42):
         self.n_actions = n_actions
         self.n_features = n_features
         self.v2 = v2
         self.A = [np.eye(n_features) for _ in range(n_actions)]
+        self.A_inv = [np.eye(n_features) for _ in range(n_actions)]
         self.b = [np.zeros(n_features) for _ in range(n_actions)]
-        self.rng = np.random.default_rng(seed=42)
+        self.rng = np.random.default_rng(seed=seed)
+        # Cache Cholesky factors; recompute only when A_inv changes
+        self._cov_chol = [None] * n_actions
+        self._cov_dirty = [True] * n_actions
+
+    def _sample_theta(self, a: int) -> np.ndarray:
+        """Sample a parameter vector from N(mu_hat, v^2 * A_inv)."""
+        if self._cov_dirty[a]:
+            cov = self.v2 * self.A_inv[a] + 1e-6 * np.eye(self.n_features)
+            self._cov_chol[a] = np.linalg.cholesky(cov)
+            self._cov_dirty[a] = False
+        mu_hat = self.A_inv[a] @ self.b[a]
+        z = self.rng.standard_normal(self.n_features)
+        return mu_hat + self._cov_chol[a] @ z
 
     def select_action(self, context: np.ndarray) -> int:
         p = np.zeros(self.n_actions)
         for a in range(self.n_actions):
-            A_inv = np.linalg.inv(self.A[a])
-            mu_hat = A_inv @ self.b[a]
-            cov = self.v2 * A_inv
-            mu_tilde = self.rng.multivariate_normal(mu_hat, cov)
+            mu_tilde = self._sample_theta(a)
             p[a] = mu_tilde @ context
         return int(np.argmax(p))
 
     def update(self, action: int, context: np.ndarray, reward: float) -> None:
         self.A[action] += np.outer(context, context)
         self.b[action] += reward * context
+        A_inv = self.A_inv[action]
+        Ax = A_inv @ context
+        denom = 1.0 + context @ Ax
+        self.A_inv[action] = A_inv - np.outer(Ax, Ax) / denom
+        self._cov_dirty[action] = True
 
 
 class EpsilonGreedy:
-    """Epsilon-greedy with linear regression per action."""
+    """Epsilon-greedy with linear regression per action.
 
-    def __init__(self, n_actions: int, n_features: int, epsilon: float = 0.1):
+    Uses Sherman-Morrison to maintain A^{-1} in O(d^2) time per update.
+    """
+
+    def __init__(self, n_actions: int, n_features: int, epsilon: float = 0.1, seed: int = 42):
         self.n_actions = n_actions
         self.n_features = n_features
         self.epsilon = epsilon
         self.A = [np.eye(n_features) for _ in range(n_actions)]
+        self.A_inv = [np.eye(n_features) for _ in range(n_actions)]
         self.b = [np.zeros(n_features) for _ in range(n_actions)]
         self.theta = [np.zeros(n_features) for _ in range(n_actions)]
-        self.rng = np.random.default_rng(seed=42)
+        self.rng = np.random.default_rng(seed=seed)
 
     def select_action(self, context: np.ndarray) -> int:
         if self.rng.random() < self.epsilon:
             return self.rng.integers(self.n_actions)
         p = np.zeros(self.n_actions)
         for a in range(self.n_actions):
-            A_inv = np.linalg.inv(self.A[a])
+            A_inv = self.A_inv[a]
             self.theta[a] = A_inv @ self.b[a]
             p[a] = self.theta[a] @ context
         return int(np.argmax(p))
@@ -406,6 +510,10 @@ class EpsilonGreedy:
     def update(self, action: int, context: np.ndarray, reward: float) -> None:
         self.A[action] += np.outer(context, context)
         self.b[action] += reward * context
+        A_inv = self.A_inv[action]
+        Ax = A_inv @ context
+        denom = 1.0 + context @ Ax
+        self.A_inv[action] = A_inv - np.outer(Ax, Ax) / denom
 
 
 # ── Static baseline ────────────────────────────────────────────────────────
@@ -481,6 +589,33 @@ class StaticXGBBaseline:
         pass  # Static baseline does not learn
 
 
+# ── Oracle baseline ────────────────────────────────────────────────────────
+
+class OraclePolicy:
+    """Deterministic oracle that always selects the action with highest expected reward.
+
+    This policy uses the actuarial reward simulator's ``expected_rewards`` to pick
+    the optimal action for each applicant. It provides an upper bound on cumulative
+    reward and a lower bound on cumulative regret for any learning algorithm.
+    """
+
+    def __init__(self, config: RewardConfig | None = None):
+        self.config = config
+
+    # Marker so ``run_bandit`` routes row data to ``select_action``
+    def _preprocess_row(self, row: pd.Series) -> np.ndarray:
+        return np.array([])
+
+    def select_action(self, context: np.ndarray, row: pd.Series | None = None) -> int:
+        if row is None:
+            raise ValueError("OraclePolicy needs row to compute expected rewards")
+        expected = expected_rewards(row, self.config)
+        return int(expected.argmax())
+
+    def update(self, action: int, context: np.ndarray, reward: float) -> None:
+        pass  # Oracle does not learn
+
+
 # ── Runner ─────────────────────────────────────────────────────────────────
 
 @dataclass
@@ -491,6 +626,7 @@ class RunResult:
     regrets: np.ndarray
     cumulative_rewards: np.ndarray
     cumulative_regrets: np.ndarray
+    oracle_actions: np.ndarray | None = None
 
 
 def run_bandit(
@@ -500,17 +636,42 @@ def run_bandit(
     df_raw: pd.DataFrame,
     n_rounds: int,
     seed: int = 42,
+    acceptance_draws: np.ndarray | None = None,
+    claims_noise: np.ndarray | None = None,
+    config: RewardConfig | None = None,
 ) -> RunResult:
-    """Run a bandit algorithm for n_rounds and return metrics."""
+    """Run a bandit algorithm for n_rounds and return metrics.
+
+    Args:
+        config: Optional RewardConfig override for sensitivity analysis.
+                If None, uses default RewardConfig().
+    """
     rng = np.random.default_rng(seed)
-    reward_fn = make_reward_simulator(rng)
+    reward_fn = make_reward_simulator(rng, config=config, acceptance_draws=acceptance_draws, claims_noise=claims_noise)
+
+    n_samples = len(contexts)
+    indices = np.arange(n_samples)
+
+    # Precompute oracle optimal rewards and actions for all unique samples
+    oracle_rewards = np.zeros(n_samples)
+    oracle_actions_arr = np.zeros(n_samples, dtype=int)
+    for i in range(n_samples):
+        expected = expected_rewards(df_raw.iloc[i], config=config)
+        oracle_rewards[i] = expected.max()
+        oracle_actions_arr[i] = int(expected.argmax())
+
+    # Precompute static baseline actions if applicable (saves repeated XGB predict calls)
+    static_actions = None
+    if hasattr(bandit, '_preprocess_row'):
+        static_actions = np.zeros(n_samples, dtype=int)
+        for i in range(n_samples):
+            static_actions[i] = bandit.select_action(None, df_raw.iloc[i])
 
     actions = np.zeros(n_rounds, dtype=int)
     rewards = np.zeros(n_rounds)
     regrets = np.zeros(n_rounds)
+    oracle_actions_seq = np.zeros(n_rounds, dtype=int)
 
-    n_samples = len(contexts)
-    indices = np.arange(n_samples)
     for t in range(n_rounds):
         idx = indices[t % n_samples]
         if t > 0 and t % n_samples == 0:
@@ -518,21 +679,19 @@ def run_bandit(
 
         context = contexts[idx]
         row = df_raw.iloc[idx]
-        # Pass row to baseline for its own preprocessing; bandits ignore it
-        if hasattr(bandit, '_preprocess_row'):
-            action = bandit.select_action(context, row)
+
+        if static_actions is not None:
+            action = int(static_actions[idx])
         else:
             action = bandit.select_action(context)
         reward = reward_fn(action, row)
 
-        # Oracle optimal action for regret
-        expected = expected_rewards(df_raw.iloc[idx])
-        optimal_reward = expected.max()
-        optimal_action = expected.argmax()
+        optimal_reward = oracle_rewards[idx]
 
         actions[t] = action
         rewards[t] = reward
         regrets[t] = optimal_reward - reward
+        oracle_actions_seq[t] = oracle_actions_arr[idx]
 
         bandit.update(action, context, reward)
 
@@ -543,6 +702,7 @@ def run_bandit(
         regrets=regrets,
         cumulative_rewards=np.cumsum(rewards),
         cumulative_regrets=np.cumsum(regrets),
+        oracle_actions=oracle_actions_seq,
     )
 
 

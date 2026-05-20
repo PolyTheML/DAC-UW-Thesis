@@ -2,13 +2,19 @@
 EXP-007: Benchmark Comparison + Regret Analysis
 
 Compares LinUCB, LinTS, Epsilon-Greedy, and a static XGBoost rule baseline
-on cumulative regret and reward over 5,000 rounds.
+on cumulative regret and reward over 5,000 rounds using common random numbers.
 
-PASS criteria:
-1. LinUCB and LinTS achieve strictly lower cumulative regret than both
-   Epsilon-Greedy and Static XGB baseline at round 5,000.
-2. The contextual bandits (LinUCB, LinTS) achieve higher cumulative reward
-   than the non-contextual/static baselines.
+Statistical inference (new):
+* Bootstrap 95% CIs for all algorithms
+* Pairwise Wilcoxon signed-rank tests with Bonferroni correction
+* Cohen's d and Cliff's delta effect sizes
+* Permutation tests for robustness
+
+PASS criteria (evaluated on 20 seeds):
+1. Oracle regret <= all learning algorithms (sanity check).
+2. LinUCB and LinTS regret significantly < EpsilonGreedy AND StaticXGB.
+3. LinUCB and LinTS reward significantly > StaticXGB.
+4. Oracle reward >= all learning algorithms (sanity check).
 """
 from __future__ import annotations
 
@@ -25,76 +31,178 @@ from stress_testing.rl.underwriting_bandit import (
     LinTS,
     EpsilonGreedy,
     StaticXGBBaseline,
+    OraclePolicy,
+    RewardConfig,
     preprocess_cambodia_data,
     run_bandit,
 )
+from statistical_utils import (
+    format_comparison,
+    print_comparison_table,
+    bootstrap_ci,
+)
 
 N_ROUNDS = 5000
-SEED = 42
 
 
-def main() -> int:
-    print("=" * 70)
-    print("EXP-007: Benchmark Comparison + Regret Analysis")
-    print("=" * 70)
-
-    X, df_raw, features = preprocess_cambodia_data()
+def run(seed: int) -> dict[str, float]:
+    """Run EXP-007 for a single seed and return scalar metrics."""
+    X, df_raw, _features = preprocess_cambodia_data()
     n_features = X.shape[1]
 
+    # Common random numbers: pre-generate noise so every algorithm sees
+    # identical claims noise and acceptance draws conditioned on round t.
+    rng = np.random.default_rng(seed)
+    cfg = RewardConfig()
+    acceptance_draws = rng.random(N_ROUNDS)
+    claims_noise = rng.uniform(cfg.claims_noise_low, cfg.claims_noise_high, size=N_ROUNDS)
+
     algorithms = {
+        "Oracle": OraclePolicy(),
         "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=1.0),
-        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0),
-        "EpsilonGreedy": EpsilonGreedy(n_actions=4, n_features=n_features, epsilon=0.15),
+        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0, seed=seed),
+        "EpsilonGreedy": EpsilonGreedy(n_actions=4, n_features=n_features, epsilon=0.15, seed=seed),
         "StaticXGB": StaticXGBBaseline(),
     }
 
     results = {}
     for name, bandit in algorithms.items():
-        print(f"\nRunning {name} ...")
-        results[name] = run_bandit(name, bandit, X.copy(), df_raw, N_ROUNDS, seed=SEED)
-        print(f"  Cumulative reward: ${results[name].cumulative_rewards[-1]:,.0f}")
-        print(f"  Cumulative regret: ${results[name].cumulative_regrets[-1]:,.0f}")
+        results[name] = run_bandit(
+            name, bandit, X.copy(), df_raw, N_ROUNDS, seed=seed,
+            acceptance_draws=acceptance_draws, claims_noise=claims_noise,
+        )
 
-    # Summary table
-    print("\n" + "-" * 70)
-    print("SUMMARY (final round)")
-    print("-" * 70)
-    print(f"{'Algorithm':<18} {'Cum. Reward':>14} {'Cum. Regret':>14} {'Final Regret':>14}")
-    print("-" * 70)
+    out = {}
     for name in algorithms.keys():
-        r = results[name]
-        print(f"{name:<18} ${r.cumulative_rewards[-1]:>12,.0f} ${r.cumulative_regrets[-1]:>12,.0f} ${r.regrets[-1]:>12,.0f}")
+        out[f"cum_reward_{name}"] = float(results[name].cumulative_rewards[-1])
+        out[f"cum_regret_{name}"] = float(results[name].cumulative_regrets[-1])
+    return out
 
-    # Assertions
+
+def main() -> int:
+    print("=" * 70)
+    print("EXP-007: Benchmark Comparison + Regret Analysis (20 seeds)")
+    print("=" * 70)
+
+    from experiment_utils import run_experiment_seeds_raw
+    stats = run_experiment_seeds_raw(run, n_seeds=20)
+
+    def fmt(key: str) -> str:
+        s = stats[key]
+        ci = bootstrap_ci(s["values"])
+        return f"{s['mean']:>12,.0f} ± {s['std']:>10,.0f} [{ci[0]:>12,.0f}, {ci[1]:>12,.0f}]"
+
+    print("\n" + "-" * 70)
+    print("SUMMARY (mean ± std, 95% CI over 20 seeds)")
+    print("-" * 70)
+    print(f"{'Algorithm':<18} {'Cum. Reward':>50} {'Cum. Regret':>50}")
+    print("-" * 70)
+    for name in ("Oracle", "LinUCB", "LinTS", "EpsilonGreedy", "StaticXGB"):
+        print(f"{name:<18} ${fmt(f'cum_reward_{name}')}  ${fmt(f'cum_regret_{name}')}")
+
+    # Pairwise statistical comparisons
+    print("\n" + "=" * 70)
+    print("PAIRWISE STATISTICAL COMPARISONS (Wilcoxon signed-rank, 20 seeds)")
+    print("=" * 70)
+
+    algorithm_names = ["LinUCB", "LinTS", "EpsilonGreedy", "StaticXGB"]
+    regret_comparisons = []
+    reward_comparisons = []
+
+    # All pairwise regret comparisons
+    for i, name_a in enumerate(algorithm_names):
+        for name_b in algorithm_names[i + 1:]:
+            regret_comparisons.append(
+                format_comparison(
+                    stats[f"cum_regret_{name_b}"]["values"],
+                    stats[f"cum_regret_{name_a}"]["values"],
+                    metric_name="Cum. Regret",
+                    baseline_name=name_b,
+                    treatment_name=name_a,
+                    alternative="less",
+                )
+            )
+
+    # Reward comparisons: bandits vs StaticXGB
+    for name in ("LinUCB", "LinTS"):
+        reward_comparisons.append(
+            format_comparison(
+                stats["cum_reward_StaticXGB"]["values"],
+                stats[f"cum_reward_{name}"]["values"],
+                metric_name="Cum. Reward",
+                baseline_name="StaticXGB",
+                treatment_name=name,
+                alternative="greater",
+            )
+        )
+
+    print("\nRegret Comparisons:")
+    print_comparison_table(regret_comparisons)
+
+    print("\nReward Comparisons:")
+    print_comparison_table(reward_comparisons)
+
+    # Bonferroni correction for multiple comparisons
+    n_regret_tests = len(regret_comparisons)
+    n_reward_tests = len(reward_comparisons)
+    alpha_bonf_regret = 0.05 / n_regret_tests
+    alpha_bonf_reward = 0.05 / n_reward_tests
+    print(f"\nBonferroni-corrected alpha: regret tests = {alpha_bonf_regret:.4f}, reward tests = {alpha_bonf_reward:.4f}")
+
     print("\n" + "=" * 70)
     print("ASSERTIONS")
     print("=" * 70)
 
     pass_total = True
-    regret_ucb = results["LinUCB"].cumulative_regrets[-1]
-    regret_ts = results["LinTS"].cumulative_regrets[-1]
-    regret_eg = results["EpsilonGreedy"].cumulative_regrets[-1]
-    regret_static = results["StaticXGB"].cumulative_regrets[-1]
 
-    check1 = regret_ucb < regret_eg and regret_ucb < regret_static
-    print(f"[{'PASS' if check1 else 'FAIL'}] LinUCB regret < EpsilonGreedy AND StaticXGB")
-    print(f"       LinUCB: ${regret_ucb:,.0f}  EpsGreedy: ${regret_eg:,.0f}  Static: ${regret_static:,.0f}")
+    # Sanity: Oracle <= all on regret
+    regret_oracle = stats["cum_regret_Oracle"]["mean"]
+    regret_ucb = stats["cum_regret_LinUCB"]["mean"]
+    regret_ts = stats["cum_regret_LinTS"]["mean"]
+    regret_eg = stats["cum_regret_EpsilonGreedy"]["mean"]
+    regret_static = stats["cum_regret_StaticXGB"]["mean"]
+
+    check0 = regret_oracle <= regret_ucb and regret_oracle <= regret_ts and regret_oracle <= regret_eg and regret_oracle <= regret_static
+    print(f"[{'PASS' if check0 else 'FAIL'}] Oracle mean regret <= all learning algorithms")
+    print(f"       Oracle: ${regret_oracle:,.0f}  LinUCB: ${regret_ucb:,.0f}  LinTS: ${regret_ts:,.0f}")
+    pass_total &= check0
+
+    # Statistical significance: LinUCB < StaticXGB and EpsilonGreedy
+    ucb_vs_static_regret = next(c for c in regret_comparisons if c["treatment_name"] == "LinUCB" and c["baseline_name"] == "StaticXGB")
+    ucb_vs_eg_regret = next(c for c in regret_comparisons if c["treatment_name"] == "LinUCB" and c["baseline_name"] == "EpsilonGreedy")
+    check1 = ucb_vs_static_regret["wilcoxon_significant"] and ucb_vs_eg_regret["wilcoxon_significant"]
+    print(f"[{'PASS' if check1 else 'FAIL'}] LinUCB regret significantly < StaticXGB AND EpsilonGreedy (Wilcoxon)")
+    print(f"       vs StaticXGB: p={ucb_vs_static_regret['wilcoxon_p']:.4f}, d={ucb_vs_static_regret['cohens_d']:.2f}")
+    print(f"       vs EpsGreedy: p={ucb_vs_eg_regret['wilcoxon_p']:.4f}, d={ucb_vs_eg_regret['cohens_d']:.2f}")
     pass_total &= check1
 
-    check2 = regret_ts < regret_eg and regret_ts < regret_static
-    print(f"[{'PASS' if check2 else 'FAIL'}] LinTS regret < EpsilonGreedy AND StaticXGB")
-    print(f"       LinTS: ${regret_ts:,.0f}  EpsGreedy: ${regret_eg:,.0f}  Static: ${regret_static:,.0f}")
+    # Statistical significance: LinTS < StaticXGB and EpsilonGreedy
+    ts_vs_static_regret = next(c for c in regret_comparisons if c["treatment_name"] == "LinTS" and c["baseline_name"] == "StaticXGB")
+    ts_vs_eg_regret = next(c for c in regret_comparisons if c["treatment_name"] == "LinTS" and c["baseline_name"] == "EpsilonGreedy")
+    check2 = ts_vs_static_regret["wilcoxon_significant"] and ts_vs_eg_regret["wilcoxon_significant"]
+    print(f"[{'PASS' if check2 else 'FAIL'}] LinTS regret significantly < StaticXGB AND EpsilonGreedy (Wilcoxon)")
+    print(f"       vs StaticXGB: p={ts_vs_static_regret['wilcoxon_p']:.4f}, d={ts_vs_static_regret['cohens_d']:.2f}")
+    print(f"       vs EpsGreedy: p={ts_vs_eg_regret['wilcoxon_p']:.4f}, d={ts_vs_eg_regret['cohens_d']:.2f}")
     pass_total &= check2
 
-    reward_ucb = results["LinUCB"].cumulative_rewards[-1]
-    reward_ts = results["LinTS"].cumulative_rewards[-1]
-    reward_eg = results["EpsilonGreedy"].cumulative_rewards[-1]
-    reward_static = results["StaticXGB"].cumulative_rewards[-1]
-
-    check3 = reward_ucb > reward_static and reward_ts > reward_static
-    print(f"[{'PASS' if check3 else 'FAIL'}] LinUCB and LinTS reward > StaticXGB")
-    print(f"       LinUCB: ${reward_ucb:,.0f}  LinTS: ${reward_ts:,.0f}  Static: ${reward_static:,.0f}")
+    # Reward: LinUCB and LinTS > StaticXGB
+    ucb_vs_static_reward = next(c for c in reward_comparisons if c["treatment_name"] == "LinUCB")
+    ts_vs_static_reward = next(c for c in reward_comparisons if c["treatment_name"] == "LinTS")
+    check3 = ucb_vs_static_reward["wilcoxon_significant"] and ts_vs_static_reward["wilcoxon_significant"]
+    print(f"[{'PASS' if check3 else 'FAIL'}] LinUCB and LinTS reward significantly > StaticXGB (Wilcoxon)")
+    print(f"       LinUCB: p={ucb_vs_static_reward['wilcoxon_p']:.4f}, d={ucb_vs_static_reward['cohens_d']:.2f}")
+    print(f"       LinTS:  p={ts_vs_static_reward['wilcoxon_p']:.4f}, d={ts_vs_static_reward['cohens_d']:.2f}")
     pass_total &= check3
+
+    reward_oracle = stats["cum_reward_Oracle"]["mean"]
+    reward_ucb = stats["cum_reward_LinUCB"]["mean"]
+    reward_ts = stats["cum_reward_LinTS"]["mean"]
+    reward_static = stats["cum_reward_StaticXGB"]["mean"]
+
+    check4 = reward_oracle >= reward_ucb and reward_oracle >= reward_ts and reward_oracle >= reward_static
+    print(f"[{'PASS' if check4 else 'FAIL'}] Oracle mean reward >= all learning algorithms")
+    print(f"       Oracle: ${reward_oracle:,.0f}  LinUCB: ${reward_ucb:,.0f}  LinTS: ${reward_ts:,.0f}")
+    pass_total &= check4
 
     print("\n" + "=" * 70)
     if pass_total:
