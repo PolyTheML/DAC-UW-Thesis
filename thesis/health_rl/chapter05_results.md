@@ -2,6 +2,14 @@
 
 ---
 
+## 5.0 Statistical Methodology and Reproducibility
+
+All headline statistics in this chapter are computed across **20 independent seeds (1–20)** with the actuarial simulator run for **N = 5,000 rounds** per seed. Tables report **mean ± standard deviation** with **95 % bootstrap confidence intervals** in brackets. Pairwise comparisons between algorithms use the **paired Wilcoxon signed-rank test** with **Bonferroni correction** for multiple comparisons; effect sizes are reported as **Cohen's d**. The primary illustrative seed (used for trajectory figures) is SEED = 42; figures are produced from this seed unless noted.
+
+A reviewer can reproduce any reported number by running `python stress_testing/rl/experiments/exp_005_underwriting_convergence.py` (or the corresponding `exp_006`, `exp_007`, `exp_008`) on Python 3.11 with the pinned dependencies in `requirements.txt`. Each script exits with code 0 if the pre-registered pass criteria are satisfied.
+
+---
+
 ## 5.1 EXP-005: Convergence Validation
 
 [FIGURE: thesis/health_rl/figures/fig_reward_curves.png — Figure 5.1. Cumulative reward curves for LinUCB and Static XGB baseline (mean of 20 seeds, shaded band = 95% bootstrap confidence interval).]
