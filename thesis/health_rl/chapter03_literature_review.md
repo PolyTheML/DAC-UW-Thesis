@@ -116,7 +116,7 @@ where $A_i$ is the actual proportion and $E_i$ is the expected proportion in bin
 
 The canonical industry reference for PSI thresholds is Siddiqi (2006, reprinted 2012), who describes the traffic-light system as: GREEN ($<$ 0.10) indicates little or no shift; AMBER (0.10–0.25) signals a moderate shift requiring investigation; RED ($>$ 0.25) indicates a significant shift that may warrant model recalibration or retraining (Siddiqi, 2006). These thresholds — sometimes called the "Lewis constants" after their originator — are widely adopted in actuarial and banking model-risk management frameworks.
 
-The PSI traffic-light thresholds are codified in Chapter III (Table 3.4.1) alongside their integration with the bandit decision loop.
+The PSI traffic-light thresholds are codified in **Chapter IV** (§4.8.1) alongside their integration with the bandit decision loop.
 
 A more recent statistical treatment by Yurdakul and Naranjo (2020) provides the first formal justification for the Lewis constants. They derive the asymptotic distribution of PSI under the null hypothesis of no population shift and show that the 0.10 and 0.25 benchmarks are reasonable for sample sizes typical of scorecard development (roughly 100–600 observations per bin), though they caution that the thresholds become conservative for larger samples (Yurdakul & Naranjo, 2020). Their simulation study confirms that PSI $>$ 0.25 controls Type I error at acceptable levels while retaining power to detect meaningful distributional shifts.
 

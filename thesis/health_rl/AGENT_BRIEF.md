@@ -14,12 +14,11 @@ The DOCX builder (`thesis/health_rl/build_thesis_docx.py`) reads these files in 
 
 | File | Chapter | Words | Status |
 |------|---------|-------|--------|
-| `chapter1_introduction.md` | I. INTRODUCTION | ~1,900 | ✅ Complete draft |
-| `chapter2_literature_review.md` | II. LITERATURE REVIEW | ~3,000 | ✅ Complete draft |
-| `chapter3_methodology.md` | III. METHODOLOGY | ~4,400 | ✅ Complete draft |
-| `chapter4_project_analysis.md` | IV. PROJECT ANALYSIS | ~1,500 | ✅ Complete draft |
-| `chapter4_results.md` | V. RESULTS & DISCUSSION | ~3,600 | ✅ Complete draft |
-| `chapter5_conclusion.md` | VI. CONCLUSION | ~1,600 | ✅ Complete draft |
+| `chapter01_introduction.md` | I. INTRODUCTION | ~1,900 | ✅ Complete draft |
+| `chapter03_literature_review.md` | II. LITERATURE REVIEW | ~3,000 | ✅ Complete draft |
+| `chapter04_project_analysis.md` (folds in former Ch III methodology) | IV. PROJECT ANALYSIS | ~1,500 | ✅ Complete draft |
+| `chapter05_results.md` | V. RESULTS & DISCUSSION | ~3,600 | ✅ Complete draft |
+| `chapter06_conclusion.md` | VI. CONCLUSION | ~1,600 | ✅ Complete draft |
 
 **Total body text**: ~14,500 words.
 
@@ -30,20 +29,20 @@ There are **three different sets of EXP-005 numbers** in the repo. You must reco
 
 | Source | LinUCB Reward | Static XGB Reward | Delta |
 |--------|---------------|-------------------|-------|
-| `chapter4_results.md` (used in DOCX) | $58,642 | $35,032 | +67% |
-| `chapter5_results.md` (NOT in DOCX) | $95,872 | $75,067 | +27.7% |
+| `chapter05_results.md` (used in DOCX) | $58,642 | $35,032 | +67% |
+| `chapter05_results.md` alt draft (NOT in DOCX) | $95,872 | $75,067 | +27.7% |
 | `AGENTS.md` quick reference | $99,706 | $72,540 | +37% |
 | `build_presentation.py` (hardcoded) | $58,642 | $35,032 | +67% |
 | **Actual experiment run (2026-05-21)** | ~$99,700 | ~$72,500 | +37% |
 
-**Decision needed**: The hardcoded presentation figures and `chapter4_results.md` currently agree with each other but **disagree with the actual experiments**. The actual experiments (running `exp_005_underwriting_convergence.py`) produce ~$99,700 / ~$72,500.
+**Decision needed**: The hardcoded presentation figures and `chapter05_results.md` currently agree with each other but **disagree with the actual experiments**. The actual experiments (running `exp_005_underwriting_convergence.py`) produce ~$99,700 / ~$72,500.
 
 **Recommended fix**:
 1. Run EXP-005, EXP-006, EXP-007, EXP-008 on seed=42 with default `RewardConfig()`.
-2. Update `chapter4_results.md` tables and prose to match the actual output.
+2. Update `chapter05_results.md` tables and prose to match the actual output.
 3. Update `build_presentation.py` hardcoded scaling factors to match.
 4. Regenerate all 6 core figures (`fig_reward_curves.png`, `fig_regret_curves.png`, etc.).
-5. Delete `chapter5_results.md` and `chapter5_conclusion.md` duplicates to avoid confusion (the build uses `chapter4_results.md` and `chapter5_conclusion.md`).
+5. Delete any duplicate chapter files to avoid confusion (the build uses `chapter05_results.md` and `chapter06_conclusion.md`).
 
 #### Issue B: References are placeholders
 The DOCX bibliography section contains placeholder APA citations marked `[CITATION: Author Year]`. These need to be replaced with real references.
@@ -56,9 +55,8 @@ The DOCX auto-generates title pages, abstracts, and acknowledgements with placeh
 **Action**: Update `build_thesis_docx.py` front-matter functions (`add_title_page`, `add_acknowledgement`, `add_khmer_abstract`, `add_english_abstract`) with the real content.
 
 ### Files to ignore / not modify
-- `chapter2_presentation_of_project.md` — NOT used in DOCX build; it's an older parallel draft.
-- `chapter5_results.md` — NOT used in DOCX build; superseded by `chapter4_results.md`.
-- `chapter6_conclusion.md` — NOT used in DOCX build.
+- `chapter02_presentation.md` — NOT used in DOCX build; it's an older parallel draft.
+- `chapter06_conclusion.md` — NOT used in DOCX build (superseded by the version folded into the main build).
 - `DEMO_DEFENSE_REDEMPTION_PLAN.md` — planning doc, not thesis content.
 
 ---
@@ -73,7 +71,7 @@ The DOCX auto-generates title pages, abstracts, and acknowledgements with placeh
    - Run: `python stress_testing/rl/experiments/exp_007_benchmark_comparison.py`
    - Run: `python stress_testing/rl/experiments/exp_008_human_in_the_loop.py`
    - Note the seed=42 outputs.
-   - Update all tables in `chapter4_results.md` to match seed=42 outputs.
+   - Update all tables in `chapter05_results.md` to match seed=42 outputs.
    - Update scaling factors in `thesis/health_rl/build_presentation.py` to match.
    - Regenerate figures: `python thesis/health_rl/build_presentation.py`
    - Regenerate DOCX: `python thesis/health_rl/build_thesis_docx.py`
@@ -98,7 +96,7 @@ The DOCX auto-generates title pages, abstracts, and acknowledgements with placeh
    - Check that figure/table numbering is sequential (no gaps, no duplicates).
 
 5. **Clean up duplicate chapter files**
-   - Move `chapter5_results.md`, `chapter6_conclusion.md`, `chapter2_presentation_of_project.md` to an `archive/` subfolder so they don't confuse future agents.
+   - Move any legacy unpadded chapter files to an `archive/` subfolder so they don't confuse future agents.
 
 6. **Regenerate defense presentation**
    - `python thesis/health_rl/build_presentation.py` — already done after number reconciliation.
@@ -153,7 +151,7 @@ This directly supports the "non-stationary drift" discussion in Chapter 6 (Futur
 
 #### C. Visual polish
 - Add a Cambodia-themed color palette (blue/white from the national flag, with gold accents).
-- Use Chart.js (already referenced in `chapter4_project_analysis.md`) for all charts.
+- Use Chart.js (already referenced in `chapter04_project_analysis.md`) for all charts.
 - Add a "live ticker" showing total applications processed, cumulative profit, current PSI status.
 - Mobile-responsive layout (the thesis mentions mobile distribution).
 

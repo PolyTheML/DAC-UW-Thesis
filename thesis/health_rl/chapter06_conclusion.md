@@ -65,5 +65,3 @@ The broader implication is structural. Traditional insurance underwriting in eme
 The work presented here is a proof of concept on synthetic data. Its value lies not in the specific numbers — which will differ on real Cambodian claims data — but in the demonstration that the full pipeline is feasible: data generation, bandit training, fairness auditing, benchmark comparison, human integration, and drift monitoring can all be operationalised within the resource and regulatory constraints of an emerging-market insurer. The next step is a pilot with a willing partner.
 
 ---
-
-*Skeleton — content to be expanded.*
