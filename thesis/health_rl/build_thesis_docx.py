@@ -19,6 +19,11 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
+# Local LaTeX -> Unicode renderer for thesis math expressions
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+from latex_render import render_inline as _render_latex_inline, extract_display_math as _extract_display_math
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -26,16 +31,16 @@ ROOT = Path(__file__).parent
 OUT_PATH = Path(r"C:\DAC-UW-Thesis\thesis\I5_ITC_Thesis_Template_Guideline-AMS_BACKUP_CLEAN.docx")
 
 CHAPTERS = [
-    ("chapter1_introduction.md", "CHAPTER I. INTRODUCTION"),
-    ("chapter2_literature_review.md", "CHAPTER II. LITERATURE REVIEW"),
-    ("chapter3_methodology.md", "CHAPTER III. METHODOLOGY"),
-    ("chapter4_project_analysis.md", "CHAPTER IV. PROJECT ANALYSIS AND CONCEPTS"),
-    ("chapter4_results.md", "CHAPTER V. RESULTS AND DISCUSSION"),
-    ("chapter5_conclusion.md", "CHAPTER VI. CONCLUSION"),
+    ("chapter01_introduction.md", "CHAPTER I. INTRODUCTION"),
+    ("chapter02_presentation.md", "CHAPTER II. PRESENTATION OF THE PROJECT"),
+    ("chapter03_literature_review.md", "CHAPTER III. LITERATURE REVIEW"),
+    ("chapter04_project_analysis.md", "CHAPTER IV. PROJECT ANALYSIS AND CONCEPTS"),
+    ("chapter05_results.md", "CHAPTER V. RESULTS AND DISCUSSION"),
+    ("chapter06_conclusion.md", "CHAPTER VI. CONCLUSION"),
 ]
 
 FIGURES = [
-    ("fig_framework.png", "Figure 3.1. System architecture of the adaptive underwriting framework."),
+    ("fig_framework.png", "Figure 4.3. System architecture of the adaptive underwriting framework."),
     ("fig_ch4_architecture.png", "Figure 4.1. System architecture of the demonstration system."),
     ("fig_ch4_bandit_loop.png", "Figure 4.2. Contextual bandit decision loop."),
     ("fig_reward_curves.png", "Figure 5.1. Cumulative reward curves for LinUCB and Static XGB baseline."),
@@ -150,7 +155,7 @@ def add_body_paragraph(doc, text, is_bullet=False, bullet_level=0, is_numbered=F
         set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.JUSTIFY,
                              first_line_indent=Cm(1.27))
 
-    # Parse inline formatting: **bold**, *italic*, $math$
+    # Parse inline formatting: **bold**, *italic*, $math$ (LaTeX -> Unicode)
     parts = re.split(r'(\*\*.*?\*\*|\*.*?\*|\$.*?\$)', text)
     for part in parts:
         if part.startswith('**') and part.endswith('**'):
@@ -159,12 +164,26 @@ def add_body_paragraph(doc, text, is_bullet=False, bullet_level=0, is_numbered=F
         elif part.startswith('*') and part.endswith('*') and not part.startswith('**'):
             run = para.add_run(part[1:-1])
             set_run_font(run, size_pt=12, italic=True)
-        elif part.startswith('$') and part.endswith('$'):
-            run = para.add_run(part)
+        elif part.startswith('$') and part.endswith('$') and len(part) > 2:
+            # Inline LaTeX math -> Unicode, rendered in italic Cambria Math-friendly font
+            rendered = _render_latex_inline(part[1:-1])
+            run = para.add_run(rendered)
             set_run_font(run, size_pt=12, italic=True)
         else:
             run = para.add_run(part)
             set_run_font(run, size_pt=12)
+    return para
+
+
+def add_display_equation(doc, latex: str):
+    """Render a $$...$$ display equation as a centered indented paragraph."""
+    rendered = _render_latex_inline(latex)
+    para = doc.add_paragraph()
+    run = para.add_run(rendered)
+    set_run_font(run, size_pt=12, italic=True)
+    set_paragraph_format(para, space_after=Pt(12),
+                         line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.CENTER)
+    para.paragraph_format.space_before = Pt(6)
     return para
 
 
@@ -272,6 +291,13 @@ def parse_markdown(doc, md_text: str):
 
         # Horizontal rule
         if stripped == "---" or stripped == "***":
+            i += 1
+            continue
+
+        # Display equation: $$...$$ on its own line (rendered to Unicode)
+        if stripped.startswith("$$") and stripped.endswith("$$") and len(stripped) > 4:
+            inner = stripped[2:-2].strip()
+            add_display_equation(doc, inner)
             i += 1
             continue
 
@@ -390,6 +416,14 @@ def parse_markdown(doc, md_text: str):
         continue
 
 
+def _render_cell_math(text: str) -> str:
+    """Render any $...$ inline math inside a table cell to Unicode."""
+    text = text.replace("\\$", "\x01")
+    text = re.sub(r"\$([^$\n]+?)\$", lambda m: _render_latex_inline(m.group(1)), text)
+    text = text.replace("\x01", "$")
+    return text
+
+
 def add_markdown_table(doc, data_lines):
     """Convert markdown table rows to a Word table."""
     rows_data = []
@@ -407,7 +441,7 @@ def add_markdown_table(doc, data_lines):
         for col_idx in range(num_cols):
             cell = row.cells[col_idx]
             if col_idx < len(row_data):
-                cell.text = row_data[col_idx]
+                cell.text = _render_cell_math(row_data[col_idx])
             # Format cell text
             for paragraph in cell.paragraphs:
                 for run in paragraph.runs:
@@ -446,8 +480,14 @@ def add_title_page(doc):
                          left_indent=Cm(2))
 
     para = doc.add_paragraph()
-    run = para.add_run("Adaptive Health Insurance Underwriting via Contextual Bandits:\nA Reinforcement Learning Approach for Cambodia")
+    run = para.add_run("ការធានារ៉ាប់រងសុខភាពតាមរយៈ Contextual Bandits:\nវិធីសាស្ត្រសិក្សាពង្រឹងសម្រាប់កម្ពុជា")
     set_run_font(run, size_pt=14, bold=True)
+    set_paragraph_format(para, space_after=Pt(6), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
+                         left_indent=Cm(2))
+
+    para = doc.add_paragraph()
+    run = para.add_run("Adaptive Health Insurance Underwriting via Contextual Bandits:\nA Reinforcement Learning Approach for Cambodia")
+    set_run_font(run, size_pt=14, bold=True, italic=True)
     set_paragraph_format(para, space_after=Pt(24), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
                          left_indent=Cm(2))
 
@@ -594,18 +634,12 @@ def add_english_abstract(doc):
         "demographic segments. This thesis investigates whether contextual bandits — a class of online learning algorithms for sequential "
         "decision-making under uncertainty — can replace static rules in emerging-market health insurance underwriting.\n\n"
         "The research designs and implements a contextual bandit framework with three algorithms (LinUCB, LinTS, and Epsilon-Greedy) "
-        "and compares them against a static XGBoost rule baseline on a synthetic dataset of 2,000 Cambodian health insurance applicants anchored on the Cambodia Demographic and Health Survey (CDHS) 2021–22 (National Institute of Statistics / ICF, 2023). "
-        "A profit-based actuarial reward simulator evaluates four underwriting actions (standard, rated, decline, refer), while Population "
-        "Stability Index (PSI) guardrails monitor regional and occupational fairness.\n\n"
-        "Three controlled experiments validate the framework. EXP-005 demonstrates that LinUCB achieves 67% higher cumulative reward than "
-        "the static baseline and reduces average regret by 50% in the final 500 rounds. EXP-006 confirms that all regional and occupational "
-        "segments meet the 50% approval-rate parity constraint, with PSI values in the GREEN zone for both dimensions. EXP-007 establishes "
-        "a clear performance ranking: LinTS lowest regret ($5,641), followed by LinUCB ($12,954), Epsilon-Greedy ($24,273), and Static XGB "
-        "($35,067).\n\n"
+        "and compares them against a static XGBoost rule baseline on a synthetic dataset of 2,000 Cambodian health insurance applicants anchored on the Cambodia Demographic and Health Survey 2021–22 (National Institute of Statistics et al., 2023). "
+        "A profit-based actuarial reward simulator evaluates four underwriting actions (standard, rated, decline, refer); Population Stability Index (PSI) sliding-window guardrails and the U.S. EEOC four-fifths rule jointly monitor regional and occupational fairness. All headline results are reported as means across 20 independent seeds with paired Wilcoxon signed-rank tests and bootstrap 95% confidence intervals.\n\n"
+        "Four controlled experiments validate the framework. EXP-005 shows that LinUCB achieves $90,540 cumulative reward over 5,000 rounds against the static baseline's $72,292 (+25%, Wilcoxon p < 0.001, Cohen's d = 2.98), and cuts average regret in the final 500 rounds from $9.01 to $2.20 per round (p < 0.001, d = −1.59). EXP-006 confirms that maximum sliding-window PSI remains in the GREEN/AMBER band for both region (0.082) and occupation (0.123) while the EEOC 4/5 rule is satisfied with parity ratios of 85.7% and 90.1% respectively. EXP-007 ranks four algorithms by cumulative regret: LinTS $21,149, LinUCB $22,774 (statistically indistinguishable from LinTS, p = 0.87), Epsilon-Greedy $38,281, and Static XGB $42,548 — both bandits decisively outperform the static and uniform-exploration baselines (p < 0.001, d > 3.4). EXP-008 wraps LinUCB in a human-in-the-loop layer and raises cumulative reward to $102,100 (+6.5% over the mathematical-REFER baseline) at a human-review cost of 2.6% of reward, with zero queue depth throughout.\n\n"
         "The results provide a rigorous proof of concept that contextual bandits can improve both profitability and fairness in Cambodian "
         "health insurance underwriting while remaining computationally lightweight enough for deployment on low-resource mobile infrastructure. "
-        "The thesis contributes a reproducible experimental harness, a Cambodia-calibrated synthetic dataset, and a fairness monitoring protocol "
-        "that may inform future research and industry practice in emerging-market algorithmic insurance."
+        "The thesis contributes a reproducible 20-seed experimental harness, a Cambodia-calibrated synthetic dataset, sliding-window PSI and EEOC-4/5 fairness monitoring, and a human-in-the-loop wrapper that may inform future research and industry practice in emerging-market algorithmic insurance."
     )
     for para_text in abstract_text.split("\n\n"):
         add_body_paragraph(doc, para_text.strip())
@@ -745,46 +779,54 @@ def main():
     # ---- References --------------------------------------------------------
     add_page_break(doc)
     add_heading_paragraph(doc, "REFERENCES", level="chapter")
-    ref_text = (
-        "References should be written in APA 7th edition style. "
-        "The following placeholders indicate the key sources cited in this thesis:\n\n"
-        "[CITATION: Robbins 1952] Robbins, H. (1952). Some aspects of the sequential design of experiments. "
-        "Bulletin of the American Mathematical Society, 58(5), 527–535.\n\n"
-        "[CITATION: Li et al. 2010] Li, L., Chu, W., Langford, J., & Schapire, R. E. (2010). "
-        "A contextual-bandit approach to personalized news article recommendation. "
-        "Proceedings of the 19th International Conference on World Wide Web, 661–670.\n\n"
-        "[CITATION: Agrawal & Goyal 2013] Agrawal, S., & Goyal, N. (2013). "
-        "Thompson sampling for contextual bandits with linear payoffs. "
-        "Proceedings of the 30th International Conference on Machine Learning, 127–135.\n\n"
-        "[CITATION: Lattimore & Szepesvari 2020] Lattimore, T., & Szepesvári, C. (2020). "
-        "Bandit algorithms. Cambridge University Press.\n\n"
-        "[CITATION: Russo et al. 2018] Russo, D., Van Roy, B., Kazerouni, A., Osband, I., & Wen, Z. (2018). "
-        "A tutorial on Thompson sampling. Foundations and Trends in Machine Learning, 11(1), 1–96.\n\n"
-        "[CITATION: Sutton & Barto 2018] Sutton, R. S., & Barto, A. G. (2018). "
-        "Reinforcement learning: An introduction (2nd ed.). MIT Press.\n\n"
-        "[CITATION: Zhou et al. 2020] Zhou, D., Gu, Q., & Szepesvári, C. (2020). "
-        "Neural contextual bandits with UCB-based exploration. "
-        "Proceedings of the 37th International Conference on Machine Learning.\n\n"
-        "[CITATION: Zhang et al. 2021] Zhang, W., Zhou, D., Li, L., & Gu, Q. (2021). "
-        "Neural Thompson sampling. Proceedings of the 9th International Conference on Learning Representations.\n\n"
-        "[CITATION: Chen et al. 2022] Chen, X., Wang, Y., & Wang, X. (2022). "
-        "EE-Net: Exploitation and exploration neural network for dynamic pricing. arXiv preprint.\n\n"
-        "[CITATION: Barocas et al. 2019] Barocas, S., Hardt, M., & Narayanan, A. (2019). "
-        "Fairness and machine learning. fairmlbook.org.\n\n"
-        "[CITATION: Ensign et al. 2018] Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & Venkatasubramanian, S. (2018). "
-        "Runaway feedback loops in predictive policing. Proceedings of the 1st Conference on Fairness, Accountability and Transparency.\n\n"
-        "[CITATION: Lewis 1994] Lewis, E. M. (1994). An introduction to credit scoring. Athena Press, London.\n\n"
-        "[CITATION: Thomas et al. 2002] Thomas, L. C., Edelman, D. B., & Crook, J. N. (2002). Credit scoring and its applications. "
-        "SIAM monographs on mathematical modeling and computation. Philadelphia: SIAM. ISBN 978-0-89871-483-8.\n\n"
-        "[CITATION: Siddiqi 2006] Siddiqi, N. (2006). Credit risk scorecards: Developing and implementing intelligent credit scoring. "
-        "Hoboken, NJ: John Wiley & Sons. ISBN 978-0-471-75451-0. (Reprinted 2012, DOI:10.1002/9781119201731).\n\n"
-        "[CITATION: Yurdakul & Naranjo 2020] Yurdakul, B., & Naranjo, J. (2020). Statistical properties of the population stability index. "
-        "Journal of Risk Model Validation, 14(4), 89–100. DOI:10.21314/JRMV.2020.227.\n\n"
-        "[CITATION: Lin 1991] Lin, J. (1991). Divergence measures based on the Shannon entropy. "
-        "IEEE Transactions on Information Theory, 37(1), 145–151. DOI:10.1109/18.61115."
-    )
-    for para_text in ref_text.split("\n\n"):
-        add_body_paragraph(doc, para_text.strip())
+    ref_entries = [
+        # Bandit & RL theory
+        "Agrawal, S., & Goyal, N. (2013). Thompson sampling for contextual bandits with linear payoffs. "
+        "Proceedings of the 30th International Conference on Machine Learning, 127–135.",
+        "Ban, Y., Yan, Y., Banerjee, A., & He, J. (2022). EE-Net: Exploitation–exploration neural networks in contextual bandits. "
+        "Proceedings of the 10th International Conference on Learning Representations. https://arxiv.org/abs/2110.03177",
+        "Bastani, H., Bayati, M., & Khosravi, K. (2021). Mostly exploration-free algorithms for contextual bandits. "
+        "Management Science, 67(3), 1329–1349.",
+        "Lattimore, T., & Szepesvári, C. (2020). Bandit algorithms. Cambridge University Press.",
+        "Li, L., Chu, W., Langford, J., & Schapire, R. E. (2010). A contextual-bandit approach to personalized news article recommendation. "
+        "Proceedings of the 19th International Conference on World Wide Web, 661–670.",
+        "Robbins, H. (1952). Some aspects of the sequential design of experiments. "
+        "Bulletin of the American Mathematical Society, 58(5), 527–535.",
+        "Russo, D., Van Roy, B., Kazerouni, A., Osband, I., & Wen, Z. (2018). A tutorial on Thompson sampling. "
+        "Foundations and Trends in Machine Learning, 11(1), 1–96.",
+        "Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction (2nd ed.). MIT Press.",
+        "Zhang, W., Zhou, D., Li, L., & Gu, Q. (2021). Neural Thompson sampling. "
+        "Proceedings of the 9th International Conference on Learning Representations.",
+        "Zhou, D., Li, L., & Gu, Q. (2020). Neural contextual bandits with UCB-based exploration. "
+        "Proceedings of the 37th International Conference on Machine Learning.",
+        # Fairness, feedback loops, methodology
+        "Barocas, S., Hardt, M., & Narayanan, A. (2019). Fairness and machine learning: Limitations and opportunities. fairmlbook.org.",
+        "Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & Venkatasubramanian, S. (2018). "
+        "Runaway feedback loops in predictive policing. Proceedings of the 1st Conference on Fairness, Accountability and Transparency, "
+        "PMLR 81, 160–171.",
+        "Shadish, W. R., Cook, T. D., & Leviton, L. C. (1991). Foundations of program evaluation: Theories of practice. Sage Publications.",
+        # PSI & credit-scoring lineage
+        "Lewis, E. M. (1994). An introduction to credit scoring. Athena Press.",
+        "Lin, J. (1991). Divergence measures based on the Shannon entropy. "
+        "IEEE Transactions on Information Theory, 37(1), 145–151. https://doi.org/10.1109/18.61115",
+        "Siddiqi, N. (2006). Credit risk scorecards: Developing and implementing intelligent credit scoring. John Wiley & Sons. "
+        "(Reprinted 2012, https://doi.org/10.1002/9781119201731).",
+        "Thomas, L. C., Edelman, D. B., & Crook, J. N. (2002). Credit scoring and its applications. "
+        "SIAM Monographs on Mathematical Modeling and Computation. SIAM.",
+        "Yurdakul, B., & Naranjo, J. (2020). Statistical properties of the population stability index. "
+        "Journal of Risk Model Validation, 14(4), 89–100. https://doi.org/10.21314/JRMV.2020.227",
+        # Cambodia market context & data sources
+        "Asian Development Bank. (2023). Asian Development Outlook April 2023 — Cambodia. Manila: ADB. https://www.adb.org/sites/default/files/publication/863591/cam-ado-april-2023.pdf",
+        "BIMA Mobile. (2022). BIMA–Smart Axiata partnership: mobile micro-insurance in Cambodia. Company report. https://bimamobile.com",
+        "International Labour Organization. (2022). Cambodian Garment and Footwear Sector Bulletin. ILO Country Office for Cambodia. https://www.ilo.org",
+        "Ministry of Agriculture, Forestry and Fisheries of Cambodia. (2022). Annual report on the work of the agriculture, forestry and fisheries sector and direction for the following year. Phnom Penh: MAFF. https://maff.gov.kh",
+        "National Institute of Statistics, Ministry of Health, & ICF. (2023). Cambodia Demographic and Health Survey 2021–22. Phnom Penh, Cambodia, and Rockville, Maryland, USA: NIS, MoH, and ICF. https://dhsprogram.com/pubs/pdf/FR377/FR377.pdf",
+        "Swiss Re Institute. (2023). Sigma 3/2023: World insurance — stirred, and not shaken. Zürich: Swiss Re. https://www.swissre.com/institute/research/sigma-research/sigma-2023-03.html",
+        "World Bank. (2023). World Development Indicators — Cambodia. Washington, DC: World Bank. https://databank.worldbank.org/source/world-development-indicators",
+    ]
+    add_body_paragraph(doc, "References are formatted in APA 7th edition style.")
+    for entry in ref_entries:
+        add_body_paragraph(doc, entry)
 
     # ---- Appendices --------------------------------------------------------
     add_page_break(doc)

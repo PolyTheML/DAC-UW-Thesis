@@ -1,10 +1,4 @@
-# II. PRESENTATION OF THE PROJECT
-
-*[Note: Per ITC thesis structure, Chapter II is reserved for "Presentation of the Project". The Literature Review content below has been re-numbered as Chapter III in accordance with ITC guidelines.]*
-
----
-
-# III. LITERATURE REVIEW
+# CHAPTER III. LITERATURE REVIEW
 
 ---
 
@@ -16,9 +10,9 @@ This chapter reviews the body of literature relevant to the thesis, organised ar
 
 ## 3.2. Health Insurance Underwriting in Emerging Markets
 
-Health insurance underwriting is the process by which an insurer evaluates an applicant's risk profile and assigns a premium and coverage terms conditional on that risk. In traditional actuarial practice, this evaluation relies on mortality tables, medical examinations, and historical claims experience. In emerging markets such as Cambodia, these inputs are often unavailable or unreliable. The absence of longitudinal health records, the concentration of healthcare access in urban centers, and the prevalence of informal employment without standardized income documentation create an information asymmetry that static underwriting models struggle to resolve [CITATION: NIS & ICF 2023 CDHS].
+Health insurance underwriting is the process by which an insurer evaluates an applicant's risk profile and assigns a premium and coverage terms conditional on that risk. In traditional actuarial practice, this evaluation relies on mortality tables, medical examinations, and historical claims experience. In emerging markets such as Cambodia, these inputs are often unavailable or unreliable. The absence of longitudinal health records, the concentration of healthcare access in urban centers, and the prevalence of informal employment without standardized income documentation create an information asymmetry that static underwriting models struggle to resolve (National Institute of Statistics et al., 2023).
 
-Digital underwriting — in which applicants complete a short questionnaire on a mobile device and receive an instant decision — has emerged as a promising alternative. Mobile distribution channels have shown that emerging-market consumers will purchase insurance when transaction costs are reduced through digital onboarding [CITATION: needed]. The underwriting engines behind these products, however, typically use simple rule-based scorecards or shallow decision trees that cannot learn from feedback or adapt to changing applicant populations. The academic literature on algorithmic underwriting in emerging markets remains sparse, with most published work focusing on credit scoring rather than health insurance [CITATION: needed].
+Digital underwriting — in which applicants complete a short questionnaire on a mobile device and receive an instant decision — has emerged as a promising alternative. Mobile distribution channels have shown that emerging-market consumers will purchase insurance when transaction costs are reduced through digital onboarding (BIMA, 2022; Asian Development Bank, 2023). The underwriting engines behind these products, however, typically use simple rule-based scorecards or shallow decision trees that cannot learn from feedback or adapt to changing applicant populations. The academic literature on algorithmic underwriting in emerging markets remains sparse, with most published work focusing on credit scoring rather than health insurance.
 
 ---
 
@@ -26,9 +20,9 @@ Digital underwriting — in which applicants complete a short questionnaire on a
 
 ### 3.3.1. From Multi-Armed Bandits to Contextual Bandits
 
-The multi-armed bandit problem, first formalized by Robbins (1952), captures the fundamental exploration-exploitation dilemma: an agent must repeatedly choose among multiple actions (arms) with unknown reward distributions, balancing the need to explore poorly understood arms against the desire to exploit arms known to yield high rewards. In the stochastic bandit setting, each arm has a fixed but unknown expected reward, and the agent's objective is to minimize cumulative regret — the difference between the reward obtained and the reward that would have been obtained by always pulling the optimal arm [CITATION: Robbins 1952] [CITATION: Lattimore & Szepesvari 2020].
+The multi-armed bandit problem, first formalized by Robbins (1952), captures the fundamental exploration-exploitation dilemma: an agent must repeatedly choose among multiple actions (arms) with unknown reward distributions, balancing the need to explore poorly understood arms against the desire to exploit arms known to yield high rewards. In the stochastic bandit setting, each arm has a fixed but unknown expected reward, and the agent's objective is to minimize cumulative regret — the difference between the reward obtained and the reward that would have been obtained by always pulling the optimal arm (Robbins, 1952) (Lattimore & Szepesvári, 2020).
 
-Contextual bandits extend this framework by associating each decision round with a context vector describing the current state of the environment. In the insurance setting, the context is the applicant's feature vector (age, BMI, region, occupation, health conditions). The agent's goal is to learn a policy that maps contexts to actions in a way that maximizes expected cumulative reward. Formally, at each round $t$, the agent observes context $x_t \in \mathbb{R}^d$, selects an action $a_t \in \mathcal{A}$, and receives reward $r_t \in \mathbb{R}$ drawn from a distribution depending on $x_t$ and $a_t$ [CITATION: Li et al. 2010].
+Contextual bandits extend this framework by associating each decision round with a context vector describing the current state of the environment. In the insurance setting, the context is the applicant's feature vector (age, BMI, region, occupation, health conditions). The agent's goal is to learn a policy that maps contexts to actions in a way that maximizes expected cumulative reward. Formally, at each round $t$, the agent observes context $x_t \in \mathbb{R}^d$, selects an action $a_t \in \mathcal{A}$, and receives reward $r_t \in \mathbb{R}$ drawn from a distribution depending on $x_t$ and $a_t$ (Li et al., 2010).
 
 ### 3.3.2. LinUCB and LinTS
 
@@ -36,19 +30,29 @@ Contextual bandits extend this framework by associating each decision round with
 
 $$a_t = \arg\max_{a \in \mathcal{A}} \left( \hat{\theta}_a^T x_t + \alpha \sqrt{x_t^T A_a^{-1} x_t} \right)$$
 
-where $A_a$ is the design matrix and $\alpha$ controls the exploration-exploitation trade-off. Li et al. proved that LinUCB achieves regret bounded by $\tilde{O}(d \sqrt{T})$, making it near-optimal for linear reward functions [CITATION: Li et al. 2010].
+where $A_a$ is the design matrix and $\alpha$ controls the exploration-exploitation trade-off. Li et al. proved that LinUCB achieves regret bounded by $\tilde{O}(d \sqrt{T})$, making it near-optimal for linear reward functions (Li et al., 2010).
 
-**LinTS** (Agrawal & Goyal, 2013) takes a Bayesian approach. Rather than constructing an explicit confidence bound, it samples a parameter vector $\tilde{\theta}_a$ from the posterior distribution $N(\hat{\theta}_a, v^2 A_a^{-1})$ and selects the action maximizing the sampled reward: $a_t = \arg\max_a \tilde{\theta}_a^T x_t$. Thompson Sampling has been shown to achieve comparable theoretical regret bounds while often outperforming UCB-based methods empirically, particularly in problems with correlated arms or complex posterior geometries [CITATION: Agrawal & Goyal 2013] [CITATION: Russo et al. 2018].
+**LinTS** (Agrawal & Goyal, 2013) takes a Bayesian approach. Rather than constructing an explicit confidence bound, it samples a parameter vector $\tilde{\theta}_a$ from the posterior distribution $N(\hat{\theta}_a, v^2 A_a^{-1})$ and selects the action maximizing the sampled reward: $a_t = \arg\max_a \tilde{\theta}_a^T x_t$. Thompson Sampling has been shown to achieve comparable theoretical regret bounds while often outperforming UCB-based methods empirically, particularly in problems with correlated arms or complex posterior geometries (Agrawal & Goyal, 2013) (Russo et al., 2018).
 
 Both algorithms are computationally efficient for low-dimensional contexts: each update requires only a rank-one matrix update and a linear solve, operations that complete in milliseconds on standard hardware. This efficiency is essential for emerging-market deployment where GPU resources may be unavailable and decision latency must remain below 200 milliseconds.
 
 ### 3.3.3. Epsilon-Greedy and Baseline Comparisons
 
-**Epsilon-Greedy** serves as the simplest exploration baseline: with probability $\epsilon$, select a random action; otherwise, select the action with highest estimated reward. While easy to implement, Epsilon-Greedy is known to be suboptimal because it explores uniformly regardless of uncertainty — wasting exploration budget on actions that are already well understood. It remains useful as a pedagogical baseline against which to measure the value of principled uncertainty-directed exploration [CITATION: Sutton & Barto 2018].
+**Epsilon-Greedy** serves as the simplest exploration baseline: with probability $\epsilon$, select a random action; otherwise, select the action with highest estimated reward. While easy to implement, Epsilon-Greedy is known to be suboptimal because it explores uniformly regardless of uncertainty — wasting exploration budget on actions that are already well understood. It remains useful as a pedagogical baseline against which to measure the value of principled uncertainty-directed exploration (Sutton & Barto, 2018).
 
 **Static baselines** — pre-trained classification or regression models applied deterministically — represent the current industry standard. An XGBoost model trained on historical data and thresholded to produce accept/rate/decline decisions has no exploration mechanism and cannot improve from feedback. Its regret grows linearly with time, whereas bandit algorithms achieve sublinear regret. The gap between static and adaptive performance is the primary empirical quantity this thesis measures.
 
-[TABLE: Comparative summary of contextual bandit algorithms (LinUCB, LinTS, NeuralUCB, NeuralTS, EE-Net) showing reward model class, exploration mechanism, theoretical regret bound, computational cost, and data requirements.]
+**Table 3.1 — Comparative summary of contextual bandit algorithms for dynamic decision-making**
+
+| Algorithm | Reward Model | Exploration Mechanism | Theoretical Regret | Per-Round Cost | Data Requirement |
+|-----------|-------------|----------------------|--------------------|----------------|------------------|
+| LinUCB (Li et al., 2010) | Linear: $\theta_a^\top x$ | Upper confidence bound: $\alpha \sqrt{x^\top A^{-1} x}$ | $O(d\sqrt{T \log T})$ | $O(d^2)$ | Moderate; $T \gg d$ |
+| LinTS (Agrawal & Goyal, 2013) | Linear: $\theta_a^\top x$ | Posterior sampling: $\tilde\theta \sim \mathcal{N}(\hat\theta, v^2 A^{-1})$ | $O(d\sqrt{T \log T})$ | $O(d^2)$ | Moderate; $T \gg d$ |
+| NeuralUCB (Zhou et al., 2020) | Deep neural network $f_\theta(x)$ | Gradient-based confidence width | $\tilde{O}(\tilde{d}\sqrt{T})$ | $O(|\theta| \cdot T)$ | Large; millions of samples |
+| NeuralTS (Zhang et al., 2021) | Deep neural network $f_\theta(x)$ | Posterior over network parameters | $\tilde{O}(\tilde{d}\sqrt{T})$ | $O(|\theta| \cdot T)$ | Large; millions of samples |
+| EE-Net (Ban et al., 2022) | Dual networks (exploit + explore) | Learned exploration value | Empirical only | $O(|\theta| \cdot T)$ | Large; ensemble training |
+
+For the Cambodia dataset ($d = 34$, $T = 5,000$), linear bandits offer the best trade-off between statistical efficiency, computational cost, and interpretability. Neural extensions become relevant only when the feature space expands beyond several hundred dimensions or when non-linear interactions are known to dominate.
 
 ---
 
@@ -66,25 +70,25 @@ Neural contextual bandits address these limitations by replacing the linear rewa
 
 ### 3.4.2. NeuralUCB
 
-**NeuralUCB** (Zhou et al., ICML 2020) extends the optimism principle of LinUCB to neural networks. The algorithm trains a deep neural network to predict rewards via gradient descent, then constructs an upper confidence bound using the gradient information of the network. Specifically, the confidence width at context $x$ is proportional to $\sqrt{g(x; \theta)^T A^{-1} g(x; \theta)}$, where $g(x; \theta)$ is the gradient of the network output with respect to its parameters and $A$ is the outer-product matrix of historical gradients [CITATION: Zhou et al. 2020].
+**NeuralUCB** (Zhou et al., ICML 2020) extends the optimism principle of LinUCB to neural networks. The algorithm trains a deep neural network to predict rewards via gradient descent, then constructs an upper confidence bound using the gradient information of the network. Specifically, the confidence width at context $x$ is proportional to $\sqrt{g(x; \theta)^T A^{-1} g(x; \theta)}$, where $g(x; \theta)$ is the gradient of the network output with respect to its parameters and $A$ is the outer-product matrix of historical gradients (Zhou et al., 2020).
 
 Theoretical analysis shows that NeuralUCB achieves regret $\tilde{O}(\tilde{d}\sqrt{T})$, where $\tilde{d}$ is an effective dimension determined by the neural tangent kernel (NTK) of the network. In the linear case, this reduces exactly to the LinUCB bound. The practical significance is that NeuralUCB provides a principled exploration mechanism for deep models without requiring Bayesian inference or ensemble methods.
 
 ### 3.4.3. NeuralTS
 
-**NeuralTS** (Zhang et al., ICLR 2021) extends Thompson Sampling to neural networks. At each round, the algorithm samples a neural network parameter vector from an approximate posterior and selects the action maximizing the sampled network's predicted reward. The posterior approximation uses gradient information analogous to NeuralUCB, but the sampling-based exploration often produces more adaptive behavior in practice [CITATION: Zhang et al. 2021].
+**NeuralTS** (Zhang et al., ICLR 2021) extends Thompson Sampling to neural networks. At each round, the algorithm samples a neural network parameter vector from an approximate posterior and selects the action maximizing the sampled network's predicted reward. The posterior approximation uses gradient information analogous to NeuralUCB, but the sampling-based exploration often produces more adaptive behavior in practice (Zhang et al., 2021).
 
 Empirically, NeuralTS has demonstrated strong performance on recommendation and advertising benchmarks where user preferences exhibit complex, non-linear structure. The algorithm's natural uncertainty quantification — regions of feature space with few historical observations produce high posterior variance — makes it attractive for high-stakes domains such as insurance where exploration must be cautious.
 
 ### 3.4.4. EE-Net and Hybrid Approaches
 
-**EE-Net** (Ban et al., 2022) proposes a more radical architecture: two separate neural networks, one for exploitation and one for exploration. The exploitation network predicts expected reward; the exploration network predicts the value of exploring (the expected information gain). The final decision combines both predictions [CITATION: Ban et al. 2022].
+**EE-Net** (Ban et al., 2022) proposes a more radical architecture: two separate neural networks, one for exploitation and one for exploration. The exploitation network predicts expected reward; the exploration network predicts the value of exploring (the expected information gain). The final decision combines both predictions (Ban et al., 2022).
 
 A more pragmatic middle ground is the **Neural Linear Bandit**, in which a neural network learns a feature representation $\phi(x)$ from raw inputs, and a linear bandit (LinUCB or LinTS) operates on the learned representation. This approach decouples representation learning from exploration, making it more stable to train and easier to interpret in production settings where actuarial or business stakeholders require auditable per-feature coefficients.
 
 ### 3.4.5. Applications in Dynamic Pricing
 
-Contextual bandits have become a standard paradigm in recommendation, advertising, and dynamic pricing. The original LinUCB paper (Li et al., 2010) deployed the algorithm on the Yahoo! news front page, demonstrating click-through-rate gains over editorial selection in a production setting [CITATION: Li et al. 2010]. Subsequent industrial work has extended the framework to personalized search ranking, e-commerce assortment, and ride-hailing surge pricing, where the action space encodes a discrete price tier and the reward is the realized revenue conditional on customer acceptance.
+Contextual bandits have become a standard paradigm in recommendation, advertising, and dynamic pricing. The original LinUCB paper (Li et al., 2010) deployed the algorithm on the Yahoo! news front page, demonstrating click-through-rate gains over editorial selection in a production setting (Li et al., 2010). Subsequent industrial work has extended the framework to personalized search ranking, e-commerce assortment, and ride-hailing surge pricing, where the action space encodes a discrete price tier and the reward is the realized revenue conditional on customer acceptance.
 
 This dynamic pricing literature is structurally aligned with insurance underwriting: both problems present a context (customer or applicant features), a finite action space (price tiers or underwriting decisions), and a noisy reward (revenue or premium minus claims). The key difference is risk asymmetry: in advertising, showing a suboptimal recommendation costs only a click; in insurance, accepting a high-risk applicant at standard rates can generate substantial losses that materialize months later as claims. This asymmetry motivates the conservative reward design and PSI guardrails proposed in this thesis.
 
@@ -98,9 +102,9 @@ While neural bandits offer superior representational capacity, they require larg
 
 ### 3.5.1. Algorithmic Fairness in Insurance
 
-Algorithmic fairness has received substantial attention in the machine learning literature, with definitions spanning demographic parity, equalized odds, and individual fairness [CITATION: Barocas et al. 2019]. In insurance, fairness concerns are amplified by the industry's social role: underwriting decisions determine who receives financial protection against health shocks. A model that systematically declines applicants from rural provinces or informal occupations deepens existing inequalities.
+Algorithmic fairness has received substantial attention in the machine learning literature, with definitions spanning demographic parity, equalized odds, and individual fairness (Barocas et al., 2019). In insurance, fairness concerns are amplified by the industry's social role: underwriting decisions determine who receives financial protection against health shocks. A model that systematically declines applicants from rural provinces or informal occupations deepens existing inequalities.
 
-Most fairness research focuses on static models trained on fixed datasets. Fairness in adaptive systems — where the algorithm's decisions influence the training data it sees next — introduces additional complexity. If a bandit learns that rural applicants are less profitable, it may decline them more often, reducing the rural data it receives and reinforcing the initial bias. This **feedback loop** is well documented in lending and criminal justice applications but has not been systematically studied in health insurance underwriting [CITATION: Ensign et al. 2018] [CITATION: needed - additional lending/criminal justice feedback loop references].
+Most fairness research focuses on static models trained on fixed datasets. Fairness in adaptive systems — where the algorithm's decisions influence the training data it sees next — introduces additional complexity. If a bandit learns that rural applicants are less profitable, it may decline them more often, reducing the rural data it receives and reinforcing the initial bias. This **feedback loop** is well documented in lending and criminal justice applications but has not been systematically studied in health insurance underwriting (Ensign et al., 2018).
 
 ### 3.5.2. Population Stability Index (PSI)
 
@@ -108,13 +112,13 @@ The Population Stability Index (PSI) is a statistical metric for detecting distr
 
 $$\text{PSI} = \sum_{i=1}^{B} (A_i - E_i) \times \ln\left(\frac{A_i}{E_i}\right)$$
 
-where $A_i$ is the actual proportion and $E_i$ is the expected proportion in bin $i$. PSI is a symmetric form of the Kullback-Leibler divergence; it appears in the statistical literature as the "J divergence" (Lin, 1991) [CITATION: Lin 1991]. The term "Population Stability Index" and the associated threshold values were first introduced by Lewis (1994), who proposed the benchmarks as a practical diagnostic for credit-scoring practitioners [CITATION: Lewis 1994]. Thomas et al. (2002, pp. 155 ff.) codified PSI within the credit-scoring textbook literature, and Siddiqi (2006, 2012) popularised the traffic-light system in scorecard development guides [CITATION: Thomas et al. 2002] [CITATION: Siddiqi 2006].
+where $A_i$ is the actual proportion and $E_i$ is the expected proportion in bin $i$. PSI is a symmetric form of the Kullback-Leibler divergence; it appears in the statistical literature as the "J divergence" (Lin, 1991) (Lin, 1991). The term "Population Stability Index" and the associated threshold values were first introduced by Lewis (1994), who proposed the benchmarks as a practical diagnostic for credit-scoring practitioners (Lewis, 1994). Thomas et al. (2002, pp. 155 ff.) codified PSI within the credit-scoring textbook literature, and Siddiqi (2006, 2012) popularised the traffic-light system in scorecard development guides (Thomas et al., 2002) (Siddiqi, 2006).
 
-The canonical industry reference for PSI thresholds is Siddiqi (2006, reprinted 2012), who describes the traffic-light system as: GREEN ($<$ 0.10) indicates little or no shift; AMBER (0.10–0.25) signals a moderate shift requiring investigation; RED ($>$ 0.25) indicates a significant shift that may warrant model recalibration or retraining [CITATION: Siddiqi 2006]. These thresholds — sometimes called the "Lewis constants" after their originator — are widely adopted in actuarial and banking model-risk management frameworks.
+The canonical industry reference for PSI thresholds is Siddiqi (2006, reprinted 2012), who describes the traffic-light system as: GREEN ($<$ 0.10) indicates little or no shift; AMBER (0.10–0.25) signals a moderate shift requiring investigation; RED ($>$ 0.25) indicates a significant shift that may warrant model recalibration or retraining (Siddiqi, 2006). These thresholds — sometimes called the "Lewis constants" after their originator — are widely adopted in actuarial and banking model-risk management frameworks.
 
-[TABLE: PSI traffic-light threshold system (GREEN < 0.10, AMBER 0.10–0.25, RED > 0.25) with corresponding interpretation and recommended action per Siddiqi (2006).]
+The PSI traffic-light thresholds are codified in Chapter III (Table 3.4.1) alongside their integration with the bandit decision loop.
 
-A more recent statistical treatment by Yurdakul and Naranjo (2020) provides the first formal justification for the Lewis constants. They derive the asymptotic distribution of PSI under the null hypothesis of no population shift and show that the 0.10 and 0.25 benchmarks are reasonable for sample sizes typical of scorecard development (roughly 100–600 observations per bin), though they caution that the thresholds become conservative for larger samples [CITATION: Yurdakul & Naranjo 2020]. Their simulation study confirms that PSI $>$ 0.25 controls Type I error at acceptable levels while retaining power to detect meaningful distributional shifts.
+A more recent statistical treatment by Yurdakul and Naranjo (2020) provides the first formal justification for the Lewis constants. They derive the asymptotic distribution of PSI under the null hypothesis of no population shift and show that the 0.10 and 0.25 benchmarks are reasonable for sample sizes typical of scorecard development (roughly 100–600 observations per bin), though they caution that the thresholds become conservative for larger samples (Yurdakul & Naranjo, 2020). Their simulation study confirms that PSI $>$ 0.25 controls Type I error at acceptable levels while retaining power to detect meaningful distributional shifts.
 
 In this thesis, PSI is applied not to model outputs but to demographic distributions: comparing the region and occupation distributions of the *approved* portfolio against the *applicant* population. This usage treats PSI as a fairness guardrail rather than a model-drift detector. If the approved portfolio diverges demographically from the applicant pool, the bandit may be exploiting or excluding specific segments, triggering an AMBER or RED alert regardless of profitability. The choice of PSI for this purpose is motivated by its interpretability, its symmetry with respect to the reference and monitored distributions, and its established regulatory acceptance in actuarial practice.
 
