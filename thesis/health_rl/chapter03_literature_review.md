@@ -94,7 +94,7 @@ This dynamic pricing literature is structurally aligned with insurance underwrit
 
 ### 3.4.6. Implications for This Thesis
 
-While neural bandits offer superior representational capacity, they require larger datasets and more careful hyperparameter tuning than linear models. With a synthetic dataset of 2,000 records and 25 features after one-hot encoding, the risk of overfitting outweighs the potential gains from non-linear modeling. The experiments in this thesis therefore focus on linear bandits, which achieve strong performance with minimal computational requirements. The neural bandit literature review provides the theoretical foundation and implementation pathway for future work with larger, real-world Cambodian insurance portfolios.
+While neural bandits offer superior representational capacity, they require larger datasets and more careful hyperparameter tuning than linear models. With a synthetic dataset of 2,000 records and 34 features after one-hot encoding, the risk of overfitting outweighs the potential gains from non-linear modeling. The experiments in this thesis therefore focus on linear bandits, which achieve strong performance with minimal computational requirements. The neural bandit literature review provides the theoretical foundation and implementation pathway for future work with larger, real-world Cambodian insurance portfolios.
 
 ---
 
