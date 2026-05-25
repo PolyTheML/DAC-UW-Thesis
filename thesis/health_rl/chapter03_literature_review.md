@@ -148,6 +148,8 @@ Agrawal, S., & Goyal, N. (2013). Thompson sampling for contextual bandits with l
 
 Ban, Y., Yan, Y., Banerjee, A., & He, J. (2022). EE-Net: Exploitation-exploration neural networks in contextual bandits. In *Proceedings of the 10th International Conference on Learning Representations (ICLR)*.
 
+Bastani, H., Bayati, M., & Khosravi, K. (2021). Mostly exploration-free algorithms for contextual bandits. *Management Science*, *67*(3), 1329–1349. https://doi.org/10.1287/mnsc.2020.3605
+
 Barocas, S., Hardt, M., & Narayanan, A. (2019). *Fairness and machine learning: Limitations and opportunities*. fairmlbook.org. http://www.fairmlbook.org
 
 Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & Venkatasubramanian, S. (2018). Runaway feedback loops in predictive policing. In *Proceedings of the 1st Conference on Fairness, Accountability and Transparency* (pp. 160–171). PMLR.
@@ -165,6 +167,8 @@ National Institute of Statistics (NIS) & ICF. (2023). *Cambodia Demographic and 
 Robbins, H. (1952). Some aspects of the sequential design of experiments. *Bulletin of the American Mathematical Society*, *58*(5), 527–535. https://doi.org/10.1090/S0002-9904-1952-09620-8
 
 Russo, D. J., Van Roy, B., Kazerouni, A., Osband, I., & Wen, Z. (2018). A tutorial on Thompson sampling. *Foundations and Trends in Machine Learning*, *11*(1), 1–96. https://doi.org/10.1561/2200000070
+
+Shadish, W. R., Cook, T. D., & Campbell, D. T. (2002). *Experimental and quasi-experimental designs for generalized causal inference*. Houghton Mifflin.
 
 Siddiqi, N. (2006). *Credit risk scorecards: Developing and implementing intelligent credit scoring*. Wiley.
 

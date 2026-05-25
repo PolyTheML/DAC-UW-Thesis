@@ -120,7 +120,7 @@ The takeaway is structural rather than competitive: **uncertainty-directed explo
 
 **LinUCB (rank 2).** Upper Confidence Bound performs comparably to LinTS but requires choice of \alpha. At \alpha = 1.0 (Li et al., 2010 default), it accumulates slightly more regret in the early rounds than LinTS before converging to a similar late-round policy. The two algorithms reach statistically indistinguishable asymptotic performance, but UCB's parameter sensitivity means that production deployment would warrant either a tuned \alpha for the specific data distribution or a switch to Thompson Sampling.
 
-**Epsilon-Greedy (rank 3).** With \varepsilon = 0.10, the algorithm wastes 10% of decisions on uniform random exploration regardless of how much has been learned. Unlike UCB and Thompson Sampling, it does not reduce exploration as confidence grows. This produces a nearly-linear regret curve — the hallmark of an algorithm that never fully exploits its learned knowledge — and its mean regret is roughly 1.8 times that of LinUCB and LinTS combined.
+**Epsilon-Greedy (rank 3).** With \varepsilon = 0.15, the algorithm wastes 15% of decisions on uniform random exploration regardless of how much has been learned. Unlike UCB and Thompson Sampling, it does not reduce exploration as confidence grows. This produces a nearly-linear regret curve — the hallmark of an algorithm that never fully exploits its learned knowledge — and its mean regret is roughly 1.8 times that of LinUCB and LinTS combined.
 
 **Static XGB (rank 4).** The pre-trained XGBoost baseline, combined with deterministic underwriting rules, cannot adapt to the reward signals it receives. Its regret is bounded below by the systematic mismatch between its fixed decision boundaries and the actuarial reward structure. Even Epsilon-Greedy — which explores uniformly without using any context-dependent information beyond the empirical mean — outperforms it by a statistically significant margin (-4,268, d = -0.82, large effect), underscoring that *any* online adaptation beats *no* online adaptation in this environment.
 
@@ -227,7 +227,7 @@ Four limitations bound the interpretation of the empirical findings.
 
 ### 5.5.4 Threats to Validity
 
-Threats to validity are classified following the framework of Shadish, Cook, and Leviton (1991).
+Threats to validity are classified following the four-threats framework of Shadish, Cook, and Campbell (2002).
 
 **Internal validity.**  The primary threat is seed dependence and hyperparameter sensitivity.  All headline results in this chapter are reported as means across 20 independent seeds (1–20) with bootstrap 95% confidence intervals and paired non-parametric tests (Wilcoxon signed-rank), so the seed-dependence threat is bounded by the reported intervals.  The finding that LinUCB and LinTS consistently outperform Static XGB and Epsilon-Greedy is robust across all 20 seeds with large effect sizes (Cohen's d > 3 in EXP-007); the finding that LinTS narrowly leads LinUCB is *not* significant (p = 0.87) and should not be over-interpreted as a definitive ranking.  Hyperparameter sensitivity is addressed indirectly: LinTS has no tuned exploration parameter (posterior variance v^2 = 1.0 is fixed), and LinUCB's α = 1.0 is a standard default from the original Li et al. (2010) paper.  A full grid-search sensitivity analysis (α ∈ [0.1, 5.0], v² ∈ [0.1, 5.0], ε ∈ [0.05, 0.30]) remains future work.
 

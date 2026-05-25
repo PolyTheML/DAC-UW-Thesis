@@ -132,7 +132,7 @@ A contextual bandit is a reinforcement learning framework in which an agent repe
 
 The contextual bandit underwriting loop proceeds in five steps per applicant.
 
-1. **Context observation.** At round *t*, the algorithm observes the applicant feature vector *x_t* ∈ ℝ^d, where d = 25 in this implementation (age, BMI, region one-hot, occupation one-hot, health flags, income).
+1. **Context observation.** At round *t*, the algorithm observes the applicant feature vector *x_t* ∈ ℝ^d, where d = 34 in this implementation (age, BMI, region one-hot, occupation one-hot, health flags, income).
 2. **Action selection.** For each action *a* ∈ {STANDARD, RATED, DECLINE, REFER}, the algorithm estimates the expected reward and adds an exploration term. LinUCB adds an upper-confidence bonus α·√(x_tᵀ A_a⁻¹ x_t); LinTS samples θ_a from its posterior; Epsilon-Greedy chooses the empirical maximum with probability 1−ε and explores uniformly otherwise.
 3. **Reward observation.** The selected action is executed by the actuarial simulator, which returns a stochastic reward composed of premium revenue, expected claims, customer acceptance, and expense loadings.
 4. **Parameter update.** The algorithm updates its parameter estimates using the observed (*x_t*, *a_t*, *r_t*) triple. For LinUCB and LinTS this is a rank-one update of the per-action precision matrix A_a and reward vector b_a, completed in O(d²) operations.
@@ -155,7 +155,7 @@ Six properties distinguish contextual bandits from competing approaches and moti
 3. **No batch retraining.** Unlike static XGBoost models that require periodic offline retraining cycles, bandits learn online from each new decision, eliminating the operational cost and stale-model risk of scheduled retraining.
 4. **Interpretability.** Linear bandits maintain explicit per-action coefficient vectors θ_a, allowing actuaries and regulators to inspect which features drive each decision (NFR-7) — a property that neural bandits do not provide.
 5. **Fairness compatibility.** Because the reward function need not encode demographic parity, fairness can be monitored externally via PSI guardrails (FR-4), decoupling profitability from demographic constraints and avoiding the adversarial dynamics of constrained-reward formulations.
-6. **Emerging-market data fit.** With only 2,000 calibrated records available, deep neural approaches risk overfitting. Linear bandits with d = 25 features achieve strong generalisation under this sample budget while remaining flexible enough to capture the dominant feature interactions identified in the literature.
+6. **Emerging-market data fit.** With only 2,000 calibrated records available, deep neural approaches risk overfitting. Linear bandits with d = 34 features achieve strong generalisation under this sample budget while remaining flexible enough to capture the dominant feature interactions identified in the literature.
 
 ---
 

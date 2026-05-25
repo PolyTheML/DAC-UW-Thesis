@@ -26,7 +26,7 @@ Several limitations bound the generalisability of these findings.
 
 **Stationary environment.** EXP-005 through EXP-007 assume a stationary applicant distribution throughout the 5,000 rounds. Real insurance portfolios experience demographic drift — seasonal disease spikes, economic migration, aging cohorts — that can invalidate a bandit's learned coefficients. EXP-008 partially addresses this by introducing human overrides as a correction mechanism, but does not model environmental non-stationarity explicitly.
 
-**Sample size.** 2,000 applicants is sufficient to demonstrate convergence on this synthetic problem but is small relative to the hundreds of thousands of policies held by even mid-sized emerging-market insurers. Bandit convergence rates scale with context dimensionality; the 25-feature space used here may require substantially more rounds to converge in a live setting with richer feature sets.
+**Sample size.** 2,000 applicants is sufficient to demonstrate convergence on this synthetic problem but is small relative to the hundreds of thousands of policies held by even mid-sized emerging-market insurers. Bandit convergence rates scale with context dimensionality; the 34-feature space used here may require substantially more rounds to converge in a live setting with richer feature sets.
 
 ## 6.3 Future Work
 
@@ -46,7 +46,7 @@ The recommended monitoring architecture combines both signals: PSI computed on a
 
 ### 6.3.2 Neural Bandit Extensions
 
-The linear reward model underlying LinUCB and LinTS assumes that the expected reward is a linear function of the context features. For a 25-feature dataset, this assumption is reasonable and produces strong empirical performance. However, real-world applicant data — including telematics, claims history, and social network signals — may exhibit non-linear feature interactions that linear models cannot capture. NeuralUCB and NeuralTS replace the linear estimator with a deep network while preserving the UCB or Thompson Sampling exploration strategy, at the cost of substantially increased computational overhead. A hybrid neural-linear architecture, in which a neural network learns a low-dimensional embedding and a linear bandit operates in the embedding space, offers a practical middle ground for deployment on the compute budgets typical of emerging-market insurers.
+The linear reward model underlying LinUCB and LinTS assumes that the expected reward is a linear function of the context features. For a 34-feature dataset, this assumption is reasonable and produces strong empirical performance. However, real-world applicant data — including telematics, claims history, and social network signals — may exhibit non-linear feature interactions that linear models cannot capture. NeuralUCB and NeuralTS replace the linear estimator with a deep network while preserving the UCB or Thompson Sampling exploration strategy, at the cost of substantially increased computational overhead. A hybrid neural-linear architecture, in which a neural network learns a low-dimensional embedding and a linear bandit operates in the embedding space, offers a practical middle ground for deployment on the compute budgets typical of emerging-market insurers.
 
 ### 6.3.3 Live Deployment and A/B Testing
 
