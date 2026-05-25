@@ -421,7 +421,9 @@ All experiments are designed to be fully reproducible.  The primary random seed 
 
 While the experiments validate the algorithmic core, moving from a research prototype to a production actuarial system requires additional engineering layers. The deployment strategy is structured in three phases that progressively reduce human oversight while maintaining regulatory compliance.
 
-### 4.10.1 Phase 1 — Shadow Mode (Months 1–3)
+### 4.10.1 Phase 1 — Shadow Mode (Months 1–3, design proposal)
+
+This subsection describes the recommended first phase of a production deployment. The architecture below is a *design proposal* validated against the bandit core implemented in `stress_testing/rl/underwriting_bandit.py`; the production wrapper (PAS API, persistent state layer, audit logging) is recommended future work (Ch VI §6.4). The live demo (`demo/`) implements a single-tenant actuarial dashboard with the bandit and PSI logic, but does not yet provide the shadow-mode logging or multi-instance state persistence described below.
 
 In shadow mode, the contextual bandit runs alongside the existing static rule engine without making live decisions. Every incoming application is scored by both systems simultaneously. The bandit's recommendation is logged and compared against the static rule outcome, but the static rule remains the binding decision. This phase serves three purposes:
 
@@ -460,16 +462,16 @@ Confidence is defined as the posterior probability (LinTS) or the relative gap b
 
 ### 4.10.4 Technical Infrastructure for Production
 
-The current FastAPI prototype is designed to slot into a standard microservices architecture. The production extensions required are:
+The bandit core (and its `demo/` wrapper) is designed to slot into a standard microservices architecture. The production extensions recommended for a full deployment are:
 
-1. **Persistent state layer.** PostgreSQL stores the bandit's $A_a$ and $b_a$ matrices, enabling warm restarts and multi-instance scaling.
-2. **Feedback integration.** A `/feedback` endpoint receives post-decision outcomes from the PAS: policy accepted, lapsed, claims paid, final profit/loss.
-3. **Audit logging.** Every `(context, action, reward, PSI, user_id, timestamp)` tuple is immutably logged for regulatory review.
-4. **Authentication and RBAC.** OAuth2 with role-based access control (Underwriter, Senior Underwriter, Actuary, Admin).
-5. **Batch upload.** CSV/Excel endpoints for portfolio-level pricing runs and quarterly PSI monitoring.
-6. **BI dashboard integration.** PSI time-series and cumulative regret curves exposed via REST for Power BI or Tableau consumption.
+1. **Persistent state layer.** PostgreSQL would store the bandit's $A_a$ and $b_a$ matrices, enabling warm restarts and multi-instance scaling.
+2. **Feedback integration.** A `/feedback` endpoint would receive post-decision outcomes from the PAS: policy accepted, lapsed, claims paid, final profit/loss.
+3. **Audit logging.** Every `(context, action, reward, PSI, user_id, timestamp)` tuple would be immutably logged for regulatory review.
+4. **Authentication and RBAC.** OAuth2 with role-based access control (Underwriter, Senior Underwriter, Actuary, Admin) would govern all API access.
+5. **Batch upload.** CSV/Excel endpoints would support portfolio-level pricing runs and quarterly PSI monitoring.
+6. **BI dashboard integration.** PSI time-series and cumulative regret curves would be exposed via REST for Power BI or Tableau consumption.
 
-These additions do not require rewriting the core algorithms; they wrap the existing `LinUCB`, `LinTS`, `expected_rewards`, and `compute_psi` functions in enterprise-grade infrastructure.
+These additions would not require rewriting the core algorithms; they would wrap the existing `LinUCB`, `LinTS`, `expected_rewards`, and `compute_psi` functions in enterprise-grade infrastructure.
 
 ---
 
