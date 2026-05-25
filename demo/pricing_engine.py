@@ -16,7 +16,7 @@ import pandas as pd
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (  # noqa: E402
+from healthrl.underwriting_bandit import (  # noqa: E402
     RewardConfig,
     expected_rewards,
 )

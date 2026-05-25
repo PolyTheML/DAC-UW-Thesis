@@ -606,7 +606,7 @@ Have a PowerPoint slide deck with static screenshots of every scene. If the API 
 **Rule 3: Terminal fallback.**  
 Keep a terminal window open behind the browser. If the frontend fails, run:
 ```bash
-python stress_testing/rl/experiments/exp_005_underwriting_convergence.py
+python healthrl/experiments/exp_005_underwriting_convergence.py
 ```
 and narrate the JSON output. It is less cinematic but equally rigorous.
 

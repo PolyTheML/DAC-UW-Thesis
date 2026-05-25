@@ -423,7 +423,7 @@ While the experiments validate the algorithmic core, moving from a research prot
 
 ### 4.10.1 Phase 1 — Shadow Mode (Months 1–3, design proposal)
 
-This subsection describes the recommended first phase of a production deployment. The architecture below is a *design proposal* validated against the bandit core implemented in `stress_testing/rl/underwriting_bandit.py`; the production wrapper (PAS API, persistent state layer, audit logging) is recommended future work (Ch VI §6.4). The live demo (`demo/`) implements a single-tenant actuarial dashboard with the bandit and PSI logic, but does not yet provide the shadow-mode logging or multi-instance state persistence described below.
+This subsection describes the recommended first phase of a production deployment. The architecture below is a *design proposal* validated against the bandit core implemented in `healthrl/underwriting_bandit.py`; the production wrapper (PAS API, persistent state layer, audit logging) is recommended future work (Ch VI §6.4). The live demo (`demo/`) implements a single-tenant actuarial dashboard with the bandit and PSI logic, but does not yet provide the shadow-mode logging or multi-instance state persistence described below.
 
 In shadow mode, the contextual bandit runs alongside the existing static rule engine without making live decisions. Every incoming application is scored by both systems simultaneously. The bandit's recommendation is logged and compared against the static rule outcome, but the static rule remains the binding decision. This phase serves three purposes:
 

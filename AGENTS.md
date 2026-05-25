@@ -41,12 +41,11 @@ C:\DAC-UW-Thesis\
     models/                            # Pickled GLM/XGB models + SHAP + JSON results
                                        #   cambodia_*: current RL experiments
 
-  stress_testing/                      # Stress-testing framework (RL underwriting only)
-    rl/                                # CURRENT experiments (adaptive underwriting)
-      __init__.py
-      underwriting_bandit.py           # LinUCB, LinTS, EpsilonGreedy + simulator
-      experiments/
-        exp_005_underwriting_convergence.py   # Bandit learns risk-appropriate decisions
+  healthrl/                            # RL underwriting package (adaptive underwriting)
+    __init__.py
+    underwriting_bandit.py             # LinUCB, LinTS, EpsilonGreedy + simulator
+    experiments/
+      exp_005_underwriting_convergence.py   # Bandit learns risk-appropriate decisions
         exp_006_fairness_audit.py             # Regional / occupational bias check
         exp_007_benchmark_comparison.py       # Regret analysis vs static baseline
         exp_008_human_in_the_loop.py          # Human-in-the-loop underwriting
@@ -92,16 +91,16 @@ C:\DAC-UW-Thesis\
 ### Run experiments (adaptive underwriting)
 ```powershell
 # EXP-005: Bandit convergence validation
-python stress_testing/rl/experiments/exp_005_underwriting_convergence.py
+python healthrl/experiments/exp_005_underwriting_convergence.py
 
 # EXP-006: Fairness audit (regional / occupational bias)
-python stress_testing/rl/experiments/exp_006_fairness_audit.py
+python healthrl/experiments/exp_006_fairness_audit.py
 
 # EXP-007: Benchmark comparison + regret analysis
-python stress_testing/rl/experiments/exp_007_benchmark_comparison.py
+python healthrl/experiments/exp_007_benchmark_comparison.py
 
 # EXP-008: Human-in-the-loop underwriting
-python stress_testing/rl/experiments/exp_008_human_in_the_loop.py
+python healthrl/experiments/exp_008_human_in_the_loop.py
 ```
 
 All experiment scripts exit with code `0` on PASS and code `1` on FAIL.
@@ -134,7 +133,7 @@ python data/cambodia/train_cambodia_models.py
 
 ## Code Organization & Module Divisions
 
-### RL Underwriting Framework (`stress_testing/rl/`)
+### RL Underwriting Framework (`healthrl/`)
 - `underwriting_bandit.py` — Core bandit module:
   - `LinUCB`: Frequentist linear upper confidence bound (Li et al. 2010)
   - `LinTS`: Bayesian linear Thompson Sampling (Agrawal & Goyal 2013)
@@ -168,7 +167,7 @@ python data/cambodia/train_cambodia_models.py
 ## Development Conventions
 
 ### File naming
-- **Experiment files**: `stress_testing/rl/experiments/exp_{NNN}_{slug}.py`
+- **Experiment files**: `healthrl/experiments/exp_{NNN}_{slug}.py`
 - **Chapter drafts**: `thesis/health_rl/chapter{N}_{slug}.md`
 - **Figures**: `thesis/health_rl/figures/fig_{N}_{slug}.png`
 - **Dates in filenames**: ISO `YYYY-MM-DD` (e.g., `2026-04-21-defense-presentation.md`)
@@ -195,7 +194,7 @@ python data/cambodia/train_cambodia_models.py
 - New social-determinant features: `education`, `wealth_quintile`, `alcohol_use`, `self_reported_health`.
 
 ### Reward simulator (`RewardConfig`)
-The actuarial reward simulator is now parameterised via `RewardConfig` (dataclass) in `stress_testing/rl/underwriting_bandit.py`.
+The actuarial reward simulator is now parameterised via `RewardConfig` (dataclass) in `healthrl/underwriting_bandit.py`.
 
 **Default (simple) mode** reproduces the original hardcoded model:
 - `base_premium_rate = 200`, `expected_claims_rate = 150`
@@ -230,11 +229,11 @@ All experiments, the demo API, and the backend support an optional `config` argu
 
 | Exp | File | Key Result |
 |-----|------|------------|
-| EXP-005 | `stress_testing/rl/experiments/exp_005_underwriting_convergence.py` | LinUCB cumulative reward $99,706 vs Static XGB $72,540 (+37%); avg regret $5.16 vs $12.26 in last 500 rounds |
-| EXP-006 | `stress_testing/rl/experiments/exp_006_fairness_audit.py` | No region/occupation approval rate < 50% of max; Region PSI=0.0041 GREEN, Occupation PSI=0.0104 GREEN |
-| EXP-007 | `stress_testing/rl/experiments/exp_007_benchmark_comparison.py` | LinUCB lowest regret ($14,840), followed by LinTS ($17,036), EpsilonGreedy ($31,760), StaticXGB ($42,052) |
-| EXP-008 | `stress_testing/rl/experiments/exp_008_human_in_the_loop.py` | HITL reward $101,646 vs baseline $99,706 (+1.9%); late-stage alignment 46%; human cost $2,555 (2.5% of reward) |
-| EXP-013 | `stress_testing/rl/experiments/exp_013_loglog_regret_validation.py` | Log-log slope 0.572 (R²=0.992); converges to 0.511 at burn-in=1000, empirically validating O(√T) bound |
+| EXP-005 | `healthrl/experiments/exp_005_underwriting_convergence.py` | LinUCB cumulative reward $99,706 vs Static XGB $72,540 (+37%); avg regret $5.16 vs $12.26 in last 500 rounds |
+| EXP-006 | `healthrl/experiments/exp_006_fairness_audit.py` | No region/occupation approval rate < 50% of max; Region PSI=0.0041 GREEN, Occupation PSI=0.0104 GREEN |
+| EXP-007 | `healthrl/experiments/exp_007_benchmark_comparison.py` | LinUCB lowest regret ($14,840), followed by LinTS ($17,036), EpsilonGreedy ($31,760), StaticXGB ($42,052) |
+| EXP-008 | `healthrl/experiments/exp_008_human_in_the_loop.py` | HITL reward $101,646 vs baseline $99,706 (+1.9%); late-stage alignment 46%; human cost $2,555 (2.5% of reward) |
+| EXP-013 | `healthrl/experiments/exp_013_loglog_regret_validation.py` | Log-log slope 0.572 (R²=0.992); converges to 0.511 at burn-in=1000, empirically validating O(√T) bound |
 
 ---
 

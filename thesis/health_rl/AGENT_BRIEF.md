@@ -66,10 +66,10 @@ The DOCX auto-generates title pages, abstracts, and acknowledgements with placeh
 ### High Priority (do first)
 
 1. **Reconcile experiment numbers**
-   - Run: `python stress_testing/rl/experiments/exp_005_underwriting_convergence.py`
-   - Run: `python stress_testing/rl/experiments/exp_006_fairness_audit.py`
-   - Run: `python stress_testing/rl/experiments/exp_007_benchmark_comparison.py`
-   - Run: `python stress_testing/rl/experiments/exp_008_human_in_the_loop.py`
+   - Run: `python healthrl/experiments/exp_005_underwriting_convergence.py`
+   - Run: `python healthrl/experiments/exp_006_fairness_audit.py`
+   - Run: `python healthrl/experiments/exp_007_benchmark_comparison.py`
+   - Run: `python healthrl/experiments/exp_008_human_in_the_loop.py`
    - Note the seed=42 outputs.
    - Update all tables in `chapter05_results.md` to match seed=42 outputs.
    - Update scaling factors in `thesis/health_rl/build_presentation.py` to match.
@@ -198,10 +198,10 @@ Each step pauses with explanatory text. This turns the demo into a story the stu
 
 ```powershell
 # Run experiments
-python stress_testing/rl/experiments/exp_005_underwriting_convergence.py
-python stress_testing/rl/experiments/exp_006_fairness_audit.py
-python stress_testing/rl/experiments/exp_007_benchmark_comparison.py
-python stress_testing/rl/experiments/exp_008_human_in_the_loop.py
+python healthrl/experiments/exp_005_underwriting_convergence.py
+python healthrl/experiments/exp_006_fairness_audit.py
+python healthrl/experiments/exp_007_benchmark_comparison.py
+python healthrl/experiments/exp_008_human_in_the_loop.py
 
 # Generate figures + presentation
 python thesis/health_rl/build_presentation.py
