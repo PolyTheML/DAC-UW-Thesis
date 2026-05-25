@@ -848,13 +848,480 @@ Expected: ≤ 8 commits, each tagged with the IMP-C* identifier it resolves.
 
 ---
 
-## Out of scope for this plan (Tier-2 & Tier-3)
+---
 
-These are deferred to a follow-up plan and are explicitly **not** addressed here:
-- IMP-I1: writing up EXP-009/010/011/012/013 into Ch V (the highest-leverage Tier-2 item)
-- IMP-I3: centralizing hyperparameters in `healthrl/config.py`
+## Task 9 — Structural rename: `case-study/` → `data/cambodia/`
+
+**Goal:** Bring directory naming in line with the project's content (it's the primary Cambodia dataset, not a "case study"). Update all 17 Python files + 4 markdown files that reference the old path.
+
+**Files:**
+- Move: `case-study/` → `data/cambodia/` (everything inside preserved)
+- Modify (Python, 17 files): `demo/main.py`, `demo/pricing_engine.py`, `thesis/health_rl/build_thesis_docx.py`, `thesis/health_rl/generate_eda_figures.py`, all 9 files under `stress_testing/rl/` (experiments + bandit), `case-study/generate_cambodia_dataset.py`, `case-study/train_cambodia_models.py`, `case-study/train_cambodia_rl.py`
+- Modify (markdown): `thesis/health_rl/chapter01_introduction.md`, `thesis/health_rl/AGENT_BRIEF.md`, `thesis/health_rl/DEMO_DEFENSE_REDEMPTION_PLAN.md` (the `chapter3_methodology.md` reference was eliminated when that file was folded into Ch IV in Task 1)
+- Modify: `CLAUDE.md` (project instructions reference `case-study/`)
+- Modify: `.gitignore` (line 59: `case-study/phnom_penh_pings.csv` — though this file no longer exists, the path pattern matters)
+
+- [ ] **Step 9.1: Inventory all references**
+
+```bash
+cd C:/DAC-UW-Thesis && grep -rnE "case[-_]study" --include="*.py" --include="*.md" --include="*.yaml" --include=".gitignore" 2>&1 | tee /tmp/case-study-refs.txt | wc -l
+```
+
+Save the output. Expect ~30-50 hits.
+
+- [ ] **Step 9.2: Move the directory**
+
+```bash
+cd C:/DAC-UW-Thesis && mkdir -p data && git mv case-study data/cambodia
+```
+
+- [ ] **Step 9.3: Mass-update Python imports and path constants**
+
+Two patterns to replace:
+
+Pattern A (string literals containing the path):
+- `"case-study/...` → `"data/cambodia/...`
+- `'case-study/...` → `'data/cambodia/...`
+- `case-study\\` → `data/cambodia\\` (Windows paths if any)
+- `case-study/models` → `data/cambodia/models`
+
+Pattern B (Path objects with `case-study` segment):
+- `ROOT / "case-study"` → `ROOT / "data" / "cambodia"`
+- `Path("case-study")` → `Path("data/cambodia")`
+
+For each file in the inventory:
+```bash
+# Use Edit tool per file with replace_all=True for unambiguous string matches.
+# Key files to check first:
+#   stress_testing/rl/underwriting_bandit.py:28  DATA_PATH = ROOT / "case-study" / "cambodia_dataset.csv"
+#   stress_testing/rl/underwriting_bandit.py:29  MODELS_DIR = ROOT / "case-study" / "models"
+#   demo/main.py, demo/pricing_engine.py, thesis/health_rl/build_thesis_docx.py
+```
+
+- [ ] **Step 9.4: Update markdown references**
+
+In `chapter01_introduction.md`, `AGENT_BRIEF.md`, `DEMO_DEFENSE_REDEMPTION_PLAN.md`, and `CLAUDE.md`: search for `case-study` and replace with `data/cambodia` (or `data/cambodia/` for directory references).
+
+- [ ] **Step 9.5: Update `.gitignore`**
+
+Open `.gitignore`. Find line 59 `case-study/phnom_penh_pings.csv` and change to `data/cambodia/phnom_penh_pings.csv` (preserves the historical ignore even if the file no longer exists).
+
+- [ ] **Step 9.6: Verify**
+
+```bash
+cd C:/DAC-UW-Thesis && grep -rnE "case[-_]study" --include="*.py" --include="*.md" --include="*.yaml" --include=".gitignore" 2>&1 | grep -v "docs/superpowers/audit/" | grep -v "docs/superpowers/plans/" | grep -v "docs/superpowers/specs/"
+```
+
+Expected: zero hits (excluding the historical audit/plan/spec docs which legitimately reference the old name).
+
+- [ ] **Step 9.7: Smoke-test code paths**
+
+```bash
+cd C:/DAC-UW-Thesis && python -c "from stress_testing.rl.underwriting_bandit import preprocess_cambodia_data; X, df, _ = preprocess_cambodia_data(); print(f'Loaded {len(df)} rows, d={X.shape[1]}')"
+```
+
+Expected: `Loaded 2000 rows, d=34`.
+
+- [ ] **Step 9.8: Commit IMP-S1**
+
+```bash
+cd C:/DAC-UW-Thesis && git add -A && git commit -m "refactor: rename case-study/ to data/cambodia/ (IMP-S1)
+
+The 2000-record Cambodia dataset is the primary corpus, not a 'case study'.
+New layout: data/cambodia/{cambodia_dataset.csv, generate_cambodia_dataset.py,
+train_cambodia_*.py, models/*.pkl}. Updated all 17 Python files and 4 markdown
+files that referenced the old path. .gitignore updated for the new location.
+
+Per docs/superpowers/audit/2026-05-25/02-structure-overview.md."
+```
+
+---
+
+## Task 10 — Structural rename: `stress_testing/rl/` → `healthrl/`
+
+**Goal:** Replace the holdover name from the predecessor (auto-insurance / PSI) thesis with a name that reflects the current thesis content. `healthrl/` is concise, accurate, and importable as a Python package.
+
+**Files:**
+- Move: `stress_testing/rl/` → `healthrl/`
+- Delete: `stress_testing/` (now empty)
+- Modify: all files that have `from stress_testing.rl…` or `import stress_testing.rl…` (≈12 files: demo/, thesis builders, the 9 experiment scripts internally if any cross-reference)
+- Modify: `CLAUDE.md`, audit reports referenced by future docs
+
+- [ ] **Step 10.1: Inventory all references**
+
+```bash
+cd C:/DAC-UW-Thesis && grep -rnE "stress_testing" --include="*.py" --include="*.md" --include="*.yaml" 2>&1 | tee /tmp/stress-refs.txt | wc -l
+```
+
+- [ ] **Step 10.2: Move the directory**
+
+```bash
+cd C:/DAC-UW-Thesis && git mv stress_testing/rl healthrl && rmdir stress_testing 2>&1 || rm -rf stress_testing
+```
+
+- [ ] **Step 10.3: Mass-update Python imports**
+
+Patterns:
+- `from stress_testing.rl.` → `from healthrl.`
+- `from stress_testing.rl ` → `from healthrl `
+- `import stress_testing.rl` → `import healthrl`
+- `from stress_testing.rl.underwriting_bandit import` → `from healthrl.underwriting_bandit import`
+
+For each file. Use `Grep` to find, `Edit` per file with `replace_all=True`.
+
+Key files: `demo/main.py:31`, `demo/pricing_engine.py:19`, `thesis/health_rl/build_thesis_docx.py` (if applicable), each `healthrl/experiments/exp_*.py` (they internally `from stress_testing.rl.underwriting_bandit import …` — fix all 9).
+
+- [ ] **Step 10.4: Update path-string references in docs**
+
+In `CLAUDE.md`, `thesis/health_rl/AGENT_BRIEF.md`, `chapter01_introduction.md` (if applicable): search for `stress_testing` and replace with `healthrl`. For chapter texts mentioning experiment paths (e.g., `stress_testing/rl/experiments/`), update to `healthrl/experiments/`.
+
+- [ ] **Step 10.5: Update sys.path injections**
+
+Several experiment scripts have:
+```python
+ROOT = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(ROOT))
+```
+
+After the move, the `parent.parent.parent.parent` depth may change (was `experiments/ → rl/ → stress_testing/ → repo_root`, now `experiments/ → healthrl/ → repo_root`). Count carefully:
+- Old: `exp_*.py` at depth 4 → 4 parents to reach ROOT
+- New: `exp_*.py` at depth 3 → 3 parents to reach ROOT
+
+Update each `exp_*.py` to use `parent.parent.parent` (3 levels).
+
+- [ ] **Step 10.6: Verify**
+
+```bash
+cd C:/DAC-UW-Thesis && grep -rnE "stress_testing" --include="*.py" --include="*.md" --include="*.yaml" 2>&1 | grep -v "docs/superpowers/audit/" | grep -v "docs/superpowers/plans/" | grep -v "docs/superpowers/specs/"
+```
+
+Expected: zero hits.
+
+- [ ] **Step 10.7: Smoke-test the package**
+
+```bash
+cd C:/DAC-UW-Thesis && python -c "from healthrl.underwriting_bandit import LinUCB, LinTS, EpsilonGreedy, StaticXGBBaseline, OraclePolicy, preprocess_cambodia_data, RewardConfig; print('All imports OK')"
+```
+
+Expected: `All imports OK`.
+
+```bash
+cd C:/DAC-UW-Thesis && python healthrl/experiments/exp_005_underwriting_convergence.py 2>&1 | tail -3
+```
+
+Expected: `EXP-005: PASS` (last line). May take ~5 minutes.
+
+- [ ] **Step 10.8: Commit IMP-S2**
+
+```bash
+cd C:/DAC-UW-Thesis && git add -A && git commit -m "refactor: rename stress_testing/rl/ to healthrl/ (IMP-S2)
+
+'stress_testing' was a holdover from the predecessor PSI/telematics thesis;
+this thesis is health-RL. Renamed top-level package, updated all imports
+in demo/, healthrl/experiments/, thesis builders. Adjusted sys.path depth
+in experiment scripts (now 3 parents to ROOT, was 4).
+
+Per docs/superpowers/audit/2026-05-25/02-structure-overview.md."
+```
+
+---
+
+## Task 11 — Centralize hyperparameters: create `healthrl/config.py`
+
+**Goal:** Eliminate hyperparameter drift (the kind of drift that produced the IMP-C4 ε=0.10 vs 0.15 bug). Constants currently duplicated across 9 experiment files become a single import.
+
+**Files:**
+- Create: `healthrl/config.py`
+- Modify: all 9 files in `healthrl/experiments/exp_*.py`
+
+- [ ] **Step 11.1: Create `healthrl/config.py`**
+
+Write this exact content to `healthrl/config.py`:
+
+```python
+"""Central configuration for healthrl experiments.
+
+All experiment-wide constants live here so that:
+1. Methodology changes (e.g., N_ROUNDS, n_seeds) require editing one file.
+2. Cross-chapter consistency is mechanical: chapters quote these constants
+   by name and the actual numbers stay synchronized with code.
+
+Add new constants here rather than introducing module-level constants in
+individual exp_*.py scripts.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class ExperimentConfig:
+    """Common settings for every multi-seed experiment."""
+    n_rounds: int = 5000
+    n_seeds: int = 20
+    primary_seed: int = 42
+    psi_window: int = 500
+    drift_shock_round: int = 2500
+
+
+@dataclass(frozen=True)
+class BanditConfig:
+    """Default bandit hyperparameters.
+
+    These match the methodology declarations in thesis Ch IV §§4.6.1-4.6.3.
+    Override per-experiment if the experiment is intentionally exploring
+    a different setting (e.g., exp_012 sensitivity sweep over alpha).
+    """
+    linucb_alpha: float = 1.0
+    lints_v2: float = 1.0
+    epsilon: float = 0.15
+
+
+EXPERIMENT = ExperimentConfig()
+BANDIT = BanditConfig()
+```
+
+- [ ] **Step 11.2: Update each `exp_*.py` to import and use the config**
+
+For each of `exp_005`, `exp_006`, `exp_007`, `exp_008`, `exp_009`, `exp_010`, `exp_011`, `exp_012`, `exp_013`:
+
+1. Add import after the existing healthrl imports:
+   ```python
+   from healthrl.config import EXPERIMENT, BANDIT
+   ```
+
+2. Replace `N_ROUNDS = 5000` with `N_ROUNDS = EXPERIMENT.n_rounds`.
+
+3. Replace `n_seeds=20` (or `n_seeds=10` in exp_010 — see note below) in the `run_experiment_seeds_*` call sites with `n_seeds=EXPERIMENT.n_seeds`. Exception: exp_010 currently uses 10; if you want to keep the deliberate divergence, leave `n_seeds=10` as a literal with a comment `# n_seeds=10 by design — cold-start sweep is expensive` (this also addresses IMP-I2 from the improvements report).
+
+4. Replace bandit hyperparameter literals in instantiation calls:
+   - `LinUCB(..., alpha=1.0)` → `LinUCB(..., alpha=BANDIT.linucb_alpha)`
+   - `LinTS(..., v2=1.0, ...)` → `LinTS(..., v2=BANDIT.lints_v2, ...)`
+   - `EpsilonGreedy(..., epsilon=0.15, ...)` → `EpsilonGreedy(..., epsilon=BANDIT.epsilon, ...)`
+
+   EXCEPTION: in `exp_012_sensitivity_analysis.py`, the alpha values are swept intentionally — leave those literals alone but add the import for use elsewhere if any.
+
+   EXCEPTION: in `exp_011_ablation_study.py:84`, `alpha=0.0` is the greedy-only ablation — leave that literal alone.
+
+5. Replace `WINDOW = 500` in exp_006 with `WINDOW = EXPERIMENT.psi_window`.
+
+6. Replace `SHOCK_ROUND = 2500` in exp_009 with `SHOCK_ROUND = EXPERIMENT.drift_shock_round`.
+
+- [ ] **Step 11.3: Verify**
+
+```bash
+cd C:/DAC-UW-Thesis && grep -nE "^N_ROUNDS ?= ?5000|^WINDOW ?= ?500|^SHOCK_ROUND ?= ?2500" healthrl/experiments/exp_*.py
+```
+
+Expected: zero hits (all replaced by `EXPERIMENT.*`).
+
+```bash
+cd C:/DAC-UW-Thesis && grep -nE "epsilon ?= ?0\.15" healthrl/experiments/exp_*.py
+```
+
+Expected: zero hits (replaced by `BANDIT.epsilon`).
+
+```bash
+cd C:/DAC-UW-Thesis && python -c "from healthrl.config import EXPERIMENT, BANDIT; assert EXPERIMENT.n_rounds == 5000; assert BANDIT.epsilon == 0.15; print('Config OK')"
+```
+
+Expected: `Config OK`.
+
+- [ ] **Step 11.4: Re-run EXP-005 to confirm no behavior change**
+
+```bash
+cd C:/DAC-UW-Thesis && python healthrl/experiments/exp_005_underwriting_convergence.py 2>&1 | tail -3
+```
+
+Expected: `EXP-005: PASS` with identical numbers to before (refactor must be behavior-preserving).
+
+- [ ] **Step 11.5: Commit IMP-S3**
+
+```bash
+cd C:/DAC-UW-Thesis && git add -A && git commit -m "refactor: centralize hyperparameters in healthrl/config.py (IMP-S3)
+
+EXPERIMENT (n_rounds, n_seeds, primary_seed, psi_window, drift_shock_round)
+and BANDIT (linucb_alpha, lints_v2, epsilon) are now defined once and
+imported by all exp_*.py scripts. Prevents the kind of drift that produced
+the chapter ε=0.10 vs code ε=0.15 contradiction (IMP-C4). Eliminates 9
+duplicated constant definitions.
+
+Sweep-based experiments (exp_011 greedy ablation, exp_012 alpha sensitivity)
+retain literal hyperparameter values where the sweep is the point. exp_010
+keeps n_seeds=10 with a comment justifying the divergence.
+
+Per docs/superpowers/audit/2026-05-25/02-structure-overview.md."
+```
+
+---
+
+## Task 12 — Update top-level docs to reflect new structure
+
+**Files:**
+- Modify: `CLAUDE.md` (project root)
+- Create: `README.md` (project root)
+
+- [ ] **Step 12.1: Update `CLAUDE.md`**
+
+Open `CLAUDE.md`. Find the "Repo Structure" section. Replace the directory tree with the new layout:
+
+Find (or similar):
+```
+C:\DAC-UW-Thesis\
+  thesis/
+    archive-life-insurance-2026-04-19/
+    ...
+  stress_testing/
+    auto_insurance/
+    experiments/
+  case-study/
+    phnom_penh_pings.csv
+    ...
+```
+
+Replace with the actual current tree:
+```
+C:\DAC-UW-Thesis\
+  CLAUDE.md
+  README.md
+  requirements.txt
+  render.yaml
+  healthrl/                       # core bandit package (LinUCB, LinTS, ε-Greedy, StaticXGB, Oracle)
+    underwriting_bandit.py
+    config.py                     # central hyperparameters (EXPERIMENT, BANDIT)
+    experiments/
+      exp_005_underwriting_convergence.py
+      exp_006_fairness_audit.py
+      exp_007_benchmark_comparison.py
+      exp_008_human_in_the_loop.py
+      exp_009_drift_adaptation.py
+      exp_010_cold_start_analysis.py
+      exp_011_ablation_study.py
+      exp_012_sensitivity_analysis.py
+      exp_013_loglog_regret_validation.py
+      experiment_utils.py
+      statistical_utils.py
+  data/
+    cambodia/
+      cambodia_dataset.csv
+      cambodia_dataset.parquet
+      generate_cambodia_dataset.py
+      train_cambodia_models.py
+      train_cambodia_rl.py
+      models/                    # GLM + XGBoost + bandit pickles
+  demo/                          # Render-deployed FastAPI dashboard
+  scripts/                       # thesis_loop / scorer / rewriter
+  tests/
+  thesis/
+    health_rl/
+      chapter01_introduction.md
+      chapter02_presentation.md
+      chapter03_literature_review.md
+      chapter04_project_analysis.md   # includes methodology §§4.5-4.10
+      chapter05_results.md
+      chapter06_conclusion.md
+      figures/                   # chapter figures + math_cache
+      build_thesis_docx.py
+      build_presentation.py
+  wiki/                          # writing templates + topic guides
+  docs/superpowers/              # specs, plans, audits
+```
+
+Also update the section "What this repo is" and any text mentioning `auto insurance / PSI` — the thesis topic is RL health insurance.
+
+Also remove the "Vietnam case study" mention if present; that was for the old project.
+
+- [ ] **Step 12.2: Create `README.md`**
+
+Write to `README.md`:
+
+```markdown
+# DAC-UW-Thesis — Adaptive Health Insurance Underwriting via Contextual Bandits
+
+Master's thesis at ITC (Institut de Technologie du Cambodge): a contextual bandit framework for health insurance underwriting in Cambodia, with PSI-based fairness guardrails and a human-in-the-loop extension.
+
+## Quick start
+
+```bash
+# Install
+pip install -r requirements.txt
+
+# Regenerate the synthetic dataset (deterministic, SEED=42)
+python data/cambodia/generate_cambodia_dataset.py
+
+# Train baseline models (XGBoost + GLM)
+python data/cambodia/train_cambodia_models.py
+
+# Run the headline experiment (LinUCB convergence vs Static XGB, 20 seeds)
+python healthrl/experiments/exp_005_underwriting_convergence.py
+
+# Launch the live demo dashboard locally
+uvicorn demo.main:app --reload --port 8000
+```
+
+## Repository layout
+
+| Path | Purpose |
+|---|---|
+| `healthrl/` | Core bandit package: LinUCB, LinTS, ε-Greedy, StaticXGB, Oracle, reward simulator, preprocessor |
+| `healthrl/config.py` | Central hyperparameters (`EXPERIMENT`, `BANDIT`) — change in one place |
+| `healthrl/experiments/` | 9 experiments (EXP-005 to EXP-013) with pre-registered pass criteria + exit codes |
+| `data/cambodia/` | Synthetic CDHS-anchored applicant dataset (2,000 records) + trained baseline models |
+| `demo/` | FastAPI actuarial dashboard (Render-deployed) |
+| `thesis/health_rl/` | Chapter sources + figures + docx/pptx builders |
+| `docs/superpowers/` | Specs, plans, audits |
+
+## Reproducibility
+
+All experiments use fixed seeds, multi-seed analysis (20 seeds for headline statistics, 10 for the cold-start sweep in EXP-010), bootstrap 95 % confidence intervals, and paired Wilcoxon tests with Bonferroni correction. Each `exp_*.py` exits 0 on PASS, 1 on FAIL, suitable for CI.
+
+Primary seed: 42. Multi-seed range: 1–20.
+
+## Thesis structure
+
+| Chapter | File |
+|---|---|
+| I. Introduction | `thesis/health_rl/chapter01_introduction.md` |
+| II. Presentation of the Project | `thesis/health_rl/chapter02_presentation.md` |
+| III. Literature Review | `thesis/health_rl/chapter03_literature_review.md` |
+| IV. Project Analysis (includes methodology §§4.5-4.10) | `thesis/health_rl/chapter04_project_analysis.md` |
+| V. Results and Discussion | `thesis/health_rl/chapter05_results.md` |
+| VI. Conclusion | `thesis/health_rl/chapter06_conclusion.md` |
+
+## License
+
+[TBD by candidate]
+```
+
+- [ ] **Step 12.3: Verify**
+
+```bash
+cd C:/DAC-UW-Thesis && test -f README.md && grep -q "healthrl/" README.md && grep -q "data/cambodia/" README.md && echo "README OK"
+cd C:/DAC-UW-Thesis && grep -q "healthrl/" CLAUDE.md && grep -q "data/cambodia/" CLAUDE.md && echo "CLAUDE.md OK"
+```
+
+- [ ] **Step 12.4: Commit IMP-S4**
+
+```bash
+cd C:/DAC-UW-Thesis && git add CLAUDE.md README.md && git commit -m "docs: update CLAUDE.md and add README.md for new structure (IMP-S4)
+
+Reflects: healthrl/ package, data/cambodia/ dataset path, chapter01_..06_
+naming, and consolidated 6-chapter structure with methodology folded into
+Ch IV. README gives the 60-second orientation for new readers.
+
+Per docs/superpowers/audit/2026-05-25/02-structure-overview.md."
+```
+
+---
+
+## Out of scope for this plan (deferred to follow-up)
+
+The following items from `05-improvements.md` are explicitly **not** addressed here:
+- IMP-I1: writing up EXP-009/010/011/012/013 results into Ch V
 - IMP-I7: bandit-core unit tests
-- All structural refactors from `02-structure-overview.md` (`stress_testing/` → `healthrl/`, `case-study/` → `data/cambodia/`, etc.)
+- Extracting reward/preprocessor modules from `underwriting_bandit.py`
+- Renaming `wiki/` → `docs/templates/` (pure cosmetic; defer)
+- Three-into-one consolidation of presentation builders
 - All Tier-3 publication-quality improvements (NeuralLinear baseline, heavy-tailed claims, pre-registration)
 
-When this Tier-1 plan is complete, the thesis should be **submission-ready** per the audit verdict. Tier-2 work raises the work toward **publication-ready**.
+When this combined plan is complete, the thesis is **submission-ready** and the repo structure is **research-publication-presentable**. Tier-2 content work (especially IMP-I1) raises the work toward publication-ready.
