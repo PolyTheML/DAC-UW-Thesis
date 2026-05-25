@@ -179,8 +179,10 @@ def main() -> int:
     check4 = stats["action_acc_last500"]["mean"] > 0.30
     print(f"[{'PASS' if check4 else 'FAIL'}] Action accuracy (last 500) > 30%")
     print(f"       Mean: {stats['action_acc_last500']['mean']:.2%}")
-    print(f"       Interpretation: Bandit discovers a *different* but profitable policy,")
-    print(f"       not oracle convergence. See Bastani et al. (2021) on hidden-context discovery.")
+    print(f"       Interpretation: Bandit learns a profitable policy within its")
+    print(f"       feature subspace; the Oracle has access to the per-sample noise")
+    print(f"       realisation that the bandit cannot observe. See Bastani et al. (2021)")
+    print(f"       for theory on rate-optimal greedy under covariate diversity.")
     pass_total &= check4
 
     check5 = stats["action_acc_oracle_last500"]["mean"] == 1.0

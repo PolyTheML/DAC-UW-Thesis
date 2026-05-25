@@ -371,7 +371,7 @@ EXP-005 tests whether LinUCB learns a profitable underwriting policy that domina
 1. LinUCB cumulative reward significantly exceeds Static XGB ($p < 0.05$, Wilcoxon).
 2. LinUCB average regret in the last 500 rounds is significantly lower than Static XGB ($p < 0.05$, Wilcoxon).
 3. Action entropy decreases from early (rounds 1–500) to late (rounds 4,501–5,000), confirming convergence from exploration to exploitation.
-4. Action accuracy versus the oracle in the last 500 rounds exceeds 30 % (the bandit is expected to discover a *different* but profitable policy, not to converge to the oracle exactly; see Bastani et al., 2021).
+4. Action accuracy versus the oracle in the last 500 rounds exceeds 30 % (the bandit is expected to learn a profitable policy within its feature subspace rather than converge to the oracle exactly; theoretical support for the broader claim that simple bandit methods can be rate-optimal under heterogeneous contexts is provided by Bastani, Bayati & Khosravi (2021), who prove that covariate diversity alone can make exploration-free greedy near-optimal).
 5. Oracle action accuracy equals 100 % (sanity check).
 
 ### 4.9.2 EXP-006: Fairness Audit
