@@ -2,172 +2,137 @@
 
 ## What this repo is
 
-This is the thesis workspace for the auto insurance telematics research project, separated from the DAC HealthPrice platform repo (`C:\DAC-UW-Agent`). The DAC platform (wiki, sources, backend, frontend) remains at `C:\DAC-UW-Agent`.
+This is the thesis workspace for *"Adaptive Health Insurance Underwriting via Contextual Bandits: A Reinforcement Learning Approach for Cambodia"*, a master's thesis at ITC (Institut de Technologie du Cambodge). The repo contains: bandit algorithm implementations, a synthetic Cambodia applicant dataset, all experiment scripts, the chapter sources, a Render-deployed FastAPI demo, and build pipelines for the docx thesis + pptx defense presentation.
 
 ## Thesis
 
-**Title**: *"Validating Population Stability Metrics for Dynamic Auto Insurance Pricing with Telematics Data"*  
-**Student**: Chanpoly (chanpoly3@gmail.com)  
-**Target Defense**: ~2026-06-26 (8 weeks from 2026-04-21)  
-**Advisor/Client**: Chris & Peter — DAC (Decent Actuarial Consultants)
+**Title**: *"Adaptive Health Insurance Underwriting via Contextual Bandits: A Reinforcement Learning Approach for Cambodia"*
+**Student**: Chanpoly (chanpoly3@gmail.com)
+**Advisor/Client**: DAC (Decent Actuarial Consultants — Chris & Peter)
 
-**Core claim**: PSI successfully detects driver behavior distribution shifts, but fails under continuous dynamic pricing (3 identified failure modes). Solution: temporal multi-metric monitoring framework.
-
----
-
-## Current Status (as of 2026-04-21)
-
-**Phase**: Week 1 of 8 — writing phase begins (all experiments done early)
-
-### Experiments — ALL COMPLETE
-
-| Exp | File | Key Result |
-|-----|------|------------|
-| EXP-001 | `stress_testing/auto_insurance/exp_001_baseline.py` | PSI = 0.000 baseline (all GREEN) |
-| EXP-002 | `stress_testing/auto_insurance/exp_002_responsiveness.py` | PSI monotonic: GREEN→AMBER→RED at 0%→30%→50% distortion; `idle_pct` most sensitive |
-| EXP-003 | `stress_testing/auto_insurance/exp_003_failure_modes.py` | 3/3 failure modes caught: FM1 Highway Migration (idle_pct PSI=0.23 AMBER), FM2 Monsoon Surge (idle_pct PSI=0.30 RED), FM3 Tail Risk Flip (cohort PSI=42.3 RED) |
-| EXP-004 | `stress_testing/auto_insurance/exp_004_temporal_drift.py` | Consecutive-month PSI unreliable (71% false-positive rate); YoY PSI detects (Jul RED PSI=3.007); rolling 3-month window detects (PSI=0.731 RED) |
-
-### Synthetic Dataset
-
-- `data/cambodia/phnom_penh_pings.csv` — 1,161,881 GPS pings from 1,500 real-route trips
-- `data/cambodia/phnom_penh_trip_features.csv` — 1,500 trip-level rows (PSI-ready)
-- `data/cambodia/routes_cache.json` — 30 Phnom Penh O-D pairs × 3 traffic snapshots
-- Generator: `stress_testing/auto_insurance/real_route_telematics_generator.py`
-
-### Writing — NOT STARTED
-
-No chapters written yet for the auto thesis. Life insurance chapters (Chs 1-5) are archived at `thesis/archive-life-insurance-2026-04-19/` for reference only.
+**Core claim**: Linear contextual bandits (LinUCB, LinTS) decisively outperform static rule-based underwriting on synthetic Cambodian health insurance data (+25.2 % cumulative reward over Static XGB, 20 seeds, p < 0.001, d = 2.98), while maintaining demographic parity via external PSI guardrails. A human-in-the-loop wrapper adds another +6.5 % at 1.5 % human-review cost.
 
 ---
 
-## Week-by-Week Plan
-
-| Week | Dates | Writing | Platform |
-|------|-------|---------|----------|
-| **Week 1** | Apr 21-27 | Ch1 (Intro) + Ch2 (Background) | — |
-| **Week 2** | Apr 28-May 4 | Ch3 (Methodology) + Ch4 draft | Driver onboarding form |
-| **Week 3** | May 5-11 | Ch4 (Results — all 4 experiments) | Quote display + policy tracker |
-| **Week 4** | May 12-18 | Ch5 (Discussion & Implications) | Admin monitor dashboard (5 metrics) |
-| **Week 5** | May 19-25 | Ch6 (Conclusion) | Retraining logic + versioning |
-| **Week 6** | May 26-Jun 1 | Full draft review | Platform polish |
-| **Week 7** | Jun 2-8 | Advisor feedback + revisions | — |
-| **Week 8** | Jun 9-26 | Final proof + defense prep | Defense presentation |
-
----
-
-## Chapter Structure (6 chapters)
-
-### Ch1: Introduction & Background
-- Why auto insurance + telematics in emerging markets
-- Cambodia: 4.8M motorcycles, seasonal patterns, 8-15% claim frequency
-- Gap: existing drift detection assumes batch data; telematics is streaming
-- Key claim: single-metric monitoring insufficient for continuous pricing
-
-### Ch2: Background
-- PSI definition, formula, thresholds (GREEN <0.10, AMBER 0.10-0.25, RED >0.25)
-- Telematics: NHTSA correlations (harsh braking, speeding, nighttime → claims)
-- Prior drift detection literature (batch vs. stream context)
-- Cambodia market context
-
-### Ch3: Methodology
-- Synthetic telematics data generator (30 Phnom Penh O-D pairs, 3 archetypes, 1,500 trips)
-- Features: speed_mean, speed_std, hard_braking_events, idle_pct, trip_duration_min, trips_per_day, hour_of_day
-- Experiment design rationale for EXP-001/002/003/004
-- PSI formula and binning approach
-
-### Ch4: Results
-- EXP-001: PSI = 0.000 (all 7 features GREEN)
-- EXP-002: Monotonicity confirmed; `idle_pct` most sensitive feature
-- EXP-003: 3 failure modes — FM1 highway migration, FM2 monsoon surge, FM3 tail risk flip
-- EXP-004: Consecutive-month PSI unreliable; YoY + rolling window required
-
-### Ch5: Discussion & Implications
-- Main finding: PSI insufficient alone for continuous pricing
-- Recommendation: temporal multi-metric framework (5 metrics in parallel, checked every 2 weeks)
-- Architecture: 2-week ingestion windows → alert → retrain → price update → audit
-- Limitations: synthetic data, assumed independence, hypothetical seasonality
-- Contrast with life insurance thesis (static vs. dynamic, batch vs. stream)
-
-### Ch6: Conclusion
-- Life vs. auto: monitoring requirements scale with pricing update frequency
-- Generalization to other emerging markets
-- Future work: real telematics validation, LangGraph retraining agent, publication
-
----
-
-## Thesis Demo Platform Plan
-
-A separate SPA (similar to DAC HealthPrice) demonstrating dynamic pricing + drift monitoring.
-
-### Frontend screens
-1. **Driver Onboarding** — personal info + telematics consent + quote generation
-2. **Quote Display** — base premium, behavior adjustments, SHAP waterfall
-3. **Policy Tracker** — current metrics (miles, harsh braking, speeding) + next repricing date
-4. **Admin Monitor** — 5-metric dashboard (PSI, feature PSI, quantile PSI, seasonal decomp, model perf), alert colors, retrain trigger, version history
-
-### Backend endpoints
-```
-POST /api/v1/telematics/quote      → premium + SHAP
-GET  /api/v1/telematics/metrics    → 5-metric dashboard
-POST /api/v1/telematics/retrain    → trigger retraining
-GET  /api/v1/telematics/model-versions
-POST /api/v1/telematics/policies/{id}/track
-```
-
-### Deployment target
-- Frontend: `https://dac-auto-insurance.vercel.app`
-- Backend: Same Render instance as DAC HealthPrice (`/api/v1/telematics/*`)
-
----
-
-## Repo Structure
+## Repository structure
 
 ```
 C:\DAC-UW-Thesis\
+  CLAUDE.md
+  README.md
+  requirements.txt
+  render.yaml                  # Render PaaS config (entry: demo.main:app)
+  .gitignore
+
+  healthrl/                    # core bandit package
+    __init__.py
+    underwriting_bandit.py     # LinUCB, LinTS, ε-Greedy, StaticXGB, Oracle,
+                               # RewardConfig, preprocess_cambodia_data
+    config.py                  # central hyperparameters (EXPERIMENT, BANDIT)
+    experiments/
+      exp_005_underwriting_convergence.py
+      exp_006_fairness_audit.py
+      exp_007_benchmark_comparison.py
+      exp_008_human_in_the_loop.py
+      exp_009_drift_adaptation.py
+      exp_010_cold_start_analysis.py
+      exp_011_ablation_study.py
+      exp_012_sensitivity_analysis.py
+      exp_013_loglog_regret_validation.py
+      experiment_utils.py
+      statistical_utils.py
+
+  data/
+    cambodia/
+      cambodia_dataset.csv     # 2,000-record synthetic dataset (CDHS-anchored)
+      cambodia_dataset.parquet
+      generate_cambodia_dataset.py
+      train_cambodia_models.py # GLM + XGBoost training
+      train_cambodia_rl.py     # bandit training driver
+      models/                  # trained model pickles + metric JSONs
+
+  demo/                        # live FastAPI actuarial dashboard (Render)
+    main.py
+    pricing_engine.py
+    hitl_db.py
+    static/                    # frontend assets
+    templates/
+
+  scripts/                     # thesis automation loop (score → rewrite)
+    thesis_loop.py
+    thesis_scorer.py
+    thesis_rewriter.py
+
   thesis/
-    archive-life-insurance-2026-04-19/  ← archived, reference only
-    vietnam_case_study.html             ← Vietnam demo (May 1 deadline)
-    auto/                               ← CREATE THIS: chapter drafts
-      chapter1_introduction.md
-      chapter2_background.md
-      chapter3_methodology.md
-      chapter4_results.md
-      chapter5_discussion.md
-      chapter6_conclusion.md
-    auto_defense_presentation.html      ← CREATE: 20-slide deck
-  stress_testing/
-    auto_insurance/                     ← all 4 experiments live here
-    experiments/                        ← life insurance experiments (archived)
-  data/cambodia/
-    phnom_penh_pings.csv
-    phnom_penh_trip_features.csv
-    vietnam_dataset.csv
-    models/                             ← GLM + XGBoost models (Vietnam)
+    health_rl/
+      chapter01_introduction.md
+      chapter02_presentation.md
+      chapter03_literature_review.md
+      chapter04_project_analysis.md   # includes methodology §§4.5-4.10
+      chapter05_results.md
+      chapter06_conclusion.md
+      figures/                 # chapter figures + math_cache
+      build_thesis_docx.py     # docx builder
+      build_burgundy_presentation.py
+      generate_eda_figures.py
+      latex_render.py
+      ITC_STYLE_GUIDE.md
+
+  wiki/                        # writing templates + topic guides
+    sources/                   # ITC chapter templates, references
+    topics/                    # defense framework, presentation guide
+
+  tests/                       # pytest suite
+    test_build_presentation.py
+    test_thesis_loop.py
+    test_thesis_rewriter.py
+    test_thesis_scorer.py
+
+  docs/superpowers/            # specs + plans + audits
+    specs/
+    plans/
+    audit/2026-05-25/          # the audit driving the current cleanup
 ```
 
 ---
 
-## "hey" Protocol
+## Key conventions
 
-When the user types **"hey"**, immediately provide:
+- **Chapter files**: `thesis/health_rl/chapterNN_<slug>.md`, zero-padded to match declared chapter numbers.
+- **Experiment files**: `healthrl/experiments/exp_NNN_<slug>.py` with pre-registered pass criteria + exit codes.
+- **Hyperparameters**: import `from healthrl.config import EXPERIMENT, BANDIT` — do NOT introduce module-level constants in new experiments.
+- **Statistical methodology**: 20-seed multi-run, bootstrap 95 % CI, paired Wilcoxon, Bonferroni correction, Cohen's d. Primary illustrative seed = 42.
+- **PSI thresholds**: GREEN < 0.10, AMBER 0.10–0.25, RED > 0.25.
+- **Dates**: ISO `YYYY-MM-DD`.
 
-1. **Thesis Status** — current week, what's done, what's pending (chapters + experiments)
-2. **Vietnam Demo Status** — days complete, days remaining, May 1 deadline
-3. **Next Actions** — top 3 prioritized items
+## How to run the headline experiment
 
-Check `wiki/log.md` in `C:\DAC-UW-Agent` for recent activity (requires switching repos).
+```bash
+python healthrl/experiments/exp_005_underwriting_convergence.py
+```
 
----
+Exit 0 = pre-registered pass criteria satisfied. Takes ~5-10 minutes on a standard CPU (20 seeds × 5,000 rounds × 3 algorithms).
 
-## Key Conventions
+## How to launch the demo locally
 
-- Chapter files: `thesis/auto/chapter{N}_{slug}.md`
-- Experiment files: `stress_testing/auto_insurance/exp_{NNN}_{slug}.py`
-- Figures referenced in chapters: `thesis/auto/figures/fig_{N}_{slug}.png`
-- Dates: always ISO `YYYY-MM-DD`
-- PSI thresholds: GREEN < 0.10, AMBER 0.10–0.25, RED > 0.25
+```bash
+uvicorn demo.main:app --reload --port 8000
+```
 
-## Relationship to DAC Platform
+## Where to find things
 
-This thesis demo will be a **new tab** ("Auto Insurance") on the DAC HealthPrice frontend, OR a standalone SPA. The architecture mirrors DAC HealthPrice Phase 4 but for telematics/auto product. Backend shared with existing Render deployment.
+| What | Where |
+|---|---|
+| Bandit math | `healthrl/underwriting_bandit.py` |
+| Reward simulator | `healthrl/underwriting_bandit.py` (`RewardConfig`, `expected_rewards`, `make_reward_simulator`) |
+| Dataset spec | `data/cambodia/generate_cambodia_dataset.py` (docstring is anchored on CDHS / STEPS / ILO / WHO sources) |
+| Live audit | `docs/superpowers/audit/2026-05-25/` (6 reports) |
+| Implementation plan in progress | `docs/superpowers/plans/2026-05-25-tier1-critical-fixes.md` |
+
+## "hey" protocol
+
+When the user types **hey**, immediately provide:
+
+1. **Thesis status**: which chapters are done, which experiments pass, any pending Tier-1/2/3 audit items.
+2. **Last commit**: `git log -1 --oneline` and a one-sentence summary of what that commit accomplished.
+3. **Next actions**: top 3 prioritized items from `docs/superpowers/audit/2026-05-25/05-improvements.md` that are not yet committed.
