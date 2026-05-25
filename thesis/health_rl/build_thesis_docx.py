@@ -804,7 +804,7 @@ def main():
         "Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & Venkatasubramanian, S. (2018). "
         "Runaway feedback loops in predictive policing. Proceedings of the 1st Conference on Fairness, Accountability and Transparency, "
         "PMLR 81, 160–171.",
-        "Shadish, W. R., Cook, T. D., & Leviton, L. C. (1991). Foundations of program evaluation: Theories of practice. Sage Publications.",
+        "Shadish, W. R., Cook, T. D., & Campbell, D. T. (2002). Experimental and quasi-experimental designs for generalized causal inference. Houghton Mifflin.",
         # PSI & credit-scoring lineage
         "Lewis, E. M. (1994). An introduction to credit scoring. Athena Press.",
         "Lin, J. (1991). Divergence measures based on the Shannon entropy. "
