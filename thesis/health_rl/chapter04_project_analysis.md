@@ -71,7 +71,7 @@ Non-functional requirements specify the quality attributes and operational const
 | NFR-5 | Maintainability | Modular code structure separating data generation, algorithm implementation, API routing, and frontend assets. | Enables extension with new algorithms or PSI dimensions without rewriting unrelated subsystems. |
 | NFR-6 | Accuracy | PSI computations in the demonstration interface match the values produced by experiment EXP-006 to four decimal places. | Guarantees consistency between research code and production demo so that reviewers can verify reported results. |
 | NFR-7 | Interpretability | Per-action coefficient vectors θ_a remain inspectable for LinUCB and LinTS. | Linear bandits, unlike neural alternatives, expose explicit feature weights for actuarial review and regulatory explanation. |
-| NFR-8 | Auditability | Every decision tuple (context, action, reward, PSI status, timestamp) is immutably logged. | The decision log is the regulator-facing artefact; auditors must be able to reconstruct any historical decision from it. |
+| NFR-8 | Auditability *(design target)* | Every decision tuple (context, action, reward, PSI status, timestamp) shall be immutably logged once the Shadow Mode wrapper described in §4.10.1 is deployed. | The decision log is the regulator-facing artefact; auditors must be able to reconstruct any historical decision from it. The current `demo/` exposes the bandit policy but does not yet provide the persistent decision log; integrating that log is part of the production rollout (§4.10). |
 
 ---
 
@@ -93,7 +93,7 @@ The technology stack is selected to satisfy three constraints simultaneously: sc
 | Pandas | ≥ 2.2 | Tabular data manipulation for dataset generation, feature engineering, and batch scoring. |
 | scikit-learn | ≥ 1.4 | Preprocessing utilities (LabelEncoder for categorical variables, scaling helpers). |
 | XGBoost | ≥ 2.0 | Gradient-boosted mortality predictor used as the static baseline against which bandits are benchmarked. |
-| SQLAlchemy | 2.0 (async) | Object-relational mapper for shadow-mode decision logging (NFR-8). |
+| SQLAlchemy *(planned)* | 2.0 (async) | Object-relational mapper anticipated for the shadow-mode decision log (NFR-8) when §4.10.1 is implemented. Not currently used by `demo/`. |
 
 ### 4.3.2 Frontend and Visualisation
 
