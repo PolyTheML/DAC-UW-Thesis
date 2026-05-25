@@ -56,7 +56,7 @@ Thumbs.db
 .claude/
 
 # Large generated data files (>100 MB)
-case-study/phnom_penh_pings.csv
+data/cambodia/phnom_penh_pings.csv
 
 # Jupyter
 .ipynb_checkpoints/

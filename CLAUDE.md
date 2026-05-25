@@ -30,9 +30,9 @@ This is the thesis workspace for the auto insurance telematics research project,
 
 ### Synthetic Dataset
 
-- `case-study/phnom_penh_pings.csv` — 1,161,881 GPS pings from 1,500 real-route trips
-- `case-study/phnom_penh_trip_features.csv` — 1,500 trip-level rows (PSI-ready)
-- `case-study/routes_cache.json` — 30 Phnom Penh O-D pairs × 3 traffic snapshots
+- `data/cambodia/phnom_penh_pings.csv` — 1,161,881 GPS pings from 1,500 real-route trips
+- `data/cambodia/phnom_penh_trip_features.csv` — 1,500 trip-level rows (PSI-ready)
+- `data/cambodia/routes_cache.json` — 30 Phnom Penh O-D pairs × 3 traffic snapshots
 - Generator: `stress_testing/auto_insurance/real_route_telematics_generator.py`
 
 ### Writing — NOT STARTED
@@ -139,7 +139,7 @@ C:\DAC-UW-Thesis\
   stress_testing/
     auto_insurance/                     ← all 4 experiments live here
     experiments/                        ← life insurance experiments (archived)
-  case-study/
+  data/cambodia/
     phnom_penh_pings.csv
     phnom_penh_trip_features.csv
     vietnam_dataset.csv

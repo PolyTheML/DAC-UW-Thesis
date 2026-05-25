@@ -33,7 +33,7 @@ RED = '#C0392B'
 PURPLE = '#8E44AD'
 COLORS = [BLUE, ORANGE, GREEN, RED, PURPLE, '#16A085', '#D35400', '#2980B9']
 
-DATA_PATH = Path(r'C:\DAC-UW-Thesis\case-study\cambodia_dataset.csv')
+DATA_PATH = Path(r'C:\DAC-UW-Thesis\data\cambodia\cambodia_dataset.csv')
 OUT_DIR = Path(r'C:\DAC-UW-Thesis\thesis\health_rl\figures')
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

@@ -34,7 +34,7 @@ The repository was migrated from `C:\DAC-UW-Agent` (the DAC HealthPrice platform
 
 ```
 C:\DAC-UW-Thesis\
-  case-study/                          # Datasets & trained models
+  data/cambodia/                       # Datasets & trained models
     generate_cambodia_dataset.py       # Synthetic Cambodia health dataset (2,000 records)
     train_cambodia_models.py           # Trains GLM + XGBoost models; saves to models/
     cambodia_dataset.csv / .parquet    # Generated synthetic dataset
@@ -126,8 +126,8 @@ pytest tests/test_build_presentation.py -v
 
 ### Generate / retrain Cambodia models
 ```powershell
-python case-study/generate_cambodia_dataset.py
-python case-study/train_cambodia_models.py
+python data/cambodia/generate_cambodia_dataset.py
+python data/cambodia/train_cambodia_models.py
 ```
 
 ---
@@ -146,7 +146,7 @@ python case-study/train_cambodia_models.py
 - `experiments/exp_007_benchmark_comparison.py` — Compares LinUCB, LinTS, EpsilonGreedy, and StaticXGB on cumulative regret over 5,000 rounds.
 - `experiments/exp_008_human_in_the_loop.py` — Measures HITL reward lift, alignment rate, and human cost.
 
-### Cambodia Case Study (`case-study/`)
+### Cambodia Dataset (`data/cambodia/`)
 - `generate_cambodia_dataset.py` — Produces 2,000 synthetic Cambodia health insurance records with Cambodia-specific demographics, occupations, and disease prevalence (TB, Hepatitis B).
 - `train_cambodia_models.py` — Trains health (`cambodia_health_xgb` + `cambodia_health_glm`) and mortality (`cambodia_life_xgb` + `cambodia_life_glm`) models; exports SHAP values, GLM coefficients JSON, and test predictions CSV.
 
@@ -245,12 +245,12 @@ All experiments, the demo API, and the backend support an optional `config` argu
 - **Defense presentation**: **COMPLETE** — `thesis/health_rl/build_presentation.py` generates a full 20-slide deck. Output `health_rl_defense_presentation.pptx` already generated.
 - **Thesis DOCX**: **COMPLETE** — `build_thesis_docx.py` converts Markdown chapters to ITC-formatted Word. Output `ITC_Thesis_Draft.docx` already generated (contains Ch1–2 body + Ch3–5 skeletons).
 - **Figures**: 6 PNGs generated in `thesis/health_rl/figures/` (regret curves, reward curves, action evolution, fairness region, fairness occupation, framework).
-- **Cambodia dataset & models**: Complete (`case-study/models/` populated with `cambodia_*.pkl`, `.json`, `.csv`).
+- **Cambodia dataset & models**: Complete (`data/cambodia/models/` populated with `cambodia_*.pkl`, `.json`, `.csv`).
 
 ---
 
 ## Security Considerations
 
 - `.gitignore` is present and excludes `.env`, `node_modules/`, `__pycache__/`, `.next/`, `.vercel/`, `.claude/`, and large data files.
-- The repo is **not** a sandbox. It operates on the local filesystem and writes to `case-study/`, `thesis/health_rl/`, etc.
+- The repo is **not** a sandbox. It operates on the local filesystem and writes to `data/cambodia/`, `thesis/health_rl/`, etc.
 - No secrets or credentials should be added to generated `.pptx`, `.csv`, `.html`, or markdown files.

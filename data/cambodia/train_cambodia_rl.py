@@ -445,5 +445,5 @@ if __name__ == "__main__":
     with open(MODELS_DIR / "cambodia_rl_results.json", "w") as f:
         json.dump(results_out, f, indent=2)
 
-    print("\nDone. RL outputs saved to case-study/models/")
+    print("\nDone. RL outputs saved to data/cambodia/models/")
     print(json.dumps(results_out, indent=2))

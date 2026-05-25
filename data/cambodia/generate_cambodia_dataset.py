@@ -50,7 +50,7 @@ New features vs. previous version:
   - BMI recalibrated to CDHS mean 22.9, SD 3.9
   - Smoking recalibrated to CDHS 1.4% women, STEPS 29.6% men
 
-Output: case-study/cambodia_dataset.csv + .parquet
+Output: data/cambodia/cambodia_dataset.csv + .parquet
 """
 
 import pandas as pd

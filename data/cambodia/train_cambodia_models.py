@@ -280,5 +280,5 @@ results = {
 with open(MODELS_DIR / "cambodia_model_results.json", "w") as f:
     json.dump(results, f, indent=2)
 
-print("\nDone. All Cambodia models saved to case-study/models/")
+print("\nDone. All Cambodia models saved to data/cambodia/models/")
 print(json.dumps(results, indent=2))

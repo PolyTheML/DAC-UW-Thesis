@@ -833,7 +833,7 @@ def main():
     add_heading_paragraph(doc, "APPENDICES", level="chapter")
     add_heading_paragraph(doc, "Appendix A: Dataset Generation Code", level="section")
     para = doc.add_paragraph()
-    run = para.add_run("[Source code listing from case-study/generate_cambodia_dataset.py]")
+    run = para.add_run("[Source code listing from data/cambodia/generate_cambodia_dataset.py]")
     set_run_font(run, size_pt=12, italic=True, color=RGBColor(0x80, 0x80, 0x80))
     set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
                          first_line_indent=Cm(1.27))
