@@ -28,10 +28,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import xgboost as xgb
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     LinTS,
     preprocess_cambodia_data,
@@ -42,6 +42,7 @@ from stress_testing.rl.underwriting_bandit import (
     ACTION_REFER,
     MODELS_DIR,
 )
+from healthrl.config import BANDIT
 
 TS = [200, 500, 1000, 2000]
 
@@ -183,8 +184,8 @@ def run(seed: int) -> dict[str, float]:
         fresh_xgb = FreshXGBBaseline(fresh_model)
 
         algorithms = {
-            "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=1.0),
-            "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0, seed=seed),
+            "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha),
+            "LinTS": LinTS(n_actions=4, n_features=n_features, v2=BANDIT.lints_v2, seed=seed),
             "FreshXGB": fresh_xgb,
         }
 
@@ -249,7 +250,7 @@ def main() -> int:
     print("=" * 70)
 
     from experiment_utils import run_experiment_seeds
-    stats = run_experiment_seeds(run, n_seeds=10)
+    stats = run_experiment_seeds(run, n_seeds=10)  # 10 by design — cold-start sweep is expensive
 
     def fmt(key: str) -> str:
         mean, std = stats[key]
@@ -276,8 +277,8 @@ def main() -> int:
         fresh_model = train_fresh_xgb(df_raw, t, seed)
         fresh_xgb = FreshXGBBaseline(fresh_model)
         algorithms = {
-            "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=1.0),
-            "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0, seed=seed),
+            "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha),
+            "LinTS": LinTS(n_actions=4, n_features=n_features, v2=BANDIT.lints_v2, seed=seed),
             "FreshXGB": fresh_xgb,
         }
         results_by_t[t] = {}

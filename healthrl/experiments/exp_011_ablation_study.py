@@ -29,29 +29,30 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     StaticXGBBaseline,
     preprocess_cambodia_data,
     run_bandit,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 from statistical_utils import (
     format_comparison,
     print_comparison_table,
     bootstrap_ci,
 )
 
-N_ROUNDS = 5000
-N_SEEDS = 20
+N_ROUNDS = EXPERIMENT.n_rounds
+N_SEEDS = EXPERIMENT.n_seeds
 
 
 def ablation_full(seed: int) -> dict[str, float]:
     """Full 4-arm LinUCB with standard hyperparameters."""
     X, df_raw, _features = preprocess_cambodia_data()
-    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=1.0)
+    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=BANDIT.linucb_alpha)
     result = run_bandit("LinUCB_full", bandit, X.copy(), df_raw, N_ROUNDS, seed=seed)
     return {
         "reward": float(result.cumulative_rewards[-1]),
@@ -66,7 +67,7 @@ def ablation_no_refer(seed: int) -> dict[str, float]:
     is disadvantaged when REFER would have been optimal.
     """
     X, df_raw, _features = preprocess_cambodia_data()
-    bandit = LinUCB(n_actions=3, n_features=X.shape[1], alpha=1.0)
+    bandit = LinUCB(n_actions=3, n_features=X.shape[1], alpha=BANDIT.linucb_alpha)
     result = run_bandit("LinUCB_3arm", bandit, X.copy(), df_raw, N_ROUNDS, seed=seed)
     return {
         "reward": float(result.cumulative_rewards[-1]),

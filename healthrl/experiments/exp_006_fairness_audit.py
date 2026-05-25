@@ -24,23 +24,24 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     preprocess_cambodia_data,
     run_bandit,
     ACTION_STANDARD,
     ACTION_RATED,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 from statistical_utils import (
     permutation_test_paired,
     bootstrap_ci,
 )
 
-N_ROUNDS = 5000
-WINDOW = 500
+N_ROUNDS = EXPERIMENT.n_rounds
+WINDOW = EXPERIMENT.psi_window
 N_WINDOWS = N_ROUNDS // WINDOW
 
 
@@ -132,7 +133,7 @@ def run(seed: int) -> dict[str, float]:
     n_features = X.shape[1]
     n_samples = len(df_raw)
 
-    linucb = LinUCB(n_actions=4, n_features=n_features, alpha=1.0)
+    linucb = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
     result = run_bandit("LinUCB", linucb, X.copy(), df_raw, N_ROUNDS, seed=seed)
 
     decisions = pd.DataFrame({
@@ -198,7 +199,7 @@ def main() -> int:
     print("=" * 70)
 
     from experiment_utils import run_experiment_seeds_raw
-    stats = run_experiment_seeds_raw(run, n_seeds=20)
+    stats = run_experiment_seeds_raw(run, n_seeds=EXPERIMENT.n_seeds)
 
     def fmt(key: str) -> str:
         s = stats[key]

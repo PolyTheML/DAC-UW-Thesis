@@ -28,18 +28,19 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     RewardConfig,
     preprocess_cambodia_data,
     run_bandit,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 
-N_ROUNDS = 5000
-N_SEEDS = 20
+N_ROUNDS = EXPERIMENT.n_rounds
+N_SEEDS = EXPERIMENT.n_seeds
 FIGURE_PATH = ROOT / "thesis" / "health_rl" / "figures" / "fig_loglog_regret.png"
 
 
@@ -53,7 +54,7 @@ def run_single_seed(seed: int) -> np.ndarray:
     acceptance_draws = rng.random(N_ROUNDS)
     claims_noise = rng.uniform(cfg.claims_noise_low, cfg.claims_noise_high, size=N_ROUNDS)
 
-    bandit = LinUCB(n_actions=4, n_features=n_features, alpha=1.0)
+    bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
     result = run_bandit(
         "LinUCB",
         bandit,

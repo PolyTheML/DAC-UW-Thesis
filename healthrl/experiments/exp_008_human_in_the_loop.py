@@ -37,20 +37,21 @@ import numpy as np
 import pandas as pd
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     preprocess_cambodia_data,
     LinUCB,
     LinTS,
     run_bandit,
     RunResult,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 
 # ── Constants ────────────────────────────────────────────────────────────────
-SEED = 42
-N_ROUNDS = 5000
+SEED = EXPERIMENT.primary_seed
+N_ROUNDS = EXPERIMENT.n_rounds
 HUMAN_REVIEW_COST = 35.0
 RNG = np.random.default_rng(SEED)
 
@@ -139,7 +140,7 @@ def run_hitl_bandit(
     simulated human underwriter. The bandit learns from the human's chosen
     action, not the original REFER.
     """
-    from stress_testing.rl.underwriting_bandit import (
+    from healthrl.underwriting_bandit import (
         make_reward_simulator,
         expected_rewards,
     )
@@ -293,7 +294,7 @@ def main() -> int:
     for cons in conservatism_levels:
         label = f"HITL-cons={cons}"
         print(f"\nRunning {label} ...")
-        bandit = LinUCB(n_actions=4, n_features=n_features, alpha=1.0)
+        bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
         result = run_hitl_bandit(bandit, X, df, n_rounds=N_ROUNDS, conservatism=cons, seed=SEED)
         hitl_results[label] = result
         print(f"  Final cumulative reward: ${result.cumulative_rewards[-1]:,.2f}")
@@ -306,7 +307,7 @@ def main() -> int:
 
     # ── Run baseline (mathematical REFER) ──────────────────────────────────
     print("\nRunning Baseline (mathematical REFER shortcut) ...")
-    baseline_bandit = LinUCB(n_actions=4, n_features=n_features, alpha=1.0)
+    baseline_bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
     baseline_result = run_refer_baseline("linucb", baseline_bandit, X, df, n_rounds=N_ROUNDS, seed=SEED)
     print(f"  Final cumulative reward: ${baseline_result.cumulative_rewards[-1]:,.2f}")
     print(f"  Final cumulative regret: ${baseline_result.cumulative_regrets[-1]:,.2f}")

@@ -28,10 +28,10 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     LinTS,
     StaticXGBBaseline,
@@ -41,9 +41,10 @@ from stress_testing.rl.underwriting_bandit import (
     make_reward_simulator,
     DATA_PATH,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 
-N_ROUNDS = 5000
-SHOCK_ROUND = 1500
+N_ROUNDS = EXPERIMENT.n_rounds
+SHOCK_ROUND = EXPERIMENT.drift_shock_round
 WINDOW = 100  # rolling-average window for instantaneous regret plots
 
 
@@ -176,8 +177,8 @@ def run(seed: int) -> dict[str, float]:
     X_post, df_post, _ = preprocess_cambodia_data(df=df_post_raw, stats=stats)
 
     algorithms = {
-        "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=1.0),
-        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0, seed=seed),
+        "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha),
+        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=BANDIT.lints_v2, seed=seed),
         "StaticXGB": StaticXGBBaseline(),
     }
 
@@ -229,7 +230,7 @@ def main() -> int:
     print("=" * 70)
 
     from experiment_utils import run_experiment_seeds
-    stats = run_experiment_seeds(run, n_seeds=20)
+    stats = run_experiment_seeds(run, n_seeds=EXPERIMENT.n_seeds)
 
     def fmt(key: str) -> str:
         mean, std = stats[key]
@@ -261,8 +262,8 @@ def main() -> int:
     n_features = X_pre.shape[1]
 
     algorithms = {
-        "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=1.0),
-        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=1.0, seed=42),
+        "LinUCB": LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha),
+        "LinTS": LinTS(n_actions=4, n_features=n_features, v2=BANDIT.lints_v2, seed=42),
         "StaticXGB": StaticXGBBaseline(),
     }
     results = {}

@@ -27,24 +27,25 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).parent.parent.parent.parent
+ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from stress_testing.rl.underwriting_bandit import (
+from healthrl.underwriting_bandit import (
     LinUCB,
     StaticXGBBaseline,
     RewardConfig,
     preprocess_cambodia_data,
     run_bandit,
 )
+from healthrl.config import EXPERIMENT, BANDIT
 from statistical_utils import (
     format_comparison,
     print_comparison_table,
     bootstrap_ci,
 )
 
-N_ROUNDS = 5000
-N_SEEDS = 10
+N_ROUNDS = EXPERIMENT.n_rounds
+N_SEEDS = 10  # 10 by design — sensitivity sweep runs many conditions; full 20 would be prohibitive
 
 
 def run_alpha_sweep(alpha: float, seed: int) -> dict[str, float]:
@@ -63,7 +64,7 @@ def run_adverse_sweep(adverse_factor: float, seed: int) -> dict[str, float]:
     X, df_raw, _features = preprocess_cambodia_data()
     cfg = RewardConfig(adverse_factor=adverse_factor)
 
-    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=1.0)
+    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=BANDIT.linucb_alpha)
     result_ucb = run_bandit("LinUCB", bandit, X.copy(), df_raw, N_ROUNDS, seed=seed, config=cfg)
 
     static = StaticXGBBaseline()
@@ -82,7 +83,7 @@ def run_elasticity_sweep(slope: float, seed: int) -> dict[str, float]:
     X, df_raw, _features = preprocess_cambodia_data()
     cfg = RewardConfig(acceptance_slope=slope)
 
-    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=1.0)
+    bandit = LinUCB(n_actions=4, n_features=X.shape[1], alpha=BANDIT.linucb_alpha)
     result_ucb = run_bandit("LinUCB", bandit, X.copy(), df_raw, N_ROUNDS, seed=seed, config=cfg)
 
     static = StaticXGBBaseline()
