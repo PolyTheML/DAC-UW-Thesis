@@ -62,10 +62,7 @@
   <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex space-x-8">
-        <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-active py-3 text-sm transition-colors">
-          Applicant Simulator
-        </button>
-        <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-inactive py-3 text-sm transition-colors">
+        <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-active py-3 text-sm transition-colors">
           Pricing Engine
         </button>
         <button onclick="switchTab('arena')" id="tab-arena" class="tab-inactive py-3 text-sm transition-colors">
@@ -83,26 +80,20 @@
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- ==================== TAB 1: APPLICANT SIMULATOR ==================== -->
-    <section id="panel-simulator" class="space-y-6">
+    <!-- ==================== TAB 1: PRICING ENGINE ==================== -->
+    <section id="panel-pricing" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- Input Form -->
-        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="font-semibold text-gray-900">Applicant Profile</h2>
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-gray-900">Premium Optimiser</h2>
             <button onclick="loadRandomApplicant()" class="text-xs bg-thesis-50 text-thesis-600 px-2.5 py-1.5 rounded-md hover:bg-thesis-100 transition font-medium">
               🎲 Random
             </button>
           </div>
-          <div class="mb-4">
-            <label class="block text-xs font-medium text-gray-500 mb-1">Simulator Mode</label>
-            <select id="sim-mode" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition" onchange="simulateApplicant()">
-              <option value="simple" selected>Simple (default)</option>
-              <option value="realistic">Realistic (expenses + lapse + CLV)</option>
-            </select>
-            <p class="text-xs text-gray-400 mt-1" id="mode-desc">Base model: premium &minus; claims. No expenses, no lapse.</p>
-          </div>
+          <p class="text-xs text-gray-500">Enter an applicant, then grid-search premium multipliers 0.5×–3.0× along the adverse-selection curve.</p>
+
+          <!-- Applicant profile -->
           <form id="applicant-form" class="space-y-3 text-sm">
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -225,99 +216,26 @@
               <input type="range" id="mortality_multiplier" min="0.5" max="5.0" step="0.1" value="1.2" oninput="document.getElementById('mort-label').innerText = this.value" class="w-full">
               <div class="text-xs text-gray-500 text-right" id="mort-label">1.2</div>
             </div>
-
-            <button type="button" onclick="simulateApplicant()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm">
-              Calculate Expected Rewards
-            </button>
           </form>
-        </div>
-
-        <!-- Results -->
-        <div class="lg:col-span-2 space-y-5">
-
-          <!-- Expected Rewards Cards -->
-          <div>
-            <h2 class="font-semibold text-gray-900 mb-3">Expected Rewards (Deterministic)</h2>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="reward-cards">
-              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
-                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Optimised</div>
-                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
-                <div class="text-xs text-gray-400 mt-1">dynamic premium</div>
-              </div>
-              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
-                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Standard</div>
-                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
-                <div class="text-xs text-gray-400 mt-1">base premium</div>
-              </div>
-              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
-                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Rated (+25%)</div>
-                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
-                <div class="text-xs text-gray-400 mt-1">higher premium</div>
-              </div>
-              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
-                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Decline</div>
-                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
-                <div class="text-xs text-gray-400 mt-1">opportunity cost</div>
-              </div>
-              <div class="action-card bg-white rounded-xl border border-gray-200 p-4">
-                <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Refer</div>
-                <div class="text-2xl font-bold text-gray-900 mt-1">—</div>
-                <div class="text-xs text-gray-400 mt-1">manual review</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Chart -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h2 class="font-semibold text-gray-900 mb-3">Reward Comparison</h2>
-            <div class="h-64">
-              <canvas id="reward-chart"></canvas>
-            </div>
-          </div>
-
-          <!-- Stochastic Simulation -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <div class="flex items-center justify-between mb-3">
-              <h2 class="font-semibold text-gray-900">Stochastic Realisation</h2>
-              <button onclick="runStochastic()" class="text-xs bg-thesis-50 text-thesis-600 px-3 py-1.5 rounded-md hover:bg-thesis-100 transition font-medium">
-                ▶ Run Simulation
-              </button>
-            </div>
-            <div id="stochastic-results" class="text-sm text-gray-500 italic">
-              Press "Run Simulation" to see a single random draw for each action.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== TAB 2: PRICING ENGINE ==================== -->
-    <section id="panel-pricing" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Controls -->
-        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
-          <h2 class="font-semibold text-gray-900">Premium Optimiser</h2>
-          <p class="text-xs text-gray-500">Grid-search multipliers 0.5×–3.0× (0.05 steps) with adverse-selection curve.</p>
 
           <div>
-            <label class="block text-xs font-medium text-gray-500 mb-1">Simulator Mode</label>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Cost Model</label>
             <select id="pricing-mode" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring-2 focus:ring-thesis-300 focus:border-thesis-500 outline-none transition" onchange="runPricingOptimize()">
               <option value="simple" selected>Simple (default)</option>
               <option value="realistic">Realistic (expenses + lapse + CLV)</option>
             </select>
           </div>
 
-          <div class="bg-thesis-50 rounded-lg p-3 border border-thesis-100">
-            <div class="text-xs font-medium text-thesis-700 mb-1">Current Applicant</div>
-            <div class="text-sm text-thesis-900" id="pricing-applicant-summary">—</div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-gray-500">Adverse-Selection Factor</label>
+              <span class="text-xs font-mono text-thesis-600" id="pricing-adverse-label">1.35×</span>
+            </div>
+            <input type="range" id="pricing-adverse" min="1.0" max="2.0" step="0.1" value="1.35"
+                   oninput="document.getElementById('pricing-adverse-label').innerText = parseFloat(this.value).toFixed(2) + '×';"
+                   onchange="runPricingOptimize()" class="w-full">
+            <p class="text-xs text-gray-400 mt-1">Claims uplift on under-priced policies (mortality &gt; 2.0× only). Watch the <em>left tail</em> of the profit curve — the optimum may not move when it sits above 1.25×.</p>
           </div>
-
-          <button onclick="loadRandomApplicant(); setTimeout(() => runPricingOptimize(), 300);" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
-            🎲 Load Random Applicant
-          </button>
-          <button onclick="copyApplicantFromSimulator()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
-            📋 Copy from Simulator
-          </button>
 
           <button onclick="runPricingOptimize()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm flex items-center justify-center gap-2">
             <span id="pricing-spinner" class="hidden">⟳</span>
@@ -769,6 +687,8 @@
                 <div class="text-lg font-bold text-gray-900 mt-1">—</div>
               </div>
             </div>
+            <div class="h-48"><canvas id="hitl-psi-chart"></canvas></div>
+            <p class="text-xs text-gray-400 mt-2">Bars coloured by guardrail status (GREEN &lt; 0.10, AMBER 0.10–0.25, RED &gt; 0.25). Reference lines mark the 0.10 and 0.25 thresholds.</p>
           </div>
 
           <!-- Review history table -->

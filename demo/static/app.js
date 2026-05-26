@@ -7,7 +7,6 @@
 // State
 // ---------------------------------------------------------------------------
 const charts = {};
-let currentExpected = {};
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -51,7 +50,7 @@ async function apiGet(path) {
 // Tabs
 // ---------------------------------------------------------------------------
 function switchTab(name) {
-  ['simulator', 'pricing', 'arena', 'benchmark', 'hitl'].forEach(t => {
+  ['pricing', 'arena', 'benchmark', 'hitl'].forEach(t => {
     document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== name);
     const btn = document.getElementById(`tab-${t}`);
     if (t === name) {
@@ -65,7 +64,7 @@ function switchTab(name) {
 }
 
 // ---------------------------------------------------------------------------
-// Applicant Simulator
+// Applicant form (shared input — drives the Pricing Engine tab)
 // ---------------------------------------------------------------------------
 function getFormData() {
   const conds = [];
@@ -86,7 +85,6 @@ function getFormData() {
     wealth_quintile: document.getElementById('wealth_quintile').value,
     self_reported_health: document.getElementById('self_reported_health').value,
     mortality_multiplier: parseFloat(document.getElementById('mortality_multiplier').value),
-    mode: document.getElementById('sim-mode').value,
   };
 }
 
@@ -115,154 +113,23 @@ async function loadRandomApplicant() {
     cb.checked = conds.includes(cb.value);
   });
 
-  simulateApplicant();
-  updatePricingApplicantSummary();
-}
-
-async function simulateApplicant() {
-  const body = getFormData();
-  try {
-    const simData = await apiPost('/api/simulate', body);
-    currentExpected = simData.expected_rewards;
-
-    let pricingData = null;
-    try {
-      pricingData = await apiPost('/api/pricing/optimize', body);
-    } catch (e) {
-      console.warn('Pricing optimisation failed:', e);
-    }
-
-    const legacyBest = Math.max(...Object.values(simData.expected_rewards));
-    const optimisedProfit = pricingData ? pricingData.optimal_expected_profit : null;
-    const trueBestIsOptimised = pricingData && optimisedProfit > legacyBest;
-
-    const actions = ['OPTIMISED', 'STANDARD', 'RATED', 'DECLINE', 'REFER'];
-    const colors = ['#2E5FA3', '#10b981', '#f59e0b', '#ef4444', '#6366f1'];
-    const values = {
-      OPTIMISED: pricingData ? pricingData.optimal_expected_profit : null,
-      STANDARD: simData.expected_rewards.STANDARD,
-      RATED: simData.expected_rewards.RATED,
-      DECLINE: simData.expected_rewards.DECLINE,
-      REFER: simData.expected_rewards.REFER,
-    };
-
-    const cardContainer = document.getElementById('reward-cards');
-    cardContainer.innerHTML = '';
-
-    actions.forEach((act, i) => {
-      const val = values[act];
-      if (val === null) return;
-      const isOpt = act === 'OPTIMISED' ? trueBestIsOptimised : (simData.optimal_action === act && !trueBestIsOptimised);
-      const card = document.createElement('div');
-      card.className = `action-card bg-white rounded-xl border ${isOpt ? 'border-thesis-400 ring-1 ring-thesis-200' : 'border-gray-200'} p-4 relative overflow-hidden`;
-
-      let label = act;
-      let sublabel = isOpt ? 'Optimal action' : 'Expected value';
-      if (act === 'OPTIMISED') {
-        label = `Optimised (${fmtNum(pricingData.optimal_multiplier, 2)}×)`;
-        sublabel = `Premium ${fmtMoney(pricingData.optimal_premium_usd)} · P(accept) ${(pricingData.optimal_p_accept * 100).toFixed(1)}%`;
-      }
-
-      card.innerHTML = `
-        <div class="absolute top-0 right-0 w-16 h-16 opacity-10" style="background:${colors[i]}; border-radius: 0 0 0 100%"></div>
-        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">${label}${isOpt ? ' ★' : ''}</div>
-        <div class="text-2xl font-bold mt-1 ${val >= 0 ? 'text-gray-900' : 'text-red-600'}">${fmtMoney(val)}</div>
-        <div class="text-xs text-gray-400 mt-1">${sublabel}</div>
-      `;
-      cardContainer.appendChild(card);
-    });
-
-    renderRewardChart(values);
-  } catch (e) {
-    alert('Simulation failed: ' + e.message);
-  }
-}
-
-async function runStochastic() {
-  const body = getFormData();
-  try {
-    const data = await apiPost('/api/simulate/stochastic?seed=' + Math.floor(Math.random() * 99999), body);
-    const container = document.getElementById('stochastic-results');
-    let html = '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">';
-    Object.entries(data.outcomes).forEach(([act, info]) => {
-      const exp = currentExpected[act] || 0;
-      const diff = info.reward - exp;
-      html += `
-        <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
-          <div class="text-xs font-semibold text-gray-600 uppercase">${act}</div>
-          <div class="text-lg font-bold ${info.reward >= 0 ? 'text-gray-900' : 'text-red-600'}">${fmtMoney(info.reward)}</div>
-          <div class="text-xs text-gray-500 mt-1">vs exp ${diff >= 0 ? '+' : ''}${fmtMoney(diff, 0)}</div>
-          <div class="text-xs text-gray-400 mt-1 leading-tight">${info.outcome}</div>
-        </div>
-      `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-  } catch (e) {
-    alert('Stochastic simulation failed: ' + e.message);
-  }
-}
-
-function renderRewardChart(values) {
-  const ctx = document.getElementById('reward-chart').getContext('2d');
-  const labels = ['Optimised', 'Standard', 'Rated (+25%)', 'Decline', 'Refer'];
-  const dataValues = [values.OPTIMISED, values.STANDARD, values.RATED, values.DECLINE, values.REFER];
-  const colors = ['#2E5FA3', '#10b981', '#f59e0b', '#ef4444', '#6366f1'];
-
-  if (charts.reward) charts.reward.destroy();
-  charts.reward = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Expected Reward (USD)',
-        data: dataValues,
-        backgroundColor: colors,
-        borderRadius: 6,
-        barThickness: 40,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
-        x: { grid: { display: false } },
-      }
-    }
-  });
+  runPricingOptimize();
 }
 
 // ---------------------------------------------------------------------------
 // Pricing Engine
 // ---------------------------------------------------------------------------
 
-function updatePricingApplicantSummary() {
-  const age = document.getElementById('age').value;
-  const region = document.getElementById('region').value;
-  const occ = document.getElementById('occupation').value;
-  const mort = document.getElementById('mortality_multiplier').value;
-  document.getElementById('pricing-applicant-summary').innerText =
-    `Age ${age}, ${region}, ${occ}, Mortality ${mort}×`;
-}
-
-function copyApplicantFromSimulator() {
-  switchTab('pricing');
-  updatePricingApplicantSummary();
-  runPricingOptimize();
-}
-
 async function runPricingOptimize() {
   const body = getFormData();
   body.mode = document.getElementById('pricing-mode').value;
+  body.adverse_factor = parseFloat(document.getElementById('pricing-adverse').value);
 
   document.getElementById('pricing-spinner').classList.remove('hidden');
   document.getElementById('pricing-btn-text').textContent = 'Optimising...';
 
   try {
     const data = await apiPost('/api/pricing/optimize', body);
-    updatePricingApplicantSummary();
 
     // Summary cards
     const summary = document.getElementById('pricing-summary');
@@ -552,6 +419,76 @@ function renderPSIChart(psiData) {
   });
 }
 
+function renderPSIBarChart(psiData, canvasId, chartKey) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (charts[chartKey]) charts[chartKey].destroy();
+
+  const order = ['region', 'occupation', 'age_bin', 'wealth_quintile'];
+  const labels = [];
+  const values = [];
+  const bgColors = [];
+  order.forEach(key => {
+    const item = psiData[key];
+    if (!item) return;
+    labels.push(item.label);
+    values.push(item.psi);
+    if (item.status === 'GREEN') bgColors.push('#10b981');
+    else if (item.status === 'AMBER') bgColors.push('#f59e0b');
+    else bgColors.push('#ef4444');
+  });
+
+  const maxVal = values.length ? Math.max(...values) : 0;
+  const suggestedMax = Math.max(0.30, maxVal * 1.15);
+
+  // Inline plugin: vertical reference lines at the 0.10 / 0.25 thresholds
+  const thresholdLines = {
+    id: 'psiThresholdLines',
+    afterDraw(chart) {
+      const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+      [[0.10, '#f59e0b'], [0.25, '#ef4444']].forEach(([v, color]) => {
+        const px = x.getPixelForValue(v);
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = color;
+        ctx.moveTo(px, top);
+        ctx.lineTo(px, bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = color;
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(v.toFixed(2), px, top - 3);
+        ctx.restore();
+      });
+    }
+  };
+
+  charts[chartKey] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'PSI', data: values, backgroundColor: bgColors, borderRadius: 4, barPercentage: 0.6 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: { top: 12 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (c) => `PSI: ${c.raw.toFixed(4)}` } },
+      },
+      scales: {
+        x: { beginAtZero: true, suggestedMax, grid: { color: '#f3f4f6' }, title: { display: true, text: 'PSI' } },
+        y: { grid: { display: false } },
+      }
+    },
+    plugins: [thresholdLines],
+  });
+}
+
 function renderBatchHistogram(histogram) {
   const ctx = document.getElementById('batch-histogram-chart').getContext('2d');
   if (charts.batchHistogram) charts.batchHistogram.destroy();
@@ -643,8 +580,23 @@ async function runArena() {
 
     // Reward curve
     renderLineChart('arena-chart-reward', 'Cumulative Reward', data.trajectory.rounds, data.trajectory.cumulative_rewards, '#2E5FA3');
-    // Regret curve
-    renderLineChart('arena-chart-regret', 'Cumulative Regret', data.trajectory.rounds, data.trajectory.cumulative_regrets, '#ef4444');
+    // Regret curve — overlay the Õ(d√t) bound for linear bandits only
+    let regretOverlay = null;
+    if (algo === 'LinUCB' || algo === 'LinTS') {
+      const d = data.n_features;
+      const cumRegrets = data.trajectory.cumulative_regrets;
+      const calT = Math.min(200, cumRegrets.length);
+      const empAtCal = calT >= 1 ? cumRegrets[calT - 1] : 0;
+      if (empAtCal > 0) {
+        const c = empAtCal / (d * Math.sqrt(calT));
+        regretOverlay = {
+          label: `Theoretical bound  c·d·√t  (d=${d})`,
+          color: '#9333ea',
+          compute: (t) => c * d * Math.sqrt(t),
+        };
+      }
+    }
+    renderLineChart('arena-chart-regret', 'Cumulative Regret', data.trajectory.rounds, data.trajectory.cumulative_regrets, '#ef4444', regretOverlay);
     // Pie
     renderPieChart('arena-chart-pie', data.action_distribution);
     // Early vs Late bar
@@ -658,7 +610,7 @@ async function runArena() {
   }
 }
 
-function renderLineChart(canvasId, label, xData, yData, color) {
+function renderLineChart(canvasId, label, xData, yData, color, overlay = null) {
   const ctx = document.getElementById(canvasId).getContext('2d');
   if (charts[canvasId]) charts[canvasId].destroy();
 
@@ -670,26 +622,44 @@ function renderLineChart(canvasId, label, xData, yData, color) {
     ys = ys.filter((_, i) => i % step === 0);
   }
 
+  const datasets = [{
+    label,
+    data: ys,
+    borderColor: color,
+    backgroundColor: color + '15',
+    fill: true,
+    pointRadius: 0,
+    tension: 0.3,
+    borderWidth: 2,
+  }];
+
+  // Optional theoretical overlay — sampled against the (possibly downsampled) xs
+  if (overlay) {
+    datasets.push({
+      label: overlay.label,
+      data: xs.map(t => overlay.compute(t)),
+      borderColor: overlay.color,
+      backgroundColor: 'transparent',
+      fill: false,
+      pointRadius: 0,
+      borderDash: [6, 4],
+      tension: 0,
+      borderWidth: 2,
+    });
+  }
+
   charts[canvasId] = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: xs,
-      datasets: [{
-        label,
-        data: ys,
-        borderColor: color,
-        backgroundColor: color + '15',
-        fill: true,
-        pointRadius: 0,
-        tension: 0.3,
-        borderWidth: 2,
-      }]
-    },
+    data: { labels: xs, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: overlay
+          ? { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, usePointStyle: true } }
+          : { display: false },
+      },
       scales: {
         x: { display: false },
         y: { grid: { color: '#f3f4f6' } },
@@ -963,6 +933,7 @@ async function hitlRefreshMetrics() {
     hitlRenderMetrics(data);
     if (data.psi) {
       renderPSIToContainer(data.psi, 'hitl-psi-cards');
+      renderPSIBarChart(data.psi, 'hitl-psi-chart', 'hitlPsi');
     }
     hitlRenderRewardChart(data.recent_rewards);
   } catch (e) {
@@ -1082,18 +1053,7 @@ async function hitlExportCSV() {
 // ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
-document.getElementById('sim-mode').addEventListener('change', function() {
-  const desc = document.getElementById('mode-desc');
-  if (this.value === 'realistic') {
-    desc.innerHTML = 'Realistic model: includes $25 fixed + 5% variable expenses, 8% lapse probability, and 2.5x CLV multiplier.';
-  } else {
-    desc.innerHTML = 'Base model: premium &minus; claims. No expenses, no lapse.';
-  }
-  simulateApplicant();
-});
-
 document.addEventListener('DOMContentLoaded', () => {
-  simulateApplicant();
-  updatePricingApplicantSummary();
+  runPricingOptimize();
   hitlRefreshMetrics();
 });

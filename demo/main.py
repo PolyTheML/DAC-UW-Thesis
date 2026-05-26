@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import sys
-from dataclasses import asdict
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +36,6 @@ from healthrl.underwriting_bandit import (  # noqa: E402
     RewardConfig,
     StaticXGBBaseline,
     expected_rewards,
-    make_reward_simulator,
     preprocess_cambodia_data,
     run_bandit,
 )
@@ -119,13 +118,13 @@ class ApplicantIn(BaseModel):
     self_reported_health: str = "Fair"
     mortality_multiplier: float = Field(..., ge=0.5, le=5.0)
     mode: str = "simple"  # "simple" or "realistic"
+    adverse_factor: float | None = Field(None, ge=1.0, le=2.0)
 
 
 class SimulateResponse(BaseModel):
     applicant: dict[str, Any]
     expected_rewards: dict[str, float]
     optimal_action: str
-    stochastic_run: dict[str, Any] | None = None
 
 
 class BanditRunIn(BaseModel):
@@ -140,6 +139,7 @@ class BanditRunIn(BaseModel):
 class BanditRunResponse(BaseModel):
     algorithm: str
     n_rounds: int
+    n_features: int
     cumulative_reward: float
     cumulative_regret: float
     avg_regret_last_500: float
@@ -262,71 +262,16 @@ def _get_config(mode: str) -> RewardConfig:
 
 @app.post("/api/simulate", response_model=SimulateResponse)
 async def simulate_applicant(payload: ApplicantIn) -> SimulateResponse:
-    """
-    Compute expected rewards for all 4 underwriting actions for a given applicant.
-    """
+    """Expected rewards for all 4 underwriting actions. Used by the /defense deck."""
     row = _applicant_to_series(payload.model_dump())
     config = _get_config(payload.mode)
     exp = expected_rewards(row, config)
-    opt_action = ACTION_NAMES[int(np.argmax(exp))]
-
-    expected = {
-        ACTION_NAMES[i]: round(float(exp[i]), 2) for i in range(len(ACTION_NAMES))
-    }
-
+    expected = {ACTION_NAMES[i]: round(float(exp[i]), 2) for i in range(len(ACTION_NAMES))}
     return SimulateResponse(
         applicant=payload.model_dump(),
         expected_rewards=expected,
-        optimal_action=opt_action,
+        optimal_action=ACTION_NAMES[int(np.argmax(exp))],
     )
-
-
-@app.post("/api/simulate/stochastic")
-async def simulate_stochastic(payload: ApplicantIn, seed: int = 42) -> dict[str, Any]:
-    """Run a stochastic realisation for each of the 4 actions."""
-    row = _applicant_to_series(payload.model_dump())
-    config = _get_config(payload.mode)
-    rng = np.random.default_rng(seed)
-    reward_fn = make_reward_simulator(rng, config)
-
-    outcomes = {}
-    for a in range(4):
-        r = reward_fn(a, row)
-        outcomes[ACTION_NAMES[a]] = {
-            "reward": round(float(r), 2),
-            "outcome": _describe_outcome(a, r, row, config),
-        }
-
-    return {
-        "applicant": payload.model_dump(),
-        "seed": seed,
-        "mode": payload.mode,
-        "outcomes": outcomes,
-    }
-
-
-def _describe_outcome(action: int, reward: float, row: pd.Series, config: RewardConfig | None = None) -> str:
-    """Human-readable description of what happened."""
-    cfg = config if config is not None else RewardConfig()
-    if action == 2:  # DECLINE
-        return f"Application declined. Opportunity cost (${cfg.decline_cost:.0f})."
-    if action == 3:  # REFER
-        return f"Referred to manual underwriter. Net reward ${reward:.0f}."
-    # STANDARD or RATED
-    base_premium = cfg.base_premium_rate * row["mortality_multiplier"]
-    monthly_premium = (base_premium * (1.0 if action == 0 else 1.25)) / 12
-    monthly_income = row["monthly_income_usd"]
-    ratio = monthly_premium / monthly_income
-    p_acc = max(cfg.min_acceptance, cfg.acceptance_intercept - cfg.acceptance_slope * ratio)
-    if reward > 0:
-        extras = []
-        if cfg.expense_fixed > 0 or cfg.expense_ratio > 0:
-            extras.append("expenses deducted")
-        if cfg.clv_multiplier > 1.0:
-            extras.append(f"CLVx{cfg.clv_multiplier}")
-        suffix = f" ({', '.join(extras)})" if extras else ""
-        return f"Customer accepted (p={p_acc:.1%}). Net reward positive{suffix}."
-    return f"Customer rejected or net negative. Walk cost applied."
 
 
 @app.post("/api/bandit/run", response_model=BanditRunResponse)
@@ -368,6 +313,7 @@ async def bandit_run(payload: BanditRunIn) -> BanditRunResponse:
     return BanditRunResponse(
         algorithm=algo_name,
         n_rounds=n,
+        n_features=N_FEATURES,
         cumulative_reward=round(float(result.cumulative_rewards[-1]), 2),
         cumulative_regret=round(float(result.cumulative_regrets[-1]), 2),
         avg_regret_last_500=round(float(np.mean(result.regrets[-500:])), 2),
@@ -414,6 +360,8 @@ async def pricing_optimize(payload: ApplicantIn) -> PricingOptimizeResponse:
     """Find the profit-maximising premium multiplier for a single applicant."""
     row = _applicant_to_series(payload.model_dump())
     config = _get_config(payload.mode)
+    if payload.adverse_factor is not None:
+        config = replace(config, adverse_factor=payload.adverse_factor)
     result = optimize_premium(row, config)
     return PricingOptimizeResponse(**result)
 
