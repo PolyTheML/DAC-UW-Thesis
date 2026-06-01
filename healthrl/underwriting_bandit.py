@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-ROOT = Path(__file__).parent.parent.parent
+ROOT = Path(__file__).parent.parent
 DATA_PATH = ROOT / "data" / "cambodia" / "cambodia_dataset.csv"
 MODELS_DIR = ROOT / "data" / "cambodia" / "models"
 
