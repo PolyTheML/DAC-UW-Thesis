@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "description": "Canonical thesis results transcribed verbatim from the Chapter V tables. These are the authoritative 20-seed (seeds 1-20, N=5000) headline numbers the demo must display. Single-seed live runs are illustrative only and must NOT be presented as these values.",
+    "methodology": "20 independent seeds (1-20), N=5000 rounds; mean +/- std with 95% bootstrap CI; paired Wilcoxon signed-rank with Bonferroni; Cohen's d. EXP-009/013 also 20 seeds; EXP-010/012 use 10 seeds/cell by design.",
+    "primary_illustrative_seed": 42,
+    "generated": "2026-06-01 (transcribed from thesis/health_rl/chapter05_results.md)"
+  },
+  "exp005": {
+    "source": "Chapter V, Table 5.1.1 (convergence, 20 seeds)",
+    "linucb_reward": 90540,
+    "linucb_reward_ci": [88287, 92886],
+    "static_reward": 72292,
+    "static_reward_ci": [70646, 74136],
+    "oracle_reward": 126804,
+    "oracle_reward_ci": [124857, 128846],
+    "reward_diff": 18248,
+    "lift_pct": 25.2,
+    "reward_p": "< 0.001",
+    "reward_cohen_d": 2.98,
+    "linucb_regret_late": 2.20,
+    "static_regret_late": 9.01,
+    "regret_diff": -6.81,
+    "regret_cohen_d": -1.59,
+    "entropy_early": 1.314,
+    "entropy_late": 1.105,
+    "action_accuracy_pct": 37.8,
+    "oracle_reward_recovered_pct": 72
+  },
+  "exp006": {
+    "source": "Chapter V, Table 5.2.1 + sec 5.2.1/5.2.3 (fairness, 20 seeds, converged rounds 3000-4999)",
+    "eeoc_threshold_pct": 80,
+    "region": {
+      "parity_pct": 85.72,
+      "approval_min": 0.6622,
+      "approval_max": 0.7725,
+      "psi_max_sliding": 0.0821,
+      "psi_final_window": 0.0424,
+      "psi_zone": "GREEN",
+      "permutation_p": 0.1322,
+      "permutation_note": "null of action-region independence NOT rejected (no significant regional bias)"
+    },
+    "occupation": {
+      "parity_pct": 90.12,
+      "approval_min": 0.6803,
+      "approval_max": 0.7549,
+      "psi_max_sliding": 0.1225,
+      "psi_final_window": 0.0710,
+      "psi_zone": "AMBER",
+      "permutation_p": "< 0.001",
+      "permutation_note": "statistically significant association but practically small; parity 90.12% >> 80% and PSI within threshold (sec 5.2.3)"
+    }
+  },
+  "exp007": {
+    "source": "Chapter V, Table 5.3.1 (benchmark, 20 seeds)",
+    "lints_vs_linucb_p": 0.87,
+    "ranking": [
+      { "rank": 1, "algorithm": "LinTS",    "reward": 93572, "reward_ci": [90980, 96312], "regret": 21149, "regret_ci": [18285, 23873] },
+      { "rank": 2, "algorithm": "LinUCB",   "reward": 91947, "reward_ci": [89251, 94768], "regret": 22774, "regret_ci": [19865, 25559] },
+      { "rank": 3, "algorithm": "EpsilonGreedy", "reward": 76441, "reward_ci": [73767, 79107], "regret": 38281, "regret_ci": [35570, 40983] },
+      { "rank": 4, "algorithm": "StaticXGB", "reward": 72173, "reward_ci": [70085, 74318], "regret": 42548, "regret_ci": [40414, 44642] }
+    ],
+    "oracle": { "reward": 126318, "regret": -11597 }
+  },
+  "exp008": {
+    "source": "Chapter V, Table 5.4.1 (human-in-the-loop)",
+    "headline_conservatism": 0.7,
+    "hitl_reward": 102100,
+    "baseline_reward": 95872,
+    "hitl_regret": 12555,
+    "baseline_regret": 19289,
+    "lift_abs": 6228,
+    "lift_pct": 6.5,
+    "human_cost": 2625,
+    "human_cost_pct_of_reward": 2.6,
+    "referrals": 75,
+    "referral_pct": 1.5,
+    "alignment_pct": 60.0,
+    "max_queue_depth": 0,
+    "cells": {
+      "0.3": { "reward": 101646, "regret": 13009, "human_cost": 2555, "alignment_pct": 54.0, "overrides": 73 },
+      "0.5": { "reward": 101646, "regret": 13009, "human_cost": 2555, "alignment_pct": 54.0, "overrides": 73 },
+      "0.7": { "reward": 102100, "regret": 12555, "human_cost": 2625, "alignment_pct": 60.0, "overrides": 75 }
+    }
+  },
+  "exp009": {
+    "source": "Chapter V, Table 5.9.1 (drift adaptation, 20 seeds, shock at round 1500)",
+    "shock": "TB prevalence doubled (~6.3% -> 12.5%) + garment-worker income -30% at round 1500",
+    "rows": [
+      { "algorithm": "LinUCB",    "pre_regret": 8.67, "post_regret": 2.48, "post_pre_ratio": 0.29, "cum_regret": 21679 },
+      { "algorithm": "LinTS",     "pre_regret": 8.24, "post_regret": 2.42, "post_pre_ratio": 0.29, "cum_regret": 20824 },
+      { "algorithm": "StaticXGB", "pre_regret": 8.71, "post_regret": 7.44, "post_pre_ratio": 0.85, "cum_regret": 39093 }
+    ],
+    "caveat": "Pre/post windows also differ in learning-curve position; the static baseline's 0.85x ratio is the cleanest comparator (sec 5.9.3). DiscountedLinUCB is proposed future work, not tested here.",
+    "figure": "/static/fig_009_drift_adaptation.png"
+  },
+  "exp013": {
+    "source": "Chapter V, Table 5.6.1 (log-log regret validation, 20 seeds)",
+    "slope": 0.572,
+    "r2": 0.992,
+    "per_seed_slope_mean": 0.564,
+    "per_seed_slope_std": 0.142,
+    "asymptotic_slope": 0.511,
+    "asymptotic_burnin": 1000,
+    "theoretical_slope": 0.5,
+    "bound": "O~(d sqrt(T)), Li et al. 2010"
+  }
+}

@@ -3,7 +3,7 @@ const TOTAL_SCENES = 10;
 let currentScene = 1;
 const charts = {};
 const state = {
-  exp005: null, exp007: null, coef: null,
+  exp005: null, exp007: null, coef: null, thesis: null,
   s3: { humanReward: 0, linucbReward: 0, pulls: 0, means: [45, 50, -10, 20], counts: [0,0,0,0], sums: [0,0,0,0], linucb: { A:[], b:[] } },
   arena: { interval: null, round: 0, data: null },
   fairnessTab: 'region',
@@ -61,6 +61,7 @@ async function loadData(){
   try{ state.exp005 = await (await fetch('/static/exp005_results_seed42.json')).json(); }catch(e){ console.warn('exp005',e); }
   try{ state.exp007 = await (await fetch('/static/exp007_results_seed42.json')).json(); }catch(e){ console.warn('exp007',e); }
   try{ state.coef   = await (await fetch('/static/coefficients_linucb_seed42.json')).json(); }catch(e){ console.warn('coef',e); }
+  try{ state.thesis = await (await fetch('/static/thesis_results.json')).json(); }catch(e){ console.warn('thesis',e); }
 }
 
 // ---------------------------------------------------------------------------
@@ -252,31 +253,40 @@ function renderCoefficients(actionIdx){
 // ---------------------------------------------------------------------------
 // Scene 7: Fairness
 // ---------------------------------------------------------------------------
-const FAIRNESS_DATA = {
-  region:{
-    labels:['Phnom Penh','Kandal','Kampong Cham','Siem Reap','Battambang','Prey Veng','Preah Sihanouk','Other Provinces'],
-    applicant:[16.2,7.4,10.3,7.9,6.9,6.3,1.3,43.6],
-    approved:[15.8,7.1,10.1,7.5,6.5,5.8,1.2,46.0],
-    rates:[75.3,72.1,74.5,73.8,70.2,56.2,79.4,68.5],
-  },
-  occupation:{
-    labels:['Rice Farmer','Garment Worker','Market Vendor','Moto/Tuk-tuk','Civil Servant','Construction','Monk/Retired'],
-    applicant:[28,20,15,12,10,8,7],
-    approved:[26.5,21.2,14.1,11.5,9.8,8.2,5.7],
-    rates:[67.7,77.4,71.2,68.4,73.1,72.2,51.1],
-  }
-};
+// Fairness is driven entirely by canonical 20-seed thesis numbers (thesis_results.json -> exp006).
+// The thesis reports min/max approval rates per dimension + the EEOC four-fifths (80%) rule;
+// we render those real extremes against the 80%-of-max floor (no fabricated per-group rates).
 function setFairnessTab(tab){ state.fairnessTab=tab; document.getElementById('tab-region').className='text-xs px-3 py-1.5 rounded-md '+(tab==='region'?'bg-thesis-500 text-white':'bg-white border border-gray-300 text-gray-700'); document.getElementById('tab-occupation').className='text-xs px-3 py-1.5 rounded-md '+(tab==='occupation'?'bg-thesis-500 text-white':'bg-white border border-gray-300 text-gray-700'); renderFairness(); }
 function renderFairness(){
-  const d=FAIRNESS_DATA[state.fairnessTab];
+  const t = state.thesis && state.thesis.exp006;
+  const dim = state.fairnessTab;
+  const d = t && t[dim];
+  if(!d) return;
+  const minPct = d.approval_min*100, maxPct = d.approval_max*100;
+  const floor = maxPct * (t.eeoc_threshold_pct/100); // EEOC 4/5 floor relative to the max group
   const ctx=document.getElementById('chart-fairness');
   if(charts.fairness) charts.fairness.destroy();
-  const maxRate=Math.max(...d.rates);
-  const thresholdLine=d.rates.map(()=>maxRate*0.5);
-  charts.fairness=new Chart(ctx,{type:'bar',data:{labels:d.labels,datasets:[
-    {label:'Approval Rate %', data:d.rates, backgroundColor:d.rates.map(r=>r>=maxRate*0.5?'#2E5FA3':'#ef4444'), borderRadius:4, order:1},
-    {label:'50% Parity Floor', data:thresholdLine, type:'line', borderColor:'#f59e0b', borderWidth:2, pointRadius:0, borderDash:[5,5], order:0}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{grid:{color:'#f3f4f6'},max:100},x:{grid:{display:false}}}}}});
+  charts.fairness=new Chart(ctx,{type:'bar',data:{
+    labels:['Lowest-approval group','Highest-approval group'],
+    datasets:[
+      {label:'Approval rate %', data:[minPct,maxPct], backgroundColor:[minPct>=floor?'#10b981':'#ef4444','#2E5FA3'], borderRadius:4, order:1},
+      {label:`EEOC 4/5 floor (${t.eeoc_threshold_pct}% of max)`, data:[floor,floor], type:'line', borderColor:'#f59e0b', borderWidth:2, pointRadius:0, borderDash:[6,4], order:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{grid:{color:'#f3f4f6'},max:100,title:{display:true,text:'Approval rate (%)'}},x:{grid:{display:false}}}}
+  });
+  // Scorecard (canonical values)
+  document.getElementById('fair-dim-label').textContent = dim==='region'?'Region':'Occupation';
+  const parityBadge=document.getElementById('fair-parity-badge');
+  parityBadge.textContent = d.parity_pct.toFixed(2)+'% (min/max)';
+  parityBadge.className='stamp '+(d.parity_pct>=t.eeoc_threshold_pct?'stamp-green':'stamp-red');
+  const psiBadge=document.getElementById('fair-psi-badge');
+  psiBadge.textContent = d.psi_max_sliding.toFixed(4)+' '+d.psi_zone;
+  psiBadge.className='stamp '+(d.psi_zone==='GREEN'?'stamp-green':d.psi_zone==='AMBER'?'stamp-amber':'stamp-red');
+  const eeoc=document.getElementById('fair-eeoc-badge');
+  const pass=d.parity_pct>=t.eeoc_threshold_pct;
+  eeoc.textContent = pass?('PASS ≥'+t.eeoc_threshold_pct+'%'):'FAIL';
+  eeoc.className='stamp '+(pass?'stamp-green':'stamp-red');
+  document.getElementById('fair-perm-note').textContent = 'Permutation test p='+d.permutation_p+' — '+d.permutation_note;
 }
 
 // ---------------------------------------------------------------------------
