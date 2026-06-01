@@ -50,7 +50,7 @@ async function apiGet(path) {
 // Tabs
 // ---------------------------------------------------------------------------
 function switchTab(name) {
-  ['pricing', 'arena', 'benchmark', 'hitl'].forEach(t => {
+  ['simulator', 'pricing', 'arena', 'benchmark', 'hitl', 'interpret'].forEach(t => {
     document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== name);
     const btn = document.getElementById(`tab-${t}`);
     if (t === name) {
@@ -61,6 +61,7 @@ function switchTab(name) {
       btn.classList.add('tab-inactive');
     }
   });
+  if (name === 'interpret') interpInit();
 }
 
 // ---------------------------------------------------------------------------
@@ -1051,9 +1052,193 @@ async function hitlExportCSV() {
 }
 
 // ---------------------------------------------------------------------------
+// Applicant Simulator (FR-1) — expected reward for all four actions
+// ---------------------------------------------------------------------------
+const SIM_ACTIONS = ['STANDARD', 'RATED', 'DECLINE', 'REFER'];
+const SIM_COLORS = ['#10b981', '#f59e0b', '#ef4444', '#6366f1'];
+
+async function populateSimSelects() {
+  try {
+    const f = await apiGet('/api/applicant/fields');
+    const reg = document.getElementById('sim-region');
+    const occ = document.getElementById('sim-occupation');
+    reg.innerHTML = f.regions.map(r => `<option>${r}</option>`).join('');
+    occ.innerHTML = f.occupations.map(o => `<option>${o}</option>`).join('');
+    reg.value = 'Phnom Penh';
+    occ.value = 'Rice Farmer';
+  } catch (e) { console.warn('sim fields', e); }
+}
+
+function getSimFormData() {
+  return {
+    age: parseInt(document.getElementById('sim-age').value),
+    gender: document.getElementById('sim-gender').value,
+    bmi: parseFloat(document.getElementById('sim-bmi').value),
+    is_smoking: document.getElementById('sim-smoking').checked ? 1 : 0,
+    alcohol_use: document.getElementById('sim-alcohol').checked ? 1 : 0,
+    is_exercise: document.getElementById('sim-exercise').checked ? 1 : 0,
+    has_family_history: 0,
+    monthly_income_usd: parseFloat(document.getElementById('sim-income').value),
+    pre_existing_conditions: '',
+    region: document.getElementById('sim-region').value,
+    occupation: document.getElementById('sim-occupation').value,
+    education: 'Primary',
+    wealth_quintile: 'Middle',
+    self_reported_health: 'Fair',
+    mortality_multiplier: parseFloat(document.getElementById('sim-mortality').value),
+    mode: document.getElementById('sim-mode').value,
+  };
+}
+
+async function simRandom() {
+  try {
+    const data = await apiGet('/api/applicant/random');
+    const a = data.applicant;
+    document.getElementById('sim-age').value = a.age;
+    document.getElementById('sim-gender').value = a.gender;
+    document.getElementById('sim-bmi').value = a.bmi;
+    document.getElementById('sim-income').value = a.monthly_income_usd;
+    document.getElementById('sim-region').value = a.region;
+    document.getElementById('sim-occupation').value = a.occupation;
+    document.getElementById('sim-smoking').checked = !!a.is_smoking;
+    document.getElementById('sim-alcohol').checked = !!a.alcohol_use;
+    document.getElementById('sim-exercise').checked = !!a.is_exercise;
+    document.getElementById('sim-mortality').value = a.mortality_multiplier;
+    document.getElementById('sim-mort-label').innerText = a.mortality_multiplier;
+    simRun();
+  } catch (e) { console.warn(e); }
+}
+
+async function simRun() {
+  try {
+    const data = await apiPost('/api/simulate', getSimFormData());
+    const rewards = data.expected_rewards;
+    const optimal = data.optimal_action;
+    const cards = document.getElementById('sim-action-cards');
+    cards.innerHTML = '';
+    SIM_ACTIONS.forEach((act, i) => {
+      const v = rewards[act];
+      const isOpt = act === optimal;
+      const card = document.createElement('div');
+      card.className = `rounded-xl border p-4 ${isOpt ? 'border-thesis-400 ring-2 ring-thesis-200 bg-thesis-50' : 'border-gray-200 bg-white'}`;
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase ${isOpt ? 'text-thesis-700' : 'text-gray-500'}">${act}</span>
+          ${isOpt ? '<span class="text-xs font-bold text-thesis-600">★ pick</span>' : ''}
+        </div>
+        <div class="text-2xl font-bold mt-1 ${v >= 0 ? 'text-gray-900' : 'text-red-600'}">${fmtMoney(v)}</div>
+      `;
+      cards.appendChild(card);
+    });
+    renderSimChart(rewards, optimal);
+  } catch (e) {
+    alert('Simulate failed: ' + e.message);
+  }
+}
+
+function renderSimChart(rewards, optimal) {
+  const ctx = document.getElementById('sim-chart').getContext('2d');
+  if (charts.sim) charts.sim.destroy();
+  charts.sim = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: SIM_ACTIONS,
+      datasets: [{
+        label: 'Expected Reward (USD)',
+        data: SIM_ACTIONS.map(a => rewards[a]),
+        backgroundColor: SIM_ACTIONS.map((a, i) => a === optimal ? SIM_COLORS[i] : SIM_COLORS[i] + '88'),
+        borderColor: SIM_ACTIONS.map((a) => a === optimal ? '#1f3f6f' : 'transparent'),
+        borderWidth: SIM_ACTIONS.map((a) => a === optimal ? 2 : 0),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.label}: ${fmtMoney(c.raw)}` } } },
+      scales: { y: { grid: { color: '#f3f4f6' }, title: { display: true, text: 'Expected Reward (USD)' } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Interpretability (NFR-7) — per-action coefficient audit
+// ---------------------------------------------------------------------------
+let interpCoef = null;
+const INTERP_INSIGHTS = [
+  'For STANDARD, income and low mortality are the strongest positive drivers — the bandit favours profitable low-risk applicants.',
+  'For RATED, the mortality multiplier dominates: the bandit learns to price elevated risk rather than decline it.',
+  'For DECLINE, smoking and condition count are the top positive predictors of uninsurability.',
+  'For REFER, coefficients sit near zero — the bandit treats it as an uncertainty fallback, not a feature-driven action.',
+];
+
+async function interpInit() {
+  if (interpCoef) return;
+  try {
+    interpCoef = await apiGet('/static/coefficients_linucb_seed42.json');
+    interpShow(0);
+  } catch (e) { console.warn('coef', e); }
+}
+
+function interpShow(actionIdx) {
+  if (!interpCoef) return;
+  document.querySelectorAll('#interp-action-buttons button').forEach((btn, i) => {
+    btn.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium border ' +
+      (i === actionIdx ? 'bg-thesis-100 text-thesis-700 border-thesis-200' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50');
+  });
+  document.getElementById('interp-action-label').textContent = SIM_ACTIONS[actionIdx];
+  document.getElementById('interp-insight').textContent = INTERP_INSIGHTS[actionIdx];
+  const vals = interpCoef.theta[actionIdx];
+  const top = interpCoef.features
+    .map((f, i) => ({ name: f, value: vals[i] }))
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    .slice(0, 14);
+  const ctx = document.getElementById('interp-chart').getContext('2d');
+  if (charts.interp) charts.interp.destroy();
+  charts.interp = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: top.map(f => f.name),
+      datasets: [{
+        label: 'Coefficient θ',
+        data: top.map(f => f.value),
+        backgroundColor: top.map(f => f.value >= 0 ? '#2E5FA3' : '#ef4444'),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `θ = ${c.raw.toFixed(3)}` } } },
+      scales: { x: { grid: { color: '#f3f4f6' } }, y: { grid: { display: false } } }
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Canonical 20-seed results strip
+// ---------------------------------------------------------------------------
+async function loadCanonStrip() {
+  try {
+    const t = await apiGet('/static/thesis_results.json');
+    const parts = [
+      `LinUCB +${t.exp005.lift_pct}% vs Static (p ${t.exp005.reward_p}, d=${t.exp005.reward_cohen_d})`,
+      `fairness parity ${t.exp006.region.parity_pct}% region / ${t.exp006.occupation.parity_pct}% occ (EEOC ≥${t.exp006.eeoc_threshold_pct}%)`,
+      `HITL +${t.exp008.lift_pct}% @ ${t.exp008.referral_pct}% referral`,
+    ];
+    document.getElementById('canon-strip-body').textContent = parts.join('  ·  ');
+  } catch (e) {
+    document.getElementById('canon-strip-body').textContent = 'see defense deck for full results';
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
+  loadCanonStrip();
+  populateSimSelects().then(simRun);
   runPricingOptimize();
   hitlRefreshMetrics();
 });

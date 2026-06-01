@@ -58,21 +58,36 @@
     </div>
   </header>
 
+  <!-- Canonical 20-seed results strip -->
+  <div class="bg-thesis-700 text-white text-xs">
+    <div class="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center gap-x-5 gap-y-1">
+      <span class="font-semibold uppercase tracking-wide text-thesis-100">Thesis results · 20 seeds</span>
+      <span id="canon-strip-body" class="text-thesis-50">loading…</span>
+      <a href="/defense" class="ml-auto underline hover:text-white font-medium">Open defense deck →</a>
+    </div>
+  </div>
+
   <!-- Tabs -->
   <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="flex space-x-8">
-        <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-active py-3 text-sm transition-colors">
+      <div class="flex space-x-8 overflow-x-auto">
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="tab-active py-3 text-sm transition-colors whitespace-nowrap">
+          Applicant Simulator
+        </button>
+        <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
           Pricing Engine
         </button>
-        <button onclick="switchTab('arena')" id="tab-arena" class="tab-inactive py-3 text-sm transition-colors">
+        <button onclick="switchTab('arena')" id="tab-arena" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
           Bandit Arena
         </button>
-        <button onclick="switchTab('benchmark')" id="tab-benchmark" class="tab-inactive py-3 text-sm transition-colors">
+        <button onclick="switchTab('benchmark')" id="tab-benchmark" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
           Benchmark Race
         </button>
-        <button onclick="switchTab('hitl')" id="tab-hitl" class="tab-inactive py-3 text-sm transition-colors">
+        <button onclick="switchTab('hitl')" id="tab-hitl" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
           Underwriter Review
+        </button>
+        <button onclick="switchTab('interpret')" id="tab-interpret" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
+          Interpretability
         </button>
       </div>
     </div>
@@ -80,8 +95,60 @@
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
+    <!-- ==================== TAB: APPLICANT SIMULATOR (FR-1) ==================== -->
+    <section id="panel-simulator" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Controls -->
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-gray-900">Applicant</h2>
+            <button onclick="simRandom()" class="text-xs bg-thesis-50 text-thesis-600 px-2.5 py-1.5 rounded-md hover:bg-thesis-100 font-medium">🎲 Random</button>
+          </div>
+          <p class="text-xs text-gray-500">FR-1: the bandit observes the applicant context and scores all four underwriting actions. It chooses the action with the highest expected reward (★).</p>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div><label class="block text-xs text-gray-500 mb-1">Age</label><input type="number" id="sim-age" value="35" min="18" max="85" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"></div>
+            <div><label class="block text-xs text-gray-500 mb-1">Gender</label><select id="sim-gender" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"><option>Male</option><option selected>Female</option></select></div>
+            <div><label class="block text-xs text-gray-500 mb-1">BMI</label><input type="number" id="sim-bmi" value="24.5" step="0.1" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"></div>
+            <div><label class="block text-xs text-gray-500 mb-1">Income (USD/mo)</label><input type="number" id="sim-income" value="320" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"></div>
+            <div><label class="block text-xs text-gray-500 mb-1">Region</label><select id="sim-region" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"></select></div>
+            <div><label class="block text-xs text-gray-500 mb-1">Occupation</label><select id="sim-occupation" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5"></select></div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <label class="flex items-center gap-1.5"><input type="checkbox" id="sim-smoking" class="w-3.5 h-3.5">Smoking</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" id="sim-alcohol" class="w-3.5 h-3.5">Alcohol</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" id="sim-exercise" class="w-3.5 h-3.5" checked>Exercise</label>
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Mortality Multiplier <span id="sim-mort-label" class="font-mono text-thesis-600">1.2</span></label>
+            <input type="range" id="sim-mortality" min="0.5" max="5.0" step="0.1" value="1.2" oninput="document.getElementById('sim-mort-label').innerText=this.value" class="w-full">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Cost Model</label>
+            <select id="sim-mode" class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm" onchange="simRun()"><option value="simple" selected>Simple</option><option value="realistic">Realistic (expenses + lapse + CLV)</option></select>
+          </div>
+          <button onclick="simRun()" class="w-full bg-thesis-500 hover:bg-thesis-600 text-white font-medium py-2 rounded-md transition shadow-sm">Score Applicant</button>
+        </div>
+        <!-- Results -->
+        <div class="lg:col-span-2 space-y-5">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-semibold text-gray-900">Expected Reward by Action</h2>
+              <span class="text-xs text-gray-500">Bandit picks the ★ (argmax expected reward)</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="sim-action-cards">
+              <div class="col-span-4 text-center text-gray-400 italic py-6">Score an applicant to see the four-action reward comparison.</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h3 class="text-sm font-semibold text-gray-700 mb-2">Action Reward Comparison</h3>
+            <div class="h-56"><canvas id="sim-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== TAB 1: PRICING ENGINE ==================== -->
-    <section id="panel-pricing" class="space-y-6">
+    <section id="panel-pricing" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Controls -->
         <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
@@ -714,6 +781,32 @@
               </table>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: INTERPRETABILITY (NFR-7) ==================== -->
+    <section id="panel-interpret" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 space-y-3">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h2 class="font-semibold text-gray-900 mb-1">Coefficient Audit</h2>
+            <p class="text-xs text-gray-500 mb-3">NFR-7: linear bandits expose an explicit per-action weight vector θ_a. Inspect which features drive each decision (LinUCB, seed 42, 5,000 rounds).</p>
+            <div class="space-y-2" id="interp-action-buttons">
+              <button onclick="interpShow(0)" data-idx="0" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-thesis-100 text-thesis-700 border border-thesis-200">STANDARD</button>
+              <button onclick="interpShow(1)" data-idx="1" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">RATED</button>
+              <button onclick="interpShow(2)" data-idx="2" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">DECLINE</button>
+              <button onclick="interpShow(3)" data-idx="3" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-50">REFER</button>
+            </div>
+          </div>
+          <div class="bg-thesis-50 rounded-xl border border-thesis-200 p-4">
+            <div class="text-xs font-semibold text-thesis-600 uppercase mb-1">Insight</div>
+            <p class="text-sm text-thesis-800" id="interp-insight">Select an action to inspect its feature weights.</p>
+          </div>
+        </div>
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2">Top feature weights (θ) — <span id="interp-action-label">STANDARD</span></h3>
+          <div class="h-96"><canvas id="interp-chart"></canvas></div>
         </div>
       </div>
     </section>
