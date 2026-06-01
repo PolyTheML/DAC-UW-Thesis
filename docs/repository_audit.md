@@ -22,6 +22,12 @@ Backend (`main.py`): 🟢 Endpoints are correct and reuse the real `healthrl` pa
 
 ## B. Defense deck — thesis-alignment defects
 
+### B0 🔴🔴 `defense.js` did not parse at all — the deck was completely non-functional
+- Two bracket errors shipped on `main`: a **missing `}`** in `renderBenchmark` (Scene 5, line ~228) and an **extra `}`** in `renderCoefficients` (Scene 6, line ~253). A single syntax error aborts parsing of the *entire* script, so `init()` never ran — no nav dots, no charts, no scene logic anywhere in `/defense`.
+- **How found:** `node --check` / V8 `new Function` rejected the file at the benchmark line; a string-aware bracket linter localised both (16 `{`/15 `}` at 228; 11 `{`/12 `}` at 253).
+- **Status:** **FIXED** (commit "repair two pre-existing syntax errors"). File now parses cleanly under V8; server-verified that `/defense` serves and the scene endpoints respond.
+- This is the single most important fix: no amount of number-alignment matters if the JavaScript never executes.
+
 ### B1 🔴 Scene 7 (Fairness & PSI) — fabricated data + wrong fairness rule
 - `FAIRNESS_DATA` in `defense.js:255-268` is **hardcoded and invented**. Several rates fall **below 80%** (Prey Veng 56.2%, Monk/Retired 51.1%) and the chart enforces a **50% parity floor** (`defense.js:275-279`), not the thesis's **EEOC four-fifths (80%) rule**.
 - The HTML PSI scorecard (`defense.html:368-377`) shows "Region 0.0050 / Occupation 0.0100 GREEN".
@@ -89,6 +95,7 @@ Backend (`main.py`): 🟢 Endpoints are correct and reuse the real `healthrl` pa
 
 ## E. Summary — what to fix, in priority order
 
+0. **B0 (dead JS)** 🔴🔴 — **DONE.** Deck JS now parses and runs.
 1. **B1 (fairness)** 🔴 — correct rule + real numbers. *Highest defense risk.*
 2. **B2 (arena headline)** 🔴 — canonical 20-seed vs illustrative single-seed; fix entropy.
 3. **B3 (HITL)** 🟠 — headline c=0.7 numbers.
