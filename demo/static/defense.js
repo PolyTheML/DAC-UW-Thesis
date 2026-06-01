@@ -48,7 +48,7 @@ function showScene(n){
   if(n===5) renderBenchmark();
   if(n===6) renderCoefficients(0);
   if(n===7) renderFairness();
-  if(n===8) hitlRecommend();
+  if(n===8){ renderHitlCanonical(); hitlRecommend(); }
   if(n===9) renderDrift();
 }
 function nextScene(){ showScene(currentScene+1); }
@@ -325,9 +325,27 @@ async function hitlOverride(action){
     renderHitlWaterfall();
   }catch(e){ console.warn(e); }
 }
+function renderHitlCanonical(){
+  const t = state.thesis && state.thesis.exp008; if(!t) return;
+  const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  set('hitl-d-reward', fmt$(t.hitl_reward));
+  set('hitl-d-baseline', fmt$(t.baseline_reward));
+  set('hitl-d-lift', '+'+t.lift_pct+'%');
+  set('hitl-d-queue', t.max_queue_depth.toFixed(2)+'%');
+  set('hitl-d-cost', fmt$(t.human_cost));
+  set('hitl-d-referral', t.referral_pct+'%');
+  renderHitlWaterfall();
+}
 function renderHitlWaterfall(){
+  // HITL cumulative reward (102,100) is already net of the 2,625 review cost, so we show
+  // baseline -> improvement -> net (the cost is reported separately in the diagnostics card,
+  // not subtracted again).
+  const t = state.thesis && state.thesis.exp008;
+  const baseline = t ? t.baseline_reward : 95872;
+  const hitl = t ? t.hitl_reward : 102100;
+  const lift = hitl - baseline;
   const ctx=document.getElementById('chart-hitl-waterfall'); if(charts.hitl) charts.hitl.destroy();
-  charts.hitl=new Chart(ctx,{type:'bar',data:{labels:['Baseline','+HITL Lift','−Human Cost','=Net'],datasets:[{data:[95872,101646-95872,-2555,101646-2555],backgroundColor:['#9ca3af','#10b981','#ef4444','#2E5FA3'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f4f6'}}}}});
+  charts.hitl=new Chart(ctx,{type:'bar',data:{labels:['Baseline','+HITL improvement','= HITL (net)'],datasets:[{data:[baseline,lift,hitl],backgroundColor:['#9ca3af','#10b981','#2E5FA3'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f4f6'}}}}});
 }
 
 // ---------------------------------------------------------------------------

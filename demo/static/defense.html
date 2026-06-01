@@ -417,7 +417,7 @@
     <div class="text-center mb-4">
       <div class="stamp stamp-green mb-1">EXP-008 · RQ4</div>
       <h2 class="text-2xl font-bold text-gray-900">Human-in-the-Loop Underwriting</h2>
-      <p class="text-gray-500 text-sm mt-1">The bandit refers when uncertain. A human resolves. Cost: 2.5% of reward.</p>
+      <p class="text-gray-500 text-sm mt-1">The bandit refers when uncertain. A human resolves. Cost: 2.6% of reward (c = 0.7).</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Left: Live Review -->
@@ -462,15 +462,19 @@
           <canvas id="chart-hitl-waterfall" height="160"></canvas>
         </div>
         <div class="bg-white rounded-xl border border-gray-200 p-4">
-          <div class="text-xs font-semibold text-gray-400 uppercase mb-2">HITL Diagnostics (EXP-008)</div>
-          <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">HITL Reward</div><div class="font-bold">$101,646</div></div>
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Baseline</div><div class="font-bold text-gray-500">$95,872</div></div>
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Lift</div><div class="font-bold text-green-700">+6.0%</div></div>
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Queue Depth</div><div class="font-bold text-green-700">0.00%</div></div>
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Human Cost</div><div class="font-bold">$2,555</div></div>
-            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Referral Rate</div><div class="font-bold">1.46%</div></div>
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-xs font-semibold text-gray-400 uppercase">HITL Diagnostics (EXP-008)</div>
+            <span class="stamp stamp-blue">c = 0.7 · headline</span>
           </div>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">HITL Reward</div><div class="font-bold" id="hitl-d-reward">$102,100</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Baseline</div><div class="font-bold text-gray-500" id="hitl-d-baseline">$95,872</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Lift</div><div class="font-bold text-green-700" id="hitl-d-lift">+6.5%</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Queue Depth</div><div class="font-bold text-green-700" id="hitl-d-queue">0.00%</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Human Cost</div><div class="font-bold" id="hitl-d-cost">$2,625</div></div>
+            <div class="bg-gray-50 rounded-lg p-2"><div class="text-xs text-gray-400">Referral Rate</div><div class="font-bold" id="hitl-d-referral">1.5%</div></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">Dual-update: the human's action <em>and</em> the REFER arm are updated, so REFER never becomes a perpetually-deferred dead action.</p>
         </div>
       </div>
     </div>
