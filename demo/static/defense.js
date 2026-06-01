@@ -105,7 +105,8 @@ async function updateScene2(){
   const p=SCENE2_PROFILES[s2idx];
   const bmi=parseFloat(document.getElementById('bmi-slider-s2').value);
   document.getElementById('bmi-val-s2').textContent=bmi.toFixed(1);
-  const body={...p, bmi, monthly_income_usd:p.income, mortality_multiplier:p.multiplier, pre_existing_conditions:p.conditions, self_reported_health:p.health, wealth_quintile:p.wealth, education:p.education, mode:'simple'};
+  const body={...p, bmi, monthly_income_usd:p.income, mortality_multiplier:p.multiplier, pre_existing_conditions:p.conditions, self_reported_health:p.health, wealth_quintile:p.wealth, education:p.education,
+    is_smoking:p.smoking||0, alcohol_use:0, is_exercise:1, has_family_history:0, mode:'simple'};
   try{
     const sim=await apiPost('/api/simulate',body);
     const container=document.getElementById('bandit-action-cards-s2'); container.innerHTML='';

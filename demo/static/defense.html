@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thesis Defense — Adaptive Underwriting Demo</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="/static/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -323,6 +323,7 @@
           <div id="benchmark-podium" class="space-y-2">
             <!-- populated by JS -->
           </div>
+          <p class="text-xs text-gray-400 mt-2">Live podium is seed 42 (illustrative). <span class="font-medium text-gray-500">Canonical 20-seed regret:</span> LinTS 21,149 ≈ LinUCB 22,774 (n.s., p=0.87) ≪ ε-Greedy 38,281 ≪ Static 42,548.</p>
         </div>
         <div class="bg-white rounded-xl border border-gray-200 p-4">
           <div class="text-xs font-semibold text-gray-400 uppercase mb-2">Key Lesson</div>
