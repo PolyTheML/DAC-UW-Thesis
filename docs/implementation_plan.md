@@ -5,6 +5,8 @@
 
 Phases run in priority order; **Phase A is defense-critical and should ship first**. B–D are improvements that strengthen the demo but do not gate the defense.
 
+> **Status (2026-06-01): Phases A, B, C, D all implemented and committed on branch `demo-thesis-alignment`.** A surprise prerequisite surfaced during A — `defense.js` had two pre-existing bracket errors that broke the entire deck's JavaScript (see audit B0); fixed first. All changes are presentation-layer only; `healthrl/`, the dataset, and experiment scripts are untouched. Server-verified: `/`, `/defense`, the new tabs, the figures, and `POST /api/hitl/reset` all respond 200.
+
 ---
 
 ## Phase A — Critical thesis alignment (defense-blocking)
