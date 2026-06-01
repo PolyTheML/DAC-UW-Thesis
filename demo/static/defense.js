@@ -352,36 +352,19 @@ function renderHitlWaterfall(){
 // Scene 9: Drift
 // ---------------------------------------------------------------------------
 function renderDrift(){
-  const ctx=document.getElementById('chart-drift');
-  if(charts.drift) charts.drift.destroy();
-  // Generate synthetic trajectories
-  const rounds=Array.from({length:100},(_,i)=>i*50+50);
-  const staticR=rounds.map(t=> t<=2500? 0.0078*t : 0.0078*t + 0.004*(t-2500) );
-  const linucbR=rounds.map(t=> t<=2500? 3.86*Math.sqrt(t) : 3.86*Math.sqrt(t) + 0.003*(t-2500) );
-  const discR=rounds.map(t=> t<=2500? 3.86*Math.sqrt(t) : 3.86*Math.sqrt(2500) + 3.5*Math.sqrt(t-2500)*0.8 );
-  charts.drift=new Chart(ctx,{type:'line',data:{labels:rounds,datasets:[
-    {label:'Static XGB', data:staticR, borderColor:'#9ca3af', borderWidth:2, pointRadius:0, borderDash:[5,5]},
-    {label:'LinUCB (no adapt)', data:linucbR, borderColor:'#f59e0b', borderWidth:2, pointRadius:0},
-    {label:'Discounted LinUCB', data:discR, borderColor:'#2E5FA3', borderWidth:2, pointRadius:0}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f4f6'},title:{display:true,text:'Cumulative Regret ($)'}}}}});
-}
-function injectDrift(type){
-  const badge=document.getElementById('drift-psi-badge');
-  const alert=document.getElementById('drift-alert');
-  badge.className='stamp stamp-red text-sm'; badge.textContent='RED · 0.31';
-  alert.classList.remove('hidden');
-  // Re-render chart with steeper post-drift slopes
-  const ctx=document.getElementById('chart-drift');
-  if(charts.drift) charts.drift.destroy();
-  const rounds=Array.from({length:100},(_,i)=>i*50+50);
-  const staticR=rounds.map(t=> t<=2500? 0.0078*t : 0.0078*t + 0.006*(t-2500) );
-  const linucbR=rounds.map(t=> t<=2500? 3.86*Math.sqrt(t) : 3.86*Math.sqrt(t) + 0.005*(t-2500) );
-  const discR=rounds.map(t=> t<=2500? 3.86*Math.sqrt(t) : 3.86*Math.sqrt(2500) + 2.8*Math.sqrt(t-2500)*0.7 );
-  charts.drift=new Chart(ctx,{type:'line',data:{labels:rounds,datasets:[
-    {label:'Static XGB', data:staticR, borderColor:'#9ca3af', borderWidth:2, pointRadius:0, borderDash:[5,5]},
-    {label:'LinUCB (no adapt)', data:linucbR, borderColor:'#f59e0b', borderWidth:2, pointRadius:0},
-    {label:'Discounted LinUCB', data:discR, borderColor:'#2E5FA3', borderWidth:2, pointRadius:0}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{},scales:{x:{grid:{display:false}},y:{grid:{color:'#f3f4f6'},title:{display:true,text:'Cumulative Regret ($)'}}}}});
+  // Real EXP-009 evidence (figure is a static image); populate the canonical ratio cards.
+  const t = state.thesis && state.thesis.exp009; if(!t) return;
+  const wrap = document.getElementById('drift-ratios');
+  if(wrap){
+    wrap.innerHTML='';
+    t.rows.forEach(r=>{
+      const good = r.post_pre_ratio <= 0.5;
+      const div=document.createElement('div'); div.className='flex items-center justify-between';
+      div.innerHTML=`<span class="text-gray-700">${r.algorithm}</span><span class="stamp ${good?'stamp-green':'stamp-amber'}">${r.post_pre_ratio.toFixed(2)}×</span>`;
+      wrap.appendChild(div);
+    });
+  }
+  const cav=document.getElementById('drift-caveat'); if(cav) cav.textContent=t.caveat;
 }
 
 // ---------------------------------------------------------------------------
