@@ -105,7 +105,17 @@ async function updateScene2(){
   const p=SCENE2_PROFILES[s2idx];
   const bmi=parseFloat(document.getElementById('bmi-slider-s2').value);
   document.getElementById('bmi-val-s2').textContent=bmi.toFixed(1);
-  const body={...p, bmi, monthly_income_usd:p.income, mortality_multiplier:p.multiplier, pre_existing_conditions:p.conditions, self_reported_health:p.health, wealth_quintile:p.wealth, education:p.education,
+  // Illustrative BMI -> mortality mapping so the slider drives real risk (higher BMI => higher
+  // expected claims). The dataset generator likewise derives mortality partly from BMI; this is a
+  // simplified monotonic version for the live scene, not the trained model.
+  const mort=Math.round((1.0+Math.max(0,bmi-20)*0.05)*100)/100;
+  // Illustrative static rule (sec 2.2): DECLINE iff BMI > 30 AND age > 50.
+  const declines=bmi>30 && p.age>50;
+  const decEl=document.getElementById('s2-static-decision');
+  const profEl=document.getElementById('s2-static-profit');
+  if(decEl){ decEl.textContent=declines?'DECLINE':'STANDARD'; decEl.className='font-bold '+(declines?'text-red-600':'text-emerald-600'); }
+  if(profEl){ profEl.textContent=declines?'−$10':'issues policy'; profEl.className='font-bold '+(declines?'text-red-600':'text-emerald-600'); }
+  const body={...p, bmi, monthly_income_usd:p.income, mortality_multiplier:mort, pre_existing_conditions:p.conditions, self_reported_health:p.health, wealth_quintile:p.wealth, education:p.education,
     is_smoking:p.smoking||0, alcohol_use:0, is_exercise:1, has_family_history:0, mode:'simple'};
   try{
     const sim=await apiPost('/api/simulate',body);

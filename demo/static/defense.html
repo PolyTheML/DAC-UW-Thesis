@@ -142,10 +142,10 @@
             <span class="text-gray-500">Age threshold</span><span class="font-mono font-medium">> 50</span>
           </div>
           <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-red-200">
-            <span class="text-gray-500">Decision</span><span class="font-bold text-red-600">DECLINE</span>
+            <span class="text-gray-500">Decision</span><span id="s2-static-decision" class="font-bold text-red-600">DECLINE</span>
           </div>
           <div class="flex justify-between bg-white rounded-lg px-3 py-2 border border-gray-200">
-            <span class="text-gray-500">Expected profit</span><span class="font-bold text-red-600">−$10</span>
+            <span class="text-gray-500">Expected profit</span><span id="s2-static-profit" class="font-bold text-red-600">−$10</span>
           </div>
         </div>
         <div class="mt-4 text-xs text-gray-400">Illustrative rule (§2.2): <code class="bg-gray-100 px-1 rounded">IF BMI&gt;30 AND AGE&gt;50 THEN DECLINE</code>. The experimental baseline is an XGBoost mortality predictor feeding a fixed threshold engine (R1–R4, §4.6.4).</div>
