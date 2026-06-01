@@ -74,6 +74,20 @@ def save_review(
         return int(cur.lastrowid)
 
 
+def reset_reviews() -> int:
+    """Delete all review records. Returns the number of rows removed.
+
+    Used by the demo's reset control so a fresh HITL session can be run
+    between defense rehearsals.
+    """
+    with _conn() as conn:
+        cur = conn.execute("SELECT COUNT(*) AS n FROM reviews")
+        n = int(cur.fetchone()["n"])
+        conn.execute("DELETE FROM reviews")
+        conn.commit()
+    return n
+
+
 def get_all_reviews() -> list[dict[str, Any]]:
     """Return every review as a dict."""
     with _conn() as conn:

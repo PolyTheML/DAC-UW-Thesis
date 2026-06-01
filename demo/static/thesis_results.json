@@ -103,5 +103,43 @@
     "asymptotic_burnin": 1000,
     "theoretical_slope": 0.5,
     "bound": "O~(d sqrt(T)), Li et al. 2010"
+  },
+  "exp010": {
+    "source": "Chapter V, Table 5.10.1 (cold-start, 10 seeds/horizon)",
+    "figure": "/static/fig_010_cold_start.png",
+    "crossover": "between T=1,000 and T=2,000",
+    "horizons": [
+      { "T": 200,  "linucb": 1313,  "lints": 1206,  "freshxgb": 2812,  "bandit_wins": false },
+      { "T": 500,  "linucb": 5593,  "lints": 5570,  "freshxgb": 7048,  "bandit_wins": false },
+      { "T": 1000, "linucb": 13033, "lints": 13496, "freshxgb": 13692, "bandit_wins": false },
+      { "T": 2000, "linucb": 31227, "lints": 31401, "freshxgb": 29267, "bandit_wins": true }
+    ],
+    "implication": "Deploy with warm-start (pre-train or shadow mode) for the first ~1,000 applications; a fresh XGBoost wins below the crossover."
+  },
+  "exp011": {
+    "source": "Chapter V, Table 5.7.1 (ablation, 20 seeds)",
+    "finding": "Load-bearing mechanism is online ridge updating, NOT the UCB exploration bonus.",
+    "variants": [
+      { "name": "Full LinUCB (alpha=1.0)", "reward": 90540, "regret": 24025, "vs_full_p": "—",        "cohen_d": "—" },
+      { "name": "No REFER (3-arm)",        "reward": 94481, "regret": 19863, "vs_full_p": "0.978 (ns)", "cohen_d": 0.49 },
+      { "name": "Greedy-only (alpha=0)",   "reward": 91261, "regret": 23365, "vs_full_p": "0.580 (ns)", "cohen_d": 0.13 },
+      { "name": "Static XGB",              "reward": 72292, "regret": 41956, "vs_full_p": "< 0.001 ***", "cohen_d": -2.98 }
+    ]
+  },
+  "exp012": {
+    "source": "Chapter V, sec 5.8 (sensitivity, 10 seeds/cell)",
+    "finding": "LinUCB beats Static XGB at every alpha, adverse-selection factor and elasticity slope; alpha=1.0 is regret-minimising.",
+    "alpha_best": 1.0,
+    "alpha_regret_spread_pct": 12,
+    "adverse_advantage": [
+      { "af": 1.0,  "advantage": 26371, "p": "0.0010 ***", "d": 4.70 },
+      { "af": 1.35, "advantage": 20028, "p": "0.0010 ***", "d": 3.05 },
+      { "af": 1.7,  "advantage": 20239, "p": "0.0010 ***", "d": 3.34 }
+    ],
+    "elasticity_advantage": [
+      { "slope": 2.5, "advantage": 23222, "p": "0.0049 **",  "d": 1.14 },
+      { "slope": 3.5, "advantage": 20028, "p": "0.0010 ***", "d": 3.05 },
+      { "slope": 4.5, "advantage": 17358, "p": "0.0010 ***", "d": 2.24 }
+    ]
   }
 }

@@ -460,6 +460,18 @@ async def hitl_metrics() -> HITLMetricsResponse:
     )
 
 
+@app.post("/api/hitl/reset")
+async def hitl_reset() -> dict[str, Any]:
+    """Clear the HITL review log and reset the in-memory bandit to a fresh prior.
+
+    Lets the demo be returned to a clean state between defense rehearsals.
+    """
+    global HITL_BANDIT
+    removed = hitl_db.reset_reviews()
+    HITL_BANDIT = LinUCB(n_actions=4, n_features=N_FEATURES, alpha=1.0)
+    return {"reset": True, "removed_reviews": removed}
+
+
 @app.get("/api/hitl/export")
 async def hitl_export() -> dict[str, str]:
     """Return the review log as a CSV string."""

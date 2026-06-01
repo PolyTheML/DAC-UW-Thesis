@@ -50,7 +50,7 @@ async function apiGet(path) {
 // Tabs
 // ---------------------------------------------------------------------------
 function switchTab(name) {
-  ['simulator', 'pricing', 'arena', 'benchmark', 'hitl', 'interpret'].forEach(t => {
+  ['simulator', 'pricing', 'arena', 'benchmark', 'hitl', 'interpret', 'appendix'].forEach(t => {
     document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== name);
     const btn = document.getElementById(`tab-${t}`);
     if (t === name) {
@@ -62,6 +62,7 @@ function switchTab(name) {
     }
   });
   if (name === 'interpret') interpInit();
+  if (name === 'appendix') appendixInit();
 }
 
 // ---------------------------------------------------------------------------
@@ -1032,6 +1033,21 @@ function hitlRenderRewardChart(rewards) {
   });
 }
 
+async function hitlReset() {
+  if (!confirm('Clear all HITL reviews and reset the bandit to a fresh prior?')) return;
+  try {
+    await apiPost('/api/hitl/reset', {});
+    hitlHistory = [];
+    hitlCurrent = null;
+    hitlRenderHistory();
+    document.getElementById('hitl-override-buttons').classList.add('hidden');
+    document.getElementById('hitl-recommendation').innerHTML = '<span class="italic text-gray-500">Session reset. Click "Next Applicant" to begin.</span>';
+    await hitlRefreshMetrics();
+  } catch (e) {
+    alert('Reset failed: ' + e.message);
+  }
+}
+
 async function hitlExportCSV() {
   try {
     const data = await apiGet('/api/hitl/export');
@@ -1219,9 +1235,11 @@ function interpShow(actionIdx) {
 // ---------------------------------------------------------------------------
 // Canonical 20-seed results strip
 // ---------------------------------------------------------------------------
+let THESIS = null;
 async function loadCanonStrip() {
   try {
     const t = await apiGet('/static/thesis_results.json');
+    THESIS = t;
     const parts = [
       `LinUCB +${t.exp005.lift_pct}% vs Static (p ${t.exp005.reward_p}, d=${t.exp005.reward_cohen_d})`,
       `fairness parity ${t.exp006.region.parity_pct}% region / ${t.exp006.occupation.parity_pct}% occ (EEOC ≥${t.exp006.eeoc_threshold_pct}%)`,
@@ -1231,6 +1249,39 @@ async function loadCanonStrip() {
   } catch (e) {
     document.getElementById('canon-strip-body').textContent = 'see defense deck for full results';
   }
+}
+
+// ---------------------------------------------------------------------------
+// More Experiments (depth on demand) — EXP-010 / 011 / 012
+// ---------------------------------------------------------------------------
+async function appendixInit() {
+  if (!THESIS) { try { THESIS = await apiGet('/static/thesis_results.json'); } catch (e) { return; } }
+  const cell = (v, cls = '') => `<td class="px-3 py-2 text-right font-mono ${cls}">${v}</td>`;
+
+  // EXP-010 cold start
+  const cold = THESIS.exp010;
+  document.getElementById('appx-cold-crossover').textContent = 'Crossover ' + cold.crossover + '.';
+  document.getElementById('appx-cold-impl').textContent = cold.implication;
+  document.getElementById('appx-cold-body').innerHTML = cold.horizons.map(h =>
+    `<tr class="hover:bg-gray-50"><td class="px-3 py-2 font-medium text-gray-700">${h.T}</td>${cell(fmtMoney(h.linucb))}${cell(fmtMoney(h.lints))}${cell(fmtMoney(h.freshxgb))}<td class="px-3 py-2 text-center">${h.bandit_wins ? '<span class="text-green-600 font-semibold">bandit</span>' : '<span class="text-gray-400">FreshXGB</span>'}</td></tr>`
+  ).join('');
+
+  // EXP-011 ablation
+  const abl = THESIS.exp011;
+  document.getElementById('appx-abl-finding').textContent = abl.finding;
+  document.getElementById('appx-abl-body').innerHTML = abl.variants.map(v =>
+    `<tr class="hover:bg-gray-50"><td class="px-3 py-2 font-medium text-gray-700">${v.name}</td>${cell(fmtMoney(v.reward))}${cell(fmtMoney(v.regret))}${cell(v.vs_full_p)}${cell(v.cohen_d)}</tr>`
+  ).join('');
+
+  // EXP-012 sensitivity
+  const sens = THESIS.exp012;
+  document.getElementById('appx-sens-finding').textContent = sens.finding;
+  document.getElementById('appx-adv-body').innerHTML = sens.adverse_advantage.map(r =>
+    `<tr><td class="px-2 py-1.5 text-gray-700">${r.af}</td><td class="px-2 py-1.5 text-right font-mono text-green-700">+${fmtMoney(r.advantage)}</td><td class="px-2 py-1.5 text-right font-mono text-gray-600">${r.p}</td><td class="px-2 py-1.5 text-right font-mono text-gray-600">${r.d}</td></tr>`
+  ).join('');
+  document.getElementById('appx-elas-body').innerHTML = sens.elasticity_advantage.map(r =>
+    `<tr><td class="px-2 py-1.5 text-gray-700">${r.slope}</td><td class="px-2 py-1.5 text-right font-mono text-green-700">+${fmtMoney(r.advantage)}</td><td class="px-2 py-1.5 text-right font-mono text-gray-600">${r.p}</td><td class="px-2 py-1.5 text-right font-mono text-gray-600">${r.d}</td></tr>`
+  ).join('');
 }
 
 // ---------------------------------------------------------------------------

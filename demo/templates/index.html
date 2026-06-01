@@ -89,6 +89,9 @@
         <button onclick="switchTab('interpret')" id="tab-interpret" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
           Interpretability
         </button>
+        <button onclick="switchTab('appendix')" id="tab-appendix" class="tab-inactive py-3 text-sm transition-colors whitespace-nowrap">
+          More Experiments
+        </button>
       </div>
     </div>
   </nav>
@@ -684,6 +687,9 @@
           <button onclick="hitlExportCSV()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-md transition shadow-sm text-sm">
             📥 Export Review Log (CSV)
           </button>
+          <button onclick="hitlReset()" class="w-full bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium py-2 rounded-md transition shadow-sm text-sm">
+            ↺ Reset Session
+          </button>
         </div>
 
         <!-- Applicant + Metrics -->
@@ -807,6 +813,59 @@
         <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
           <h3 class="text-sm font-semibold text-gray-700 mb-2">Top feature weights (θ) — <span id="interp-action-label">STANDARD</span></h3>
           <div class="h-96"><canvas id="interp-chart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB: MORE EXPERIMENTS (depth on demand) ==================== -->
+    <section id="panel-appendix" class="hidden space-y-6">
+      <p class="text-sm text-gray-500">Supporting experiments behind the headline claims. All values are the canonical thesis numbers (see <a href="/defense" class="text-thesis-600 underline">defense deck</a>).</p>
+
+      <!-- Cold start -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="font-semibold text-gray-900 mb-1">EXP-010 — Cold Start</h2>
+        <p class="text-xs text-gray-500 mb-3">When does the bandit beat a freshly-trained XGBoost? <span id="appx-cold-crossover" class="font-medium"></span></p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+          <img src="/static/fig_010_cold_start.png" alt="Cold-start crossover" class="w-full rounded-lg border border-gray-100" style="max-height: 280px; object-fit: contain;">
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+                <tr><th class="px-3 py-2 text-left">Horizon T</th><th class="px-3 py-2 text-right">LinUCB</th><th class="px-3 py-2 text-right">LinTS</th><th class="px-3 py-2 text-right">FreshXGB</th><th class="px-3 py-2 text-center">Winner</th></tr>
+              </thead>
+              <tbody id="appx-cold-body" class="divide-y divide-gray-100"></tbody>
+            </table>
+            <p id="appx-cold-impl" class="text-xs text-gray-400 mt-2"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ablation -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="font-semibold text-gray-900 mb-1">EXP-011 — Ablation</h2>
+        <p class="text-xs text-gray-500 mb-3" id="appx-abl-finding"></p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+              <tr><th class="px-3 py-2 text-left">Variant</th><th class="px-3 py-2 text-right">Reward</th><th class="px-3 py-2 text-right">Regret</th><th class="px-3 py-2 text-right">vs Full (p)</th><th class="px-3 py-2 text-right">Cohen's d</th></tr>
+            </thead>
+            <tbody id="appx-abl-body" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sensitivity -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="font-semibold text-gray-900 mb-1">EXP-012 — Sensitivity</h2>
+        <p class="text-xs text-gray-500 mb-3" id="appx-sens-finding"></p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <h3 class="text-xs font-semibold text-gray-700 uppercase mb-1">Adverse-selection factor</h3>
+            <div class="overflow-x-auto"><table class="min-w-full text-xs"><thead class="bg-gray-50 text-gray-600 uppercase font-semibold"><tr><th class="px-2 py-1.5 text-left">af</th><th class="px-2 py-1.5 text-right">LinUCB advantage</th><th class="px-2 py-1.5 text-right">p</th><th class="px-2 py-1.5 text-right">d</th></tr></thead><tbody id="appx-adv-body" class="divide-y divide-gray-100"></tbody></table></div>
+          </div>
+          <div>
+            <h3 class="text-xs font-semibold text-gray-700 uppercase mb-1">Customer-elasticity slope</h3>
+            <div class="overflow-x-auto"><table class="min-w-full text-xs"><thead class="bg-gray-50 text-gray-600 uppercase font-semibold"><tr><th class="px-2 py-1.5 text-left">slope</th><th class="px-2 py-1.5 text-right">LinUCB advantage</th><th class="px-2 py-1.5 text-right">p</th><th class="px-2 py-1.5 text-right">d</th></tr></thead><tbody id="appx-elas-body" class="divide-y divide-gray-100"></tbody></table></div>
+          </div>
         </div>
       </div>
     </section>
