@@ -177,12 +177,23 @@ function letLinUCBDecide(){
 // Scene 4: Bandit Arena
 // ---------------------------------------------------------------------------
 function initArena(){
+  // Canonical 20-seed headline (authoritative)
+  const t = state.thesis && state.thesis.exp005;
+  if(t){
+    document.getElementById('arena-canon-lift').textContent='+'+t.lift_pct+'%';
+    document.getElementById('arena-canon-linucb').textContent=fmt$(t.linucb_reward);
+    document.getElementById('arena-canon-static').textContent=fmt$(t.static_reward);
+    document.getElementById('arena-canon-stats').textContent='Wilcoxon p '+t.reward_p+" · Cohen's d = "+t.reward_cohen_d;
+    document.getElementById('arena-ent-early').textContent=t.entropy_early.toFixed(3);
+    document.getElementById('arena-ent-late').textContent=t.entropy_late.toFixed(3);
+  }
+  // Illustrative single-seed live run (seed 42)
   if(!state.exp005) return;
   const d=state.exp005;
   document.getElementById('arena-linucb-final').textContent=fmt$(d.LinUCB.cumulative_reward);
   document.getElementById('arena-static-final').textContent=fmt$(d.StaticXGB.cumulative_reward);
   const lift=((d.LinUCB.cumulative_reward/d.StaticXGB.cumulative_reward-1)*100).toFixed(1);
-  document.getElementById('arena-lift').textContent='+'+lift+'% lift';
+  document.getElementById('arena-lift').textContent='single-seed lift +'+lift+'% (illustrative — not the headline)';
   renderArenaCharts();
 }
 function renderArenaCharts(){
