@@ -166,6 +166,10 @@
       <input type="range" min="28" max="32" step="0.1" value="31" id="bmi-slider-s2" class="w-64" oninput="updateScene2()">
       <button onclick="flipScenario()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md transition">↻ Flip Scenario</button>
     </div>
+    <div class="mt-6 bg-white rounded-xl border border-gray-200 p-3">
+      <div class="text-xs font-semibold text-gray-400 uppercase mb-2 text-center">System architecture — browser → FastAPI → bandit core + PSI guardrail</div>
+      <img src="/static/fig_ch4_architecture.png" alt="System architecture diagram" class="mx-auto rounded" style="max-height: 220px; object-fit: contain;">
+    </div>
   </div>
 </section>
 
@@ -174,7 +178,11 @@
   <div class="max-w-4xl w-full text-center">
     <div class="stamp stamp-blue mb-3">Core Theory</div>
     <h2 class="text-3xl font-bold text-gray-900 mb-2">The Exploration–Exploitation Dilemma</h2>
-    <p class="text-gray-500 text-sm mb-8">Robbins (1952). Four actions. Unknown rewards. How do you choose?</p>
+    <p class="text-gray-500 text-sm mb-4">Robbins (1952). Four actions. Unknown rewards. How do you choose?</p>
+    <div class="bg-white rounded-xl border border-gray-200 p-3 mb-6 inline-block">
+      <img src="/static/fig_ch4_bandit_loop.png" alt="Contextual bandit decision loop" class="mx-auto rounded" style="max-height: 150px; object-fit: contain;">
+      <div class="text-xs text-gray-400 mt-1">Decision loop: context xₜ → action → reward rₜ → rank-one update of (Aₐ, bₐ) → next round</div>
+    </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="arm-trays">
       <!-- populated by JS -->
@@ -233,7 +241,8 @@
       </div>
       <div class="space-y-4">
         <!-- CANONICAL 20-seed headline (authoritative) -->
-        <div class="bg-thesis-50 rounded-xl border-2 border-thesis-300 p-4">
+        <div class="bg-thesis-50 rounded-xl border-2 border-thesis-300 p-4" title="Source: Chapter V §5.1.1, Table 5.1.1 — 20 seeds, N=5000">
+          <div class="sr-only">Source: Chapter V, Table 5.1.1</div>
           <div class="flex items-center justify-between mb-2">
             <div class="text-xs font-semibold text-thesis-600 uppercase">Headline result</div>
             <span class="stamp stamp-blue">20 seeds</span>
@@ -279,6 +288,13 @@
     </div>
     <div class="mt-4 bg-gray-50 rounded-xl border border-gray-200 p-4">
       <canvas id="chart-arena-actions" height="90"></canvas>
+    </div>
+    <div class="mt-4 bg-white rounded-xl border-2 border-thesis-200 p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs font-semibold text-thesis-600 uppercase">Canonical figure — cumulative reward, 20-seed mean ± 95% CI</div>
+        <span class="stamp stamp-blue">Thesis Fig 5.1</span>
+      </div>
+      <img src="/static/fig_reward_curves.png" alt="Cumulative reward curves, 20 seeds with 95% CI band" class="w-full rounded-lg" style="max-height: 300px; object-fit: contain;">
     </div>
   </div>
 </section>
