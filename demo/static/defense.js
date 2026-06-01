@@ -225,7 +225,7 @@ function renderBenchmark(){
   const ctx=document.getElementById('chart-benchmark');
   if(charts.benchmark) charts.benchmark.destroy();
   const colors={'LinTS':'#1e3a8a','LinUCB':'#2E5FA3','EpsilonGreedy':'#f59e0b','StaticXGB':'#9ca3af'};
-  charts.benchmark=new Chart(ctx,{type:'line',data:{labels:d[0].trajectory.rounds,datasets:d.map(r=>({label:r.algorithm,data:r.trajectory.cumulative_regrets,borderColor:colors[r.algorithm],backgroundColor:colors[r.algorithm]+'10',borderWidth:2,pointRadius:0,tension:0.1}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{grid:{color:'#f3f4f6'},title:{display:true,text:'Cumulative Regret ($)'}}}});
+  charts.benchmark=new Chart(ctx,{type:'line',data:{labels:d[0].trajectory.rounds,datasets:d.map(r=>({label:r.algorithm,data:r.trajectory.cumulative_regrets,borderColor:colors[r.algorithm],backgroundColor:colors[r.algorithm]+'10',borderWidth:2,pointRadius:0,tension:0.1}))},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{grid:{color:'#f3f4f6'},title:{display:true,text:'Cumulative Regret ($)'}}}}});
 
   const podium=document.getElementById('benchmark-podium'); podium.innerHTML='';
   const ranked=[...d].sort((a,b)=>a.cumulative_regret-b.cumulative_regret);
@@ -250,7 +250,7 @@ function renderCoefficients(actionIdx){
   const featureLabels=c.features.map((f,i)=>{ const v=vals[i]; return {name:f,value:v,abs:Math.abs(v)}; }).sort((a,b)=>b.abs-a.abs).slice(0,12);
   const ctx=document.getElementById('chart-coefficients');
   if(charts.coef) charts.coef.destroy();
-  charts.coef=new Chart(ctx,{type:'bar',data:{labels:featureLabels.map(f=>f.name),datasets:[{label:'Coefficient θ',data:featureLabels.map(f=>f.value),backgroundColor:featureLabels.map(f=>f.value>=0?'#2E5FA3':'#ef4444'),borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f3f4f6'}},y:{grid:{display:false}}}}}});
+  charts.coef=new Chart(ctx,{type:'bar',data:{labels:featureLabels.map(f=>f.name),datasets:[{label:'Coefficient θ',data:featureLabels.map(f=>f.value),backgroundColor:featureLabels.map(f=>f.value>=0?'#2E5FA3':'#ef4444'),borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f3f4f6'}},y:{grid:{display:false}}}}});
 
   const insights=[
     'For STANDARD, income and low mortality are the strongest positive drivers.',
