@@ -4,8 +4,7 @@ from pathlib import Path
 _DISPLAY_RE = re.compile(r'\$\$(.*?)\$\$', re.DOTALL)
 _INLINE_RE = re.compile(r'(?<!\$)\$(?!\$)((?:[^$]|\n)+?)(?<!\$)\$(?!\$)')
 _CITATION_RE = re.compile(
-    r'\(([A-Z][A-Za-zÀ-ÿ\s\&]+(?:et al\.)?(?:,?\s+\d{4}[a-z]?)'
-    r'(?:;\s*[A-Z][A-Za-zÀ-ÿ\s\&]+(?:et al\.)?(?:,?\s+\d{4}[a-z]?)?)*)\)'
+    r'\(([A-Z][A-Za-zÀ-ÿ\s\&,\.]+,\s*\d{4}[a-z]?(?:;\s*[A-Z][A-Za-zÀ-ÿ\s\&,\.]+,\s*\d{4}[a-z]?)*)\)'
 )
 _HEADING_RE = re.compile(r'^#{1,4}\s+(.+)$', re.MULTILINE)
 _SECTION_NUM_RE = re.compile(r'^(\d+\.\d+(?:\.\d+)?)')
@@ -81,6 +80,9 @@ def extract_equations_from_markdown(md_text: str, chapter: str) -> list[dict]:
             continue
         latex = m.group(1).strip()
         if len(latex) < 2:
+            continue
+        # Skip currency amounts and non-math dollar signs
+        if latex[0].isdigit() and not any(c in latex for c in r'\_{^'):
             continue
         counter["inline"] += 1
         eq_id = f"ch{chapter}_inl_{counter['inline']:03d}"
