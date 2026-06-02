@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_055
+Chapter: 04 Section: 4.7.3
+LaTeX: 10 against the uncertain but potentially positive expected profit of STANDARD or RATED.
+
+**Net cost of REFER (−\
+
+Context before: ly profitable policy.  The −\$10 figure represents an administrative opportunity cost rather than a cash outflow.  Without this penalty, a myopic algorithm might decline every borderline applicant to avoid claims variance; the small negative reward forces the bandit to compare the certain loss of −\
+
+Candidate paper match (confidence 0.51):
+  Paper text: expected value of the sum Sn=xi+
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

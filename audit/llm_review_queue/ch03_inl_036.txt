@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_036
+Chapter: 03 Section: 3.4.2
+LaTeX: \sqrt{g(x; \theta)^T A^{-1} g(x; \theta)}
+
+Context before: ends the optimism principle of LinUCB to neural networks. The algorithm trains a deep neural network to predict rewards via gradient descent, then constructs an upper confidence bound using the gradient information of the network. Specifically, the confidence width at context $x$ is proportional to
+
+Candidate paper match (confidence 0.44):
+  Paper text: t=1 st,a(t) + 2g(T )
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_048
+Chapter: 05 Section: 5.7.3
+LaTeX: ) and within the seed-to-seed variability. This is the central finding of EXP-011: on the 34-dimensional Cambodia feature space at
+
+Context before: contradictory.
+
+Second, **disabling the LinUCB exploration bonus ($\alpha = 0$, Greedy-only) yields a cumulative reward statistically indistinguishable from full LinUCB** ($p = 0.580$, $d = +0.13$ negligible). The empirical regret of Greedy-only ($23{,}365$) is within 3 % of full LinUCB's ($24{,}025
+
+Candidate paper match (confidence 0.43):
+  Paper text: This regret
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

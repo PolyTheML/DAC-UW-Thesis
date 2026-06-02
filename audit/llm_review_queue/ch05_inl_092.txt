@@ -1,0 +1,22 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_092
+Chapter: 05 Section: 5.10.3
+LaTeX: vectors with synthetic observations before the first live applicant arrives. The bandit then begins production already in the regime where it dominates.
+2. **Shadow Mode warm-up.** Run the bandit alongside the existing rule engine for the first 1,000–2,000 production applications, updating its sufficient statistics from the static rule's outcomes (§4.10.1). Switch to bandit-binding decisions only after the crossover horizon is reached.
+
+Neither strategy is novel — both are documented in the contextual-bandit deployment literature — but EXP-010 quantifies for the first time the horizon at which the switch becomes net-positive on the Cambodia dataset specifically.
+
+### 5.10.4 Pass/Fail Assessment
+
+1. **LinUCB crossover exists (beats FreshXGB at T = 2,000).**
+
+Context before: warm-starting from an existing model**. Two warm-start strategies follow naturally from this finding and the live demo design (§4.10):
+
+1. **Pre-train then deploy.** Run a Static XGB or GLM baseline offline on historical data and use the predicted mortality multipliers to populate the bandit's $b_a
+
+Candidate paper match (confidence 0.62):
+  Paper text: where ν = 1
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

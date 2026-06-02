@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_031
+Chapter: 04 Section: 4.6.4
+LaTeX: \hat{m} \le 1.5
+
+Context before: upation are encoded as integers 0–7 rather than one-hot vectors).  At decision time, the model outputs a predicted mortality multiplier $\hat{m}$ for the applicant, and the rule engine maps this to one of four underwriting actions:
+
+| Rule | Condition | Action |
+|------|-----------|--------|
+| R1 |
+
+Candidate paper match (confidence 0.40):
+  Paper text: at least 1 −δ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

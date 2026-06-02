@@ -1,0 +1,21 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_034
+Chapter: 03 Section: 3.4.1
+LaTeX: E[r | x, a] = \theta_a^T x
+
+Context before: ural extensions become relevant only when the feature space expands beyond several hundred dimensions or when non-linear interactions are known to dominate.
+
+---
+
+## 3.4. Neural Contextual Bandits and Dynamic Pricing
+
+### 3.4.1. Limitations of Linear Reward Assumptions
+
+The linear reward assumption
+
+Candidate paper match (confidence 0.48):
+  Paper text: x = ν ±
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

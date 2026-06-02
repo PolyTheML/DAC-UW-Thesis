@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_011
+Chapter: 05 Section: 5.4.1
+LaTeX: c \in [0,1]
+
+Context before: evaluated over N = 5,000 rounds on the 2,000-record Cambodia dataset.
+
+**Equation 5.4.1 — Simulated underwriter adjusted reward:**
+
+$$\hat{r}_\text{std} = r_\text{std} - c \cdot 5.0, \quad \hat{r}_\text{rated} = r_\text{rated} - c \cdot 2.5, \quad \hat{r}_\text{decline} = r_\text{decline}$$
+
+where
+
+Candidate paper match (confidence 0.40):
+  Paper text: 0 < δ < 1.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

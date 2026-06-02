@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_059
+Chapter: 05 Section: 5.8.2
+LaTeX: within the adaptive family.
+
+### 5.8.3 Adverse-selection factor sweep
+
+The adverse-selection multiplier inflates expected claims for
+
+Context before: of the sweep, but the spread between best and worst is only $\$2{,}809$ in mean regret (12 % of the optimum) and all five 95 % CIs overlap. The system is robust to $\alpha$ within an order of magnitude; the choice between adaptive and non-adaptive learning matters far more than the choice of $\alpha
+
+Candidate paper match (confidence 0.46):
+  Paper text: the expected regret in time T.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

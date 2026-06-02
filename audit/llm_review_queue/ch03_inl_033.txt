@@ -1,0 +1,16 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_033
+Chapter: 03 Section: 3.3.3
+LaTeX: T = 5,000
+
+Context before: rameters | $\tilde{O}(\tilde{d}\sqrt{T})$ | $O(\|\theta\| \cdot T)$ | Large; millions of samples |
+| EE-Net (Ban et al., 2022) | Dual networks (exploit + explore) | Learned exploration value | Empirical only | $O(\|\theta\| \cdot T)$ | Large; ensemble training |
+
+For the Cambodia dataset ($d = 34$,
+
+Candidate paper match (confidence 0.40):
+  Paper text: time t as follows: λr(t) = µr +P
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

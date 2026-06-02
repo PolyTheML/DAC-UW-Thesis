@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_061
+Chapter: 04 Section: 4.9.1
+LaTeX: \alpha = 1.0
+
+Context before: cy that dominates the static XGB baseline.
+
+**Hypothesis.**  LinUCB will achieve higher cumulative reward and lower late-round average regret than the Static XGB baseline, and its action distribution will converge from high entropy (exploration) to lower entropy (exploitation).
+
+**Setup.**  LinUCB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

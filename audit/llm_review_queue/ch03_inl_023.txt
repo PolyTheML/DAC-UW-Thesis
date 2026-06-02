@@ -1,0 +1,14 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_023
+Chapter: 03 Section: 3.3.3
+LaTeX: O(d^2)
+
+Context before: $\theta_a^\top x$ | Upper confidence bound: $\alpha \sqrt{x^\top A^{-1} x}$ | $O(d\sqrt{T \log T})$ | $O(d^2)$ | Moderate; $T \gg d$ |
+| LinTS (Agrawal & Goyal, 2013) | Linear: $\theta_a^\top x$ | Posterior sampling: $\tilde\theta \sim \mathcal{N}(\hat\theta, v^2 A^{-1})$ | $O(d\sqrt{T \log T})$ |
+
+Candidate paper match (confidence 0.58):
+  Paper text: O(d2√
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

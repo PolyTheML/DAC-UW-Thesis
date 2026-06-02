@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_043
+Chapter: 04 Section: 4.7.2
+LaTeX: r_{\text{std}} = p_{\text{std}}(P_{\text{base}} - C_{\text{std}}) + (1-p_{\text{std}})(-25)
+
+Context before: raw.
+
+**Table 4.7.2 — Action-specific reward functions (expected value)**
+
+| Action | Premium | Claims | Acceptance | Net Reward Formula |
+|--------|---------|--------|------------|-------------------|
+| STANDARD | $P_{\text{base}}$ | $C_{\text{exp}} \times \gamma_{\text{adv}}$ | $p_{\text{std}}$ |
+
+Candidate paper match (confidence 0.60):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

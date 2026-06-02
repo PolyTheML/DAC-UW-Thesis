@@ -1,0 +1,28 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_078
+Chapter: 05 Section: 5.9.4
+LaTeX: . PASSED.
+
+EXP-009: PASS (with the convergence-confound caveat in §5.9.3).
+
+---
+
+## 5.10 EXP-010: Cold-Start — When Does the Bandit Catch Up?
+
+[FIGURE: thesis/health_rl/figures/fig_010_cold_start.png — Figure 5.10. Cumulative reward at horizons T ∈ {200, 500, 1,000, 2,000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (mean of 10 seeds). FreshXGB leads at T ≤ 500; bandits cross over between T = 1,000 and T = 2,000.]
+
+### 5.10.1 Design
+
+EXP-010 asks an operationally crucial question that the headline experiments do not: *at what data scale does the bandit begin to beat a freshly-trained static model?* At each horizon
+
+Context before: post-shock regret.** $\$7.44$ > $\$2.42$. PASSED.
+3. **LinUCB vs Static gap widens post-shock.** $\$0.03 \to \$4.96$. PASSED.
+4. **LinTS vs Static gap widens post-shock.** $\$0.46 \to \$5.02$. PASSED.
+5. **LinUCB and LinTS cumulative regret < Static XGB.** $21{,}679 < 39{,}093$; $20{,}824 < 39{,}093
+
+Candidate paper match (confidence 0.53):
+  Paper text: for all a ∈At do
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

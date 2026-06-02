@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_033
+Chapter: 05 Section: 5.7.1
+LaTeX: \alpha = 1.0
+
+Context before: --
+
+## 5.7 EXP-011: Ablation Study — REFER and Exploration Are Not Load-Bearing
+
+### 5.7.1 Design
+
+EXP-011 evaluates the marginal contribution of three design choices made in the headline LinUCB configuration: (a) the four-action set including REFER; (b) the upper-confidence-bound exploration bonus
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

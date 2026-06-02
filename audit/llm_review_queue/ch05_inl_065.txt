@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_065
+Chapter: 05 Section: 5.8.4
+LaTeX: , all
+
+Context before: 33] | +17,358 | 0.0010 *** | 2.24 |
+
+The absolute reward levels differ by an order of magnitude across slope cells because elasticity directly governs how many quoted applicants bind a policy. The **relative** LinUCB-over-Static advantage, however, holds at every slope: $\$+17{,}358$ to $\$+23{,}222
+
+Candidate paper match (confidence 0.60):
+  Paper text: in practice. Like all UCB methods, LinUCB always chooses the
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

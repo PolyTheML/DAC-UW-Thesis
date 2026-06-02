@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_013
+Chapter: 03 Section: 3.3.2
+LaTeX: a_t = \arg\max_a \tilde{\theta}_a^T x_t
+
+Context before: t al., 2010).
+
+**LinTS** (Agrawal & Goyal, 2013) takes a Bayesian approach. Rather than constructing an explicit confidence bound, it samples a parameter vector $\tilde{\theta}_a$ from the posterior distribution $N(\hat{\theta}_a, v^2 A_a^{-1})$ and selects the action maximizing the sampled reward:
+
+Candidate paper match (confidence 0.40):
+  Paper text: Let at = argmaxa∈[K] Ut,a
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

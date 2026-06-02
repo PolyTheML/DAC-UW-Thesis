@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch06_inl_005
+Chapter: 06 Section: 6.1
+LaTeX: 91,261 cumulative reward — statistically indistinguishable from full LinUCB at α = 1.0 (\
+
+Context before: on-Greedy (\$38,281) and Static XGB (\$42,548), with pairwise differences highly significant after Bonferroni correction (p < 0.001, |d| > 2.7 in all cases). The follow-up ablation (EXP-011, §5.7) refines the causal attribution: a Greedy-only variant of LinUCB (α = 0, no exploration bonus) attains \
+
+Candidate paper match (confidence 0.40):
+  Paper text: — ) = y + —
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

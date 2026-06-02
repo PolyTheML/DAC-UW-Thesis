@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch06_inl_008
+Chapter: 06 Section: 6.3.1
+LaTeX: \lambda \in (0, 1)
+
+Context before: g flooding — that can shift the feature distribution and invalidate the bandit's learned reward coefficients within weeks.
+
+A Discounted LinUCB (DiscountedLinUCB) addresses this through exponential forgetting: the sufficient statistics $A$ and $b$ are discounted at each round by a forgetting factor
+
+Candidate paper match (confidence 0.50):
+  Paper text: κ + 1 = λ∗
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

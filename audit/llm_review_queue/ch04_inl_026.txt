@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_026
+Chapter: 04 Section: 4.6.2
+LaTeX: O(d^2)
+
+Context before: offline via empirical Bayes.
+
+The update of $(A_a, b_a)$ is identical to LinUCB.  To avoid the expensive singular-value decomposition required by `numpy.random.multivariate_normal`, the implementation pre-computes and caches the Cholesky factor of $v^2 A_a^{-1} + 10^{-6} I_d$, yielding sampling in
+
+Candidate paper match (confidence 0.58):
+  Paper text: O(d2√
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

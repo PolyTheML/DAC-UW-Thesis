@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_007
+Chapter: 04 Section: 4.6.1
+LaTeX: A_a(t) = I_d + \sum_{s: a_s = a} x_s x_s^\top
+
+Context before: t $x_t \in \mathbb{R}^d$ and selects the action that maximises the upper confidence bound:
+
+$$a_t = \arg\max_{a \in \mathcal{A}} \Bigl( \hat\theta_a(t)^\top x_t + \alpha \sqrt{x_t^\top A_a(t)^{-1} x_t} \Bigr)$$
+
+where $\hat\theta_a(t) = A_a(t)^{-1} b_a(t)$ is the regularised least-squares estimate,
+
+Candidate paper match (confidence 0.60):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_053
+Chapter: 04 Section: 4.7.2
+LaTeX: , and the unbound case incurs the slightly different walk cost of
+
+Context before: nfig.processing_cost` in `underwriting_bandit.py`) charged whenever the applicant is quoted but does not bind a policy: it covers underwriting staff time and system overhead.  In the stochastic simulator, claims are multiplied by $\nu_t$, acceptance is drawn from $\text{Bernoulli}(p_{\text{accept}})
+
+Candidate paper match (confidence 0.41):
+  Paper text: TS with the best known versions of UCB and show
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

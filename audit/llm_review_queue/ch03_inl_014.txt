@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_014
+Chapter: 03 Section: 3.3.3
+LaTeX: \epsilon
+
+Context before: hardware. This efficiency is essential for emerging-market deployment where GPU resources may be unavailable and decision latency must remain below 200 milliseconds.
+
+### 3.3.3. Epsilon-Greedy and Baseline Comparisons
+
+**Epsilon-Greedy** serves as the simplest exploration baseline: with probability
+
+Candidate paper match (confidence 0.50):
+  Paper text: ε-greedy
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

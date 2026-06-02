@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_018
+Chapter: 03 Section: 3.3.3
+LaTeX: O(d^2)
+
+Context before: retical Regret | Per-Round Cost | Data Requirement |
+|-----------|-------------|----------------------|--------------------|----------------|------------------|
+| LinUCB (Li et al., 2010) | Linear: $\theta_a^\top x$ | Upper confidence bound: $\alpha \sqrt{x^\top A^{-1} x}$ | $O(d\sqrt{T \log T})$ |
+
+Candidate paper match (confidence 0.58):
+  Paper text: O(d2√
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

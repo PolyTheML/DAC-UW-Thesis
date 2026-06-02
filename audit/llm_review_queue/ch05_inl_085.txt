@@ -1,0 +1,18 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_085
+Chapter: 05 Section: 5.10.2
+LaTeX: the freshly-trained XGBoost regressor more than doubles the bandits' cumulative reward. At
+
+Context before: eshXGB ≈ 2.1× |
+| 500 | 5,593 ± 1,597 | 5,570 ± 1,051 | **7,048 ± 1,407** | No — FreshXGB ≈ 1.26× |
+| 1,000 | 13,033 ± 2,174 | 13,496 ± 949 | 13,692 ± 1,819 | Tie (within seed variance) |
+| 2,000 | **31,227 ± 2,987** | **31,401 ± 2,187** | 29,267 ± 1,731 | **Yes — bandits cross over** |
+
+At $T = 200
+
+Candidate paper match (confidence 0.42):
+  Paper text: Figures 1 and 2 show the cumulative regret of all algorithms.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

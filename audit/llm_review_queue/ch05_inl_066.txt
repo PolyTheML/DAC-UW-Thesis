@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_066
+Chapter: 05 Section: 5.8.4
+LaTeX: , all effect sizes large or very large. Readers should not compare absolute reward levels across slope cells (the underlying acceptance distribution changes) — only the within-cell advantage.
+
+### 5.8.5 Pass/Fail Assessment
+
+1. **α = 1.0 is the regret-minimising value (or within 5 %).** Observed: 1.0 is best at
+
+Context before: 010 *** | 2.24 |
+
+The absolute reward levels differ by an order of magnitude across slope cells because elasticity directly governs how many quoted applicants bind a policy. The **relative** LinUCB-over-Static advantage, however, holds at every slope: $\$+17{,}358$ to $\$+23{,}222$, all $p \le 0.005
+
+Candidate paper match (confidence 0.48):
+  Paper text: the beta distribution Beta(α, β) be a distribution
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch06_inl_011
+Chapter: 06 Section: 6.3.1
+LaTeX: A = I, b = 0
+
+Context before: : PSI computed on a rolling 3-month ingestion window triggers an alert when it crosses the 0.25 RED threshold; the alert would initiate a DiscountedLinUCB warm restart with a moderate forgetting factor (e.g. λ = 0.90) applied to the current sufficient statistics rather than a full cold restart from
+
+Candidate paper match (confidence 0.53):
+  Paper text: with a = d = 1 and b = c = 0.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_035
+Chapter: 05 Section: 5.7.1
+LaTeX: \alpha = 1.0
+
+Context before: us $\alpha = 1.0$; and (c) the use of online ridge-regression coefficients at all. Four conditions are compared on the same 20 seeds, $N = 5{,}000$ rounds, with common random numbers within each seed pair:
+
+- **Full LinUCB (4-arm)** — the headline configuration: STANDARD, RATED, DECLINE, REFER with
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

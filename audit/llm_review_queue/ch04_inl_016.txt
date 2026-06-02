@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_016
+Chapter: 04 Section: 4.6.1
+LaTeX: A_a(0) = I_d
+
+Context before: $O(d^3)$ cost of explicitly inverting $A_a$ at every round, the implementation uses the Sherman–Morrison formula to maintain $A_a^{-1}$ in $O(d^2)$ time:
+
+$$A_a^{-1} \leftarrow A_a^{-1} - \frac{A_a^{-1} x_t x_t^\top A_a^{-1}}{1 + x_t^\top A_a^{-1} x_t}.$$
+
+Initialisation follows the standard choice
+
+Candidate paper match (confidence 0.40):
+  Paper text: B(t) = Id + Pt−1
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

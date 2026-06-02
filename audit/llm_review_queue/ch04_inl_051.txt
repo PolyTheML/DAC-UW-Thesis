@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_051
+Chapter: 04 Section: 4.7.2
+LaTeX: term in the STANDARD and RATED rows is the **processing cost** (`config.processing_cost` in `underwriting_bandit.py`) charged whenever the applicant is quoted but does not bind a policy: it covers underwriting staff time and system overhead.  In the stochastic simulator, claims are multiplied by
+
+Context before: p}}$ | $p_{\text{rtd}}$ | $r_{\text{rtd}} = p_{\text{rtd}}(1.25 P_{\text{base}} - C_{\text{exp}}) + (1-p_{\text{rtd}})(-25)$ |
+| DECLINE | — | — | — | $r_{\text{dcl}} = -10$ |
+| REFER | — | — | — | $r_{\text{ref}} = 0.70 \times \max(r_{\text{std}}, r_{\text{rtd}}, r_{\text{dcl}}) - 35$ |
+
+The $-\$25
+
+Candidate paper match (confidence 0.43):
+  Paper text: the expected regret in time T.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

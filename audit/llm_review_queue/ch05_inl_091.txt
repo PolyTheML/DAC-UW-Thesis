@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_091
+Chapter: 05 Section: 5.10.3
+LaTeX: the situation reverses: a freshly trained XGBoost regressor, fitted offline on whatever historical data is available, exploits the dataset more efficiently than a bandit that begins each run from an uninformative prior.
+
+The operational implication for a Cambodian insurer is direct: **a contextual bandit should not be deployed cold on the first 500–1,000 policy applications without warm-starting from an existing model**. Two warm-start strategies follow naturally from this finding and the live demo design (§4.10):
+
+1. **Pre-train then deploy.** Run a Static XGB or GLM baseline offline on historical data and use the predicted mortality multipliers to populate the bandit's
+
+Context before: and operational implications
+
+The cold-start result is the honest counterweight to the headline LinUCB-beats-Static-XGB finding of §5.1. The headline experiment runs to $N = 5{,}000$ rounds; the bandit has accumulated sufficient coefficient data to dominate the fixed-threshold baseline. At small $T
+
+Candidate paper match (confidence 0.56):
+  Paper text: T) regret for linear contextual bandit as a
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

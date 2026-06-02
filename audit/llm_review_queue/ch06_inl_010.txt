@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch06_inl_010
+Chapter: 06 Section: 6.3.1
+LaTeX: \lambda \to 1
+
+Context before: (0, 1)$,
+
+$$A_t \leftarrow \lambda A_{t-1} + x_t x_t^\top, \quad b_t \leftarrow \lambda b_{t-1} + r_t x_t,$$
+
+so that older observations contribute less to the current parameter estimate. Smaller $\lambda$ (e.g., 0.9) produces faster adaptation at the cost of higher variance in stationary periods;
+
+Candidate paper match (confidence 0.67):
+  Paper text: κ + 1 = λ∗
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

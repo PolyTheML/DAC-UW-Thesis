@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_083
+Chapter: 05 Section: 5.10.1
+LaTeX: . Cumulative rewards at each horizon are compared across **10 seeds per horizon** owing to the cost of repeated XGBoost refits (`exp_010_cold_start_analysis.py:253`).
+
+### 5.10.2 Results
+
+**Table 5.10.1 — EXP-010 cumulative reward by horizon (10 seeds, mean ± std)**
+
+| Horizon
+
+Context before: r is retrained from scratch on the first $T$ applicants and then deployed under the same fixed rule engine as the headline Static XGB (the **FreshXGB** baseline). LinUCB and LinTS are run with their standard parameters ($\alpha = 1.0$, $v^2 = 1.0$) for exactly $T$ rounds, starting from $A = I, b = 0
+
+Candidate paper match (confidence 0.41):
+  Paper text: mean reward µi ∈R for arm i, and the regret for
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

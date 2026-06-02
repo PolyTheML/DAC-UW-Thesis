@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_047
+Chapter: 04 Section: 4.7.2
+LaTeX: r_{\text{rtd}} = p_{\text{rtd}}(1.25 P_{\text{base}} - C_{\text{exp}}) + (1-p_{\text{rtd}})(-25)
+
+Context before: --------|-------------------|
+| STANDARD | $P_{\text{base}}$ | $C_{\text{exp}} \times \gamma_{\text{adv}}$ | $p_{\text{std}}$ | $r_{\text{std}} = p_{\text{std}}(P_{\text{base}} - C_{\text{std}}) + (1-p_{\text{std}})(-25)$ |
+| RATED | $1.25 \, P_{\text{base}}$ | $C_{\text{exp}}$ | $p_{\text{rtd}}$ |
+
+Candidate paper match (confidence 0.60):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

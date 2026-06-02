@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_081
+Chapter: 05 Section: 5.10.1
+LaTeX: ) for exactly
+
+Context before: n \{200, 500, 1{,}000, 2{,}000\}$, an XGBoost regressor is retrained from scratch on the first $T$ applicants and then deployed under the same fixed rule engine as the headline Static XGB (the **FreshXGB** baseline). LinUCB and LinTS are run with their standard parameters ($\alpha = 1.0$, $v^2 = 1.0
+
+Candidate paper match (confidence 0.40):
+  Paper text: δ )
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

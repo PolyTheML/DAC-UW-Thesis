@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_053
+Chapter: 05 Section: 5.8.1
+LaTeX: m > 2.0
+
+Context before: and Reward Structure
+
+### 5.8.1 Design
+
+EXP-012 tests whether the §5.3 finding (LinUCB decisively beats Static XGB) is robust to three sources of mis-specification: (a) the exploration parameter $\alpha$; (b) the adverse-selection factor that inflates expected claims for high-mortality applicants (
+
+Candidate paper match (confidence 0.43):
+  Paper text: λB > λA.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

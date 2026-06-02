@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_009
+Chapter: 04 Section: 4.6.1
+LaTeX: \alpha = 1.0
+
+Context before: a(t)^\top x_t + \alpha \sqrt{x_t^\top A_a(t)^{-1} x_t} \Bigr)$$
+
+where $\hat\theta_a(t) = A_a(t)^{-1} b_a(t)$ is the regularised least-squares estimate, $A_a(t) = I_d + \sum_{s: a_s = a} x_s x_s^\top$ is the design matrix, and $b_a(t) = \sum_{s: a_s = a} r_s x_s$ is the response vector.  The scalar
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_020
+Chapter: 04 Section: 4.6.2
+LaTeX: v^2 = 1.0
+
+Context before: $\theta_a$.  At each round it samples a candidate parameter vector from the posterior and acts greedily with respect to that sample:
+
+$$\tilde\theta_a \sim \mathcal{N}\bigl( \hat\theta_a,\; v^2 A_a^{-1} \bigr), \qquad a_t = \arg\max_{a \in \mathcal{A}} \tilde\theta_a^\top x_t.$$
+
+The hyperparameter
+
+Candidate paper match (confidence 0.40):
+  Paper text: = 1 + κ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

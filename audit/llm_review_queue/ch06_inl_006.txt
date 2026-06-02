@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch06_inl_006
+Chapter: 06 Section: 6.1
+LaTeX: 18,969 (p < 0.001, d = 3.01). The load-bearing mechanism on this dataset is therefore *online ridge-regression updating of per-action coefficients*; UCB exploration adds no statistically significant gain on top. LinTS's operational advantage over LinUCB is parameter-free deployment, not statistical superiority.
+
+**Finding 4 — Human-in-the-loop underwriting improves reward at low cost (EXP-008).** Replacing the REFER arm's mathematical oracle with a simulated human underwriter (conservatism c = 0.7) increases cumulative reward by **6.5%** (\
+
+Context before: up ablation (EXP-011, §5.7) refines the causal attribution: a Greedy-only variant of LinUCB (α = 0, no exploration bonus) attains \$91,261 cumulative reward — statistically indistinguishable from full LinUCB at α = 1.0 (\$90,540; paired Wilcoxon p = 0.58, d = 0.13) — yet still beats Static XGB by +\
+
+Candidate paper match (confidence 0.55):
+  Paper text: with a = d = 1 and b = c = 0.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

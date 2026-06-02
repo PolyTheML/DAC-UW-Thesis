@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_056
+Chapter: 05 Section: 5.8.2
+LaTeX: \alpha = 1.0
+
+Context before: 5,607] | 23,808 [18,783, 28,350] |
+| 0.5 | 88,473 [84,350, 93,366] | 25,855 [20,969, 29,923] |
+| **1.0** | **91,378 [88,801, 94,281]** | **23,046 [20,011, 25,759]** |
+| 2.0 | 89,953 [86,055, 93,905] | 24,592 [20,482, 28,616] |
+| 5.0 | 90,959 [87,358, 94,868] | 24,101 [20,364, 27,595] |
+
+The default
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

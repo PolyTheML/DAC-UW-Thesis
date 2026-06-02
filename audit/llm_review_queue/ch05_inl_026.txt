@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_026
+Chapter: 05 Section: 5.6.1
+LaTeX: \alpha = 1.0
+
+Context before: e of the reward curve. EXP-013 closes that loop by testing the prediction directly: if cumulative regret $R_T$ scales as $O(\sqrt T)$, then $\log R_T$ should grow linearly in $\log T$ with slope $\approx 0.5$. The experiment fits a least-squares line to the logged cumulative-regret curve of LinUCB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

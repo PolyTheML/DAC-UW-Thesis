@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_069
+Chapter: 04 Section: 4.9.3
+LaTeX: \alpha = 1.0
+
+Context before: cumulative regret and reward using common random numbers to ensure fairness.
+
+**Hypothesis.**  LinTS will achieve the lowest cumulative regret, followed by LinUCB, then Epsilon-Greedy, then Static XGB.  All adaptive algorithms will significantly outperform the static baseline.
+
+**Setup.**  LinUCB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

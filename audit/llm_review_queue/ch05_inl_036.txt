@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_036
+Chapter: 05 Section: 5.7.1
+LaTeX: \alpha = 0
+
+Context before: seed pair:
+
+- **Full LinUCB (4-arm)** — the headline configuration: STANDARD, RATED, DECLINE, REFER with $\alpha = 1.0$.
+- **No REFER (3-arm)** — same algorithm restricted to STANDARD, RATED, DECLINE. Tests whether the REFER action captures value in the standard (no-human) setting.
+- **Greedy-only (
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

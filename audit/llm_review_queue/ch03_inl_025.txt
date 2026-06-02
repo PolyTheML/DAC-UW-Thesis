@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_025
+Chapter: 03 Section: 3.3.3
+LaTeX: f_\theta(x)
+
+Context before: t{T \log T})$ | $O(d^2)$ | Moderate; $T \gg d$ |
+| LinTS (Agrawal & Goyal, 2013) | Linear: $\theta_a^\top x$ | Posterior sampling: $\tilde\theta \sim \mathcal{N}(\hat\theta, v^2 A^{-1})$ | $O(d\sqrt{T \log T})$ | $O(d^2)$ | Moderate; $T \gg d$ |
+| NeuralUCB (Zhou et al., 2020) | Deep neural network
+
+Candidate paper match (confidence 0.40):
+  Paper text: f(x; θ) = √mWLσ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_028
+Chapter: 04 Section: 4.6.3
+LaTeX: 1 - \varepsilon
+
+Context before: O(d^2)$ time.
+
+### 4.6.3 Epsilon-Greedy
+
+Epsilon-Greedy serves as a simple baseline that separates exploration and exploitation explicitly rather than through a statistically principled confidence measure.  With probability $\varepsilon = 0.15$ it selects a uniformly random action; with probability
+
+Candidate paper match (confidence 0.50):
+  Paper text: = 1 + κ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

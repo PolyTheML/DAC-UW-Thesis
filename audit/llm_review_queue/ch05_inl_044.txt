@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_044
+Chapter: 05 Section: 5.7.3
+LaTeX: ) is on average dominated by direct decisions. The two findings are complementary, not contradictory.
+
+Second, **disabling the LinUCB exploration bonus (
+
+Context before: ER — EXP-008 (§5.4) shows that REFER is materially valuable when paired with a human reviewer who can resolve the deferred case more conservatively than the mathematical oracle does. EXP-011 isolates a different question: with no human in the loop, the bandit's REFER reward ($0.70 \times \max - \$35
+
+Candidate paper match (confidence 0.40):
+  Paper text: δ )
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

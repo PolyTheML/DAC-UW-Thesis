@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_disp_001
+Chapter: 04 Section: 4.6.1
+LaTeX: a_t = \arg\max_{a \in \mathcal{A}} \Bigl( \hat\theta_a(t)^\top x_t + \alpha \sqrt{x_t^\top A_a(t)^{-1} x_t} \Bigr)
+
+Context before: ction $a$, a ridge-regression estimate of the unknown parameter vector $\theta_a$ and adds an exploration bonus proportional to the standard deviation of that estimate.  At round $t$ the learner observes context $x_t \in \mathbb{R}^d$ and selects the action that maximises the upper confidence bound:
+
+Candidate paper match (confidence 0.60):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

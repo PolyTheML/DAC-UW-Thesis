@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_017
+Chapter: 05 Section: 5.4.1
+LaTeX: A = I
+
+Context before: h$, the bandit receives two updates. It learns the reward from $a_h$ directly (the override), and it also receives a penalised update for REFER itself ($0.7 \times r^\ast - 35$, where $r^\ast$ is the oracle-optimal reward). Without this second update, the REFER arm retains an un-explored posterior (
+
+Candidate paper match (confidence 0.60):
+  Paper text: achieves a highest upper conﬁdence bound (UCB for short): at =
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,18 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_067
+Chapter: 04 Section: 4.9.2
+LaTeX: p > 0.025
+
+Context before: *
+1. Minimum region approval rate ≥ 80 % of maximum region approval rate (EEOC 4/5 rule).
+2. Minimum occupation approval rate ≥ 80 % of maximum occupation approval rate (EEOC 4/5 rule).
+3. Maximum region sliding-window PSI < 0.25.
+4. Maximum occupation sliding-window PSI < 0.25.
+5. Permutation test
+
+Candidate paper match (confidence 0.40):
+  Paper text: T 2 ≥p,
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

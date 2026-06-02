@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_040
+Chapter: 03 Section: 3.4.4
+LaTeX: \phi(x)
+
+Context before: dicts expected reward; the exploration network predicts the value of exploring (the expected information gain). The final decision combines both predictions (Ban et al., 2022).
+
+A more pragmatic middle ground is the **Neural Linear Bandit**, in which a neural network learns a feature representation
+
+Candidate paper match (confidence 0.50):
+  Paper text: =φ⊤
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

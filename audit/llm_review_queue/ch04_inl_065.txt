@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_065
+Chapter: 04 Section: 4.9.2
+LaTeX: \alpha = 1.0
+
+Context before: he approved portfolio.
+
+**Hypothesis.**  LinUCB will satisfy the EEOC 4/5 (≥ 80 %) approval-rate parity constraint for every region and occupation subgroup, and the maximum PSI across all 500-round windows will remain below the 0.25 RED threshold for both region and occupation.
+
+**Setup.**  LinUCB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: ˛˛˛ ≤α
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

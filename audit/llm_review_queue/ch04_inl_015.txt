@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_015
+Chapter: 04 Section: 4.6.1
+LaTeX: O(d^2)
+
+Context before: he chosen action are updated via rank-one increments:
+
+$$A_{a_t} \leftarrow A_{a_t} + x_t x_t^\top, \qquad b_{a_t} \leftarrow b_{a_t} + r_t x_t.$$
+
+To avoid the $O(d^3)$ cost of explicitly inverting $A_a$ at every round, the implementation uses the Sherman–Morrison formula to maintain $A_a^{-1}$ in
+
+Candidate paper match (confidence 0.58):
+  Paper text: O(d2√
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

@@ -1,0 +1,16 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_075
+Chapter: 04 Section: 4.9.3
+LaTeX: p < 0.05
+
+Context before: Pass criteria.**
+1. Oracle regret $\le$ all learning algorithms (sanity check).
+2. LinUCB and LinTS regret are significantly lower than both Epsilon-Greedy and Static XGB ($p < 0.05$, pairwise Wilcoxon with Bonferroni correction).
+3. LinUCB and LinTS reward are significantly higher than Static XGB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: 0 < δ < 1.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

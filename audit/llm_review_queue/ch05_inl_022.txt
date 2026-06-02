@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_022
+Chapter: 05 Section: 5.6.1
+LaTeX: O(\sqrt T)
+
+Context before: qrt T)$ is 0.5; empirical mean-curve slope is 0.572 (R² = 0.992).]
+
+### 5.6.1 Motivation
+
+§5.1.3 invoked the LinUCB regret bound of Li et al. (2010) informally to explain the shape of the reward curve. EXP-013 closes that loop by testing the prediction directly: if cumulative regret $R_T$ scales as
+
+Candidate paper match (confidence 0.40):
+  Paper text: t=1 regret′(t) = O
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

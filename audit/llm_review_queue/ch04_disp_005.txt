@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_disp_005
+Chapter: 04 Section: 4.6.3
+LaTeX: a_t = \begin{cases} \text{Uniform}(\mathcal{A}) & \text{with probability } \varepsilon, \\ \arg\max_a \hat\theta_a^\top x_t & \text{otherwise}. \end{cases}
+
+Context before: line that separates exploration and exploitation explicitly rather than through a statistically principled confidence measure.  With probability $\varepsilon = 0.15$ it selects a uniformly random action; with probability $1 - \varepsilon$ it selects the action with highest estimated expected reward:
+
+Candidate paper match (confidence 0.65):
+  Paper text: probability 1 −δ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

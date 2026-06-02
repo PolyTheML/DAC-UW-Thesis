@@ -1,0 +1,16 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_032
+Chapter: 03 Section: 3.3.3
+LaTeX: d = 34
+
+Context before: network parameters | $\tilde{O}(\tilde{d}\sqrt{T})$ | $O(\|\theta\| \cdot T)$ | Large; millions of samples |
+| EE-Net (Ban et al., 2022) | Dual networks (exploit + explore) | Learned exploration value | Empirical only | $O(\|\theta\| \cdot T)$ | Large; ensemble training |
+
+For the Cambodia dataset (
+
+Candidate paper match (confidence 0.53):
+  Paper text: with a = d = 1 and b = c = 0.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

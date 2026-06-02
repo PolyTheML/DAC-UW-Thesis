@@ -1,0 +1,13 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_disp_001
+Chapter: 03 Section: 3.3.2
+LaTeX: a_t = \arg\max_{a \in \mathcal{A}} \left( \hat{\theta}_a^T x_t + \alpha \sqrt{x_t^T A_a^{-1} x_t} \right)
+
+Context before: linear in the context vector: $E[r_t | x_t, a] = \theta_a^T x_t$. The algorithm maintains a ridge regression estimate $\hat{\theta}_a$ and an associated confidence ellipsoid for each action. The selection criterion combines the estimated reward with an optimism bonus proportional to the uncertainty:
+
+Candidate paper match (confidence 0.60):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

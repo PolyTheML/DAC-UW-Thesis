@@ -1,0 +1,16 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_063
+Chapter: 04 Section: 4.9.1
+LaTeX: p < 0.05
+
+Context before: 0 independent random seeds (1–20).  For each seed, bootstrap 95 % confidence intervals are computed for cumulative reward and late-round regret, and paired Wilcoxon signed-rank tests compare LinUCB against Static XGB.
+
+**Pass criteria.**
+1. LinUCB cumulative reward significantly exceeds Static XGB (
+
+Candidate paper match (confidence 0.50):
+  Paper text: 0 < δ < 1.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

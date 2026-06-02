@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_028
+Chapter: 05 Section: 5.6.2
+LaTeX: R^2 = 0.9915
+
+Context before: ) across 20 independent seeds and reports the slope, the coefficient of determination, and the convergence of both as the early-round burn-in is increased.
+
+### 5.6.2 Results
+
+The mean-across-seeds cumulative-regret curve, fitted on rounds 50–5,000 in log–log space, yields a slope of **0.572** with
+
+Candidate paper match (confidence 0.40):
+  Paper text: wd = 1 and wr = 0.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

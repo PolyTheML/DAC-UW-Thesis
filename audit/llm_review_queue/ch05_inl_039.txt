@@ -1,0 +1,22 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_039
+Chapter: 05 Section: 5.7.2
+LaTeX: ).
+
+### 5.7.3 Interpretation
+
+Three null results and one large effect carry the section.
+
+First, **removing the REFER action does not significantly reduce cumulative reward** in the standalone (no-human) setting: No-REFER's mean is in fact \
+
+Context before: ± 5,392 [89,135, 93,701] | 23,365 ± 5,266 [20,980, 25,427] | 0.580 (ns) | +0.13 |
+| Static XGB | 72,292 ± 4,120 [70,646, 74,136] | 41,956 ± 3,872 [40,260, 43,508] | < 0.001 *** | −2.98 |
+
+The Greedy-only variant additionally beats Static XGB by +\$18,969 in cumulative reward ($p < 0.001$, $d = 3.01
+
+Candidate paper match (confidence 0.53):
+  Paper text: δ ).
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

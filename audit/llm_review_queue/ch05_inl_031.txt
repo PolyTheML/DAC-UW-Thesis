@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_031
+Chapter: 05 Section: 5.6.3
+LaTeX: d = 34
+
+Context before: and logarithmic terms in $\tilde O(d\sqrt T)$ dominate the fit, inflating the slope; once the first 1,000 rounds are discarded, the slope is statistically indistinguishable from 0.5.
+
+### 5.6.3 Caveats
+
+The slope validates the $T$-dependence of the bound only — it does not estimate the $d$-factor (
+
+Candidate paper match (confidence 0.53):
+  Paper text: with a = d = 1 and b = c = 0.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

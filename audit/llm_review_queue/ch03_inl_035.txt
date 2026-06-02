@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch03_inl_035
+Chapter: 03 Section: 3.4.1
+LaTeX: f_\theta(x, a)
+
+Context before: pertension co-occur non-additively; the joint mortality impact exceeds the sum of individual impacts. Capturing this requires either interaction terms or a more expressive function class.
+
+Neural contextual bandits address these limitations by replacing the linear reward model with a neural network
+
+Candidate paper match (confidence 0.40):
+  Paper text: pt,a ←ˆθ
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

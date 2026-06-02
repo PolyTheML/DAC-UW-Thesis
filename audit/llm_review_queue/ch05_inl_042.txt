@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_042
+Chapter: 05 Section: 5.7.3
+LaTeX: d = +0.49
+
+Context before: ge effect carry the section.
+
+First, **removing the REFER action does not significantly reduce cumulative reward** in the standalone (no-human) setting: No-REFER's mean is in fact \$3,941 higher than Full LinUCB, but with a 95 % CI [\$373, \$7,348] that straddles zero on the rank test ($p = 0.978$,
+
+Candidate paper match (confidence 0.46):
+  Paper text: = f +
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

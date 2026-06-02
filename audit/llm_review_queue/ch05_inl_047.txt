@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_047
+Chapter: 05 Section: 5.7.3
+LaTeX: ) is within 3 % of full LinUCB's (
+
+Context before: ns. The two findings are complementary, not contradictory.
+
+Second, **disabling the LinUCB exploration bonus ($\alpha = 0$, Greedy-only) yields a cumulative reward statistically indistinguishable from full LinUCB** ($p = 0.580$, $d = +0.13$ negligible). The empirical regret of Greedy-only ($23{,}365
+
+Candidate paper match (confidence 0.41):
+  Paper text: arm with highest UCB (as in Eq. (5)).
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

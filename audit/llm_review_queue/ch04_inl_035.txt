@@ -1,0 +1,21 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_035
+Chapter: 04 Section: 4.7.1
+LaTeX: m > 2.0
+
+Context before: *  The annual base premium is proportional to the applicant's mortality multiplier $m$:
+
+$$P_{\text{base}} = 200 \times m \quad \text{(USD/year)}.$$
+
+Expected claims are similarly scaled:
+
+$$C_{\text{exp}} = 150 \times m \quad \text{(USD/year)}.$$
+
+**Adverse-selection adjustment.**  Applicants with
+
+Candidate paper match (confidence 0.43):
+  Paper text: λB > λA.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

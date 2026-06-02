@@ -1,0 +1,15 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_050
+Chapter: 05 Section: 5.7.3
+LaTeX: p < 0.001
+
+Context before: he result is theoretically consistent with Bastani, Bayati & Khosravi (2021), who prove that under covariate diversity, exploration-free greedy is rate-optimal in the contextual-bandit setting.
+
+Third, **even Greedy-only with no exploration whatsoever decisively outperforms Static XGB** (+\$18,969;
+
+Candidate paper match (confidence 0.47):
+  Paper text: 0 < δ < 1.
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

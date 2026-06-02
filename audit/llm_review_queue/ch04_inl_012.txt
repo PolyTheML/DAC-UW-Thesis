@@ -1,0 +1,19 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch04_inl_012
+Chapter: 04 Section: 4.6.1
+LaTeX: O(d^3)
+
+Context before: oration–exploitation trade-off; larger $\alpha$ encourages more exploration.
+
+After observing reward $r_t$, the sufficient statistics for the chosen action are updated via rank-one increments:
+
+$$A_{a_t} \leftarrow A_{a_t} + x_t x_t^\top, \qquad b_{a_t} \leftarrow b_{a_t} + r_t x_t.$$
+
+To avoid the
+
+Candidate paper match (confidence 0.44):
+  Paper text: O(d2√
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.

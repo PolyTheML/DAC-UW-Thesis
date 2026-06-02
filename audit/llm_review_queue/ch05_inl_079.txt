@@ -1,0 +1,17 @@
+EQUATION REVIEW REQUEST
+Equation ID: ch05_inl_079
+Chapter: 05 Section: 5.10.1
+LaTeX: , an XGBoost regressor is retrained from scratch on the first
+
+Context before: 500; bandits cross over between T = 1,000 and T = 2,000.]
+
+### 5.10.1 Design
+
+EXP-010 asks an operationally crucial question that the headline experiments do not: *at what data scale does the bandit begin to beat a freshly-trained static model?* At each horizon $T \in \{200, 500, 1{,}000, 2{,}000\}
+
+Candidate paper match (confidence 0.43):
+  Paper text: using the deﬁnition of unsaturated arms, the regret is
+
+TASK: Determine if the thesis equation and the paper text express the same
+mathematical object. Answer: SAME / DIFFERENT / UNCERTAIN, with 1-2 sentences
+of explanation.
