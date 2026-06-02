@@ -10,12 +10,12 @@ class PaperEquation(TypedDict):
 
 class Paper(TypedDict):
     title: str
-    authors: list
+    authors: list[str]
     year: str
     filename: str
-    sections: list
-    equations: list          # list[PaperEquation]
-    raw_pages: dict          # {str(page_num): text}
+    sections: list[dict[str, str]]
+    equations: list[PaperEquation]
+    raw_pages: dict[str, str]
 
 
 class ThesisEquation(TypedDict):
@@ -29,7 +29,7 @@ class ThesisEquation(TypedDict):
     display: bool            # True = $$...$$, False = $...$
     nearby_text_before: str
     nearby_text_after: str
-    citations: list          # list[str]
+    citations: list[str]
 
 
 class TraceResult(TypedDict):
@@ -54,7 +54,7 @@ class ValidationResult(TypedDict):
 class NotationIssue(TypedDict):
     symbol: str
     issue_type: str          # "REUSE_CONFLICT" | "UNDEFINED" | "INCONSISTENT_INDEX"
-    locations: list          # list of equation_ids or chapter refs
+    locations: list[str]
     notes: str
 
 
@@ -62,7 +62,7 @@ class LiteratureClaim(TypedDict):
     claim_text: str
     chapter: str
     section: str
-    citations: list
+    citations: list[str]
     status: str              # "SUPPORTED" | "PARTIALLY_SUPPORTED" | "UNSUPPORTED" | "NO_CITED_PAPER"
     evidence: str
 
