@@ -69,3 +69,6 @@ data/cambodia/phnom_penh_pings.csv
 
 # Temporary analysis scripts
 analyze*.py
+
+# Audit pipeline cache (regenerated on each run)
+audit/cache/
