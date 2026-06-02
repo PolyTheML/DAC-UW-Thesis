@@ -89,6 +89,7 @@ def run(repo_root: Path, cache_dir: Path) -> list:
         })
 
     out_path = cache_dir / "phase_results" / "phase7_literature.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
     counts: dict[str, int] = {}
     for r in results:

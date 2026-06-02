@@ -52,6 +52,7 @@ def run(repo_root: Path, cache_dir: Path) -> list:
                 })
 
     out_path = cache_dir / "phase_results" / "phase8_citations.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(issues, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"[Phase 8] Citation issues: {len(issues)}")
     return issues

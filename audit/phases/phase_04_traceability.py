@@ -38,7 +38,7 @@ def run(repo_root: Path, cache_dir: Path) -> tuple:
     for json_path in (cache_dir / "papers").glob("*.json"):
         papers[json_path.stem] = json.loads(json_path.read_text(encoding="utf-8"))
 
-    llm_queue_dir = Path("audit/llm_review_queue")
+    llm_queue_dir = cache_dir.parent / "llm_review_queue"
     llm_queue_dir.mkdir(parents=True, exist_ok=True)
 
     results = []

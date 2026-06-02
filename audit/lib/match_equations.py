@@ -113,7 +113,7 @@ def match_equation(thesis_latex: str, paper_equations: list, citation_paper: str
             - notes: str
     """
     if not paper_equations:
-        return _result("FAIL", "none", 0.0, 0, "", "No paper equations to match against")
+        return _result("FAIL", "none", 0.0, 0, "", "No paper equations to match against", "")
 
     best_score = 0.0
     best_eq = None
@@ -125,7 +125,7 @@ def match_equation(thesis_latex: str, paper_equations: list, citation_paper: str
 
         if norm_thesis and norm_thesis in norm_paper:
             return _result("PASS", "exact", 1.0, eq["page"], eq["text"],
-                          "Exact normalized match")
+                          "Exact normalized match", eq.get("_paper_stem", ""))
 
         # Check 2: Fuzzy token-based match
         score = _fuzzy_score(thesis_latex, eq["text"])
@@ -136,17 +136,17 @@ def match_equation(thesis_latex: str, paper_equations: list, citation_paper: str
     # Decision tree based on score
     if best_score >= 0.75:
         return _result("PASS", "fuzzy", best_score, best_eq["page"], best_eq["text"],
-                      "")
+                      "", best_eq.get("_paper_stem", ""))
     elif best_score >= 0.40:
         return _result("LLM_QUEUE", "fuzzy", best_score, best_eq["page"], best_eq["text"],
-                      "Partial match — queued for LLM review")
+                      "Partial match — queued for LLM review", best_eq.get("_paper_stem", ""))
     else:
         return _result("FAIL", "none", best_score, 0, "",
-                      "No match found in any paper")
+                      "No match found in any paper", "")
 
 
 def _result(status: str, method: str, confidence: float,
-            page: int, text: str, notes: str) -> dict:
+            page: int, text: str, notes: str, source_paper: str = "") -> dict:
     """Helper to construct result dict with consistent structure."""
     return {
         "status": status,
@@ -154,5 +154,6 @@ def _result(status: str, method: str, confidence: float,
         "confidence": round(confidence, 3),
         "source_page": page,
         "source_text": text[:300] if text else "",
+        "source_paper": source_paper,
         "notes": notes,
     }
