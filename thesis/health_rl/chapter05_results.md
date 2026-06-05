@@ -12,9 +12,9 @@ A central methodological commitment of this chapter is **baseline completeness**
 
 ---
 
-## 5.0.1 The Complete Baseline Ladder and the Headline Question
+### 5.0.1 The Complete Baseline Ladder and the Headline Question
 
-### 5.0.1.1 The headline question
+#### 5.0.1.1 The headline question
 
 The operative question of this thesis is not *"does a contextual bandit beat a hand-tuned rule?"* — a low bar a learner clears almost by construction — but **"does a contextual bandit beat the best *simple* policy available on this problem?"** Answering it requires a complete baseline ladder. Table 5.0.1 reports that ladder under the as-published ("ORIGINAL") reward model, 20 seeds, N = 5,000 rounds, common random numbers. (This promotes the 5-seed first pass in EXP-014 to the chapter's standard 20-seed protocol; the reimplemented reward harness reproduces the headline LinUCB reward to within rounding — $91,864 here vs $91,947 in §5.3 (EXP-007) — confirming the two pipelines agree. EXP-005's own harness reports a slightly lower $90,540 for LinUCB (§5.1); the ~1.4 % difference is between EXP-005's pipeline and the regression-exact reward-sensitivity harness used for the ladder, and is immaterial to every comparison in this chapter.)
 
@@ -34,7 +34,7 @@ The operative question of this thesis is not *"does a contextual bandit beat a h
 
 [FIGURE: thesis/health_rl/figures/fig_exp_014_baseline_ladder.png — Figure 5.0.1. The baseline ladder (mean ± 95 % bootstrap CI). LinUCB and LinTS lead every deployable policy, outperforming Static XGB by +25.2 %.]
 
-### 5.0.1.2 The verdict, stated up front
+#### 5.0.1.2 The verdict, stated up front
 
 **The contextual bandit beats every deployable alternative on this problem.** LinUCB and LinTS lead the deployable-policy rankings in Table 5.0.1, outperforming the frozen Static-XGB rule by **+25.2 %** and **+29.8 %** respectively (LinUCB: p < 0.001, d = 2.98, large effect; §5.1, §5.3). Both bandits also clear every other deployable baseline — Epsilon-Greedy, AlwaysSTANDARD, and Random — by large, statistically significant margins. *Online adaptive estimation beats every frozen alternative.*
 
