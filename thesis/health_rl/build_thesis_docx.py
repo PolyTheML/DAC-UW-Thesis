@@ -172,16 +172,24 @@ def _add_formatted_inline(para, text, base_size=12, base_bold=False, base_italic
             _emit_with_math(para, part, size=base_size, bold=base_bold, italic=base_italic)
 
 
+_HEADING_STYLE = {
+    "chapter": "Heading 1",
+    "section": "Heading 2",
+    "subsection": "Heading 3",
+    "subsubsection": "Heading 4",
+}
+
+
 def add_heading_paragraph(doc, text, level="chapter"):
     """Add a heading with ITC template formatting.
     level: 'chapter' | 'section' | 'subsection' | 'subsubsection'
-    Headings now parse inline $math$, **bold**, *italic* and \\$ / \\| escapes so that
-    chapter titles such as 'Empirical Validation of the $\\tilde O(d\\sqrt{T})$ Regret Bound'
-    render correctly rather than leaking raw LaTeX."""
+
+    Each paragraph is assigned the matching Word built-in Heading style so that
+    the TOC field (\\o "1-3") collects Heading 1-3 automatically. Explicit run
+    formatting overrides the style's defaults visually."""
     para = doc.add_paragraph()
+    para.style = doc.styles[_HEADING_STYLE[level]]
     if level == "chapter":
-        # Size 16, Bold, ALL CAPS, center aligned. Inline math is uncommon in
-        # chapter headings (Roman-numeral level), but uppercase the literal text.
         _add_formatted_inline(para, text.upper(), base_size=16, base_bold=True)
         set_paragraph_format(para, space_after=Pt(24), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.CENTER)
     elif level == "section":
