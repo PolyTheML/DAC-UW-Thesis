@@ -28,7 +28,7 @@ from latex_render import render_inline as _render_latex_inline, extract_display_
 # Paths
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).parent
-OUT_PATH = Path(r"C:\DAC-UW-Thesis\thesis\I5_ITC_Thesis_Template_Guideline-AMS_BACKUP_CLEAN.docx")
+OUT_PATH = Path(r"C:\DAC-UW-Thesis\thesis\build\I5_ITC_Thesis_Submission_Final_fig21_fig22.docx")
 
 CHAPTERS = [
     ("chapter01_introduction.md", "CHAPTER I. INTRODUCTION"),
@@ -40,24 +40,43 @@ CHAPTERS = [
 ]
 
 FIGURES = [
-    ("fig_framework.png", "Figure 4.3. System architecture of the adaptive underwriting framework."),
+    ("fig_organization_chart.png", "Figure 1.1. Host organization structure and internship placement."),
+    ("fig_ch2_system_architecture.png", "Figure 2.1. Adaptive underwriting system architecture (Chapter II overview)."),
+    ("fig_ch2_project_timeline.png", "Figure 2.2. Project timeline — 6-month execution plan."),
     ("fig_ch4_architecture.png", "Figure 4.1. System architecture of the demonstration system."),
     ("fig_ch4_bandit_loop.png", "Figure 4.2. Contextual bandit decision loop."),
+    ("fig_framework.png", "Figure 4.3. System architecture of the adaptive underwriting framework."),
     ("fig_reward_curves.png", "Figure 5.1. Cumulative reward curves for LinUCB and Static XGB baseline."),
     ("fig_action_evolution.png", "Figure 5.2. Evolution of action distribution over 5,000 rounds."),
-    ("fig_fairness_region.png", "Figure 5.3. Approval rates by region with parity threshold."),
-    ("fig_fairness_occupation.png", "Figure 5.4. Approval rates by occupation with parity threshold."),
+    ("fig_fairness_region.png", "Figure 5.3. Converged-phase regional approval rates with the EEOC four-fifths threshold overlay."),
+    ("fig_fairness_occupation.png", "Figure 5.4. Converged-phase occupational approval rates with the EEOC four-fifths threshold overlay."),
     ("fig_regret_curves.png", "Figure 5.5. Cumulative regret curves across all four algorithms."),
-    ("fig_hitl_experiment.png", "Figure 5.5.1. EXP-008 four-panel HITL diagnostic."),
+    ("fig_hitl_experiment.png", "Figure 5.4.1. EXP-008 four-panel HITL diagnostic."),
+    ("fig_loglog_regret.png", "Figure 5.6. Log-log cumulative regret of LinUCB with linear fit (EXP-013 empirical validation of the O(sqrt(T)) bound)."),
+    ("fig_009_drift_adaptation.png", "Figure 5.9. Rolling per-round regret under a mid-run TB-prevalence and garment-income shock (EXP-009)."),
+    ("fig_010_cold_start.png", "Figure 5.10. Cumulative reward at horizons T in {200, 500, 1000, 2000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (EXP-010)."),
 ]
 
 TABLES = [
-    ("Table 1", "Feature categories and encoding scheme for the Cambodia dataset."),
-    ("Table 2", "Action-specific reward formulas and constraints."),
-    ("Table 3", "Hyperparameters for bandit algorithms and baseline."),
-    ("Table 4", "EXP-005 convergence validation results."),
-    ("Table 5", "EXP-006 fairness audit results by region and occupation."),
-    ("Table 6", "EXP-007 benchmark comparison final rankings."),
+    ("Table 3.1", "Comparative summary of contextual bandit algorithms for dynamic decision-making."),
+    ("Table 4.1", "Functional requirement groups mapped to research problems."),
+    ("Table 4.2", "Non-functional requirements."),
+    ("Table 4.3a", "Backend and data-science components of the implementation stack."),
+    ("Table 4.3b", "Frontend and visualisation components."),
+    ("Table 4.3c", "Deployment and development components."),
+    ("Table 4.5.2", "Feature categories and encoding scheme for the Cambodia dataset."),
+    ("Table 4.7.2", "Action-specific reward functions (expected value)."),
+    ("Table 5.1.1", "EXP-005 cumulative performance (20 seeds, mean +/- std with 95% bootstrap CI)."),
+    ("Table 5.2.1", "EXP-006 converged-phase approval rates by region and occupation."),
+    ("Table 5.3.1", "EXP-007 benchmark comparison final rankings."),
+    ("Table 5.4.1", "EXP-008 HITL performance versus mathematical-REFER baseline."),
+    ("Table 5.6.1", "EXP-013 mean-curve log-log slope of LinUCB cumulative regret as a function of burn-in."),
+    ("Table 5.7.1", "EXP-011 ablation results: Full LinUCB, No-REFER, Greedy-only, StaticXGB."),
+    ("Table 5.8.1", "EXP-012 LinUCB alpha sensitivity sweep."),
+    ("Table 5.8.2", "EXP-012 adverse-selection factor sweep."),
+    ("Table 5.8.3", "EXP-012 customer-elasticity slope sweep."),
+    ("Table 5.9.1", "EXP-009 pre- and post-shock per-round regret."),
+    ("Table 5.10.1", "EXP-010 cumulative reward by horizon T."),
 ]
 
 ABBREVIATIONS = [
@@ -112,30 +131,67 @@ def add_page_break(doc):
     doc.add_page_break()
 
 
+def _emit_with_math(para, text, size, bold, italic):
+    """Emit `text` to `para`, processing $math$ sub-tokens. Inherits the bold/italic
+    state from the caller (so math nested inside **bold** is rendered bold+italic).
+    Escape placeholders \\x01 (literal $) and \\x02 (literal |) are restored here."""
+    parts = re.split(r'(\$[^$\n]+?\$)', text)
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith('$') and part.endswith('$') and len(part) > 2:
+            inner = part[1:-1].replace("\x01", "$").replace("\x02", "|")
+            rendered = _render_latex_inline(inner)
+            run = para.add_run(rendered)
+            # Math is always rendered italic; bold is inherited.
+            set_run_font(run, size_pt=size, bold=bold, italic=True)
+        else:
+            literal = part.replace("\x01", "$").replace("\x02", "|")
+            run = para.add_run(literal)
+            set_run_font(run, size_pt=size, bold=bold, italic=italic)
+
+
+def _add_formatted_inline(para, text, base_size=12, base_bold=False, base_italic=False):
+    """Add `text` to `para` as one or more runs, parsing **bold**, *italic*, $math$,
+    \\$ (literal dollar), and \\| (literal pipe) markers. Math inside **bold** or
+    *italic* spans is rendered with the surrounding emphasis preserved. Reused by
+    body paragraphs, table cells, figure captions, and heading rendering."""
+    # Protect escapes so they don't confuse the marker regex.
+    text = text.replace("\\$", "\x01").replace("\\|", "\x02")
+    # First-level split on bold/italic markers only; math is handled per-span below.
+    parts = re.split(r'(\*\*.*?\*\*|(?<![\w*])\*[^*\n]+?\*(?!\*))', text)
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith('**') and part.endswith('**') and len(part) > 4:
+            _emit_with_math(para, part[2:-2], size=base_size, bold=True, italic=base_italic)
+        elif part.startswith('*') and part.endswith('*') and len(part) > 2 and not part.startswith('**'):
+            _emit_with_math(para, part[1:-1], size=base_size, bold=base_bold, italic=True)
+        else:
+            _emit_with_math(para, part, size=base_size, bold=base_bold, italic=base_italic)
+
+
 def add_heading_paragraph(doc, text, level="chapter"):
     """Add a heading with ITC template formatting.
     level: 'chapter' | 'section' | 'subsection' | 'subsubsection'
-    """
+    Headings now parse inline $math$, **bold**, *italic* and \\$ / \\| escapes so that
+    chapter titles such as 'Empirical Validation of the $\\tilde O(d\\sqrt{T})$ Regret Bound'
+    render correctly rather than leaking raw LaTeX."""
     para = doc.add_paragraph()
     if level == "chapter":
-        # Size 16, Bold, ALL CAPS, center aligned, page break before
-        run = para.add_run(text.upper())
-        set_run_font(run, size_pt=16, bold=True)
+        # Size 16, Bold, ALL CAPS, center aligned. Inline math is uncommon in
+        # chapter headings (Roman-numeral level), but uppercase the literal text.
+        _add_formatted_inline(para, text.upper(), base_size=16, base_bold=True)
         set_paragraph_format(para, space_after=Pt(24), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.CENTER)
     elif level == "section":
-        # Size 14, Bold
-        run = para.add_run(text)
-        set_run_font(run, size_pt=14, bold=True)
+        _add_formatted_inline(para, text, base_size=14, base_bold=True)
         set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT)
     elif level == "subsection":
-        # Size 12, Bold, indent once (1.27 cm)
-        run = para.add_run(text)
-        set_run_font(run, size_pt=12, bold=True)
+        _add_formatted_inline(para, text, base_size=12, base_bold=True)
         set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
                              left_indent=Cm(1.27))
     elif level == "subsubsection":
-        run = para.add_run(text)
-        set_run_font(run, size_pt=12, bold=True, italic=True)
+        _add_formatted_inline(para, text, base_size=12, base_bold=True, base_italic=True)
         set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.LEFT,
                              left_indent=Cm(2.0))
     return para
@@ -146,7 +202,6 @@ def add_body_paragraph(doc, text, is_bullet=False, bullet_level=0, is_numbered=F
     para = doc.add_paragraph()
     if is_bullet:
         para.style = "List Bullet"
-        # Indent based on level
         para.paragraph_format.left_indent = Cm(1.27 + bullet_level * 0.64)
     elif is_numbered:
         para.style = "List Number"
@@ -155,23 +210,7 @@ def add_body_paragraph(doc, text, is_bullet=False, bullet_level=0, is_numbered=F
         set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5, alignment=WD_ALIGN_PARAGRAPH.JUSTIFY,
                              first_line_indent=Cm(1.27))
 
-    # Parse inline formatting: **bold**, *italic*, $math$ (LaTeX -> Unicode)
-    parts = re.split(r'(\*\*.*?\*\*|\*.*?\*|\$.*?\$)', text)
-    for part in parts:
-        if part.startswith('**') and part.endswith('**'):
-            run = para.add_run(part[2:-2])
-            set_run_font(run, size_pt=12, bold=True)
-        elif part.startswith('*') and part.endswith('*') and not part.startswith('**'):
-            run = para.add_run(part[1:-1])
-            set_run_font(run, size_pt=12, italic=True)
-        elif part.startswith('$') and part.endswith('$') and len(part) > 2:
-            # Inline LaTeX math -> Unicode, rendered in italic Cambria Math-friendly font
-            rendered = _render_latex_inline(part[1:-1])
-            run = para.add_run(rendered)
-            set_run_font(run, size_pt=12, italic=True)
-        else:
-            run = para.add_run(part)
-            set_run_font(run, size_pt=12)
+    _add_formatted_inline(para, text, base_size=12)
     return para
 
 
@@ -243,8 +282,7 @@ def add_embedded_figure(doc, image_path: str, caption_text: str, figure_label: s
         full_caption = caption_text
 
     para = doc.add_paragraph()
-    run = para.add_run(full_caption)
-    set_run_font(run, size_pt=11, italic=True)
+    _add_formatted_inline(para, full_caption, base_size=11, base_italic=True)
     set_paragraph_format(para, space_after=Pt(12), line_spacing=1.5,
                          alignment=WD_ALIGN_PARAGRAPH.CENTER)
 
@@ -379,18 +417,26 @@ def parse_markdown(doc, md_text: str):
             i += 1
             continue
 
-        # Markdown table — simplistic parser
+        # Markdown table — strict detection. Only enter table mode when the line
+        # immediately following the current line is a proper markdown separator row
+        # (|---|---|, |:---|, etc.). This prevents body text containing literal
+        # vertical bars (e.g. absolute-value notation `|d|`, regex pipes, or
+        # set-builder `{x | P(x)}`) from being misread as a table.
         if '|' in stripped and not stripped.startswith('['):
-            # Check if next line is a separator like |---|---|
-            table_lines = []
-            while i < len(lines) and '|' in lines[i]:
-                table_lines.append(lines[i].strip())
-                i += 1
-            # Filter out separator lines
-            data_lines = [l for l in table_lines if not re.match(r'^[\s|\-:]+$', l.replace('|', '').strip())]
-            if data_lines:
-                add_markdown_table(doc, data_lines)
-            continue
+            next_idx = i + 1
+            next_line = lines[next_idx].strip() if next_idx < len(lines) else ''
+            sep_pattern = re.compile(r'^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$')
+            if sep_pattern.match(next_line):
+                table_lines = []
+                while i < len(lines) and '|' in lines[i]:
+                    table_lines.append(lines[i].strip())
+                    i += 1
+                # Drop separator rows from data.
+                data_lines = [l for l in table_lines if not re.match(r'^[\s|\-:]+$', l.replace('|', '').strip())]
+                if data_lines:
+                    add_markdown_table(doc, data_lines)
+                continue
+            # Otherwise fall through to paragraph handling: the pipe is body text.
 
         # Regular paragraph
         # Check if next lines are continuations (not blank, not heading, not list, not table)
@@ -417,19 +463,31 @@ def parse_markdown(doc, md_text: str):
 
 
 def _render_cell_math(text: str) -> str:
-    """Render any $...$ inline math inside a table cell to Unicode."""
-    text = text.replace("\\$", "\x01")
+    """Legacy helper: render any $...$ inline math inside a table cell to Unicode.
+    Retained for any direct callers; new code should prefer `_add_formatted_inline`
+    which also handles **bold** and *italic* markers."""
+    text = text.replace("\\$", "\x01").replace("\\|", "\x02")
     text = re.sub(r"\$([^$\n]+?)\$", lambda m: _render_latex_inline(m.group(1)), text)
-    text = text.replace("\x01", "$")
+    text = text.replace("\x01", "$").replace("\x02", "|")
     return text
 
 
 def add_markdown_table(doc, data_lines):
-    """Convert markdown table rows to a Word table."""
+    """Convert markdown table rows to a Word table.
+
+    Cell-level features supported:
+      - **bold** and *italic* markers render as Word bold/italic runs (not literal text).
+      - $math$ renders to Unicode via the LaTeX-to-Unicode converter.
+      - \\| inside a cell escapes the column delimiter so that math expressions like
+        $O(|\\theta| \\cdot T)$ can use the literal pipe character.
+      - \\$ inside a cell escapes the math delimiter so currency such as \\$25 stays literal.
+    """
     rows_data = []
     for line in data_lines:
-        cells = [c.strip() for c in line.split('|')]
-        cells = [c for c in cells if c]  # Remove empty edge cells
+        # Protect escaped pipes before splitting on the column delimiter; restore inside cells.
+        protected = line.replace("\\|", "\x02")
+        cells = [c.strip().replace("\x02", "\\|") for c in protected.split('|')]
+        cells = [c for c in cells if c]  # Remove empty edge cells from leading/trailing |
         rows_data.append(cells)
     if not rows_data:
         return
@@ -440,14 +498,13 @@ def add_markdown_table(doc, data_lines):
         row = table.rows[row_idx]
         for col_idx in range(num_cols):
             cell = row.cells[col_idx]
+            # Replace the default empty paragraph with our formatted inline content.
+            cell.text = ""  # clear default placeholder
+            paragraph = cell.paragraphs[0]
             if col_idx < len(row_data):
-                cell.text = _render_cell_math(row_data[col_idx])
-            # Format cell text
-            for paragraph in cell.paragraphs:
-                for run in paragraph.runs:
-                    set_run_font(run, size_pt=11)
-                set_paragraph_format(paragraph, space_after=Pt(6), line_spacing=1.15,
-                                     alignment=WD_ALIGN_PARAGRAPH.LEFT)
+                _add_formatted_inline(paragraph, row_data[col_idx], base_size=11)
+            set_paragraph_format(paragraph, space_after=Pt(6), line_spacing=1.15,
+                                 alignment=WD_ALIGN_PARAGRAPH.LEFT)
     doc.add_paragraph()  # spacing after table
 
 
@@ -636,7 +693,7 @@ def add_english_abstract(doc):
         "The research designs and implements a contextual bandit framework with three algorithms (LinUCB, LinTS, and Epsilon-Greedy) "
         "and compares them against a static XGBoost rule baseline on a synthetic dataset of 2,000 Cambodian health insurance applicants anchored on the Cambodia Demographic and Health Survey 2021–22 (National Institute of Statistics et al., 2023). "
         "A profit-based actuarial reward simulator evaluates four underwriting actions (standard, rated, decline, refer); Population Stability Index (PSI) sliding-window guardrails and the U.S. EEOC four-fifths rule jointly monitor regional and occupational fairness. All headline results are reported as means across 20 independent seeds with paired Wilcoxon signed-rank tests and bootstrap 95% confidence intervals.\n\n"
-        "Four controlled experiments validate the framework. EXP-005 shows that LinUCB achieves $90,540 cumulative reward over 5,000 rounds against the static baseline's $72,292 (+25%, Wilcoxon p < 0.001, Cohen's d = 2.98), and cuts average regret in the final 500 rounds from $9.01 to $2.20 per round (p < 0.001, d = −1.59). EXP-006 confirms that maximum sliding-window PSI remains in the GREEN/AMBER band for both region (0.082) and occupation (0.123) while the EEOC 4/5 rule is satisfied with parity ratios of 85.7% and 90.1% respectively. EXP-007 ranks four algorithms by cumulative regret: LinTS $21,149, LinUCB $22,774 (statistically indistinguishable from LinTS, p = 0.87), Epsilon-Greedy $38,281, and Static XGB $42,548 — both bandits decisively outperform the static and uniform-exploration baselines (p < 0.001, d > 3.4). EXP-008 wraps LinUCB in a human-in-the-loop layer and raises cumulative reward to $102,100 (+6.5% over the mathematical-REFER baseline) at a human-review cost of 2.6% of reward, with zero queue depth throughout.\n\n"
+        "Four controlled experiments validate the framework. EXP-005 shows that LinUCB achieves \\$90,540 cumulative reward over 5,000 rounds against the static baseline's \\$72,292 (+25%, Wilcoxon p < 0.001, Cohen's d = 2.98), and cuts average regret in the final 500 rounds from \\$9.01 to \\$2.20 per round (p < 0.001, d = −1.59). EXP-006 confirms that maximum sliding-window PSI remains in the GREEN/AMBER band for both region (0.082) and occupation (0.123) while the EEOC 4/5 rule is satisfied with parity ratios of 85.7% and 90.1% respectively. EXP-007 ranks four algorithms by cumulative regret: LinTS \\$21,149, LinUCB \\$22,774 (statistically indistinguishable from LinTS, p = 0.87), Epsilon-Greedy \\$38,281, and Static XGB \\$42,548 — both bandits decisively outperform the static and uniform-exploration baselines (p < 0.001, d > 3.4). EXP-008 wraps LinUCB in a human-in-the-loop layer and raises cumulative reward to \\$102,100 (+6.5% over the mathematical-REFER baseline) at a human-review cost of 2.6% of reward, with zero queue depth throughout. A post-hoc robustness analysis identifies an inadmissible constant policy as a theoretical performance ceiling (§6.2), bounding the interpretation of this result.\n\n"
         "The results provide a rigorous proof of concept that contextual bandits can improve both profitability and fairness in Cambodian "
         "health insurance underwriting while remaining computationally lightweight enough for deployment on low-resource mobile infrastructure. "
         "The thesis contributes a reproducible 20-seed experimental harness, a Cambodia-calibrated synthetic dataset, sliding-window PSI and EEOC-4/5 fairness monitoring, and a human-in-the-loop wrapper that may inform future research and industry practice in emerging-market algorithmic insurance."
