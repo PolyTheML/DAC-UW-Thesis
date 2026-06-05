@@ -16,6 +16,7 @@ from docx import Document
 from docx.shared import Inches, Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.section import WD_SECTION
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
@@ -773,6 +774,48 @@ def add_list_of_abbreviations(doc):
 # Document setup
 # ---------------------------------------------------------------------------
 
+def _add_page_number_footer(section, num_fmt="decimal", start=1, first_page_different=False):
+    """Add a bare centered page number to the footer of *section*.
+
+    num_fmt: OOXML w:pgNumType fmt value — 'lowerRoman' or 'decimal'
+    start:   page number to restart at
+    first_page_different: suppress the number on the very first page of the section
+    """
+    footer = section.footer
+    footer.is_linked_to_previous = False
+
+    para = footer.paragraphs[0]
+    para.clear()
+    para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    run = para.add_run()
+    set_run_font(run, size_pt=12)
+
+    for fld_type, instr in [("begin", None), (None, " PAGE "), ("end", None)]:
+        if fld_type:
+            el = OxmlElement("w:fldChar")
+            el.set(qn("w:fldCharType"), fld_type)
+            run._r.append(el)
+        else:
+            el = OxmlElement("w:instrText")
+            el.set(qn("xml:space"), "preserve")
+            el.text = instr
+            run._r.append(el)
+
+    sectPr = section._sectPr
+    for old in sectPr.findall(qn("w:pgNumType")):
+        sectPr.remove(old)
+    pgNumType = OxmlElement("w:pgNumType")
+    pgNumType.set(qn("w:fmt"), num_fmt)
+    pgNumType.set(qn("w:start"), str(start))
+    sectPr.append(pgNumType)
+
+    if first_page_different:
+        for old in sectPr.findall(qn("w:titlePg")):
+            sectPr.remove(old)
+        sectPr.append(OxmlElement("w:titlePg"))
+
+
 def setup_document_styles(doc):
     """Configure default styles to match ITC template."""
     style = doc.styles['Normal']
@@ -811,6 +854,10 @@ def main():
     doc = Document()
     setup_document_styles(doc)
 
+    # Front matter section: lower-Roman page numbers, title page un-numbered
+    _add_page_number_footer(doc.sections[0], num_fmt="lowerRoman", start=1,
+                            first_page_different=True)
+
     # ---- Front matter ------------------------------------------------------
     add_title_page(doc)
     add_acknowledgement(doc)
@@ -820,6 +867,10 @@ def main():
     add_list_of_figures(doc)
     add_list_of_tables(doc)
     add_list_of_abbreviations(doc)
+
+    # Section break: body starts here with Arabic page numbers restarting at 1
+    doc.add_section(WD_SECTION.NEW_PAGE)
+    _add_page_number_footer(doc.sections[-1], num_fmt="decimal", start=1)
 
     # ---- Body chapters -----------------------------------------------------
     for filename, expected_chapter_title in CHAPTERS:
