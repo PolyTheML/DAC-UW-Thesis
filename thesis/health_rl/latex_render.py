@@ -25,7 +25,7 @@ GREEK = {
 }
 
 OPS = {
-    "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥",
+    "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥", "gg": "≫", "ll": "≪",
     "ne": "≠", "neq": "≠", "approx": "≈", "sim": "∼", "simeq": "≃",
     "in": "∈", "notin": "∉", "subset": "⊂", "supset": "⊃",
     "subseteq": "⊆", "supseteq": "⊇",
@@ -70,7 +70,7 @@ SIZE_MACROS = {"left", "right", "bigl", "bigr", "big", "Bigl", "Bigr", "Big",
                "biggl", "biggr", "bigg", "Biggl", "Biggr", "Bigg"}
 
 # Macros that consume a single {arg}
-ARG_MACROS_TEXT = {"text", "mathrm", "operatorname"}    # arg used as plain text
+ARG_MACROS_TEXT = {"text", "mathrm", "operatorname", "mathbf"}    # arg used as plain text
 ARG_MACROS_HAT = {"hat"}
 ARG_MACROS_TILDE = {"tilde", "widetilde"}
 ARG_MACROS_BAR = {"bar", "overline"}
@@ -183,6 +183,10 @@ def _render_token_stream(s: str) -> str:
                 out.append(ch); i += 1; continue
             name = m.group(1)
             i += m.end()
+
+            # Escaped punctuation — emit the character literally
+            if name in ("{", "}", "_", "^", "&", "#", "%", "~"):
+                out.append(name); continue
 
             # Handle \\arg\\max / \\arg\\min specially
             if name == "arg" and s[i:i + 4] == r"\max":
@@ -319,6 +323,8 @@ def _render_token_stream(s: str) -> str:
                 continue
 
             # Unknown macro — drop the backslash, emit name as-is
+            import sys as _sys_warn
+            print(f"[latex_render] unknown macro: \\{name}", file=_sys_warn.stderr)
             out.append(name); continue
 
         if ch == "_":

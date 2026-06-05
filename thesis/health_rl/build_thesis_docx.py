@@ -135,7 +135,7 @@ def _emit_with_math(para, text, size, bold, italic):
     """Emit `text` to `para`, processing $math$ sub-tokens. Inherits the bold/italic
     state from the caller (so math nested inside **bold** is rendered bold+italic).
     Escape placeholders \\x01 (literal $) and \\x02 (literal |) are restored here."""
-    parts = re.split(r'(\$[^$\n]+?\$)', text)
+    parts = re.split(r'(\$(?!\d)[^$\n]+?\$)', text)
     for part in parts:
         if not part:
             continue
@@ -828,6 +828,11 @@ def main():
             print(f"Warning: {filepath} not found, skipping.")
             continue
         md_text = filepath.read_text(encoding="utf-8")
+        # Strip any per-chapter REFERENCES section; the consolidated section is
+        # appended by the builder below.
+        md_text = re.sub(r'\n## REFERENCES.*', '', md_text, flags=re.DOTALL | re.IGNORECASE)
+        # Strip editorial word-count / formatting footer lines.
+        md_text = re.sub(r'^\*(?:Word count|Formatting):.*\*\s*$', '', md_text, flags=re.MULTILINE)
 
         # Inject a page break before the chapter
         add_page_break(doc)
