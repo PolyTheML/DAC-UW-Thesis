@@ -1,0 +1,63 @@
+% Appendices — Health-RL thesis. (The template's fraud-detection appendix, which
+% used the unloaded `lstlisting` environment, has been removed.) Main_content.tex
+% already issues \appendix and the APPENDICES chapter heading before \input-ing this.
+
+\section*{Appendix A\quad Experiment Registry and Reproducibility}
+\addcontentsline{toc}{section}{Appendix A\quad Experiment Registry and Reproducibility}
+
+Every result in this thesis is produced by a self-contained Python script with a
+fixed random seed, pre-registered pass/fail criteria, and a standardized exit code
+(0 = criteria satisfied). The headline experiment is reproduced with
+\texttt{python healthrl/experiments/exp\_005\_underwriting\_convergence.py} on
+Python~3.11 with the pinned dependencies in \texttt{requirements.txt}.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{>{\ttfamily}l l}
+\toprule
+\textnormal{\textbf{Script}} & \textbf{Purpose} \\
+\midrule
+exp\_005 & Underwriting convergence (LinUCB vs.\ Static XGB) \\
+exp\_006 & Fairness audit (PSI guardrails, EEOC four-fifths rule) \\
+exp\_007 & Benchmark comparison over the baseline ladder \\
+exp\_008 & Human-in-the-loop wrapper \\
+exp\_009 & Drift adaptation under a mid-run shock \\
+exp\_010 & Cold-start analysis across horizons \\
+exp\_011 & Ablation study (No-REFER, Greedy-only, Static XGB) \\
+exp\_012 & Sensitivity analysis ($\alpha$, adverse selection, elasticity) \\
+exp\_013 & Log--log regret validation of the $O(\sqrt{T})$ bound \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\section*{Appendix B\quad Reproducibility Statement}
+\addcontentsline{toc}{section}{Appendix B\quad Reproducibility Statement}
+
+The synthetic Cambodia dataset (2{,}000 applicants) is regenerated from
+\texttt{data/cambodia/generate\_cambodia\_dataset.py}, whose marginal distributions
+are anchored on the Cambodia Demographic and Health Survey 2021--22 and companion
+national sources (STEPS 2023, ILO 2023, WHO disease-burden reports). All headline
+statistics are reported across 20 independent seeds with paired Wilcoxon
+signed-rank tests, Bonferroni correction, and bootstrap 95\,\% confidence intervals.
+The live demonstration dashboard is built on FastAPI and deployed on Render.
+
+\bigskip
+\section*{Appendix C\quad Supplementary Figures}
+\addcontentsline{toc}{section}{Appendix C\quad Supplementary Figures}
+
+These reviewer-grade supplementary figures support the analyses in Chapter~V. They
+are numbered separately from the body figures (C.1--C.5). Every figure is produced
+by a self-contained generator that re-derives its inputs from the frozen experiment
+harnesses or cached model outputs and prints a reproduction cross-check against the
+corresponding table in Chapter~V.
+
+\fg{0.95\textwidth}{Figure C.1. Exploration scheme versus operating regime. (a) Stationary regime (EXP-007; 20-seed mean, shaded 95\% bootstrap CI): the two uncertainty-aware linear learners are statistically indistinguishable (LinUCB $\approx$ LinTS) and both accrue far less cumulative regret than $\varepsilon$-Greedy, whose \emph{uniform} random exploration is independent of the learned model---the penalty is for uninformed exploration, not for the UCB bonus, which §5.7 finds is not load-bearing. (b) Drift regime (EXP-009; rolling 100-round regret per round): after the round-1,500 shock the adaptive learners re-converge while the frozen Static-XGB rule stays elevated. Online adaptation beats the \emph{frozen rule}---but, as §5.9.5 shows, no adaptive policy beats the best constant even under drift.}{images/fig_exploration_regime.pdf}
+
+\fg{0.62\textwidth}{Figure C.2. Calibration of the underwriting risk models on the held-out test set ($n = 400$): predicted versus observed mortality multiplier by decile of prediction, with the dashed line marking perfect calibration ($y = x$). The Static-XGB model is well calibrated before it is thresholded (slope 1.03, RMSE 0.05, $R^2$ 0.99); the GLM is looser (slope 0.95, RMSE 0.21, $R^2$ 0.78). Because the target is a continuous multiplier rather than a binary event, the diagnostic is regression calibration, not a Brier score.}{images/fig_xgb_calibration.pdf}
+
+\fg{0.82\textwidth}{Figure C.3. Synthetic-data calibration against the published national sources each marginal was anchored on (CDHS 2021--22, Cambodia STEPS 2023, WHO). The synthetic marginals track their sources in rank and rough magnitude, though several deviate by up to about 6 percentage points (e.g.\ hypertension under-represented at 11.2\% versus 16.8\%, male smoking over-represented at 35.2\% versus 29.6\%, and female smoking at 3.9\% versus 1.4\%). TB is omitted because the WHO figure (246 per 100,000) is an incidence rate, not a prevalence the dataset's condition flag can be compared against.}{images/fig_data_calibration.pdf}
+
+\fg{0.98\textwidth}{Figure C.4. Decision regions on the reward-driver plane. The actuarial reward is an exact function of two variables---mortality multiplier and monthly income---of which the mortality multiplier is the latent risk driver and is \emph{not} one of the bandit's 34 context features (it must be inferred from age, BMI, pre-existing conditions, and so on). (a) The oracle's optimal action is dominated by RATED (74\% of the plane), with a STANDARD pocket at low-to-moderate risk and lower income and a DECLINE region at high mortality; REFER is never oracle-optimal. Black crosses mark the 29\% of the 2,000 applicants where the trained LinUCB (greedy $\theta_a^{\top} x$, seed 42) disagrees with the oracle. (b) The decision margin (best minus second-best expected reward) is large only in the upper-right; across most of the plane several actions are near-ties (dark), and the disagreements fall almost entirely in these low-margin zones (mean margin \$11 versus \$31 overall). This explains two findings at once: a constant ``rate-everyone'' policy is near-optimal because the oracle map is mostly a single action (§5.0.1), and the bandit's modest oracle-action agreement still recovers about 72\% of oracle reward because its disagreements occur where the actions barely differ. (The learned greedy policy matches the oracle on 70.7\% of applicants here; the live UCB-exploring policy's agreement over the last 500 rounds is lower, 37.8\% (§5.1)---a different measurement, taken on the deployed exploring policy rather than the greedy point estimate.)}{images/fig_decision_regions.pdf}
+
+\fg{0.95\textwidth}{Figure C.5. Empirical validation of the LinUCB $\tilde{O}(d\sqrt{T})$ regret bound---the \emph{rate}, not the constant (§5.6). (a) The log--log slope of mean cumulative regret falls monotonically toward the theoretical $0.5$ as the early-round burn-in is increased (from 0.621 at 50 rounds to 0.511 at 1,000), consistent with the bound being an asymptotic statement. (b) The 20 per-seed slopes (burn-in 200 rounds): mean 0.564, with 17 of 20 inside the pre-registered plausibility band $[0.30, 0.80]$. The $d$-factor and the constant are not estimated; only the $T$-dependence is validated.}{images/fig_regret_bound_overlay.pdf}

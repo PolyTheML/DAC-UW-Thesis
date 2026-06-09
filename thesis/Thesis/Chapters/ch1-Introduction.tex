@@ -1,0 +1,103 @@
+\chapter{INTRODUCTION}\label{chapter-i.-introduction}
+
+\section{Presentation of Internship}\label{presentation-of-internship}
+
+This thesis is conducted as part of the final-year graduation requirement at the Institut de Technologie du Cambodge (ITC), under the academic supervision of Dr.~HAS Sothea and the internship advisory of Mr.~ON Radet. The research component is carried out at Decent Actuarial Consultants Co., Ltd.~(DAC), Phnom Penh, Cambodia, and is focused on the application of contextual bandit algorithms to health insurance underwriting in the Cambodian market. The internship and research work address a practical industry problem --- the inefficiency of static rule-based underwriting in emerging insurance markets --- and propose a reproducible algorithmic framework as a solution.
+
+\subsection{Objective of Internship}\label{objective-of-internship}
+
+DAC's objective for this internship is to advance research and applied work in algorithmic decision-making for the Cambodian financial services sector, with particular emphasis on insurance underwriting, risk assessment, and actuarial modeling. The intern is tasked with designing, implementing, and empirically validating a contextual bandit framework that can serve as a prototype for adaptive underwriting in the Cambodian health insurance market.
+
+\subsection{Duration of Internship}\label{duration-of-internship}
+
+The internship and research work documented in this thesis were conducted over a period of three months, from March to June 2026, under the supervision of Dr.~HAS Sothea (academic supervisor) and Mr.~ON Radet (internship advisor). The work encompassed literature review, dataset design, algorithm implementation, experimental validation, and thesis writing.
+
+\section{Presentation of Organization}\label{presentation-of-organization}
+
+\subsection{General Information of Company}\label{general-information-of-company}
+
+The host organization is \textbf{Decent Actuarial Consultants Co., Ltd.~(DAC)}, an actuarial consulting firm headquartered in Taipei, Taiwan, with regional operations covering Vietnam, Cambodia, and other Southeast Asian countries. DAC specializes in providing professional actuarial services to insurance companies operating under the regulatory frameworks of Southeast Asian jurisdictions. The internship and research work documented in this thesis were conducted at DAC's Phnom Penh, Cambodia office.
+
+DAC occupies a distinctive position in the regional insurance market: it combines deep actuarial expertise --- including IFRS 17 implementation and appointed actuary services --- with a strong commitment to capacity-building through university partnerships and government-academia-industry collaboration. This positioning made DAC an appropriate host for a research project that bridges actuarial practice and modern machine learning.
+
+\subsection{Services of Company}\label{services-of-company}
+
+DAC offers six principal service lines:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Appointed Actuary Services.} Actuarial reports prepared in compliance with local regulatory requirements for both life insurance and general insurance companies operating in Southeast Asia.
+\item
+  \textbf{IFRS 17 Implementation.} Actuarial evaluation methodologies and model establishment; valuation and business planning processes; experience analysis and automated assumption-setting procedures; integrated actuarial and financial analysis to support regulatory reporting under the International Financial Reporting Standard 17.
+\item
+  \textbf{Product Development.} Life insurance product sign-offs; survey, design, and pricing for life and general insurance products; preparation of filing documentation for regulatory submissions.
+\item
+  \textbf{Asset--Liability Management and Enterprise Risk Management (ALM \& ERM).} Investment strategy development; solvency system design; implementation of Insurance Capital Standard and Economic Capital frameworks; reinsurance strategy planning.
+\item
+  \textbf{Mergers and Acquisitions Advisory.} Due diligence for insurance company acquisitions; market research and financial planning for startup insurers entering the Southeast Asian market.
+\item
+  \textbf{Education and Cooperation.} University partnerships across the region; government-academia-industry collaboration initiatives; international cooperation programs supporting the development of actuarial capacity in emerging markets.
+\end{enumerate}
+
+\subsection{Vision \& Mission}\label{vision-mission}
+
+DAC's stated business scope encompasses general insurance and life insurance consulting across Vietnam, Cambodia, and other Southeast Asian countries. The firm's operating philosophy reflects a dual commitment: delivering technically rigorous actuarial services that meet international regulatory standards (IFRS 17, Insurance Capital Standard), while building local actuarial capacity through education and cooperation with universities and government bodies. This combination of professional excellence and institutional development shapes the environment in which this research project was conceived and executed.
+
+\subsection{Organization Chart}\label{organization-chart}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        orgnode/.style={procnode, text width=30mm, minimum height=13mm, font=\footnotesize},
+        orgline/.style={draw=dgnodeline, line width=0.8pt},
+    ]
+        \node[orgnode] (chair) at (0.2,0) {\textbf{Chairman of the Board}\\[1pt] Mr. CHAN CHIH-CHING};
+        \node[orgnode] (gov) at (-3.8,-2.6) {\textbf{Governor}\\[1pt] Mr. HIN KANAL};
+        \node[orgnode] (gm) at (4.1,-2.6) {\textbf{Executive Director \& General Manager}\\[1pt] Mr. CHAN CHIH-CHING};
+        \node[orgnode] (hr) at (0,-5.4) {\textbf{Human Resources Manager}\\[1pt] Mr. ON RADET};
+        \node[orgnode] (chek) at (4.1,-5.4) {\textbf{Risk Analysis Assistant}\\[1pt] Ms. CHEK CHANNANG};
+        \node[orgnode] (soch) at (8.2,-5.4) {\textbf{Risk Analysis Assistant}\\[1pt] Ms. SOCH CHANRY};
+        \node[orgnode, fill=dgnodefill!55] (intern) at (0,-8.1) {\textbf{Intern --- LUN CHANPOLY}\\[1pt] Adaptive bandit underwriting};
+        %
+        \draw[orgline] (chair.south) -- (gov.north);
+        \draw[orgline, dashed] (chair.south) -- (gm.north)
+            node[midway, right=1mm, text=dgsubtext, font=\scriptsize\itshape] {same individual};
+        \draw[orgline] (gm.south) -- (hr.north);
+        \draw[orgline] (gm.south) -- (chek.north);
+        \draw[orgline] (gm.south) -- (soch.north);
+        \draw[orgline] (hr.south) -- (intern.north);
+    \end{tikzpicture}
+    \caption{Figure 1. DAC organizational structure and internship placement within the Phnom Penh office}
+    \label{fig:organization_chart}
+\end{figure}
+
+\subsection{Address \& Contact}\label{address-contact}
+
+DAC maintains its registered headquarters in Taipei, Taiwan, with the Phnom Penh, Cambodia office serving as the operational base for this internship.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4828}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5172}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Contact Role
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Name / Detail
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Company Name & Decent Actuarial Consultants Co., Ltd.~(DAC) \\
+Headquarters & 802, No.2, Ln. 150, Sec. 5, Xinyi Rd., Xinyi Dist., Taipei City 110, Taiwan \\
+HQ Phone & +886-2-2345-6300 \\
+HQ Fax & +886-2-2345-6311 \\
+HQ Email & brook@dac.com.tw \\
+Internship Office & Phnom Penh, Cambodia \\
+Academic Supervisor & Dr.~HAS Sothea \\
+Internship Advisor & Mr.~ON Radet \\
+\end{longtable}
+}
+

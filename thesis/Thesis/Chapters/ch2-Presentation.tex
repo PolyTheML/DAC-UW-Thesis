@@ -1,0 +1,191 @@
+\chapter{PRESENTATION OF THE PROJECT}\label{chapter-ii.-presentation-of-the-project}
+
+\section{General Presentation of Project}\label{general-presentation-of-project}
+
+This project develops an adaptive health insurance underwriting system designed specifically for the Cambodian market. The system is titled \emph{``Adaptive Health Insurance Underwriting via Contextual Bandits: A Reinforcement Learning Approach for Cambodia.''} It addresses the critical problem that traditional static rule-based underwriting is suboptimal for emerging-market health insurance because it ignores feature interactions and cannot adapt to portfolio drift over time.
+
+The Cambodian health insurance market presents a unique operating environment. Insurance penetration remains below two percent of the population, distribution relies heavily on agent networks with commissions consuming fifteen to thirty percent of premium revenue, and underwriting decisions are made using deterministic rule sets that cannot learn from experience. Mobile penetration, however, exceeds one hundred percent of the population, and digital payment platforms have reached approximately eighty percent of Cambodian adults. This divergence --- low insurance penetration alongside high mobile connectivity --- creates an opportunity for algorithmic underwriting delivered through mobile channels.
+
+The project produces four principal deliverables:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Synthetic Cambodia Health Insurance Dataset.} A reproducible dataset of 2,000 applicants anchored on the Cambodia Demographic and Health Survey (CDHS) 2021--22 conducted by the National Institute of Statistics (NIS) in partnership with ICF. The dataset reproduces realistic demographics, disease prevalence (tuberculosis, hepatitis B), regional variation across Cambodian provinces, and occupational risk profiles calibrated to local labor market conditions. The generation script is fully parameterized, enabling other researchers to regenerate or extend the data.
+\item
+  \textbf{Contextual Bandit Underwriting Engine.} Implementations of three contextual bandit algorithms --- LinUCB \citep{Li2010}, LinTS \citep{Agrawal2013}, and Epsilon-Greedy --- that learn optimal accept, rate, decline, and refer decisions from sequential feedback. The engine is designed to operate with sub-200-millisecond decision latency on standard CPU hardware, making it deployable on low-resource mobile infrastructure.
+\item
+  \textbf{Actuarial Reward Simulator.} A profit-based simulator that computes expected reward for each underwriting action, incorporating premium levels calibrated to Cambodian income distributions, claims costs modeled from regional disease burden data, adverse selection effects, and customer acceptance probability as a function of premium-to-income ratio.
+\item
+  \textbf{Fairness Monitoring Framework.} Population Stability Index (PSI) guardrails that continuously compare the demographic distribution of the approved portfolio against the applicant population. The framework raises GREEN, AMBER, or RED alerts when regional or occupational distributions diverge beyond actuarial thresholds, ensuring that algorithmic profitability does not come at the cost of demographic exclusion.
+\end{enumerate}
+
+The project is evaluated through three controlled experiments:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{EXP-005: Underwriting Convergence.} Validates that LinUCB learns risk-appropriate decisions and outperforms a static XGBoost rule baseline on cumulative reward and average regret.
+\item
+  \textbf{EXP-006: Fairness Audit.} Verifies that no regional or occupational segment experiences an approval rate below the U.S. EEOC four-fifths benchmark (80\%) of the maximum observed rate, and that the sliding-window PSI remains within GREEN/AMBER thresholds.
+\item
+  \textbf{EXP-007: Benchmark Comparison.} Provides a head-to-head comparison of LinUCB, LinTS, Epsilon-Greedy, and Static XGB on cumulative regret over 5,000 decision rounds.
+\end{itemize}
+
+All experiments are self-contained Python scripts with fixed random seeds, pass/fail assertions, and standardized exit codes suitable for continuous integration.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        sysnode/.style={procnode, text width=28mm, minimum height=12mm},
+        elbl/.style={font=\footnotesize, text=dgsubtext, align=center, text width=26mm, inner sep=2pt},
+        node distance=20mm and 22mm,
+    ]
+        % top row
+        \node[sysnode] (inp) {\textbf{Applicant input}};
+        \node[sysnode, right=of inp] (ban) {\textbf{Bandit engine}};
+        \node[sysnode, right=of ban] (act) {\textbf{Underwriting action}};
+        % bottom row
+        \node[sysnode, below=of ban] (psi) {\textbf{PSI monitor}};
+        \node[sysnode, below=of act] (rew) {\textbf{Reward simulator}};
+        % forward loop
+        \draw[flowarrow] (inp) -- node[elbl, above] {age, BMI, region,\\occupation, health} (ban);
+        \draw[flowarrow] (ban) -- node[elbl, above] {LinUCB / LinTS /\\$\varepsilon$-Greedy} (act);
+        \draw[flowarrow] (act) -- node[elbl, right] {Standard / Rated\\(+25\%) / Decline /\\Refer} (rew);
+        \draw[flowarrow] (rew) -- node[elbl, below] {premium $-$ claims\\$\times$ acceptance prob.} (psi);
+        % feedback
+        \draw[feedbackarrow] (psi) -- node[elbl, left, text width=24mm] {region \& occupation\\distribution drift} (ban);
+        \draw[feedbackarrow] (psi.west) -| node[elbl, below, pos=0.22, text width=22mm] {reference\\distribution} (inp.south);
+        % caption note
+        \node[elbl, text width=82mm, anchor=north] at ($(psi.south)!0.5!(rew.south) + (0,-14mm)$)
+            {\itshape Feedback loop: the observed reward updates the bandit parameters each round.};
+    \end{tikzpicture}
+    \caption{Figure 2. Adaptive underwriting system architecture: applicant context → bandit policy → reward simulator → PSI guardrail}
+    \label{fig:ch2_system_architecture}
+\end{figure}
+
+\section{Problematic}\label{problematic}
+
+Current health insurance underwriting in Cambodia relies on static rule engines or pre-trained classification models that apply the same decision boundary to every applicant, regardless of how the applicant population evolves. This creates three distinct problems that the project is designed to solve.
+
+\subsection{Suboptimal Risk Selection}\label{suboptimal-risk-selection}
+
+Static rules ignore feature interactions. A rule that declines all applicants with BMI above thirty and age above fifty cannot learn that a fit, non-smoking fifty-five-year-old with BMI thirty-one may be a profitable standard-risk case. Similarly, a rule that rates all rural applicants equally cannot distinguish between a low-risk rural civil servant and a high-risk rural construction worker. The result is a portfolio that systematically excludes profitable applicants while underpricing genuinely elevated risks. This suboptimal selection reduces both insurer profitability and market coverage.
+
+\subsection{Inability to Adapt to Portfolio Drift}\label{inability-to-adapt-to-portfolio-drift}
+
+As the insured population changes --- through economic growth, urbanization, occupational shifts, or public health interventions --- the risk distribution of incoming applicants drifts away from the population on which the static model was trained. A model trained in 2023 may face a 2026 applicant pool with substantially different age, occupation, and disease prevalence profiles. Without online learning, the model cannot adapt its decision boundaries to maintain profitability. The project addresses this by framing underwriting as a sequential learning problem in which the algorithm improves continuously from each new applicant.
+
+\subsection{Fairness and Demographic Parity}\label{fairness-and-demographic-parity}
+
+Static models optimized for aggregate accuracy can inadvertently discriminate against demographic segments. If the training data underrepresents rural applicants or garment workers, the model may learn to decline these segments at higher rates. In Cambodia, where garment workers number approximately 700,000 (85 percent women) and rural rice farmers number approximately 2.5 million, such discrimination would both deepen social inequality and exclude large addressable markets. The project embeds PSI-based fairness guardrails directly into the underwriting pipeline to detect and flag demographic drift before it becomes entrenched.
+
+These three problems share a common structural cause: the underwriting system treats decision-making as a one-shot prediction task rather than a sequential learning problem. Contextual bandits reframe the task as an online optimization problem in which the algorithm explicitly balances exploration (testing uncertain applicants to learn) with exploitation (applying known good decisions), while monitoring demographic parity through PSI guardrails.
+
+\section{Objective}\label{objective}
+
+\subsection{Primary Objective}\label{primary-objective}
+
+To design, implement, and empirically validate a contextual bandit framework for health insurance underwriting that outperforms static rule-based baselines on cumulative profitability while maintaining regional and occupational fairness on a synthetic Cambodia dataset.
+
+\subsection{Secondary Objectives}\label{secondary-objectives}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Dataset Development.} Develop a reproducible synthetic dataset of 2,000 Cambodian health insurance applicants anchored on the Cambodia Demographic and Health Survey (CDHS) 2021--22 (NIS/ICF). The dataset shall reproduce realistic demographics, disease prevalence (including tuberculosis and hepatitis B), regional variation, and occupational risk profiles.
+\item
+  \textbf{Algorithm Implementation and Comparison.} Implement and compare three contextual bandit algorithms --- LinUCB, LinTS, and Epsilon-Greedy --- against a static XGBoost rule baseline on cumulative reward and regret metrics over 5,000 decision rounds.
+\item
+  \textbf{Fairness Guardrail Design.} Design and validate PSI-based fairness guardrails that ensure the approved portfolio does not drift demographically from the applicant population.
+\item
+  \textbf{Fairness Audit.} Conduct a fairness audit verifying that no regional or occupational segment experiences an approval rate below the U.S. EEOC four-fifths benchmark (80\%) of the maximum observed rate.
+\end{enumerate}
+
+\subsection{Research Questions}\label{research-questions}
+
+\begin{itemize}
+\item
+  \textbf{RQ1.} Do contextual bandits (LinUCB, LinTS) achieve higher cumulative reward and lower cumulative regret than static XGBoost rule baselines on the Cambodia health underwriting task?
+\item
+  \textbf{RQ2.} Does the bandit framework maintain demographic fairness --- as measured by regional and occupational approval-rate parity and PSI --- without explicit fairness constraints in the reward function?
+\item
+  \textbf{RQ3.} What is the relative performance ranking of LinTS, LinUCB, Epsilon-Greedy, and Static XGB on regret and reward, and what algorithmic properties explain the ordering?
+\item
+  \textbf{RQ4.} Is the proposed framework technically feasible for deployment on low-resource mobile infrastructure, and what implementation pathway is required?
+\end{itemize}
+
+\section{Planning of Project}\label{planning-of-project}
+
+The project was executed according to the following schedule:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1842}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2895}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2632}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2632}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Phase
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Activities
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Duration
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Timeline
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Phase 1 & Literature review, dataset design, baseline model training & 3 weeks & Month 1 \\
+Phase 2 & Bandit algorithm implementation, reward simulator development & 3 weeks & Month 1--2 \\
+Phase 3 & Experiment execution (EXP-005, EXP-006, EXP-007) & 2 weeks & Month 2 \\
+Phase 4 & Results analysis, fairness audit, figure generation & 2 weeks & Month 2--3 \\
+Phase 5 & Thesis writing, presentation preparation, defense rehearsal & 3 weeks & Month 3 \\
+\end{longtable}
+}
+
+\begin{figure}[H]
+    \centering
+    \begin{ganttchart}[
+        hgrid, vgrid,
+        x unit=0.82cm,
+        y unit chart=0.6cm,
+        y unit title=0.5cm,
+        title label font=\footnotesize\bfseries,
+        title/.append style={fill=dgnodefill, draw=dgnodeline!60},
+        bar/.append style={fill=dgnodefill, draw=dgnodeline, line width=0.7pt},
+        bar height=0.55,
+        bar label font=\footnotesize,
+        milestone/.append style={fill=dgnodeline, draw=dgnodeline},
+        milestone label font=\scriptsize,
+    ]{1}{12}
+        \gantttitle{Month 1}{4}\gantttitle{Month 2}{4}\gantttitle{Month 3}{4} \\
+        \gantttitlelist{1,...,12}{1} \\
+        \ganttbar{Phase 1 -- Literature \& dataset}{1}{3}\ganttmilestone{}{3} \\
+        \ganttbar{Phase 2 -- Algorithms \& simulator}{3}{5}\ganttmilestone{}{5} \\
+        \ganttbar{Phase 3 -- Experiments}{6}{7}\ganttmilestone{}{7} \\
+        \ganttbar{Phase 4 -- Analysis \& figures}{8}{9}\ganttmilestone{}{9} \\
+        \ganttbar{Phase 5 -- Writing \& defense prep}{10}{12}\ganttmilestone{}{12} \\
+    \end{ganttchart}
+    \caption{Figure 3. Project timeline — 3-month execution plan}
+    \label{fig:project_timeline}
+\end{figure}
+
+Key milestones:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Milestone 1:} Dataset and baseline models complete (week 3)
+\item
+  \textbf{Milestone 2:} Bandit engine and reward simulator operational (week 5)
+\item
+  \textbf{Milestone 3:} All three experiments executed with passing results (week 7)
+\item
+  \textbf{Milestone 4:} Figures, tables, and draft chapters complete (week 9)
+\item
+  \textbf{Milestone 5:} Thesis writing complete; submission and defense preparation (week 12)
+\end{itemize}

@@ -1,0 +1,785 @@
+\chapter{PROJECT ANALYSIS AND CONCEPTS}\label{chapter-iv.-project-analysis-and-concepts}
+
+This chapter specifies the requirements that the proposed contextual bandit underwriting system must satisfy, identifies the technologies used to implement them, and documents the full methodology. Section 4.1 defines the functional capabilities, organised around the four operational modules of the system. Section 4.2 specifies the non-functional quality attributes. Section 4.3 enumerates the implementation tool stack. Section 4.4 closes with a focused exposition of the core technology --- the contextual bandit framework --- describing what it is, how it operates, its place in the overall system architecture, and the reasons it was selected over competing alternatives. Section 4.5 describes the synthetic dataset and feature engineering. Section 4.6 specifies the bandit algorithms and baselines. Section 4.7 details the reward design and actuarial simulator. Section 4.8 documents the PSI guardrails and fairness metrics. Section 4.9 presents the experimental design for the three core validation experiments (EXP-005 through EXP-007); the human-in-the-loop experiment (EXP-008) is reported in §5.4. Section 4.10 outlines the implementation and deployment roadmap.
+
+\section{Functional Requirements}\label{functional-requirements}
+
+The functional requirements are organised into four module groups, each of which addresses one or more of the three problems identified in Section 1.2: suboptimal risk selection, inability to adapt to portfolio drift, and demographic fairness violations. Table 2 maps each module group to the problems it resolves, providing forward traceability between requirements and motivation.
+
+\captionof{table}{Table 2 --- Functional requirement groups mapped to research problems (§1.2).}\label{tab:4.1}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3030}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2424}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1515}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1515}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1515}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+FR Group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Module
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Problem 1 (Risk selection)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Problem 2 (Drift adaptation)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Problem 3 (Fairness)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FR-1 & Applicant Simulation \& Risk Assessment & ● & ● & --- \\
+FR-2 & Dynamic Premium Optimisation & ● & --- & --- \\
+FR-3 & Bandit Algorithm Arena \& Benchmarking & ● & ● & --- \\
+FR-4 & PSI Drift Monitor \& Fairness Audit & --- & ● & ● \\
+\end{longtable}
+}
+
+\subsection{FR-1 --- Applicant Simulation and Risk Assessment}\label{fr-1-applicant-simulation-and-risk-assessment}
+
+The system generates and scores individual Cambodian health insurance applicants drawn from a synthetic 2,000-record dataset calibrated to the Cambodia Demographic and Health Survey (CDHS) 2021--22.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{FR-1.1} Generate random applicant profiles containing demographics (age, gender, region, education, wealth quintile), health indicators (BMI, smoking, alcohol use, exercise, self-reported health, pre-existing conditions), occupational risk class, and monthly income.
+\item
+  \textbf{FR-1.2} Compute deterministic expected rewards for all four underwriting actions (STANDARD, RATED, DECLINE, REFER) using the actuarial profit simulator (premium revenue, expected claims with adverse-selection adjustment, customer acceptance probability, expense load, lapse probability, customer lifetime value).
+\item
+  \textbf{FR-1.3} Run stochastic realisations that draw a customer accept/reject outcome and a sampled claim cost, returning the realised profit or loss for the chosen action.
+\end{itemize}
+
+\subsection{FR-2 --- Dynamic Premium Optimisation}\label{fr-2-dynamic-premium-optimisation}
+
+The system extends the four discrete actions with a continuous pricing layer that searches for the profit-maximising premium for a given applicant.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{FR-2.1} Grid-search the optimal premium multiplier in the range 0.5×--3.0× of base premium for a single applicant.
+\item
+  \textbf{FR-2.2} Display the resulting profit curve across all multipliers with the customer acceptance probability overlaid on a secondary axis.
+\item
+  \textbf{FR-2.3} Compare the optimised continuous premium against the legacy four-action decision (STANDARD / RATED / DECLINE / REFER).
+\item
+  \textbf{FR-2.4} Run batch optimisation on 100 sampled applicants and produce portfolio-level statistics (mean and median multipliers, histogram, summary table).
+\end{itemize}
+
+\subsection{FR-3 --- Bandit Algorithm Arena and Benchmarking}\label{fr-3-bandit-algorithm-arena-and-benchmarking}
+
+The system supports head-to-head experimental comparison of contextual bandit algorithms against the static XGBoost baseline.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{FR-3.1} Execute single-algorithm simulations (LinUCB, Linear Thompson Sampling, Epsilon-Greedy, Static XGB) for a configurable number of rounds (100--10,000), updating bandit state after each decision.
+\item
+  \textbf{FR-3.2} Visualise cumulative reward, cumulative regret, and action-distribution trajectories over time.
+\item
+  \textbf{FR-3.3} Run all four algorithms head-to-head on the same random seed and render dual cumulative reward and regret charts.
+\item
+  \textbf{FR-3.4} Expose hyperparameter controls (α for LinUCB, v² for LinTS, ε for Epsilon-Greedy) for sensitivity analysis.
+\end{itemize}
+
+\subsection{FR-4 --- PSI Drift Monitor and Fairness Audit}\label{fr-4-psi-drift-monitor-and-fairness-audit}
+
+The system implements Population Stability Index (PSI) guardrails to detect demographic drift and verify approval-rate parity across protected segments.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{FR-4.1} Compute PSI between the applicant pool and the approved portfolio across region, occupation, age band, and wealth quintile dimensions.
+\item
+  \textbf{FR-4.2} Display traffic-light status cards classifying each PSI value as GREEN (\textless{} 0.10), AMBER (0.10--0.25), or RED (\textgreater{} 0.25).
+\item
+  \textbf{FR-4.3} Render PSI bar charts for visual drift inspection.
+\item
+  \textbf{FR-4.4} Validate the fairness constraint that no regional or occupational segment exhibits an approval rate below 80\% of the maximum observed segment rate, in line with the U.S. EEOC four-fifths rule formalised in §4.8.2.
+\end{itemize}
+
+\section{Non-Functional Requirements}\label{non-functional-requirements}
+
+Non-functional requirements specify the quality attributes and operational constraints under which the system must perform. The eight requirements in Table 3 reflect the deployment context --- low-resource mobile infrastructure in an emerging market --- and the academic context --- reproducibility for examiner replication and regulator audit.
+
+\captionof{table}{Table 3 --- Non-functional requirements.}\label{tab:4.2}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1053}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2632}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3421}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2895}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Requirement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rationale
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+NFR-1 & Performance & Decision latency below 200 ms on standard CPU hardware. & Cambodian mobile distribution lacks GPU servers; the system must run on commodity infrastructure. \\
+NFR-2 & Performance & A 5,000-round bandit simulation completes within 30 seconds. & Enables interactive demonstration and rapid experimentation for examiner and stakeholder sessions. \\
+NFR-3 & Reproducibility & All experiments produce identical results when rerun with a fixed random seed (default SEED = 42). & Required for scientific validation and for reconstruction of the audit trail. \\
+NFR-4 & Portability & Pure Python stack deployable on any VPS or Render free tier. & Avoids proprietary licences and cloud lock-in; supports adoption in markets with limited cloud budgets. \\
+NFR-5 & Maintainability & Modular code structure separating data generation, algorithm implementation, API routing, and frontend assets. & Enables extension with new algorithms or PSI dimensions without rewriting unrelated subsystems. \\
+NFR-6 & Accuracy & PSI computations in the demonstration interface match the values produced by experiment EXP-006 to four decimal places. & Guarantees consistency between research code and production demo so that reviewers can verify reported results. \\
+NFR-7 & Interpretability & Per-action coefficient vectors θ\_a remain inspectable for LinUCB and LinTS. & Linear bandits, unlike neural alternatives, expose explicit feature weights for actuarial review and regulatory explanation. \\
+NFR-8 & Auditability \emph{(design target)} & Every decision tuple (context, action, reward, PSI status, timestamp) shall be immutably logged once the Shadow Mode wrapper described in §4.10.1 is deployed. & The decision log is the regulator-facing artefact; auditors must be able to reconstruct any historical decision from it. The current \texttt{demo/} exposes the bandit policy but does not yet provide the persistent decision log; integrating that log is part of the production rollout (§4.10). \\
+\end{longtable}
+}
+
+\section{Tool and Technology Requirements}\label{tool-and-technology-requirements}
+
+The technology stack is selected to satisfy three constraints simultaneously: scientific reproducibility (NFR-3), low-resource deployability (NFR-1, NFR-4), and academic transparency. All components are open-source, well-documented, and widely adopted in either actuarial practice or machine learning research. The stack is grouped into three categories: backend and data science (Section 4.3.1), frontend and visualisation (Section 4.3.2), and deployment and development (Section 4.3.3).
+
+\subsection{Backend and Data Science Stack}\label{backend-and-data-science-stack}
+
+\captionof{table}{Table 4 --- Backend and data science components.}\label{tab:4.3a}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tool
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Version
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Python & 3.11 & Primary implementation language; chosen for its scientific computing ecosystem and clear syntax suitable for academic reproducibility. \\
+FastAPI & ≥ 0.110 & Asynchronous web framework powering the REST API; provides native async support and automatic OpenAPI documentation. \\
+Uvicorn & ≥ 0.29 & ASGI server hosting the FastAPI application in development and production. \\
+Pydantic & ≥ 2.6 & Request and response schema validation, ensuring applicant payloads conform to expected types and ranges. \\
+NumPy & ≥ 1.26 & Dense linear algebra (matrix inversion, outer products, multivariate normal sampling) underlying LinUCB and LinTS updates. \\
+Pandas & ≥ 2.2 & Tabular data manipulation for dataset generation, feature engineering, and batch scoring. \\
+scikit-learn & ≥ 1.4 & Preprocessing utilities (LabelEncoder for categorical variables, scaling helpers). \\
+XGBoost & ≥ 2.0 & Gradient-boosted mortality predictor used as the static baseline against which bandits are benchmarked. \\
+SQLAlchemy \emph{(planned)} & 2.0 (async) & Object-relational mapper anticipated for the shadow-mode decision log (NFR-8) when §4.10.1 is implemented. Not currently used by \texttt{demo/}. \\
+\end{longtable}
+}
+
+\subsection{Frontend and Visualisation}\label{frontend-and-visualisation}
+
+\captionof{table}{Table 5 --- Frontend and visualisation components.}\label{tab:4.3b}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tool
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Version
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+HTML5 / CSS3 & --- & Markup and styling for the single-page demonstration. \\
+Vanilla JavaScript & ES6+ & Frontend interactivity, API calls, and DOM manipulation; avoids framework lock-in for a small SPA. \\
+Chart.js & 4.x & Interactive line, bar, and pie charts for cumulative reward, regret, and PSI visualisation. \\
+Jinja2 & ≥ 3.1 & Server-side HTML templating embedded in the FastAPI application. \\
+Matplotlib & ≥ 3.8 & Generation of all static figures used in this thesis (cumulative reward curves, regret trajectories, fairness diagnostics, architecture diagrams). \\
+\end{longtable}
+}
+
+\subsection{Deployment and Development}\label{deployment-and-development}
+
+\captionof{table}{Table 6 --- Deployment and development components.}\label{tab:4.3c}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tool
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Version
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Render & Cloud PaaS & Free-tier hosting with automatic deployment on git push; meets the portability constraint (NFR-4). \\
+Git & --- & Version control and collaboration; underpins the reproducibility constraint (NFR-3). \\
+python-dotenv & ≥ 1.0 & Environment variable management for separating development and production configuration. \\
+pytest & ≥ 8.0 & Test runner for the automated suite; each experiment script (EXP-005 to EXP-008) embeds explicit pass/fail assertions and an exit code, doubling as scientific validation and regression test. \\
+\end{longtable}
+}
+
+\section{Detail Concept --- Contextual Bandits}\label{detail-concept-contextual-bandits}
+
+The technology at the centre of this thesis is the contextual bandit. Because every functional and non-functional requirement above is shaped by the choice of this learning paradigm, the present section provides a focused treatment in four parts: definition, mechanism, system architecture, and selection rationale.
+
+\subsection{What is a Contextual Bandit?}\label{what-is-a-contextual-bandit}
+
+A contextual bandit is a reinforcement learning framework in which an agent repeatedly observes a context vector, selects an action from a finite set, and receives a reward whose distribution depends on both the context and the chosen action. Unlike full reinforcement learning, the contextual bandit assumes no state transitions: each round is statistically independent except through the parameters the agent has learned from previous rounds. This restriction discards the modelling burden of a Markov decision process and yields algorithms that are computationally lightweight, statistically tractable, and theoretically well understood, which makes them well suited to high-stakes sequential decision problems such as health insurance underwriting.
+
+\subsection{How Does It Work?}\label{how-does-it-work}
+
+The contextual bandit underwriting loop proceeds in five steps per applicant.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Context observation.} At round \emph{t}, the algorithm observes the applicant feature vector \emph{x\_t} ∈ ℝ\^{}d, where d = 34 in this implementation (age, BMI, region one-hot, occupation one-hot, health flags, income).
+\item
+  \textbf{Action selection.} For each action \emph{a} ∈ \{STANDARD, RATED, DECLINE, REFER\}, the algorithm estimates the expected reward and adds an exploration term. LinUCB adds an upper-confidence bonus α·√(x\_tᵀ A\_a⁻¹ x\_t); LinTS samples θ\_a from its posterior; Epsilon-Greedy chooses the empirical maximum with probability 1−ε and explores uniformly otherwise.
+\item
+  \textbf{Reward observation.} The selected action is executed by the actuarial simulator, which returns a stochastic reward composed of premium revenue, expected claims, customer acceptance, and expense loadings.
+\item
+  \textbf{Parameter update.} The algorithm updates its parameter estimates using the observed (\emph{x\_t}, \emph{a\_t}, \emph{r\_t}) triple. For LinUCB and LinTS this is a rank-one update of the per-action precision matrix A\_a and reward vector b\_a, completed in O(d²) operations.
+\item
+  \textbf{Repeat.} Steps 1--4 continue for \emph{T} rounds. Cumulative regret --- the gap between the algorithm's total reward and the oracle optimal policy --- quantifies learning quality.
+\end{enumerate}
+
+\subsection{Architecture}\label{architecture}
+
+Figure 4 shows the end-to-end architecture of the demonstration system. The browser frontend exposes four interaction tabs (Applicant Simulator, Premium Optimiser, Bandit Arena, PSI Monitor); each issues HTTP requests to the FastAPI backend, which dispatches to one of six core modules (Actuarial Reward Simulator, Pricing Engine, Bandit Algorithms, PSI Compute, Cambodia Dataset, Static XGB Baseline). The bandit decision loop itself, isolated from infrastructural concerns, is shown in Figure 5.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        arch/.style={procnode, text width=27mm, minimum height=12mm, font=\footnotesize},
+        store/.style={procnode, fill=dgnodefill!55, text width=58mm, minimum height=9mm, font=\footnotesize},
+        rowlab/.style={text=dgnodeline, font=\small\bfseries, align=center, text width=18mm},
+        node distance=11mm and 7mm,
+    ]
+        % Browser (SPA) row
+        \node[arch] (b1) {Applicant\\Simulator};
+        \node[arch, right=of b1] (b2) {Premium\\Optimiser};
+        \node[arch, right=of b2] (b3) {Bandit\\Arena};
+        \node[arch, right=of b3] (b4) {PSI\\Monitor};
+        % FastAPI REST API row
+        \node[arch, below=of b1] (a1) {\texttt{/api/simulate}};
+        \node[arch, below=of b2] (a2) {\texttt{/api/pricing/}\\\texttt{optimize}};
+        \node[arch, below=of b3] (a3) {\texttt{/api/bandit/}\\\texttt{run/compare}};
+        \node[arch, below=of b4] (a4) {\texttt{/api/psi/audit}};
+        % Python backend row
+        \node[arch, below=of a1] (m1) {Actuarial\\Reward Simulator};
+        \node[arch, below=of a2] (m2) {Pricing\\Engine};
+        \node[arch, below=of a3] (m3) {Bandit Algorithms\\(LinUCB / LinTS /\\$\varepsilon$-Greedy)};
+        \node[arch, below=of a4] (m4) {PSI\\Compute};
+        % flow arrows
+        \foreach \c in {1,2,3,4}{%
+            \draw[flowarrow] (b\c) -- (a\c);
+            \draw[flowarrow] (a\c) -- (m\c);
+        }
+        % data stores (the 5th and 6th core modules)
+        \node[store, anchor=north] (ds1) at ($(m1.south)!0.5!(m2.south) + (0,-12mm)$) {Cambodia synthetic dataset\\(2,000 applicants)};
+        \node[store, anchor=north] (ds2) at ($(m3.south)!0.5!(m4.south) + (0,-12mm)$) {Static XGBoost baseline\\(mortality model)};
+        \draw[flowarrow, dashed] (m1.south) -- (ds1.north);
+        \draw[flowarrow, dashed] (m4.south) -- (ds2.north);
+        % row labels
+        \node[rowlab, left=7mm of b1] {Browser\\(SPA)};
+        \node[rowlab, left=7mm of a1] {FastAPI\\REST API};
+        \node[rowlab, left=7mm of m1] {Python\\Backend};
+    \end{tikzpicture}
+    \caption{Figure 4. System architecture — Browser tabs → FastAPI endpoints → backend modules}
+    \label{fig:ch4_architecture}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \node[procnode] (n1) {\textbf{1.~Observe context}\\[1pt] $x_t \in \mathbb{R}^{34}$};
+        \node[procnode, below=7mm of n1] (n2) {\textbf{2.~Select action} $a_t$\\[1pt] LinUCB / LinTS / $\varepsilon$-Greedy};
+        \node[procnode, below=7mm of n2] (n3) {\textbf{3.~Observe reward} $r_t$};
+        \node[procnode, below=7mm of n3] (n4) {\textbf{4.~Update parameters}\\[1pt] $A_{a_t},\; b_{a_t}$};
+        \node[procnode, below=7mm of n4] (n5) {\textbf{5.~Advance} $t \leftarrow t + 1$};
+        %
+        \draw[flowarrow] (n1) -- (n2);
+        \draw[flowarrow] (n2) -- (n3);
+        \draw[flowarrow] (n3) -- (n4);
+        \draw[flowarrow] (n4) -- (n5);
+        %
+        \node[subnote, right=6mm of n1] {applicant features};
+        \node[subnote, right=6mm of n2] {actions \{STANDARD, RATED, DECLINE, REFER\}};
+        \node[subnote, right=6mm of n3] {actuarial simulator: premium $-$ expected claims};
+        \node[subnote, right=6mm of n4] {rank-one update, $O(d^2)$};
+        \node[subnote, right=6mm of n5] {next applicant};
+        %
+        \draw[feedbackarrow] (n5.west) to[out=180, in=180, looseness=1.05]
+            node[midway, left=1mm, text=dgnodeline, font=\footnotesize\itshape, align=center] {next\\ round}
+            (n1.west);
+    \end{tikzpicture}
+    \caption{Figure 5. Contextual bandit decision loop — context x\_t → action selection → reward r\_t → parameter update (A\_a, b\_a) → next round}
+    \label{fig:bandit_loop}
+\end{figure}
+
+\subsection{Why Contextual Bandits Were Chosen}\label{why-contextual-bandits-were-chosen}
+
+Six properties distinguish contextual bandits from competing approaches and motivate their use in this thesis.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Computational efficiency.} LinUCB and LinTS perform their per-round update in milliseconds on commodity CPU hardware, satisfying the 200 ms latency budget (NFR-1).
+\item
+  \textbf{Theoretical regret guarantees.} Both algorithms achieve sublinear regret of order O(d√T), so performance improves predictably as more applicants are processed and the optimality gap shrinks asymptotically to zero.
+\item
+  \textbf{No batch retraining.} Unlike static XGBoost models that require periodic offline retraining cycles, bandits learn online from each new decision, eliminating the operational cost and stale-model risk of scheduled retraining.
+\item
+  \textbf{Interpretability.} Linear bandits maintain explicit per-action coefficient vectors θ\_a, allowing actuaries and regulators to inspect which features drive each decision (NFR-7) --- a property that neural bandits do not provide.
+\item
+  \textbf{Fairness compatibility.} Because the reward function need not encode demographic parity, fairness can be monitored externally via PSI guardrails (FR-4), decoupling profitability from demographic constraints and avoiding the adversarial dynamics of constrained-reward formulations.
+\item
+  \textbf{Emerging-market data fit.} With only 2,000 calibrated records available, deep neural approaches risk overfitting. Linear bandits with d = 34 features achieve strong generalisation under this sample budget while remaining flexible enough to capture the dominant feature interactions identified in the literature.
+\end{enumerate}
+
+\section{Dataset and Feature Engineering}\label{dataset-and-feature-engineering}
+
+\subsection{Synthetic Cambodia Health Insurance Dataset}\label{synthetic-cambodia-health-insurance-dataset}
+
+The empirical foundation of this thesis is a synthetic dataset of 2,000 Cambodian health-insurance applicants generated by \texttt{data/cambodia/generate\_cambodia\_dataset.py}. Every record is statistically anchored on the \textbf{Cambodia Demographic and Health Survey (CDHS) 2021--22} \citep{NIS2023}, with complementary calibration from the Cambodia STEPS Survey 2023 (MoH/WHO), the 2019 General Population Census, the ILO Cambodia Labour Force Survey 2023, and WHO disease-burden reports.
+
+\textbf{Demographic calibration.} Age is drawn from a gamma distribution (shape = 3.8, scale = 4.2, shifted +18) calibrated to the CDHS working-adult mean (\textasciitilde30.9 years for women, \textasciitilde32.5 for men) but skewed slightly older to reflect the stable-income population most likely to purchase insurance. Gender is occupation-conditional: the dataset respects documented labour-market sex ratios (e.g., 85 \% female in garment factories, 90 \% male in construction) rather than applying a uniform 52.2 \% / 47.8 \% population split.
+
+\textbf{Regional distribution} follows the CDHS 2021--22 province-level respondent shares for adults aged 15--49, collapsed into eight macro regions: Phnom Penh (16.2 \%), Kandal (7.4 \%), Kampong Cham (10.3 \%), Siem Reap (7.9 \%), Battambang (6.9 \%), Prey Veng (6.3 \%), Preah Sihanouk (1.2 \%), and Other Provinces (43.6 \%). Urban provinces receive higher education and wealth quintile probabilities, reproducing the well-documented rural--urban gradient in Cambodian socioeconomic indicators.
+
+\textbf{Occupational mix} reflects the ILO 2023 sectoral composition and is parametrised by base health risk, life risk, frequency, and income base: Rice Farmer (28 \%), Garment Worker (20 \%), Market Vendor (15 \%), Moto/Tuk-tuk Driver (12 \%), Civil Servant (10 \%), Construction Worker (8 \%), and Monk/Retired (7 \%). Each occupation carries a distinct mortality multiplier that feeds directly into the actuarial reward simulator.
+
+\textbf{Disease prevalence} is condition-specific and probability-linked to age, BMI, occupation risk, education, and wealth:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2292}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3958}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3750}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Condition
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Source Prevalence
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Risk Drivers
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Hypertension & 16.8 \% (STEPS 2023, ages 18--69) & Age ≥ 45, BMI ≥ 25, smoking \\
+Diabetes & 7.6 \% (STEPS 2023, ages 25--64) & Age ≥ 40, BMI ≥ 25, richest quintile \\
+Heart Disease & \textasciitilde4 \% (GBD 2019) & Age ≥ 50, smoking \\
+COPD/Asthma & \textasciitilde3.5 \% / \textasciitilde4 \% (WHO 2020) & Smoking \\
+Arthritis & Low baseline & Age ≥ 50 \\
+TB & 246 / 100k (WHO Global TB Report 2022) & Poorest quintile, rural region \\
+Hepatitis B & \textasciitilde7.5 \% surface antigen (WHO 2019) & Baseline population risk \\
+\end{longtable}
+}
+
+Multiple conditions can co-occur in a single applicant; the mean condition count is approximately 1.1. A composite \textbf{health score} (0--100, inverse of risk) and a \textbf{mortality multiplier} (1.0 = standard actuarial rate) are computed deterministically from the full feature vector and serve as the primary inputs to premium pricing and underwriting decisions.
+
+\subsection{Feature Categories and Encoding}\label{feature-categories-and-encoding}
+
+After one-hot encoding of categorical variables and normalisation, each applicant is represented by a 34-dimensional real-valued context vector \(x_t \in \mathbb{R}^{34}\). Table 7 breaks the raw features into four categories.
+
+\captionof{table}{Table 7 --- Feature categories and encoding scheme}\label{tab:4.5.2}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2128}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2766}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2979}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2128}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Raw Features
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Encoded Dim.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Encoding
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Demographics \& vitals & age, gender, BMI & 3 & Numeric, z-scored \\
+Lifestyle behaviours & is\_smoking, alcohol\_use, is\_exercise & 3 & Binary, z-scored \\
+Social determinants & education, wealth\_quintile, self\_reported\_health & 3 & Ordinal 0--3 / 0--4 / 0--2, z-scored \\
+Economic & monthly\_income\_usd, has\_family\_history & 2 & Numeric / binary, z-scored \\
+Clinical flags & Hypertension, Diabetes, Heart Disease, COPD/Asthma, Arthritis, TB, Hepatitis B & 7 & Binary, z-scored \\
+Clinical aggregate & condition\_count & 1 & Numeric, z-scored \\
+Region & Phnom Penh, Kandal, Kampong Cham, Siem Reap, Battambang, Prey Veng, Preah Sihanouk, Other Provinces & 8 & One-hot, z-scored \\
+Occupation & Rice Farmer, Garment Worker, Market Vendor, Moto/Tuk-tuk Driver, Civil Servant, Construction Worker, Monk/Retired & 7 & One-hot, z-scored \\
+\textbf{Total} & & \textbf{34} & \\
+\end{longtable}
+}
+
+A critical design choice is the \textbf{one-hot encoding of region and occupation} for the bandit preprocessor, versus the \textbf{label encoding} used for the static XGBoost baseline. Linear bandit algorithms (LinUCB, LinTS, Epsilon-Greedy) assume a linear relationship between context features and expected reward; assigning arbitrary integer labels (e.g., 0--7) to regions would impose an artificial ordinal structure (Phnom Penh \textless{} Kandal \textless{} \ldots) that does not exist geographically. One-hot encoding removes this false ordering, at the cost of increasing dimensionality from 21 to 34. The static XGB baseline, being a tree ensemble, is insensitive to ordinal encoding and therefore uses the more compact 21-feature representation (label-encoded region and occupation) on which it was originally trained. All 34 features are standardised to zero mean and unit variance before entering the bandit algorithms.
+
+\subsection{Train-Test Split and Reference Distribution}\label{train-test-split-and-reference-distribution}
+
+The static XGBoost baseline requires a separate training phase. The full 2,000-record dataset is split 80 / 20 (train / test) with \texttt{random\_state\ =\ 42} via \texttt{sklearn.model\_selection.train\_test\_split}. The training fold (1,600 records) is used to fit the XGBoost mortality-predictor and the accompanying GLM baseline; the hold-out fold (400 records) is reserved for out-of-sample performance diagnostics (MAE, RMSE, \(R^2\)). Feature statistics (mean and standard deviation) are computed on the full dataset so that the bandit preprocessor applies consistent normalisation across all rounds.
+
+The contextual bandit experiments do \emph{not} use a train-test split in the conventional sense. Instead, the bandit interacts with the full 2,000-record pool sequentially: at round \(t\) the next applicant is sampled uniformly without replacement until the pool is exhausted, at which point the indices are reshuffled and sampling resumes. Over \(N = 5,000\) rounds each applicant is seen 2.5 times on average, mimicking a steady stream of new applications drawn from the same underlying population distribution. This design ensures that the bandit's learning curve is not confounded by a finite-sample exhaustion effect, while preserving the empirical joint distribution of features observed in the Cambodia dataset.
+
+\section{Bandit Algorithms and Baselines}\label{bandit-algorithms-and-baselines}
+
+\subsection{LinUCB}\label{linucb}
+
+LinUCB \citep{Li2010} is a frequentist algorithm that maintains, for each action \(a\), a ridge-regression estimate of the unknown parameter vector \(\theta_a\) and adds an exploration bonus proportional to the standard deviation of that estimate. At round \(t\) the learner observes context \(x_t \in \mathbb{R}^d\) and selects the action that maximises the upper confidence bound:
+
+\[a_t = \arg\max_{a \in \mathcal{A}} \Bigl( \hat\theta_a(t)^\top x_t + \alpha \sqrt{x_t^\top A_a(t)^{-1} x_t} \Bigr)\]
+
+where \(\hat\theta_a(t) = A_a(t)^{-1} b_a(t)\) is the regularised least-squares estimate, \(A_a(t) = I_d + \sum_{s: a_s = a} x_s x_s^\top\) is the design matrix, and \(b_a(t) = \sum_{s: a_s = a} r_s x_s\) is the response vector. The scalar \(\alpha = 1.0\) controls the width of the confidence ellipsoid and therefore the exploration--exploitation trade-off; larger \(\alpha\) encourages more exploration.
+
+After observing reward \(r_t\), the sufficient statistics for the chosen action are updated via rank-one increments:
+
+\[A_{a_t} \leftarrow A_{a_t} + x_t x_t^\top, \qquad b_{a_t} \leftarrow b_{a_t} + r_t x_t.\]
+
+To avoid the \(O(d^3)\) cost of explicitly inverting \(A_a\) at every round, the implementation uses the Sherman--Morrison formula to maintain \(A_a^{-1}\) in \(O(d^2)\) time:
+
+\[A_a^{-1} \leftarrow A_a^{-1} - \frac{A_a^{-1} x_t x_t^\top A_a^{-1}}{1 + x_t^\top A_a^{-1} x_t}.\]
+
+Initialisation follows the standard choice \(A_a(0) = I_d\) and \(b_a(0) = \mathbf{0}\), which corresponds to a zero-mean Gaussian prior with unit covariance.
+
+\subsection{LinTS}\label{lints}
+
+Linear Thompson Sampling \citep{Agrawal2013} replaces the deterministic confidence bonus of LinUCB with randomised posterior sampling. It maintains the same sufficient statistics \((A_a, b_a)\) but treats them as the posterior parameters of a Gaussian distribution over \(\theta_a\). At each round it samples a candidate parameter vector from the posterior and acts greedily with respect to that sample:
+
+\[\tilde\theta_a \sim \mathcal{N}\bigl( \hat\theta_a,\; v^2 A_a^{-1} \bigr), \qquad a_t = \arg\max_{a \in \mathcal{A}} \tilde\theta_a^\top x_t.\]
+
+The hyperparameter \(v^2 = 1.0\) scales the posterior covariance and therefore the amplitude of exploration. When the posterior is wide (early rounds or rarely selected actions), samples are dispersed and the algorithm explores; when the posterior narrows (late rounds or well-understood contexts), samples concentrate near \(\hat\theta_a\) and the algorithm exploits. Unlike LinUCB, Thompson Sampling requires no tuning of an explicit exploration parameter such as \(\alpha\); the variance \(v^2\) can be fixed or calibrated offline via empirical Bayes.
+
+The update of \((A_a, b_a)\) is identical to LinUCB. To avoid the expensive singular-value decomposition required by \texttt{numpy.random.multivariate\_normal}, the implementation pre-computes and caches the Cholesky factor of \(v^2 A_a^{-1} + 10^{-6} I_d\), yielding sampling in \(O(d^2)\) time.
+
+\subsection{Epsilon-Greedy}\label{epsilon-greedy}
+
+Epsilon-Greedy serves as a simple baseline that separates exploration and exploitation explicitly rather than through a statistically principled confidence measure. With probability \(\varepsilon = 0.15\) it selects a uniformly random action; with probability \(1 - \varepsilon\) it selects the action with highest estimated expected reward:
+
+\[a_t = \begin{cases} \text{Uniform}(\mathcal{A}) & \text{with probability } \varepsilon, \\ \arg\max_a \hat\theta_a^\top x_t & \text{otherwise}. \end{cases}\]
+
+The parameter estimates \(\hat\theta_a = A_a^{-1} b_a\) are maintained via the same online least-squares update as LinUCB and LinTS. Epsilon-Greedy is included to illustrate the cost of \emph{non-adaptive} exploration: it continues to randomise 15 \% of decisions even after thousands of rounds have been observed, whereas UCB and Thompson Sampling automatically shrink exploration as confidence grows.
+
+\subsection{Static XGBoost Baseline}\label{static-xgboost-baseline}
+
+The static baseline combines a pre-trained XGBoost regressor with a fixed deterministic rule engine. The model is trained on 1,600 records (80 \% split) to predict the \textbf{mortality multiplier} from 21 label-encoded features (region and occupation are encoded as integers 0--7 rather than one-hot vectors). At decision time, the model outputs a predicted mortality multiplier \(\hat{m}\) for the applicant, and the rule engine maps this to one of four underwriting actions:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Rule & Condition & Action \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+R1 & \(\hat{m} \le 1.5\) & STANDARD \\
+R2 & \(1.5 < \hat{m} \le 2.2\) & RATED (+25 \%) \\
+R3 & \(2.2 < \hat{m} \le 2.6\) & REFER \\
+R4 & \(\hat{m} > 2.6\) & DECLINE \\
+\end{longtable}
+}
+
+The thresholds (1.5, 2.2, 2.6) were chosen to partition the mortality distribution into actuarially meaningful segments: low standard risk, moderate rated risk, elevated risk requiring manual review, and unacceptably high risk. Because the static baseline does not learn from feedback, its \texttt{update()} method is a no-op; it serves as a fixed-policy benchmark against which the adaptive algorithms' regret is measured.
+
+\section{Reward Design and Actuarial Simulator}\label{reward-design-and-actuarial-simulator}
+
+\subsection{Profit-Based Reward Formulation}\label{profit-based-reward-formulation}
+
+The actuarial reward simulator computes the profit or loss associated with each underwriting action for a given applicant. All monetary values are expressed in US dollars, reflecting the heavily dollarised Cambodian formal-sector economy.
+
+\textbf{Base premium and expected claims.} The annual base premium is proportional to the applicant's mortality multiplier \(m\):
+
+\[P_{\text{base}} = 200 \times m \quad \text{(USD/year)}.\]
+
+Expected claims are similarly scaled:
+
+\[C_{\text{exp}} = 150 \times m \quad \text{(USD/year)}.\]
+
+\textbf{Adverse-selection adjustment.} Applicants with \(m > 2.0\) are assumed to represent an adverse-selection pool: if offered standard terms, their expected claims are inflated by a factor of 1.35 to reflect the informational advantage held by high-risk applicants who self-select into standard coverage:
+
+\[C_{\text{std}} = C_{\text{exp}} \times \begin{cases} 1.0 & m \le 2.0, \\ 1.35 & m > 2.0. \end{cases}\]
+
+The RATED action (+25 \% premium) does not incur this adverse-selection penalty because the higher price is assumed to screen out the worst risks.
+
+\textbf{Customer acceptance model.} Not every quoted premium results in a bound policy. The probability that an applicant accepts a monthly premium \(p_{\text{monthly}} = P / 12\) decreases linearly with the premium-to-income ratio:
+
+\[p_{\text{accept}} = \max\Bigl(0.05,\; 0.95 - 3.5 \times \frac{p_{\text{monthly}}}{\text{income}}\Bigr).\]
+
+The intercept 0.95 captures near-universal acceptance when the premium is negligible; the slope 3.5 ensures that a premium exceeding \textasciitilde27 \% of monthly income drives acceptance below 5 \%, at which point the applicant is effectively lost. In the stochastic simulator, if the customer rejects the offer the insurer incurs a \textbf{walk cost} of \(-\$20\) (acquisition marketing sunk cost); in the expected-value formulation used for the bandit reward, the corresponding \textbf{processing cost} is \(-\$25\), representing the deterministic underwriting staff time and system overhead consumed for every quoted applicant whether or not they accept.
+
+\subsection{Action-Specific Reward Functions}\label{action-specific-reward-functions}
+
+Table 8 summarises the reward computation for each of the four underwriting actions. All expressions use the expected-value formulation (deterministic oracle); the stochastic simulator adds claims noise \(\nu_t \sim \text{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw.
+
+\captionof{table}{Table 8 --- Action-specific reward functions (expected value)}\label{tab:4.7.2}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1607}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2143}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3393}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Action
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Premium
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Claims
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Acceptance
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Net Reward Formula
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+STANDARD & \(P_{\text{base}}\) & \(C_{\text{exp}} \times \gamma_{\text{adv}}\) & \(p_{\text{std}}\) & \(r_{\text{std}} = p_{\text{std}}(P_{\text{base}} - C_{\text{std}}) + (1-p_{\text{std}})(-25)\) \\
+RATED & \(1.25 \, P_{\text{base}}\) & \(C_{\text{exp}}\) & \(p_{\text{rtd}}\) & \(r_{\text{rtd}} = p_{\text{rtd}}(1.25 P_{\text{base}} - C_{\text{exp}}) + (1-p_{\text{rtd}})(-25)\) \\
+DECLINE & --- & --- & --- & \(r_{\text{dcl}} = -10\) \\
+REFER & --- & --- & --- & \(r_{\text{ref}} = 0.70 \times \max(r_{\text{std}}, r_{\text{rtd}}, r_{\text{dcl}}) - 35\) \\
+\end{longtable}
+}
+
+The \(-\$25\) term in the STANDARD and RATED rows is the \textbf{processing cost} (\texttt{config.processing\_cost} in \texttt{underwriting\_bandit.py}) charged whenever the applicant is quoted but does not bind a policy: it covers underwriting staff time and system overhead. In the stochastic simulator, claims are multiplied by \(\nu_t\), acceptance is drawn from \(\text{Bernoulli}(p_{\text{accept}})\), and the unbound case incurs the slightly different walk cost of \(-\$20\) (\texttt{config.walk\_cost}); the two values differ because the expected-value formula amortises a deterministic overhead while the stochastic walk cost models the acquisition-marketing sunk cost only.
+
+\subsection{Design Rationale}\label{design-rationale}
+
+The reward design encodes three actuarial intuitions beyond simple profit maximisation.
+
+\textbf{Opportunity cost of DECLINE (−\textbackslash\$10).} Declining an applicant is not costless: underwriting staff have already reviewed the file, IT systems have processed the data, and the insurer forgoes the upside of a potentially profitable policy. The −\textbackslash\$10 figure represents an administrative opportunity cost rather than a cash outflow. Without this penalty, a myopic algorithm might decline every borderline applicant to avoid claims variance; the small negative reward forces the bandit to compare the certain loss of −\textbackslash\$10 against the uncertain but potentially positive expected profit of STANDARD or RATED.
+
+\textbf{Net cost of REFER (−\textbackslash\$35 admin + 70 \% efficiency).} The REFER action models the real-world practice of routing complex cases to a senior underwriter or medical reviewer. The 70 \% efficiency factor captures the reality that human review is imperfect: some profitable cases are declined out of conservatism, and some risky cases are approved through oversight. The −\textbackslash\$35 fixed administrative cost covers the senior underwriter's salary time per case. Consequently, REFER is optimal only when the bandit is genuinely uncertain (the expected values of STANDARD, RATED, and DECLINE are close) or when the applicant's mortality multiplier is so high that even the penalised REFER reward exceeds the negative expected profit of direct issuance.
+
+\textbf{Claims noise reduction.} The stochastic simulator adds uniform multiplicative noise \(\nu_t \in [0.92, 1.08]\) to claims. This narrow band (±8 \%) represents the irreducible uncertainty in claim costs for a single policy year; it is intentionally small so that the bandit learns from signal rather than noise, while still preventing degenerate solutions in which the oracle policy is trivially identifiable. Early experiments with wider noise bands (±20 \%) produced excessive variance in regret curves without altering the relative ranking of algorithms.
+
+\section{PSI Guardrails and Fairness Metrics}\label{psi-guardrails-and-fairness-metrics}
+
+\subsection{PSI Computation}\label{psi-computation}
+
+The Population Stability Index measures the divergence between the demographic distribution of the approved portfolio and the reference applicant population. For categorical features (region, occupation, wealth quintile), each distinct category serves as a bin. For continuous features (age), the reference distribution is divided into four actuarially meaningful bands: 18--30, 31--45, 46--60, and 61+, consistent with standard life-insurance age grading.
+
+The PSI is computed as:
+
+\[\text{PSI} = \sum_{i=1}^{B} (A_i - E_i) \times \ln\left(\frac{A_i}{E_i}\right)\]
+
+where \(E_i\) is the expected proportion (reference applicant pool) and \(A_i\) is the actual proportion (approved portfolio) in bin \(i\). Zero-frequency bins are handled by adding a small epsilon (\(10^{-8}\)) before normalization, following standard practice to avoid division-by-zero in the logarithm term \citep{Siddiqi2006}.
+
+The traffic-light thresholds originate with Lewis \citeyearpar{Lewis1994}, were codified in credit-scoring textbooks by Thomas et al. \citeyearpar{Thomas2002}, and are statistically validated by Yurdakul and Naranjo \citeyearpar{Yurdakul2020}:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2059}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3235}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4706}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Level
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+PSI Range
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Interpretation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+GREEN & \(<\) 0.10 & Little or no shift; portfolio is demographically stable \\
+AMBER & 0.10 -- 0.25 & Moderate shift; trigger manual review of segment exclusion \\
+RED & \(>\) 0.25 & Significant shift; freeze auto-approval and escalate to actuarial team \\
+\end{longtable}
+}
+
+These thresholds are applied independently to each monitored dimension. A RED alert on any dimension overrides the bandit's decision for the corresponding segment until the drift is investigated.
+
+\subsection{Fairness Constraints}\label{fairness-constraints}
+
+In addition to PSI drift monitoring, the fairness audit evaluates \textbf{approval-rate parity} across demographic subgroups. An applicant is considered ``approved'' if the bandit selects STANDARD or RATED (i.e., a policy is issued). For each protected dimension (region and occupation), the approval rate of every subgroup is computed and divided by the maximum subgroup approval rate. The pre-registered fairness constraint is the U.S. Equal Employment Opportunity Commission \textbf{``four-fifths'' rule}: the minimum subgroup approval rate must be at least 80 \% of the maximum:
+
+\[\frac{\text{ApprovalRate}(g)}{\max_{g'} \text{ApprovalRate}(g')} \ge 0.80 \quad \forall \, g \in \{\text{regions}\} \cup \{\text{occupations}\}.\]
+
+The 80 \% floor (EEOC 4/5 rule) is the widely cited regulatory benchmark for disparate-impact analysis. It allows actuarially justified variation (rural applicants may legitimately have higher morbidity) while drawing a bright line against systematic exclusion of any single group. The threshold is evaluated on the converged-phase decision trace (rounds 3,000--4,999), because fairness is a portfolio-level property and early-round exploration noise would inflate apparent disparity.
+
+\subsection{Integration with Bandit Loop}\label{integration-with-bandit-loop}
+
+PSI is computed after each batch of 500 decisions (a sliding window) by comparing the demographic distribution of the \emph{approved} portfolio (STANDARD + RATED actions only) against the reference distribution of the full 2,000-record applicant pool. The reference proportions \(E_i\) are fixed at the dataset generation stage; the actual proportions \(A_i\) are updated incrementally as new decisions accumulate.
+
+In the experimental pipeline, PSI is treated as a \textbf{diagnostic metric} rather than a hard constraint: the bandit is allowed to continue learning regardless of the PSI value, and the experiment reports the maximum PSI observed across all windows. In a production deployment (§4.10), PSI would trigger escalation rules: a GREEN reading permits normal bandit operation; an AMBER reading routes new applications from the affected subgroup to junior underwriter review; a RED reading freezes automated decisions for that subgroup and escalates to the actuarial team for investigation. This layered response ensures that demographic drift is caught before it compounds into portfolio-level concentration risk.
+
+\section{Experimental Design}\label{experimental-design}
+
+\subsection{EXP-005: Convergence Validation}\label{exp-005-convergence-validation}
+
+EXP-005 tests whether LinUCB learns a profitable underwriting policy that dominates the static XGB baseline.
+
+\textbf{Hypothesis.} LinUCB will achieve higher cumulative reward and lower late-round average regret than the Static XGB baseline, and its action distribution will converge from high entropy (exploration) to lower entropy (exploitation).
+
+\textbf{Setup.} LinUCB (\(\alpha = 1.0\)), Static XGB, and an Oracle policy (always selects the action with highest expected reward) are evaluated over \(N = 5,000\) rounds on the full 2,000-record Cambodia dataset. The experiment is repeated across 20 independent random seeds (1--20). For each seed, bootstrap 95 \% confidence intervals are computed for cumulative reward and late-round regret, and paired Wilcoxon signed-rank tests compare LinUCB against Static XGB.
+
+\textbf{Pass criteria.}
+1. LinUCB cumulative reward significantly exceeds Static XGB (\(p < 0.05\), Wilcoxon).
+2. LinUCB average regret in the last 500 rounds is significantly lower than Static XGB (\(p < 0.05\), Wilcoxon).
+3. Action entropy decreases from early (rounds 1--500) to late (rounds 4,501--5,000), confirming convergence from exploration to exploitation.
+4. Action accuracy versus the oracle in the last 500 rounds exceeds 30 \% (the bandit is expected to learn a profitable policy within its feature subspace rather than converge to the oracle exactly; theoretical support for the broader claim that simple bandit methods can be rate-optimal under heterogeneous contexts is provided by Bastani, Bayati \& Khosravi \citeyearpar{Bastani2021}, who prove that covariate diversity alone can make exploration-free greedy near-optimal).
+5. Oracle action accuracy equals 100 \% (sanity check).
+
+\subsection{EXP-006: Fairness Audit}\label{exp-006-fairness-audit}
+
+EXP-006 evaluates whether LinUCB introduces demographic bias into the approved portfolio.
+
+\textbf{Hypothesis.} LinUCB will satisfy the EEOC 4/5 (≥ 80 \%) approval-rate parity constraint for every region and occupation subgroup, and the maximum PSI across all 500-round windows will remain below the 0.25 RED threshold for both region and occupation.
+
+\textbf{Setup.} LinUCB (\(\alpha = 1.0\)) is run for \(N = 5,000\) rounds over 20 seeds. After each run, approval rates are computed per region and per occupation, and PSI is evaluated on a sliding window of 500 decisions (10 windows total). Permutation tests assess whether approval is independent of region and occupation. Bonferroni correction is applied for multiple comparisons.
+
+\textbf{Pass criteria.}
+1. Minimum region approval rate ≥ 80 \% of maximum region approval rate (EEOC 4/5 rule).
+2. Minimum occupation approval rate ≥ 80 \% of maximum occupation approval rate (EEOC 4/5 rule).
+3. Maximum region sliding-window PSI \textless{} 0.25.
+4. Maximum occupation sliding-window PSI \textless{} 0.25.
+5. Permutation test \(p > 0.025\) for region (Bonferroni-corrected).
+6. Permutation test \(p > 0.025\) for occupation (Bonferroni-corrected).
+
+\subsection{EXP-007: Benchmark Comparison}\label{exp-007-benchmark-comparison}
+
+EXP-007 compares all candidate algorithms on cumulative regret and reward using common random numbers to ensure fairness.
+
+\textbf{Hypothesis.} LinTS will achieve the lowest cumulative regret, followed by LinUCB, then Epsilon-Greedy, then Static XGB. All adaptive algorithms will significantly outperform the static baseline.
+
+\textbf{Setup.} LinUCB (\(\alpha = 1.0\)), LinTS (\(v^2 = 1.0\)), Epsilon-Greedy (\(\varepsilon = 0.15\)), Static XGB, and Oracle are evaluated over \(N = 5,000\) rounds on 20 seeds. \textbf{Common random numbers} are enforced: a single stream of acceptance draws and claims noise is pre-generated per seed and shared across all algorithms, so that performance differences stem solely from decision quality, not from stochastic reward variation.
+
+\textbf{Pass criteria.}
+1. Oracle regret \(\le\) all learning algorithms (sanity check).
+2. LinUCB and LinTS regret are significantly lower than both Epsilon-Greedy and Static XGB (\(p < 0.05\), pairwise Wilcoxon with Bonferroni correction).
+3. LinUCB and LinTS reward are significantly higher than Static XGB (\(p < 0.05\)).
+4. Oracle reward \(\ge\) all learning algorithms (sanity check).
+5. Regret ordering matches theoretical prediction: \(\text{LinTS} \le \text{LinUCB} \le \text{EpsilonGreedy} \le \text{StaticXGB}\).
+
+\subsection{Reproducibility Protocol}\label{reproducibility-protocol}
+
+All experiments are designed to be fully reproducible. The primary random seed is \textbf{42}; for statistical inference, experiments are repeated across 20 independent seeds (1--20) and reported with bootstrap 95 \% confidence intervals. Two supplementary experiments --- EXP-010 (cold-start scan, §5.10) and EXP-012 (sensitivity sweep, §5.8) --- use 10 seeds per cell by design, because repeatedly refitting baseline XGBoost models (EXP-010) and running multi-cell parameter sweeps (EXP-012) at 20 seeds would be computationally prohibitive on commodity hardware; the divergence is footnoted in each section and the source files (\texttt{exp\_010\_cold\_start\_analysis.py:253}, \texttt{exp\_012\_sensitivity\_analysis.py:48}) carry explicit comments to the same effect.
+
+\textbf{Software stack.} Python 3.11, NumPy 1.24+, pandas 2.0+, scikit-learn 1.3+, XGBoost 2.0+, statsmodels 0.14+. No GPU acceleration is required; all experiments run on a standard CPU in under five minutes per seed.
+
+\textbf{Feature normalisation.} Before each run, the bandit preprocessor recomputes feature means and standard deviations on the full 2,000-record dataset. Because the dataset is fixed, these statistics are deterministic; any drift experiment that modifies the dataset must supply an external \texttt{stats} dictionary to guarantee consistent scaling.
+
+\textbf{Exit codes.} Every experiment script exits with code \texttt{0} if all pass criteria are satisfied and code \texttt{1} if any criterion fails. This design allows the experiments to be run in continuous-integration pipelines as self-validating tests.
+
+\section{Implementation and Deployment Roadmap}\label{implementation-and-deployment-roadmap}
+
+While the experiments validate the algorithmic core, moving from a research prototype to a production actuarial system requires additional engineering layers. The deployment strategy is structured in three phases that progressively reduce human oversight while maintaining regulatory compliance.
+
+\subsection{Phase 1 --- Shadow Mode (Months 1--3, design proposal)}\label{phase-1-shadow-mode-months-13-design-proposal}
+
+This subsection describes the recommended first phase of a production deployment. The architecture below is a \emph{design proposal} validated against the bandit core implemented in \texttt{healthrl/underwriting\_bandit.py}; the production wrapper (PAS API, persistent state layer, audit logging) is recommended future work (Ch VI §6.4). The live demo (\texttt{demo/}) implements a single-tenant actuarial dashboard with the bandit and PSI logic, but does not yet provide the shadow-mode logging or multi-instance state persistence described below.
+
+In shadow mode, the contextual bandit runs alongside the existing static rule engine without making live decisions. Every incoming application is scored by both systems simultaneously. The bandit's recommendation is logged and compared against the static rule outcome, but the static rule remains the binding decision. This phase serves three purposes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Calibration validation.} Verify that the bandit's action distribution aligns with actuarial expectations for different risk segments.
+\item
+  \textbf{Hyperparameter tuning.} Adjust \(\alpha\) (LinUCB), \(v^2\) (LinTS), or \(\varepsilon\) (Epsilon-Greedy) based on observed disagreement rates between the bandit and the static baseline.
+\item
+  \textbf{PSI baseline establishment.} Compute PSI for the shadow-approved portfolio against the historical applicant reference to confirm that the bandit does not introduce demographic drift even before it controls live decisions.
+\end{enumerate}
+
+During shadow mode, sufficient statistics (\(A_a\), \(b_a\) matrices for each action) are updated in real time using the static rule's outcome as a proxy reward. This warm-starts the bandit with several thousand observations before Phase 2.
+
+\subsection{Phase 2 --- Assisted Underwriting (Months 4--6)}\label{phase-2-assisted-underwriting-months-46}
+
+In assisted mode, the bandit makes recommendations that human underwriters must confirm or override. The workflow is:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Applicant data enter the system via the Policy Administration System (PAS) API or manual web form.
+\item
+  The bandit selects the action with highest estimated expected reward.
+\item
+  The PSI guardrail validates demographic parity; if any dimension is AMBER or RED, the case is automatically escalated to a senior underwriter regardless of the bandit's recommendation.
+\item
+  The underwriter reviews the recommendation, context, and PSI status, then approves, modifies, or overrides.
+\item
+  The final human decision is logged as the observed reward and fed back to update the bandit's parameters.
+\end{enumerate}
+
+Key metrics tracked in Phase 2 include:
+- \textbf{Override rate:} The percentage of bandit recommendations that underwriters change. A declining override rate indicates growing trust and alignment.
+- \textbf{Reward lift:} The difference in average profit per application between bandit-recommended actions and the static baseline on the same applicant pool.
+- \textbf{Fairness KPIs:} Regional and occupational approval-rate parity, plus PSI status distribution.
+
+\subsection{Phase 3 --- Automated Underwriting with Escalation (Months 7--12)}\label{phase-3-automated-underwriting-with-escalation-months-712}
+
+In full automation, low-confidence or low-risk cases are processed without human intervention, while borderline cases continue to route through the assisted queue. The escalation logic is:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.4500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Condition
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Routing
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Bandit confidence \textgreater{} 95\% AND PSI = GREEN AND action ∈ \{STANDARD, DECLINE\} & Fully automated \\
+Bandit confidence 80--95\% OR PSI = AMBER & Junior underwriter review queue \\
+Bandit confidence \textless{} 80\% OR PSI = RED OR action = REFER & Senior underwriter / actuarial team \\
+\end{longtable}
+}
+
+Confidence is defined as the posterior probability (LinTS) or the relative gap between the best and second-best arm's UCB score (LinUCB). The automated stream is typically 60--70\% of applicants, with the remainder requiring human judgment.
+
+\subsection{Technical Infrastructure for Production}\label{technical-infrastructure-for-production}
+
+The bandit core (and its \texttt{demo/} wrapper) is designed to slot into a standard microservices architecture. The production extensions recommended for a full deployment are:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Persistent state layer.} PostgreSQL would store the bandit's \(A_a\) and \(b_a\) matrices, enabling warm restarts and multi-instance scaling.
+\item
+  \textbf{Feedback integration.} A \texttt{/feedback} endpoint would receive post-decision outcomes from the PAS: policy accepted, lapsed, claims paid, final profit/loss.
+\item
+  \textbf{Audit logging.} Every \texttt{(context,\ action,\ reward,\ PSI,\ user\_id,\ timestamp)} tuple would be immutably logged for regulatory review.
+\item
+  \textbf{Authentication and RBAC.} OAuth2 with role-based access control (Underwriter, Senior Underwriter, Actuary, Admin) would govern all API access.
+\item
+  \textbf{Batch upload.} CSV/Excel endpoints would support portfolio-level pricing runs and quarterly PSI monitoring.
+\item
+  \textbf{BI dashboard integration.} PSI time-series and cumulative regret curves would be exposed via REST for Power BI or Tableau consumption.
+\end{enumerate}
+
+These additions would not require rewriting the core algorithms; they would wrap the existing \texttt{LinUCB}, \texttt{LinTS}, \texttt{expected\_rewards}, and \texttt{compute\_psi} functions in enterprise-grade infrastructure.
+
+Taken together, these layers realise the end-to-end adaptive-underwriting architecture introduced in Figure 2 --- applicant context feeding the bandit policy, the actuarial reward simulator closing the learning loop, and the PSI guardrail monitoring demographic parity throughout.

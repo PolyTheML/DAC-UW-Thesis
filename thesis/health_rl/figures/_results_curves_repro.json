@@ -1,0 +1,12 @@
+{
+  "ucb_final_reward": 90540.44468128827,
+  "static_final_reward": 72292.08705099879,
+  "regret_final": {
+    "LinUCB": 22774.40677848913,
+    "LinTS": 21148.672765326373,
+    "EpsilonGreedy": 38280.596903735874,
+    "StaticXGB": 42548.344741583765
+  },
+  "entropy_early": 1.313525609836568,
+  "entropy_late": 1.1048367011132287
+}

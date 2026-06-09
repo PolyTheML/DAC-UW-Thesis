@@ -1,0 +1,286 @@
+\documentclass[a4paper, 12pt]{report}
+
+% ── Core ─────────────────────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{ragged2e}
+\usepackage{eso-pic}
+\usepackage{tikz}
+
+% ── Math ─────────────────────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{amssymb}     % REQUIRED: \mathbb{R} (x4) and \therefore (x14) live in the chapters; without it -> "Undefined control sequence" + Missing-$/\item-in-math cascade
+
+% ── Font & Language ───────────────────────────────────────────────────
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+% Fonts are bundled in ./fonts/ so the project compiles on Overleaf (Linux),
+% which does not ship Times New Roman or the Khmer OS fonts.
+\setmainfont{Times New Roman}[
+    Path = ./fonts/ , Extension = .ttf ,
+    UprightFont = times , BoldFont = timesbd ,
+    ItalicFont = timesi , BoldItalicFont = timesbi ]
+\setotherlanguage{khmer}
+\newfontfamily\khmerfont{KhmerOSbattambang}[Path=./fonts/, Extension=.ttf]
+\newfontfamily\khmerfontmoul{KhmerOSmuollight}[Path=./fonts/, Extension=.ttf]
+\newfontfamily\khmerfontsr{KhmerOSsiemreap}[Path=./fonts/, Extension=.ttf]
+\XeTeXlinebreaklocale 'khm'
+\XeTeXlinebreakskip = 0pt plus 0.5pt minus 0.25pt
+
+% ── Unicode glyph fallbacks ───────────────────────────────────────────
+% Math symbols typed as literal Unicode in prose (Times New Roman lacks them).
+% \ensuremath makes each render in both text and math contexts.
+\usepackage{newunicodechar}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{√}{\ensuremath{\surd}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ᵀ}{\ensuremath{{}^{\top}}}
+\newunicodechar{⁻}{\ensuremath{{}^{-}}}
+\newunicodechar{●}{\textbullet}
+
+% ── Bibliography ──────────────────────────────────────────────────────
+\usepackage{apacite}
+\usepackage[authoryear]{natbib}
+
+% ── Tables & Color ────────────────────────────────────────────────────
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{longtable}   % REQUIRED: Pandoc emits every table as a longtable (was missing -> all 27 tables failed to render)
+\usepackage{calc}        % REQUIRED: \real{..} column-width arithmetic in every Pandoc longtable column spec
+\usepackage{etoolbox}    % for the longtable spacing patch below
+% Pandoc boilerplate: correct longtable spacing after \paragraph/\subparagraph
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Pandoc boilerplate: \tightlist is emitted for every tight (single-spaced) list.
+% The ITC preamble is not Pandoc's default template, so define it (was undefined).
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% ── Other ─────────────────────────────────────────────────────────────
+% \usepackage{minted}   % removed: no code listings -> avoids -shell-escape/Pygments requirement
+\usepackage{mdframed}
+\usepackage{pgfgantt}
+
+% ── TikZ diagram styles (shared by the Ch.1-6 schematic figures; Phase-3 overhaul) ──
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, fit, backgrounds}
+\definecolor{dgnodefill}{HTML}{D9E2EC}  % light slate -- structural, deliberately NOT an algorithm palette colour
+\definecolor{dgnodeline}{HTML}{334E68}  % dark slate -- node borders + flow arrows
+\definecolor{dgsubtext}{HTML}{555555}   % muted grey -- italic side annotations
+\tikzset{
+  procnode/.style={rounded corners=3pt, draw=dgnodeline, line width=0.8pt,
+    fill=dgnodefill, text=black, align=center, inner sep=5pt,
+    text width=46mm, minimum height=11mm, font=\small},
+  subnote/.style={text=dgsubtext, font=\footnotesize\itshape, align=left, text width=44mm},
+  flowarrow/.style={-{Stealth[length=2.4mm]}, line width=0.9pt, draw=dgnodeline},
+  feedbackarrow/.style={-{Stealth[length=2.8mm]}, line width=1.3pt, draw=dgnodeline},
+}
+
+% ── TOC ───────────────────────────────────────────────────────────────
+\usepackage{tocloft}
+\cftsetindents{table}{0em}{5em}
+\renewcommand\cfttabpresnum{Table }
+\usepackage{chngcntr}
+\counterwithin{section}{chapter}
+\counterwithin{subsection}{section}
+
+% ── Geometry ──────────────────────────────────────────────────────────
+\usepackage[margin=2.5cm, top=2cm, bottom=2.5cm]{geometry}
+
+% ── Hyperref — ALWAYS LAST ────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black
+}
+
+% ── Settings ──────────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setcounter{secnumdepth}{3}
+
+% Captions carry their own manual number ("Figure 7.", "Table 9") to match
+% the in-text references, so suppress LaTeX's auto label but keep LoF/LoT entries.
+\captionsetup[figure]{labelformat=empty}
+\captionsetup[table]{labelformat=empty}
+% Pandoc emits \captionof{table}{...}\label{tab:N} before each longtable. With
+% labelformat=empty the caption establishes no counter, so the trailing \label
+% (and hyperref's \theHnone) reference an undefined 'none' counter -> hard
+% "No counter 'none' defined" error at every table. No \ref/\autoref targets
+% these labels (all in-text numbers are manual text), so a dummy counter just
+% silences the error; the resulting anchors are unused and harmless.
+\newcounter{none}
+\providecommand\theHnone{none.\arabic{none}}
+
+% ── Custom Commands ───────────────────────────────────────────────────
+\newcommand{\hs}{\hspace{1.5cm}}
+
+\newcommand{\mychapter}[2]{
+  \chapter*{#1}
+  \phantomsection
+  \addcontentsline{toc}{chapter}{#2}
+  \refstepcounter{chapter}
+  \setcounter{section}{0}
+  \label{chap:\thechapter}
+}
+
+% Manual figure/table numbering: captions already carry "Figure N.N."/"Table X.Y"
+% (matching in-text references), so labelformat=empty (see Settings) hides LaTeX's
+% own label while \caption still registers the entry in the List of Figures/Tables.
+\newcommand{\fg}[3]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=#1]{#3}
+        \caption{#2}
+        \label{fig:#3}
+    \end{figure}
+}
+
+\newcommand{\imgplaceholder}[3][0.5\textwidth]{%
+    \begin{figure}[H]
+        \centering
+        \colorbox{gray!15}{%
+            \parbox[c][5cm][c]{#1}{%
+                \centering\color{gray}\textit{[Insert: #2]}%
+            }%
+        }
+        \caption{#2}
+        \label{fig:#3}
+    \end{figure}
+}
+
+\newcommand{\unnumberdSection}[1]{
+    \section*{#1}\addcontentsline{toc}{chapter}{#1}
+}
+
+\newcommand{\progressbar}[1]{%
+  \cellcolor{blue!25}\makebox[0pt][l]{\cellcolor{blue!50}\hspace{#1\linewidth}}%
+  \hspace{-\linewidth}#1%
+}
+
+\newcommand\Watermark{%
+  \AddToShipoutPicture*{%
+    \put(0,0){%
+      \parbox[b][\paperheight]{\paperwidth}{%
+        \vfill\centering
+        \begin{tikzpicture}[overlay, remember picture]
+          \node[anchor=center, opacity=0.2] at (current page.center){%
+            \includegraphics[width=15cm]{images/schools/watermark.png}
+          };
+        \end{tikzpicture}
+        \vfill
+      }
+    }
+  }
+}
+
+
+\begin{document}
+ % ================================================================ Cover Pages
+ \input{Cover_Pages/Cover}
+ \thispagestyle{empty}
+ 
+\newpage
+\input{Cover_Pages/SubCover_KH}
+\thispagestyle{empty}
+
+\newpage
+\input{Cover_Pages/SubCover_FR}
+\thispagestyle{empty}
+
+\newpage
+\input{Cover_Pages/SubCover_EN}
+\thispagestyle{empty}
+
+
+\newpage
+\pagenumbering{roman}
+\input{Cover_Pages/Acknowledgement}
+
+% \thispagestyle{empty} % Remove page number if needed
+
+\newpage
+\input{Cover_Pages/Executive_Summary}
+
+\newpage
+\input{Cover_Pages/Abstract_KH}
+% \setmainfont{Times New Roman} % Reset font immediately after
+
+\newpage
+\input{Cover_Pages/Abstract_EN}
+
+\newpage
+\input{Cover_Pages/Resume_FR}
+
+\newpage
+\chapter*{\centering TABLE OF CONTENTS}
+\renewcommand{\contentsname}{\vspace{-4cm}}
+\tableofcontents
+%\addcontentsline{toc}{chapter}{Table of Contents}
+
+\newpage
+\input{Cover_Pages/List_figure}
+
+\newpage
+\input{Cover_Pages/List_table}
+
+\newpage
+\input{Cover_Pages/List_abreviation}
+
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{Chapters/ch1-Introduction}
+\input{Chapters/ch2-Presentation}
+\input{Chapters/ch3-LiteratureReview}
+\input{Chapters/ch4-ProjectAnalysis}
+\input{Chapters/ch5-Results}
+\input{Chapters/ch6-Conclusion}
+
+% ================================================================== End Pages
+\newpage
+\renewcommand{\bibname}{REFERENCES}
+\phantomsection
+\addcontentsline{toc}{chapter}{\bibname}
+\bibliographystyle{apacite}
+\bibliography{Chapters/reference}
+
+\newpage
+\appendix
+\chapter*{APPENDICES}
+\addcontentsline{toc}{chapter}{APPENDICES}
+\input{Chapters/appendices}
+
+
+
+\end{document}
