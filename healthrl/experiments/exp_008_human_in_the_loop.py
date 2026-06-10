@@ -275,6 +275,24 @@ def run_refer_baseline(
     return run_bandit(algorithm_name, bandit, contexts, df_raw, n_rounds=n_rounds, seed=seed)
 
 
+def run(seed: int) -> dict[str, float]:
+    """Run EXP-008 for one seed; returns scalar metrics for 20-seed aggregation."""
+    X, df_raw, _ = preprocess_cambodia_data()
+    n_features = X.shape[1]
+    out: dict[str, float] = {}
+    for cons, tag in [(0.3, "c03"), (0.5, "c05"), (0.7, "c07")]:
+        bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
+        r = run_hitl_bandit(bandit, X, df_raw, n_rounds=N_ROUNDS, conservatism=cons, seed=seed)
+        out[f"hitl_{tag}_reward"] = float(r.cumulative_rewards[-1])
+        out[f"hitl_{tag}_cost"] = float(r.total_human_cost)
+        out[f"hitl_{tag}_reviews"] = float(len(r.override_rounds))
+        out[f"hitl_{tag}_alignment"] = float(r.final_alignment_score)
+    baseline = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
+    br = run_refer_baseline("linucb", baseline, X, df_raw, n_rounds=N_ROUNDS, seed=seed)
+    out["baseline_reward"] = float(br.cumulative_rewards[-1])
+    return out
+
+
 # ── Main Experiment ──────────────────────────────────────────────────────────
 
 
@@ -458,4 +476,57 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import argparse
+    from experiment_utils import run_experiment_seeds_raw
+    from scipy.stats import wilcoxon as _wilcoxon
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--multi-seed", action="store_true",
+                        help="Run 20-seed aggregation instead of single seed=42")
+    args = parser.parse_args()
+
+    X, df_raw, _features = preprocess_cambodia_data()
+    n_features = X.shape[1]
+
+    if args.multi_seed:
+        print("Running EXP-008 over 20 seeds ...")
+        stats = run_experiment_seeds_raw(run, n_seeds=20)
+
+        def fmt(key: str) -> str:
+            s = stats[key]
+            lo = float(np.percentile(s["values"], 2.5))
+            hi = float(np.percentile(s["values"], 97.5))
+            return f"${s['mean']:>10,.0f} +/- {s['std']:>7,.0f}  [{lo:,.0f}, {hi:,.0f}]"
+
+        print("\n20-seed HITL results (mean +/- std  [95% bootstrap CI]):")
+        for tag, label in [("c03", "c=0.3"), ("c05", "c=0.5"), ("c07", "c=0.7")]:
+            print(f"  HITL {label} reward:  {fmt(f'hitl_{tag}_reward')}")
+            print(f"  HITL {label} cost:    {fmt(f'hitl_{tag}_cost')}")
+            print(f"  HITL {label} reviews: {fmt(f'hitl_{tag}_reviews')}")
+        print(f"  Baseline reward:      {fmt('baseline_reward')}")
+
+        hitl_vals = stats["hitl_c07_reward"]["values"]
+        base_vals = stats["baseline_reward"]["values"]
+        diff = hitl_vals - base_vals
+        _, p = _wilcoxon(diff)
+        d = diff.mean() / diff.std(ddof=1)
+        pct = (hitl_vals.mean() / base_vals.mean() - 1) * 100
+        print(f"\n  HITL c=0.7 vs Baseline: +{pct:.1f}%,  Wilcoxon p={p:.4f},  d={d:.2f}")
+        print("EXP-008 MULTI-SEED: DONE")
+    else:
+        CONSERVATISM_LEVELS = [0.3, 0.5, 0.7]
+        hitl_results = {}
+        for cons in CONSERVATISM_LEVELS:
+            label = f"HITL-cons={cons}"
+            print(f"\nRunning {label} ...")
+            bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
+            result = run_hitl_bandit(bandit, X, df_raw, n_rounds=N_ROUNDS,
+                                     conservatism=cons, seed=SEED)
+            hitl_results[label] = result
+            print(f"  Final cumulative reward: ${result.cumulative_rewards[-1]:,.2f}")
+            print(f"  Final cumulative regret: ${result.cumulative_regrets[-1]:,.2f}")
+
+        print("\nRunning Baseline (mathematical REFER shortcut) ...")
+        baseline_bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
+        baseline_result = run_refer_baseline("linucb", baseline_bandit, X, df_raw,
+                                             n_rounds=N_ROUNDS, seed=SEED)
