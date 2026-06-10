@@ -642,13 +642,13 @@ The reward design encodes three actuarial intuitions beyond simple profit maximi
 
 \subsection{PSI Computation}\label{psi-computation}
 
-The Population Stability Index measures the divergence between the demographic distribution of the approved portfolio and the reference applicant population. For categorical features (region, occupation, wealth quintile), each distinct category serves as a bin. For continuous features (age), the reference distribution is divided into four actuarially meaningful bands: 18--30, 31--45, 46--60, and 61+, consistent with standard life-insurance age grading.
+The Population Stability Index measures the divergence between the demographic distribution of the approved portfolio and a reference distribution --- here, the approved pool of the first sliding window (§4.8.3). For categorical features (region, occupation, wealth quintile), each distinct category serves as a bin. For continuous features (age), the reference distribution is divided into four actuarially meaningful bands: 18--30, 31--45, 46--60, and 61+, consistent with standard life-insurance age grading.
 
 The PSI is computed as:
 
 \[\text{PSI} = \sum_{i=1}^{B} (A_i - E_i) \times \ln\left(\frac{A_i}{E_i}\right)\]
 
-where \(E_i\) is the expected proportion (reference applicant pool) and \(A_i\) is the actual proportion (approved portfolio) in bin \(i\). Zero-frequency bins are handled by adding a small epsilon (\(10^{-8}\)) before normalization, following standard practice to avoid division-by-zero in the logarithm term \citep{Siddiqi2006}.
+where \(E_i\) is the expected proportion (reference window; §4.8.3) and \(A_i\) is the actual proportion (approved portfolio) in bin \(i\). Zero-frequency bins are handled by adding a small epsilon (\(10^{-8}\)) before normalization, following standard practice to avoid division-by-zero in the logarithm term \citep{Siddiqi2006}.
 
 The traffic-light thresholds originate with Lewis \citeyearpar{Lewis1994}, were codified in credit-scoring textbooks by Thomas et al. \citeyearpar{Thomas2002}, and are statistically validated by Yurdakul and Naranjo \citeyearpar{Yurdakul2020}:
 
