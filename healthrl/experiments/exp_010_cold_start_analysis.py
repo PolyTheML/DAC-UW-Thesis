@@ -249,12 +249,13 @@ def main() -> int:
     print("EXP-010: Cold-Start Analysis (10 seeds)")
     print("=" * 70)
 
-    from experiment_utils import run_experiment_seeds
-    stats = run_experiment_seeds(run, n_seeds=10)  # 10 by design — cold-start sweep is expensive
+    from experiment_utils import run_experiment_seeds_raw
+    from scipy.stats import wilcoxon as _wilcoxon
+    stats = run_experiment_seeds_raw(run, n_seeds=10)  # 10 by design — cold-start sweep is expensive
 
     def fmt(key: str) -> str:
-        mean, std = stats[key]
-        return f"${mean:>10,.0f} ± {std:>8,.0f}"
+        s = stats[key]
+        return f"${s['mean']:>10,.0f} ± {s['std']:>8,.0f}"
 
     print("\n" + "-" * 70)
     print("Cumulative Reward by Horizon T (mean ± std over 10 seeds)")
@@ -290,7 +291,7 @@ def main() -> int:
     plot_cold_start(results_by_t, figures_dir / "fig_010_cold_start.png")
 
     print("\n" + "=" * 70)
-    print("ASSERTIONS (mean-based, 20 seeds)")
+    print("ASSERTIONS (mean-based, 10 seeds)")
     print("=" * 70)
 
     pass_total = True
@@ -299,11 +300,11 @@ def main() -> int:
     cross_ucb = None
     cross_ts = None
     for t in TS:
-        if stats[f"cum_reward_LinUCB_t{t}"][0] > stats[f"cum_reward_FreshXGB_t{t}"][0]:
+        if stats[f"cum_reward_LinUCB_t{t}"]["mean"] > stats[f"cum_reward_FreshXGB_t{t}"]["mean"]:
             cross_ucb = t
             break
     for t in TS:
-        if stats[f"cum_reward_LinTS_t{t}"][0] > stats[f"cum_reward_FreshXGB_t{t}"][0]:
+        if stats[f"cum_reward_LinTS_t{t}"]["mean"] > stats[f"cum_reward_FreshXGB_t{t}"]["mean"]:
             cross_ts = t
             break
 
@@ -321,25 +322,44 @@ def main() -> int:
     )
     pass_total &= check2
 
-    check3 = stats["cum_reward_LinUCB_t2000"][0] > stats["cum_reward_FreshXGB_t2000"][0]
+    check3 = stats["cum_reward_LinUCB_t2000"]["mean"] > stats["cum_reward_FreshXGB_t2000"]["mean"]
     print(
         f"[{'PASS' if check3 else 'FAIL'}] LinUCB cumulative reward > FreshXGB at T=2000"
     )
     print(
-        f"       LinUCB: ${stats['cum_reward_LinUCB_t2000'][0]:,.0f}  "
-        f"FreshXGB: ${stats['cum_reward_FreshXGB_t2000'][0]:,.0f}"
+        f"       LinUCB: ${stats['cum_reward_LinUCB_t2000']['mean']:,.0f}  "
+        f"FreshXGB: ${stats['cum_reward_FreshXGB_t2000']['mean']:,.0f}"
     )
     pass_total &= check3
 
-    check4 = stats["cum_reward_LinTS_t2000"][0] > stats["cum_reward_FreshXGB_t2000"][0]
+    check4 = stats["cum_reward_LinTS_t2000"]["mean"] > stats["cum_reward_FreshXGB_t2000"]["mean"]
     print(
         f"[{'PASS' if check4 else 'FAIL'}] LinTS cumulative reward > FreshXGB at T=2000"
     )
     print(
-        f"       LinTS:  ${stats['cum_reward_LinTS_t2000'][0]:,.0f}  "
-        f"FreshXGB: ${stats['cum_reward_FreshXGB_t2000'][0]:,.0f}"
+        f"       LinTS:  ${stats['cum_reward_LinTS_t2000']['mean']:,.0f}  "
+        f"FreshXGB: ${stats['cum_reward_FreshXGB_t2000']['mean']:,.0f}"
     )
     pass_total &= check4
+
+    # Paired Wilcoxon test on T=2000 crossover (10 CRN seeds)
+    ucb_vals  = stats["cum_reward_LinUCB_t2000"]["values"]
+    ts_vals   = stats["cum_reward_LinTS_t2000"]["values"]
+    fresh_vals = stats["cum_reward_FreshXGB_t2000"]["values"]
+
+    _, p_ucb = _wilcoxon(ucb_vals - fresh_vals)
+    _, p_ts  = _wilcoxon(ts_vals  - fresh_vals)
+    d_ucb = (ucb_vals - fresh_vals).mean() / (ucb_vals - fresh_vals).std(ddof=1)
+    d_ts  = (ts_vals  - fresh_vals).mean() / (ts_vals  - fresh_vals).std(ddof=1)
+    alpha_bc = 0.025  # Bonferroni-corrected for 2 comparisons
+
+    print(f"\nPaired Wilcoxon T=2000 crossover significance (10 CRN seeds, alpha=0.025):")
+    print(f"  LinUCB vs FreshXGB: p={p_ucb:.4f}, d={d_ucb:.2f}")
+    print(f"  LinTS  vs FreshXGB: p={p_ts:.4f},  d={d_ts:.2f}")
+    if p_ucb >= alpha_bc:
+        print("  NOTE: LinUCB crossover not significant — soften 'Yes — bandits cross over' to 'bandits draw level' in Table 21")
+    if p_ts >= alpha_bc:
+        print("  NOTE: LinTS crossover not significant — soften similarly")
 
     print("\n" + "=" * 70)
     if pass_total:

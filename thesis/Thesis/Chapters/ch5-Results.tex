@@ -832,11 +832,11 @@ Static XGB & 52,715 & --- \\
 
 \section{EXP-010: Cold-Start --- When Does the Bandit Catch Up?}\label{exp-010-cold-start-when-does-the-bandit-catch-up}
 
-\fg{0.85\textwidth}{Figure 18. Cumulative reward at horizons T ∈ {200, 500, 1,000, 2,000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (mean of 10 seeds). FreshXGB leads at T ≤ 500; bandits cross over between T = 1,000 and T = 2,000}{images/fig_010_cold_start.pdf}
+\fg{0.85\textwidth}{Figure 18. Cumulative reward at horizons T ∈ {200, 500, 1,000, 2,000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (mean of 10 seeds). FreshXGB leads at T ≤ 500; LinTS crosses over by T = 2,000 (p = 0.0039), LinUCB draws level (p = 0.0840)}{images/fig_010_cold_start.pdf}
 
 \subsection{Design}\label{design-3}
 
-EXP-010 asks an operationally crucial question that the headline experiments do not: \emph{at what data scale does the bandit begin to beat a freshly-trained static model?} At each horizon \(T \in \{200, 500, 1{,}000, 2{,}000\}\), an XGBoost regressor is retrained from scratch on the first \(T\) applicants and then deployed under the same fixed rule engine as the headline Static XGB (the \textbf{FreshXGB} baseline). LinUCB and LinTS are run with their standard parameters (\(\alpha = 1.0\), \(v^2 = 1.0\)) for exactly \(T\) rounds, starting from \(A = I, b = 0\). Cumulative rewards at each horizon are compared across \textbf{10 seeds per horizon} owing to the cost of repeated XGBoost refits (\texttt{exp\_010\_cold\_start\_analysis.py:253}).
+EXP-010 asks an operationally crucial question that the headline experiments do not: \emph{at what data scale does the bandit begin to beat a freshly-trained static model?} At each horizon \(T \in \{200, 500, 1{,}000, 2{,}000\}\), an XGBoost regressor is retrained from scratch on the first \(T\) applicants and then deployed under the same fixed rule engine as the headline Static XGB (the \textbf{FreshXGB} baseline). LinUCB and LinTS are run with their standard parameters (\(\alpha = 1.0\), \(v^2 = 1.0\)) for exactly \(T\) rounds, starting from \(A = I, b = 0\). Cumulative rewards at each horizon are compared across \textbf{10 seeds per horizon} owing to the cost of repeated XGBoost refits (\texttt{exp\_010\_cold\_start\_analysis.py:254}).
 
 \subsection{Results}\label{results-4}
 
@@ -868,15 +868,15 @@ Bandit winner?
 200 & 1,313 ± 971 & 1,206 ± 1,038 & \textbf{2,812 ± 1,115} & No --- FreshXGB ≈ 2.1× \\
 500 & 5,593 ± 1,597 & 5,570 ± 1,051 & \textbf{7,048 ± 1,407} & No --- FreshXGB ≈ 1.26× \\
 1,000 & 13,033 ± 2,174 & 13,496 ± 949 & 13,692 ± 1,819 & Tie (within seed variance) \\
-2,000 & \textbf{31,227 ± 2,987} & \textbf{31,401 ± 2,187} & 29,267 ± 1,731 & \textbf{Yes --- bandits cross over} \\
+2,000 & \textbf{31,227 ± 2,987} & \textbf{31,401 ± 2,187} & 29,267 ± 1,731 & \textbf{LinTS crosses over; LinUCB draws level} \\
 \end{longtable}
 }
 
-At \(T = 200\) the freshly-trained XGBoost regressor more than doubles the bandits' cumulative reward. At \(T = 500\) it retains a one-quarter advantage. By \(T = 1{,}000\) the three algorithms are statistically indistinguishable. The \textbf{operational crossover} --- the smallest horizon at which the bandits beat a fresh static model --- falls between \(T = 1{,}000\) and \(T = 2{,}000\) on the Cambodia dataset.
+At \(T = 200\) the freshly-trained XGBoost regressor more than doubles the bandits' cumulative reward. At \(T = 500\) it retains a one-quarter advantage. By \(T = 1{,}000\) the three algorithms are statistically indistinguishable. The \textbf{operational crossover} --- the smallest horizon at which the bandits beat a fresh static model --- falls between \(T = 1{,}000\) and \(T = 2{,}000\) on the Cambodia dataset (LinTS reaches significance at T = 2,000, p = 0.0039; LinUCB's lead is positive but not significant, p = 0.0840; §5.10.4).
 
 \subsection{Interpretation and operational implications}\label{interpretation-and-operational-implications}
 
-The cold-start result is the honest counterweight to the §5.1 finding --- but it must be read alongside §5.13. EXP-010 shows the bandit overtakes a \emph{freshly-trained XGBoost rule} between T = 1,000 and 2,000. It does \textbf{not} show the bandit overtaking the \textbf{constant}: §5.13 runs to 20,000 rounds and finds the bandit's cumulative reward \emph{never} crosses AlwaysRATED, and its converged per-round reward plateaus below it. So the crossover quantified here is the horizon at which online adaptation beats a \emph{frozen rule} --- an operational fact about warm-starting --- not a horizon at which the bandit becomes the best available policy. The headline experiment runs to \(N = 5{,}000\) rounds; the bandit has accumulated sufficient coefficient data to dominate the fixed-threshold baseline. At small \(T\) the situation reverses: a freshly trained XGBoost regressor, fitted offline on whatever historical data is available, exploits the dataset more efficiently than a bandit that begins each run from an uninformative prior.
+The cold-start result is the honest counterweight to the §5.1 finding --- but it must be read alongside §5.13. EXP-010 shows LinTS significantly overtakes a \emph{freshly-trained XGBoost rule} between T = 1,000 and 2,000, while LinUCB's lead at T = 2,000 is positive but not statistically significant (§5.10.4). It does \textbf{not} show the bandit overtaking the \textbf{constant}: §5.13 runs to 20,000 rounds and finds the bandit's cumulative reward \emph{never} crosses AlwaysRATED, and its converged per-round reward plateaus below it. So the crossover quantified here is the horizon at which online adaptation beats a \emph{frozen rule} --- an operational fact about warm-starting --- not a horizon at which the bandit becomes the best available policy. The headline experiment runs to \(N = 5{,}000\) rounds; the bandit has accumulated sufficient coefficient data to dominate the fixed-threshold baseline. At small \(T\) the situation reverses: a freshly trained XGBoost regressor, fitted offline on whatever historical data is available, exploits the dataset more efficiently than a bandit that begins each run from an uninformative prior.
 
 The operational implication for a Cambodian insurer is direct: \textbf{a contextual bandit should not be deployed cold on the first 500--1,000 policy applications without warm-starting from an existing model}. Two warm-start strategies follow naturally from this finding and the live demo design (§4.10):
 
@@ -904,6 +904,10 @@ Neither strategy is novel --- both are documented in the contextual-bandit deplo
   \textbf{LinUCB cumulative reward \textgreater{} FreshXGB at T = 2,000.} Confirmed (criterion 1). PASSED.
 \item
   \textbf{LinTS cumulative reward \textgreater{} FreshXGB at T = 2,000.} Confirmed (criterion 2). PASSED.
+\item
+  \textbf{Paired Wilcoxon T = 2,000 crossover (10 CRN seeds, \(\alpha = 0.025\) Bonferroni).}
+  LinUCB vs FreshXGB: p = 0.0840, d = 0.55 --- the point estimate exceeds FreshXGB but does not reach significance; the crossover claim is softened to ``draws level.'' \textbf{SOFTENED.}
+  LinTS vs FreshXGB: p = 0.0039, d = 1.48 --- significant at the Bonferroni-corrected threshold. \textbf{PASSED.}
 \end{enumerate}
 
 EXP-010: PASS, with the operational deployment-boundary qualifier of §5.10.3.
