@@ -816,15 +816,15 @@ Oracle & 104,680 & 22,829 \\
 \textbf{AlwaysRATED} (best constant) & \textbf{99,321} & \textbf{10,364} \\
 LinTS & 71,429 (−39.0 \%, p \textless{} 0.0001, d = −4.3) & −14,296 (p \textless{} 0.0001, d = −4.6) \\
 LinUCB & 71,373 (−39.2 \%, p \textless{} 0.0001, d = −5.3) & −14,443 (p \textless{} 0.0001, d = −5.7) \\
-DiscountedLinUCB (γ = .999) & 70,995 (−39.9 \%) & −20,542 \\
-DiscountedLinUCB (γ = .995) & 68,919 & --- \\
+DiscountedLinUCB (\(\lambda = 0.999\)) & 70,995 (−39.9 \%) & −20,542 \\
+DiscountedLinUCB (\(\lambda = 0.995\)) & 68,919 & --- \\
 Static XGB & 52,715 & --- \\
 \end{longtable}
 }
 
 \fg{0.85\textwidth}{Figure 17. EXP-015 total reward across the full ladder under the EXP-009 shock; AlwaysRATED (constant) dominates every learner. A severe-shock companion figure (fig\_drift\_rescue\_ladder\_severe, supplementary) shows the learners turning net-negative while the constant stays positive}{images/fig_drift_rescue_ladder.pdf}
 
-\textbf{Verdict.} Under the realistic shock, \textbf{no adaptive policy beats the best constant} --- the gap is \textasciitilde39 \% with d ≈ −4 to −5. Under the severe shock the learners go \textbf{net-negative while the constant stays positive} --- exactly when the book is most marginal, the bandit's exploration cost is most punishing. \textbf{Forgetting does not help at any γ.} The reason is structural: the shock reshuffles \emph{who} falls in each risk bucket but does not change the near-constant \emph{character} of the optimal policy (``rate most, decline the clearly-uninsurable''), so a fixed ``rate everyone'' policy is barely hurt and there is little for an adaptive learner to exploit. Non-stationarity --- the last and most natural place to seek the bandit's value --- does not rescue it.
+\textbf{Verdict.} Under the realistic shock, \textbf{no adaptive policy beats the best constant} --- the gap is \textasciitilde39 \% with d ≈ −4 to −5. Under the severe shock the learners go \textbf{net-negative while the constant stays positive} --- exactly when the book is most marginal, the bandit's exploration cost is most punishing. \textbf{Forgetting does not help at any \(\lambda\).} The reason is structural: the shock reshuffles \emph{who} falls in each risk bucket but does not change the near-constant \emph{character} of the optimal policy (``rate most, decline the clearly-uninsurable''), so a fixed ``rate everyone'' policy is barely hurt and there is little for an adaptive learner to exploit. Non-stationarity --- the last and most natural place to seek the bandit's value --- does not rescue it.
 
 \section{EXP-010: Cold-Start --- When Does the Bandit Catch Up?}\label{exp-010-cold-start-when-does-the-bandit-catch-up}
 
