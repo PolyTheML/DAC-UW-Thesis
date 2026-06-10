@@ -687,7 +687,7 @@ The 80 \% floor (EEOC 4/5 rule) is the widely cited regulatory benchmark for dis
 
 \subsection{Integration with Bandit Loop}\label{integration-with-bandit-loop}
 
-PSI is computed after each batch of 500 decisions (a sliding window) by comparing the demographic distribution of the \emph{approved} portfolio (STANDARD + RATED actions only) against the reference distribution of the full 2,000-record applicant pool. The reference proportions \(E_i\) are fixed at the dataset generation stage; the actual proportions \(A_i\) are updated incrementally as new decisions accumulate.
+PSI is computed after each batch of 500 decisions (a sliding window) by comparing the demographic distribution of the \emph{approved} portfolio (STANDARD + RATED actions only) against the reference distribution of the \textbf{first 500 rounds of each seed} (window~0 of the sliding series, rounds 0--499). The reference proportions \(E_i\) are computed from the approved decisions in those first 500 rounds; the actual proportions \(A_i\) are updated window-by-window as new decisions accumulate. (Implementation: \texttt{exp\_006\_fairness\_audit.py::compute\_sliding\_psi}, docstring: ``Reference distribution = approved pool in window 0.'')
 
 In the experimental pipeline, PSI is treated as a \textbf{diagnostic metric} rather than a hard constraint: the bandit is allowed to continue learning regardless of the PSI value, and the experiment reports the maximum PSI observed across all windows. In a production deployment (§4.10), PSI would trigger escalation rules: a GREEN reading permits normal bandit operation; an AMBER reading routes new applications from the affected subgroup to junior underwriter review; a RED reading freezes automated decisions for that subgroup and escalates to the actuarial team for investigation. This layered response ensures that demographic drift is caught before it compounds into portfolio-level concentration risk.
 
@@ -700,6 +700,13 @@ EXP-005 tests whether LinUCB learns a profitable underwriting policy that domina
 \textbf{Hypothesis.} LinUCB will achieve higher cumulative reward and lower late-round average regret than the Static XGB baseline, and its action distribution will converge from high entropy (exploration) to lower entropy (exploitation).
 
 \textbf{Setup.} LinUCB (\(\alpha = 1.0\)), Static XGB, and an Oracle policy (always selects the action with highest expected reward) are evaluated over \(N = 5,000\) rounds on the full 2,000-record Cambodia dataset. The experiment is repeated across 20 independent random seeds (1--20). For each seed, bootstrap 95 \% confidence intervals are computed for cumulative reward and late-round regret, and paired Wilcoxon signed-rank tests compare LinUCB against Static XGB.
+
+\textbf{Regret estimand.} Per-round pseudo-regret is:
+\[
+  \rho_t = \mathbb{E}\!\left[r_t \mid a^*_t\right] - r_t(a_t),
+  \quad a^*_t = \arg\max_{a}\,\mathbb{E}[r_t(a)],
+\]
+where \(\mathbb{E}[r_t \mid a^*_t]\) is the Oracle's deterministic expected reward (computed via \texttt{expected\_rewards()} with no noise draws) and \(r_t(a_t)\) is the policy's stochastic realised reward (including claims noise \(\nu_t \sim \operatorname{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw). Because \(r_t(a_t)\) is stochastic, \(\rho_t < 0\) whenever favourable noise lifts the policy's realised reward above the Oracle's deterministic expectation; Oracle average pseudo-regret is therefore negative (Table~10: \(-3.06\)/round per seed).
 
 \textbf{Pass criteria.}
 1. LinUCB cumulative reward significantly exceeds Static XGB (\(p < 0.05\), Wilcoxon).
