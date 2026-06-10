@@ -26,6 +26,12 @@ exp\_010 & Cold-start analysis across horizons \\
 exp\_011 & Ablation study (No-REFER, Greedy-only, Static XGB) \\
 exp\_012 & Sensitivity analysis ($\alpha$, adverse selection, elasticity) \\
 exp\_013 & Log--log regret validation of the $O(\sqrt{T})$ bound \\
+exp\_014 & Baseline-ladder benchmark: complete policy comparison including constant policies (§5.0.1) \\
+\texttt{research/drift\_rescue.py} & EXP-015: drift rescue --- full ladder + DiscountedLinUCB under moderate and severe shock (§5.9.5) \\
+\texttt{research/elasticity\_sweep.py} & EXP-016: demand-elasticity sweep, $\kappa \in \{0.5, 1.0, 1.5, 2.0\}$, 20 seeds (§5.12) \\
+\texttt{research/horizon\_check.py} & 20{,}000-round horizon validation (LinUCB, LinTS, AlwaysRATED; §5.13) \\
+\texttt{research/hitl\_rebenchmark.py} & HITL re-benchmark against complete ladder at SEED = 42 (§5.4.2) \\
+\texttt{research/reward\_models.py} & Reward-model sensitivity: six parameterisations, 20 seeds (§5.11) \\
 \bottomrule
 \end{tabular}
 \end{center}
