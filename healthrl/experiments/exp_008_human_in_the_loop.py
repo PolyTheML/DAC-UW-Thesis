@@ -530,3 +530,4 @@ if __name__ == "__main__":
         baseline_bandit = LinUCB(n_actions=4, n_features=n_features, alpha=BANDIT.linucb_alpha)
         baseline_result = run_refer_baseline("linucb", baseline_bandit, X, df_raw,
                                              n_rounds=N_ROUNDS, seed=SEED)
+        print(f"  Final cumulative reward: ${baseline_result.cumulative_rewards[-1]:,.2f}")
