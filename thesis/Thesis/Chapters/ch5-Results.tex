@@ -18,7 +18,7 @@ A central methodological commitment of this chapter is \textbf{baseline complete
 
 \subsubsection{The headline question}\label{the-headline-question}
 
-The operative question of this thesis is not \emph{``does a contextual bandit beat a hand-tuned rule?''} --- a low bar a learner clears almost by construction --- but \textbf{``does a contextual bandit beat the best \emph{simple} policy available on this problem?''} Answering it requires a complete baseline ladder. Table 9 reports that ladder under the as-published (``ORIGINAL'') reward model, 20 seeds, N = 5,000 rounds, common random numbers. (This promotes the 5-seed first pass in EXP-014 to the chapter's standard 20-seed protocol; the reimplemented reward harness reproduces the headline LinUCB reward to within rounding --- \$91,864 here vs \$91,947 in §5.3 (EXP-007) --- confirming the two pipelines agree. EXP-005's own harness reports a slightly lower \$90,540 for LinUCB (§5.1); the \textasciitilde1.4 \% difference is between EXP-005's pipeline and the regression-exact reward-sensitivity harness used for the ladder, and is immaterial to every comparison in this chapter.)
+The operative question of this thesis is not \emph{``does a contextual bandit beat a hand-tuned rule?''} --- a low bar a learner clears almost by construction --- but \textbf{``does a contextual bandit beat the best \emph{simple} policy available on this problem?''} Answering it requires a complete baseline ladder. Table 9 reports that ladder under the as-published (``ORIGINAL'') reward model, 20 seeds, N = 5,000 rounds, common random numbers. (This promotes the 5-seed first pass in EXP-014 to the chapter's standard 20-seed protocol; the reimplemented reward harness reproduces the headline LinUCB reward of EXP-007's original run to within rounding --- \$91,864 on the harness vs \$91,947 from EXP-007's own pipeline --- confirming the two pipelines agree. Table 12 (§5.3) reports the harness values for LinUCB, LinTS, and Static XGB, so that every ladder row shares the same common random numbers. EXP-005's own harness reports a slightly lower \$90,540 for LinUCB (§5.1); the \textasciitilde1.4 \% difference is between EXP-005's pipeline and the regression-exact reward-sensitivity harness used for the ladder, and is immaterial to every comparison in this chapter.)
 
 \captionof{table}{Table 9 --- The baseline ladder (ORIGINAL reward, N = 5,000, 20 seeds, mean cumulative reward {[}95 \% bootstrap CI{]})}\label{tab:5.0.1}
 
@@ -42,11 +42,13 @@ Note
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
+AlwaysDECLINE & -50,000 (deterministic) & -39.6 \% & constant decline floor \\
 Random & 1,980 {[}739, 3,209{]} & 1.6 \% & uniform action floor \\
 AlwaysSTANDARD & 34,684 {[}33,694, 35,871{]} & 27.5 \% & conservative constant \\
 Static XGB (hand-tuned rule) & 72,206 {[}70,125, 74,352{]} & 57.1 \% & the original sole baseline \\
-\textbf{LinUCB} (proposed) & \textbf{91,864 {[}89,139, 94,702{]}} & \textbf{72.7 \%} & rank-2 of the deployable policies \\
-\textbf{LinTS} (proposed) & \textbf{93,723 {[}91,105, 96,481{]}} & \textbf{74.2 \%} & rank-1 of the deployable policies \\
+\textbf{LinUCB} (proposed) & \textbf{91,864 {[}89,139, 94,702{]}} & \textbf{72.7 \%} & rank-2 of the admissible policies \\
+\textbf{LinTS} (proposed) & \textbf{93,723 {[}91,105, 96,481{]}} & \textbf{74.2 \%} & rank-1 of the admissible policies \\
+AlwaysRATED & 122,287 {[}119,528, 124,996{]} & 96.8 \% & best constant; \emph{inadmissible} (§5.3, §5.11) \\
 LogisticOracle ‡ & 123,977 {[}121,794, 126,126{]} & 98.1 \% & full-supervision ceiling, \emph{not deployable} \\
 Oracle (upper bound) & 126,351 {[}124,187, 128,428{]} & 100 \% & --- \\
 \end{longtable}
@@ -54,13 +56,15 @@ Oracle (upper bound) & 126,351 {[}124,187, 128,428{]} & 100 \% & --- \\
 
 ‡ LogisticOracle is a logistic classifier fit \textbf{in-sample on the oracle-optimal labels}. It therefore requires the very answer it is predicting and is \textbf{not a deployable baseline} --- it is an \emph{optimistic static ceiling}. Its role is diagnostic (see below).
 
-\fg{0.85\textwidth}{Figure 6. The baseline ladder (mean ± 95 \% bootstrap CI). LinUCB and LinTS lead every deployable policy, outperforming Static XGB by +25.2 \%}{images/fig_exp_014_baseline_ladder.pdf}
+Two terms are used in a fixed sense throughout this chapter. A policy is \textbf{deployable} if it can be implemented in production from observable applicant features alone --- AlwaysRATED qualifies; Oracle and LogisticOracle, which require knowledge of the optimal action, do not. A policy is \textbf{admissible} if it is deployable \emph{and} commercially and regulatorily viable as an underwriting rule --- AlwaysRATED, which rates 100 \% of applicants at a flat +25 \% loading, is deployable but \emph{inadmissible} (§6.2).
+
+\fg{0.85\textwidth}{Figure 6. The baseline ladder (mean ± 95 \% bootstrap CI). LinUCB and LinTS lead every admissible policy, outperforming Static XGB by +25.2 \%}{images/fig_exp_014_baseline_ladder.pdf}
 
 \subsubsection{The verdict, stated up front}\label{the-verdict-stated-up-front}
 
-\textbf{The contextual bandit beats every deployable alternative on this problem.} LinUCB and LinTS lead the deployable-policy rankings in Table 9, outperforming the frozen Static-XGB rule by \textbf{+25.2 \%} and \textbf{+29.8 \%} respectively (LinUCB: p \textless{} 0.001, d = 2.98, large effect; §5.1, §5.3). Both bandits also clear every other deployable baseline --- Epsilon-Greedy, AlwaysSTANDARD, and Random --- by large, statistically significant margins. \emph{Online adaptive estimation beats every frozen alternative.}
+\textbf{The contextual bandit beats every admissible alternative on this problem.} LinUCB and LinTS lead the admissible-policy rankings in Table 9, outperforming the frozen Static-XGB rule by \textbf{+25.2 \%} and \textbf{+29.8 \%} respectively (LinUCB: p \textless{} 0.001, d = 2.98, large effect; §5.1, §5.3). Both bandits also clear every other admissible baseline --- Epsilon-Greedy, AlwaysSTANDARD, and Random --- by large, statistically significant margins. \emph{Online adaptive estimation beats every admissible frozen alternative.}
 
-A post-hoc robustness analysis identified an inadmissible constant policy (AlwaysRATED --- rating 100 \% of applicants at a +25 \% loading, which is neither commercially nor regulatorily feasible) as a theoretical performance ceiling above the bandits. This finding is quantified and interpreted in §6.2.
+A post-hoc robustness analysis identified an inadmissible constant policy (AlwaysRATED --- rating 100 \% of applicants at a +25 \% loading, which is neither commercially nor regulatorily feasible) as a theoretical performance ceiling above the bandits (Table 9). This finding is quantified and interpreted in §6.2.
 
 \section{EXP-005: Convergence Validation}\label{exp-005-convergence-validation}
 
@@ -233,7 +237,7 @@ Table 12 ranks all four algorithms by mean cumulative reward and mean cumulative
 
 \captionof{table}{Table 12 --- EXP-007 benchmark over the complete baseline ladder (ORIGINAL reward, N = 5,000, 20 seeds, mean cumulative reward {[}95 \% CI{]})}\label{tab:5.3.1}
 
-Reward is the primary metric because the realized-regret sign for the constant policies is distorted by claims noise (§5.11). The four learners use EXP-007's own run; the constant policies and LogisticOracle are measured on the same 20-seed common-random-number harness (§5.11), whose Oracle (126,351) agrees with EXP-007's (126,318) to within rounding.
+Reward is the primary metric because the realized-regret sign for the constant policies is distorted by claims noise (§5.11). LinUCB, LinTS, and Static XGB are reported on the same 20-seed common-random-number harness as the constant policies and LogisticOracle (§5.11), which reproduces EXP-007's own-run values to within rounding (LinUCB \$91,864 vs \$91,947; LinTS \$93,723 vs \$93,572; Oracle 126,351 vs 126,318); Epsilon-Greedy, which is not part of the harness, uses EXP-007's own run.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -257,7 +261,7 @@ Cumulative reward
 \endlastfoot
 --- & Oracle (ceiling) & 126,351 {[}124,187, 128,428{]} & --- \\
 --- & LogisticOracle ‡ (full-supervision ceiling) & 123,977 {[}121,794, 126,126{]} & 101.4 \% \\
-\textbf{1} & \textbf{AlwaysRATED} (trivial constant) & \textbf{122,287 {[}119,528, 124,996{]}} & \textbf{100 \%} \\
+\textbf{1} & \textbf{AlwaysRATED} (trivial constant; \emph{inadmissible}, §5.0.1) & \textbf{122,287 {[}119,528, 124,996{]}} & \textbf{100 \%} \\
 2 & LinTS & 93,723 {[}91,105, 96,481{]} & 76.6 \% \\
 3 & LinUCB & 91,864 {[}89,139, 94,702{]} & 75.1 \% \\
 4 & Epsilon-Greedy & 76,441 {[}73,767, 79,107{]} & 62.5 \% \\
@@ -582,7 +586,7 @@ First, \textbf{removing the REFER action does not reduce cumulative reward} in t
 
 Second, \textbf{disabling the LinUCB exploration bonus (\(\alpha = 0\), Greedy-only) yields a cumulative reward statistically indistinguishable from full LinUCB} (\(p = 0.580\), \(d = +0.13\) negligible). The empirical regret of Greedy-only (\(23{,}365\)) is within 3 \% of full LinUCB's (\(24{,}025\)) and within the seed-to-seed variability. This is the central finding of EXP-011: on the 34-dimensional Cambodia feature space at \(T = 5{,}000\), the upper-confidence bonus does not add measurable regret reduction beyond what the underlying online ridge regression already provides. The result is theoretically consistent with Bastani, Bayati \& Khosravi \citeyearpar{Bastani2021}, who prove that under covariate diversity, exploration-free greedy is rate-optimal in the contextual-bandit setting.
 
-Third, \textbf{even Greedy-only with no exploration whatsoever decisively outperforms Static XGB} (+\textbackslash\$18,969; \(p < 0.001\); \(d = 3.01\), large effect). This isolates the causal mechanism: the bandit's advantage on this dataset is \emph{online adaptive linear estimation}, not the addition of an exploration mechanism on top of it. Static XGB loses not because it fails to explore but because it does not update its coefficients in response to realised rewards.
+Third, \textbf{even Greedy-only with no exploration whatsoever decisively outperforms Static XGB} (+\$18,969; \(p < 0.001\); \(d = 3.01\), large effect). This isolates the causal mechanism: the bandit's advantage on this dataset is \emph{online adaptive linear estimation}, not the addition of an exploration mechanism on top of it. Static XGB loses not because it fails to explore but because it does not update its coefficients in response to realised rewards.
 
 These three results jointly motivate the reframing applied to §5.3.1 and §6.1 Finding 3: the comparison between LinUCB/LinTS and the static baseline is fundamentally a comparison between \emph{adaptive} and \emph{non-adaptive} algorithms, and the within-adaptive choice of exploration scheme carries no measurable cost on this problem. Epsilon-Greedy (ε = 0.15, §5.3.2) is a separate case: its underperformance relative to LinUCB and LinTS reflects the cost of \emph{uniform random} arm pulls independent of the learned coefficients, not the cost of disabling UCB exploration on top of a coherent linear model.
 
@@ -822,7 +826,7 @@ Static XGB & 52,715 & --- \\
 \end{longtable}
 }
 
-\fg{0.85\textwidth}{Figure 17. EXP-015 total reward across the full ladder under the EXP-009 shock; AlwaysRATED (constant) dominates every learner. A severe-shock companion (fig\_drift\_rescue\_ladder\_severe.png) shows the learners turning net-negative while the constant stays positive}{images/fig_drift_rescue_ladder.pdf}
+\fg{0.85\textwidth}{Figure 17. EXP-015 total reward across the full ladder under the EXP-009 shock; AlwaysRATED (constant) dominates every learner. A severe-shock companion figure (fig\_drift\_rescue\_ladder\_severe, supplementary) shows the learners turning net-negative while the constant stays positive}{images/fig_drift_rescue_ladder.pdf}
 
 \textbf{Verdict.} Under the realistic shock, \textbf{no adaptive policy beats the best constant} --- the gap is \textasciitilde39 \% with d ≈ −4 to −5. Under the severe shock the learners go \textbf{net-negative while the constant stays positive} --- exactly when the book is most marginal, the bandit's exploration cost is most punishing. \textbf{Forgetting does not help at any γ.} The reason is structural: the shock reshuffles \emph{who} falls in each risk bucket but does not change the near-constant \emph{character} of the optimal policy (``rate most, decline the clearly-uninsurable''), so a fixed ``rate everyone'' policy is barely hurt and there is little for an adaptive learner to exploit. Non-stationarity --- the last and most natural place to seek the bandit's value --- does not rescue it.
 

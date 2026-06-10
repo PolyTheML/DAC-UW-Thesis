@@ -17,11 +17,11 @@ The project designs, implements, and rigorously evaluates a complete adaptive-un
 \bigskip
 \noindent\textbf{Principal Findings}
 \begin{itemize}
-    \item \textbf{Bandits beat every deployable alternative.} LinUCB earns \$90{,}540 in cumulative reward versus \$72{,}292 for the static XGBoost rule --- a \textbf{25\%} improvement (Wilcoxon $p < 0.001$, Cohen's $d = 2.98$, large effect) --- and LinTS improves on the rule by roughly 30\%. Late-run regret falls to \$2.20 per decision against the rule's \$9.01.
+    \item \textbf{Bandits beat every admissible alternative.} LinUCB earns \$90{,}540 in cumulative reward versus \$72{,}292 for the static XGBoost rule --- a \textbf{25\%} improvement (Wilcoxon $p < 0.001$, Cohen's $d = 2.98$, large effect) --- and LinTS improves on the rule by roughly 30\%. Late-run regret falls to \$2.20 per decision against the rule's \$9.01.
     \item \textbf{Adaptation does not cost fairness.} With no explicit fairness term in its objective, the bandit holds regional and occupational approval parity at 85.7\% and 90.1\% (both clearing the 80\% four-fifths threshold) and keeps the maximum sliding-window PSI in the GREEN/low-AMBER band throughout the run.
     \item \textbf{The learning that matters is online estimation, not exploration.} An ablation shows that continuously re-fitting per-action coefficients --- rather than the exploration bonus --- is the load-bearing mechanism, and that the adaptive learners absorb a simulated demographic shock far better than the static rule.
     \item \textbf{Human oversight pays for itself.} Routing only the hardest 1.5\% of cases to a human underwriter raises cumulative reward by a further 6.5\%, at a review cost of just 2.6\% of reward.
-    \item \textbf{An honest ceiling.} A post-hoc analysis found that a trivial constant policy --- rating \emph{every} applicant at a flat surcharge --- scores higher still, but is neither commercially viable nor regulatorily admissible. It is reported as a ceiling that \emph{bounds}, but does not overturn, the contribution: the bandits beat every alternative an insurer could actually deploy.
+    \item \textbf{An honest ceiling.} A post-hoc analysis found that a trivial constant policy --- rating \emph{every} applicant at a flat surcharge --- scores higher still, but is neither commercially viable nor regulatorily admissible. It is reported as a ceiling that \emph{bounds}, but does not overturn, the contribution: the bandits beat every \emph{admissible} alternative --- every option an insurer could lawfully and commercially put into production.
 \end{itemize}
 
 \bigskip
