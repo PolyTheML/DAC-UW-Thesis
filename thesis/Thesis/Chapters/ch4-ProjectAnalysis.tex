@@ -260,47 +260,110 @@ The contextual bandit underwriting loop proceeds in five steps per applicant.
 
 \subsection{Architecture}\label{architecture}
 
-Figure 4 shows the end-to-end architecture of the demonstration system. The browser frontend exposes four interaction tabs (Applicant Simulator, Premium Optimiser, Bandit Arena, PSI Monitor); each issues HTTP requests to the FastAPI backend, which dispatches to one of six core modules (Actuarial Reward Simulator, Pricing Engine, Bandit Algorithms, PSI Compute, Cambodia Dataset, Static XGB Baseline). The bandit decision loop itself, isolated from infrastructural concerns, is shown in Figure 5.
+Figure 4 shows the end-to-end architecture of the demonstration system as deployed on the Render platform (\texttt{render.yaml}, served by uvicorn). The browser frontend exposes seven interaction tabs (Applicant Simulator, Pricing Engine, Bandit Arena, Benchmark Race, Underwriter Review, Interpretability, More Experiments); each issues HTTP/JSON requests to the FastAPI application (\texttt{demo/main.py}), which serves fifteen routes organised into five \texttt{/api} groups --- applicant sampling, one-shot simulation, bandit run/compare, pricing optimisation, and human-in-the-loop review --- plus three utility routes (\texttt{/}, \texttt{/defense}, \texttt{/health}). The API layer dispatches to six backend modules: the dataset loader (\texttt{preprocess\_cambodia\_data}), the actuarial reward simulator (\texttt{RewardConfig}, \texttt{expected\_rewards}), the bandit algorithms (LinUCB, LinTS, $\varepsilon$-Greedy), the frozen Static-XGB baseline, the pricing engine (which also computes batch PSI), and the HITL review logic (\texttt{hitl\_db.py}, which persists underwriter decisions and computes approved-pool PSI). Two data stores back the modules: the 2,000-applicant Cambodia synthetic dataset (CSV/Parquet) and the HITL review database (SQLite). The bandit decision loop itself, isolated from infrastructural concerns, is shown in Figure 5.
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[
-        arch/.style={procnode, text width=27mm, minimum height=12mm, font=\footnotesize},
-        store/.style={procnode, fill=dgnodefill!55, text width=58mm, minimum height=9mm, font=\footnotesize},
-        rowlab/.style={text=dgnodeline, font=\small\bfseries, align=center, text width=18mm},
-        node distance=11mm and 7mm,
-    ]
-        % Browser (SPA) row
-        \node[arch] (b1) {Applicant\\Simulator};
-        \node[arch, right=of b1] (b2) {Premium\\Optimiser};
-        \node[arch, right=of b2] (b3) {Bandit\\Arena};
-        \node[arch, right=of b3] (b4) {PSI\\Monitor};
-        % FastAPI REST API row
-        \node[arch, below=of b1] (a1) {\texttt{/api/simulate}};
-        \node[arch, below=of b2] (a2) {\texttt{/api/pricing/}\\\texttt{optimize}};
-        \node[arch, below=of b3] (a3) {\texttt{/api/bandit/}\\\texttt{run/compare}};
-        \node[arch, below=of b4] (a4) {\texttt{/api/psi/audit}};
-        % Python backend row
-        \node[arch, below=of a1] (m1) {Actuarial\\Reward Simulator};
-        \node[arch, below=of a2] (m2) {Pricing\\Engine};
-        \node[arch, below=of a3] (m3) {Bandit Algorithms\\(LinUCB / LinTS /\\$\varepsilon$-Greedy)};
-        \node[arch, below=of a4] (m4) {PSI\\Compute};
-        % flow arrows
-        \foreach \c in {1,2,3,4}{%
-            \draw[flowarrow] (b\c) -- (a\c);
-            \draw[flowarrow] (a\c) -- (m\c);
-        }
-        % data stores (the 5th and 6th core modules)
-        \node[store, anchor=north] (ds1) at ($(m1.south)!0.5!(m2.south) + (0,-12mm)$) {Cambodia synthetic dataset\\(2,000 applicants)};
-        \node[store, anchor=north] (ds2) at ($(m3.south)!0.5!(m4.south) + (0,-12mm)$) {Static XGBoost baseline\\(mortality model)};
-        \draw[flowarrow, dashed] (m1.south) -- (ds1.north);
-        \draw[flowarrow, dashed] (m4.south) -- (ds2.north);
-        % row labels
-        \node[rowlab, left=7mm of b1] {Browser\\(SPA)};
-        \node[rowlab, left=7mm of a1] {FastAPI\\REST API};
-        \node[rowlab, left=7mm of m1] {Python\\Backend};
+    % Fig-4-local palette (reference-style API-architecture look; the slate
+    % dgnode palette stays untouched for the other schematic figures)
+    \definecolor{ffteal}{HTML}{0E7C86}   \definecolor{fftealbg}{HTML}{E6F7F8}
+    \definecolor{fforange}{HTML}{C97207} \definecolor{fforangebg}{HTML}{FEF3E2}
+    \definecolor{ffred}{HTML}{E12D39}    \definecolor{ffredbg}{HTML}{FDECEC}
+    \definecolor{ffpurple}{HTML}{6D28D9} \definecolor{ffpurplebg}{HTML}{F1EAFE}
+    \definecolor{ffgold}{HTML}{B7791F}   \definecolor{ffgoldbg}{HTML}{FEF9E7}
+    \definecolor{ffgray}{HTML}{486581}   \definecolor{ffgraybg}{HTML}{F0F4F8}
+    % Band geometry is absolute (rectangles drawn before the nodes), so no
+    % fit library, no background layer, no resizebox -- only the constructs
+    % the other schematic figures already compile with.
+    \tikzset{
+        ffnode/.style={rounded corners=4pt, draw, line width=0.9pt, fill=white,
+            align=center, inner sep=2.5pt, font=\scriptsize},
+        fftab/.style={ffnode, draw=ffteal, text width=16mm, minimum height=11mm},
+        ffapi/.style={ffnode, draw=fforange, text width=21mm, minimum height=16mm},
+        ffmod/.style={ffnode, draw=ffpurple, minimum height=14mm},
+        ffstore/.style={ffnode, draw=ffgold, text width=40mm, minimum height=11mm},
+        ffband/.style={rounded corners=6pt, dashed, line width=0.9pt},
+        ffpill/.style={rounded corners=5pt, draw, line width=0.9pt, fill=white,
+            inner sep=2.5pt, font=\scriptsize\bfseries},
+        ffarrow/.style={-{Stealth[length=2.2mm]}, line width=0.8pt, dashed},
+    }
+    \newcommand{\ffroute}{\fontsize{5pt}{6.5pt}\selectfont\ttfamily}
+    \begin{tikzpicture}
+        % band containers first (absolute coordinates, mm), nodes drawn on top
+        \draw[ffband, dotted, draw=ffgray, fill=ffgraybg!35] (-3mm,-23mm) rectangle (151mm,-111mm);
+        \draw[ffband, draw=ffteal, fill=fftealbg!50] (0mm,0mm) rectangle (148mm,-19mm);
+        \draw[ffband, solid, draw=ffred, fill=ffredbg!50] (0mm,-27mm) rectangle (148mm,-53mm);
+        \draw[ffband, draw=ffpurple, fill=ffpurplebg!45] (0mm,-59mm) rectangle (148mm,-81mm);
+        \draw[ffband, draw=ffgold, fill=ffgoldbg!55] (0mm,-87mm) rectangle (148mm,-107mm);
+
+        % Band 1: browser tabs (the 7 real tabs of index.html)
+        \node[fftab, anchor=north west] (t1) at (3mm,-4mm) {Applicant\\Simulator};
+        \node[fftab, anchor=north west] (t2) at ($(t1.north east)+(2.2mm,0)$) {Pricing\\Engine};
+        \node[fftab, anchor=north west] (t3) at ($(t2.north east)+(2.2mm,0)$) {Bandit\\Arena};
+        \node[fftab, anchor=north west] (t4) at ($(t3.north east)+(2.2mm,0)$) {Benchmark\\Race};
+        \node[fftab, anchor=north west] (t5) at ($(t4.north east)+(2.2mm,0)$) {Underwriter\\Review};
+        \node[fftab, anchor=north west] (t6) at ($(t5.north east)+(2.2mm,0)$) {Interpret-\\ability};
+        \node[fftab, anchor=north west] (t7) at ($(t6.north east)+(2.2mm,0)$) {More\\Experiments};
+
+        % Band 2: FastAPI route groups (15 routes, demo/main.py)
+        \node[ffapi, anchor=north west, text width=22mm] (g1) at (3mm,-31.5mm) {\textbf{Applicant}\\[1.5pt]
+            {\ffroute /api/applicant/random\\ /api/applicant/fields}};
+        \node[ffapi, anchor=north west, text width=15mm] (g2) at ($(g1.north east)+(2.2mm,0)$) {\textbf{Simulation}\\[1.5pt]
+            {\ffroute /api/simulate}};
+        \node[ffapi, anchor=north west] (g3) at ($(g2.north east)+(2.2mm,0)$) {\textbf{Bandit}\\[1.5pt]
+            {\ffroute /api/bandit/run\\ /api/bandit/compare}};
+        \node[ffapi, anchor=north west, text width=23mm] (g4) at ($(g3.north east)+(2.2mm,0)$) {\textbf{Pricing}\\[1.5pt]
+            {\ffroute /api/pricing/optimize\\ /api/pricing/batch}};
+        \node[ffapi, anchor=north west] (g5) at ($(g4.north east)+(2.2mm,0)$) {\textbf{HITL}\\[1.5pt]
+            {\ffroute /api/hitl/recommend\\ /review, /metrics\\ /reset, /export}};
+        \node[ffapi, draw=ffgray, anchor=north west, text width=12mm] (g6) at ($(g5.north east)+(2.2mm,0)$) {\textbf{Utility}\\[1.5pt]
+            {\ffroute /\\ /defense\\ /health}};
+
+        % Band 3: Python backend modules
+        \node[ffmod, anchor=north west, text width=17mm] (m0) at (3mm,-63.5mm) {Dataset\\loader\\[1.5pt]
+            {\ffroute preprocess\_\\cambodia\_data}};
+        \node[ffmod, anchor=north west, text width=22mm] (m1) at ($(m0.north east)+(2mm,0)$) {Actuarial reward\\simulator\\[1.5pt]
+            {\ffroute RewardConfig,\\ expected\_rewards}};
+        \node[ffmod, anchor=north west, text width=22mm, line width=1.4pt] (m2) at ($(m1.north east)+(2mm,0)$) {{\bfseries Bandit\\algorithms}\\[1.5pt]
+            {\tiny LinUCB / LinTS\\ $\varepsilon$-Greedy}\\[1pt] {\ffroute run\_bandit}};
+        \node[ffmod, anchor=north west, text width=16mm] (m3) at ($(m2.north east)+(2mm,0)$) {Static XGB\\baseline\\[1.5pt]
+            {\ffroute StaticXGBBaseline}};
+        \node[ffmod, anchor=north west, text width=19mm] (m4) at ($(m3.north east)+(2mm,0)$) {Pricing engine\\{\tiny + batch PSI}\\[1.5pt]
+            {\ffroute pricing\_engine.py}};
+        \node[ffmod, anchor=north west, text width=20mm] (m5) at ($(m4.north east)+(2mm,0)$) {HITL review\\{\tiny + approved-pool PSI}\\[1.5pt]
+            {\ffroute hitl\_db.py}};
+
+        % Band 4: data stores
+        \node[ffstore, anchor=north west] (s1) at (5mm,-91.5mm)
+            {Cambodia synthetic dataset\\[1.5pt] {\tiny 2,000 applicants, CSV / Parquet}};
+        \node[ffstore, anchor=north west] (s2) at (102mm,-91.5mm)
+            {HITL review database\\[1.5pt] {\tiny SQLite}};
+
+        % pill labels on the band borders (reference style)
+        \node[ffpill, draw=ffteal, text=ffteal, anchor=west] at (5mm,0mm)
+            {Browser SPA --- index.html};
+        \node[ffpill, fill=ffred, draw=ffred, text=white, anchor=west] at (5mm,-27mm)
+            {FastAPI application --- demo/main.py};
+        \node[ffpill, draw=ffpurple, text=ffpurple, anchor=west] at (5mm,-59mm)
+            {Python backend modules};
+        \node[ffpill, draw=ffgold, text=ffgold, anchor=west] at (5mm,-87mm)
+            {Data stores};
+        \node[ffpill, draw=ffgray, text=ffgray, anchor=east] at (145mm,-23mm)
+            {Render deployment --- render.yaml, uvicorn};
+
+        % flows
+        \draw[-{Stealth[length=2.8mm]}, line width=1.3pt, draw=ffteal]
+            (74mm,-19mm) -- node[right=1mm, font=\tiny\itshape, text=ffgray] {HTTP / JSON (fetch)} (74mm,-27mm);
+        \draw[ffarrow, draw=fforange] (g1.south) -- (m0.north);
+        \draw[ffarrow, draw=fforange] (g2.south) -- (m1.north);
+        \draw[ffarrow, draw=fforange] (g3.south) -- (m2.north);
+        \draw[ffarrow, draw=fforange] (g3.south east) -- (m3.north);
+        \draw[ffarrow, draw=fforange] (g4.south) -- (m4.north);
+        \draw[ffarrow, draw=fforange] (g5.south) -- (m5.north);
+        \draw[ffarrow, draw=ffgold] (m0.south) -- (s1.north);
+        \draw[ffarrow, draw=ffgold] (m5.south) -- (s2.north);
     \end{tikzpicture}
-    \caption{Figure 4. System architecture — Browser tabs → FastAPI endpoints → backend modules}
+    \caption{Figure 4. Demonstration-system architecture — browser SPA (seven tabs) → FastAPI application (15 routes in five API groups + utility) → Python backend modules → data stores, deployed on Render}
     \label{fig:ch4_architecture}
 \end{figure}
 
@@ -569,9 +632,9 @@ The \(-\$25\) term in the STANDARD and RATED rows is the \textbf{processing cost
 
 The reward design encodes three actuarial intuitions beyond simple profit maximisation.
 
-\textbf{Opportunity cost of DECLINE (−\textbackslash\$10).} Declining an applicant is not costless: underwriting staff have already reviewed the file, IT systems have processed the data, and the insurer forgoes the upside of a potentially profitable policy. The −\textbackslash\$10 figure represents an administrative opportunity cost rather than a cash outflow. Without this penalty, a myopic algorithm might decline every borderline applicant to avoid claims variance; the small negative reward forces the bandit to compare the certain loss of −\textbackslash\$10 against the uncertain but potentially positive expected profit of STANDARD or RATED.
+\textbf{Opportunity cost of DECLINE (−\$10).} Declining an applicant is not costless: underwriting staff have already reviewed the file, IT systems have processed the data, and the insurer forgoes the upside of a potentially profitable policy. The −\$10 figure represents an administrative opportunity cost rather than a cash outflow. Without this penalty, a myopic algorithm might decline every borderline applicant to avoid claims variance; the small negative reward forces the bandit to compare the certain loss of −\$10 against the uncertain but potentially positive expected profit of STANDARD or RATED.
 
-\textbf{Net cost of REFER (−\textbackslash\$35 admin + 70 \% efficiency).} The REFER action models the real-world practice of routing complex cases to a senior underwriter or medical reviewer. The 70 \% efficiency factor captures the reality that human review is imperfect: some profitable cases are declined out of conservatism, and some risky cases are approved through oversight. The −\textbackslash\$35 fixed administrative cost covers the senior underwriter's salary time per case. Consequently, REFER is optimal only when the bandit is genuinely uncertain (the expected values of STANDARD, RATED, and DECLINE are close) or when the applicant's mortality multiplier is so high that even the penalised REFER reward exceeds the negative expected profit of direct issuance.
+\textbf{Net cost of REFER (−\$35 admin + 70 \% efficiency).} The REFER action models the real-world practice of routing complex cases to a senior underwriter or medical reviewer. The 70 \% efficiency factor captures the reality that human review is imperfect: some profitable cases are declined out of conservatism, and some risky cases are approved through oversight. The −\$35 fixed administrative cost covers the senior underwriter's salary time per case. Consequently, REFER is optimal only when the bandit is genuinely uncertain (the expected values of STANDARD, RATED, and DECLINE are close) or when the applicant's mortality multiplier is so high that even the penalised REFER reward exceeds the negative expected profit of direct issuance.
 
 \textbf{Claims noise reduction.} The stochastic simulator adds uniform multiplicative noise \(\nu_t \in [0.92, 1.08]\) to claims. This narrow band (±8 \%) represents the irreducible uncertainty in claim costs for a single policy year; it is intentionally small so that the bandit learns from signal rather than noise, while still preventing degenerate solutions in which the oracle policy is trivially identifiable. Early experiments with wider noise bands (±20 \%) produced excessive variance in regret curves without altering the relative ranking of algorithms.
 
