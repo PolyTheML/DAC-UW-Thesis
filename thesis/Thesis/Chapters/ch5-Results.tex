@@ -58,7 +58,7 @@ Oracle (upper bound) & 126,351 {[}124,187, 128,428{]} & 100 \% & --- \\
 
 Two terms are used in a fixed sense throughout this chapter. A policy is \textbf{deployable} if it can be implemented in production from observable applicant features alone --- AlwaysRATED qualifies; Oracle and LogisticOracle, which require knowledge of the optimal action, do not. A policy is \textbf{admissible} if it is deployable \emph{and} commercially and regulatorily viable as an underwriting rule --- AlwaysRATED, which rates 100 \% of applicants at a flat +25 \% loading, is deployable but \emph{inadmissible} (§6.2).
 
-\fg{0.85\textwidth}{Figure 6. The baseline ladder (mean ± 95 \% bootstrap CI). LinUCB and LinTS lead every admissible policy, outperforming Static XGB by +27.2 \% (LinUCB) and +29.8 \% (LinTS) on the ladder-harness basis (Table~9)}{images/fig_exp_014_baseline_ladder.pdf}
+\fg[Figure 6. The baseline ladder (mean ± 95\% bootstrap CI)]{0.85\textwidth}{Figure 6. The baseline ladder (mean ± 95 \% bootstrap CI). LinUCB and LinTS lead every admissible policy, outperforming Static XGB by +27.2 \% (LinUCB) and +29.8 \% (LinTS) on the ladder-harness basis (Table~9).}{images/fig_exp_014_baseline_ladder.pdf}
 
 \subsubsection{The verdict, stated up front}\label{the-verdict-stated-up-front}
 
@@ -68,7 +68,7 @@ A post-hoc robustness analysis identified an inadmissible constant policy (Alway
 
 \section{EXP-005: Convergence Validation}\label{exp-005-convergence-validation}
 
-\fg{0.85\textwidth}{Figure 7. Cumulative reward curves for LinUCB and Static XGB baseline (mean of 20 seeds, shaded band = 95\% bootstrap confidence interval)}{images/fig_reward_curves.pdf}
+\fg[Figure 7. Cumulative reward curves, LinUCB versus Static XGB (20 seeds)]{0.85\textwidth}{Figure 7. Cumulative reward curves for LinUCB and Static XGB baseline (mean of 20 seeds, shaded band = 95\% bootstrap confidence interval).}{images/fig_reward_curves.pdf}
 
 \subsection{Cumulative Reward and Regret}\label{cumulative-reward-and-regret}
 
@@ -105,7 +105,7 @@ LinUCB accumulates a mean of \textbf{90,540} in total reward over 5,000 rounds, 
 
 \textbf{Statistical inference (paired, 20 seeds).} The reward difference is highly significant under a paired Wilcoxon signed-rank test (p \textless{} 0.001, mean diff +18,248, 95\% CI {[}+15,595, +20,858{]}, Cohen's d = 2.98, large effect). The regret difference is equally robust (p \textless{} 0.001, mean diff -6.81, 95\% CI {[}-8.60, -4.90{]}, Cohen's d = -1.59, large effect). Both pairwise comparisons remain significant after Bonferroni correction for the two tests.
 
-\fg{0.85\textwidth}{Figure 8. Evolution of action distribution over 5,000 rounds. Entropy decreases from 1.31 (uniform-like exploration) to 1.10 (exploitation regime)}{images/fig_action_evolution.pdf}
+\fg[Figure 8. Action-distribution evolution over 5,000 rounds]{0.85\textwidth}{Figure 8. Evolution of action distribution over 5,000 rounds. Entropy decreases from 1.31 (uniform-like exploration) to 1.10 (exploitation regime).}{images/fig_action_evolution.pdf}
 
 \subsection{Action Distribution Evolution and Entropy}\label{action-distribution-evolution-and-entropy}
 
@@ -140,7 +140,7 @@ Five pre-registered criteria were evaluated on 20 seeds:
 
 \section{EXP-006: Fairness Audit}\label{exp-006-fairness-audit}
 
-\fg{0.85\textwidth}{Figure 9. Converged-phase regional approval rates (20-seed means with 95\% CI) and the EEOC four-fifths (80\% of maximum) overlay. All eight regions clear the threshold; per-seed parity ratios are reported in Table 11.}{images/fig_fairness_region.pdf}
+\fg[Figure 9. Converged-phase regional approval rates against the EEOC four-fifths threshold]{0.85\textwidth}{Figure 9. Converged-phase regional approval rates (20-seed means with 95\% CI) and the EEOC four-fifths (80\% of maximum) overlay. All eight regions clear the threshold; per-seed parity ratios are reported in Table 11.}{images/fig_fairness_region.pdf}
 
 \subsection{Sliding-Window PSI}\label{sliding-window-psi}
 
@@ -156,7 +156,7 @@ Rather than computing a single PSI between the full applicant pool and the final
 
 Figure 10 traces both sliding-window PSI series across the full run against the GREEN/AMBER/RED guardrail bands, showing the occupation series' transient rise toward the AMBER zone during early exploration and its return into GREEN as the policy converges.
 
-\fg{0.85\textwidth}{Figure 10. Sliding-window Population Stability Index for region and occupation across the 5,000-round run (20-seed mean; shaded band = 95\% bootstrap CI) against the GREEN ($<0.10$), AMBER ($0.10$--$0.25$), and RED ($>0.25$) guardrail thresholds. Region PSI stays within GREEN throughout; the occupation series rises toward the GREEN/AMBER boundary during early exploration---its 95\% confidence band extends into the lower AMBER zone---then eases back as the policy converges, never approaching RED.}{images/fig_psi_timeseries.pdf}
+\fg[Figure 10. Sliding-window PSI for region and occupation against the guardrail thresholds]{0.85\textwidth}{Figure 10. Sliding-window Population Stability Index for region and occupation across the 5,000-round run (20-seed mean; shaded band = 95\% bootstrap CI) against the GREEN ($<0.10$), AMBER ($0.10$--$0.25$), and RED ($>0.25$) guardrail thresholds. Region PSI stays within GREEN throughout; the occupation series rises toward the GREEN/AMBER boundary during early exploration---its 95\% confidence band extends into the lower AMBER zone---then eases back as the policy converges, never approaching RED.}{images/fig_psi_timeseries.pdf}
 
 \subsection{Approval-Rate Parity (EEOC 4/5 Rule)}\label{approval-rate-parity-eeoc-45-rule}
 
@@ -194,7 +194,7 @@ Occupation & 0.6803 ± 0.0303 & 0.7549 ± 0.0301 & \textbf{90.12\%} & \textbf{PA
 
 Both dimensions satisfy the four-fifths rule with comfortable margin. The rural--urban approval gap and the cross-occupational gap reflect actuarially justified differences in the underlying mortality and morbidity distribution of the Cambodia dataset --- rural and high-labour-intensity occupations carry higher prevalence of Hepatitis B, TB co-morbidities, and physical-injury risk --- rather than proxy discrimination on region or occupation as demographic characteristics per se.
 
-\fg{0.85\textwidth}{Figure 11. Converged-phase occupational approval rates (20-seed means with 95\% CI) and the EEOC four-fifths (80\% of maximum) overlay. All seven occupations clear the threshold; per-seed parity ratios are reported in Table 11.}{images/fig_fairness_occupation.pdf}
+\fg[Figure 11. Converged-phase occupational approval rates against the EEOC four-fifths threshold]{0.85\textwidth}{Figure 11. Converged-phase occupational approval rates (20-seed means with 95\% CI) and the EEOC four-fifths (80\% of maximum) overlay. All seven occupations clear the threshold; per-seed parity ratios are reported in Table 11.}{images/fig_fairness_occupation.pdf}
 
 \subsection{Permutation Independence Tests}\label{permutation-independence-tests}
 
@@ -233,7 +233,7 @@ A scope note for honesty: the PSI/EEOC apparatus demonstrated here is a \textbf{
 
 \section{EXP-007: Benchmark Comparison}\label{exp-007-benchmark-comparison}
 
-\fg{0.85\textwidth}{Figure 12. Cumulative regret curves across all four algorithms (mean of 20 seeds, shaded band = 95\% CI)}{images/fig_regret_curves.pdf}
+\fg[Figure 12. Cumulative regret curves across all four algorithms (20 seeds)]{0.85\textwidth}{Figure 12. Cumulative regret curves across all four algorithms (mean of 20 seeds, shaded band = 95\% CI).}{images/fig_regret_curves.pdf}
 
 \subsection{Final Rankings}\label{final-rankings}
 
@@ -390,7 +390,7 @@ At conservatism c = 0.7 the HITL system earns a mean cumulative reward of \textb
 
 At the illustrative seed (SEED = 42) the three conservatism levels exhibit a small but informative pattern: c = 0.3 and c = 0.5 produce identical trajectories (the conservatism penalty does not flip any action choices at these settings), while c = 0.7 shifts a small number of borderline cases from STANDARD to RATED or from RATED to DECLINE, raising both the alignment score (54.0\% → 60.0\%) and the cumulative reward by approximately half a percent. Across 20 seeds the three levels are statistically indistinguishable (means 104,226 / 104,119 / 103,951 with overlapping CIs), which is operationally desirable: HITL performance is robust to the precise calibration of the conservatism parameter.
 
-\fg{0.85\textwidth}{Figure 13. EXP-008 four-panel HITL diagnostic — cumulative reward curves, cumulative regret decomposition, queue depth trace, and rolling policy alignment score}{images/fig_hitl_experiment.pdf}
+\fg[Figure 13. EXP-008 four-panel HITL diagnostic]{0.85\textwidth}{Figure 13. EXP-008 four-panel HITL diagnostic — cumulative reward curves, cumulative regret decomposition, queue depth trace, and rolling policy alignment score.}{images/fig_hitl_experiment.pdf}
 
 \subsection{Pass Criteria Verification}\label{pass-criteria-verification}
 
@@ -463,7 +463,7 @@ Hyperparameter sensitivity is addressed directly in §5.8: a sweep over LinUCB's
 
 \section{\texorpdfstring{EXP-013: Empirical Validation of the \(\tilde O(d\sqrt{T})\) Regret Bound}{EXP-013: Empirical Validation of the \textbackslash tilde O(d\textbackslash sqrt\{T\}) Regret Bound}}\label{exp-013-empirical-validation-of-the-tilde-odsqrtt-regret-bound}
 
-\fg{0.85\textwidth}{Figure 14. Cumulative regret of LinUCB on log–log axes (mean across 20 seeds with per-seed traces overlaid) with a linear fit over rounds 200–5,000 (burn-in 200 removes high-variance early rounds; Table~14). Theoretical slope under $R\_T = O(\sqrt T)$ is 0.5; empirical mean-curve slope is 0.572 (R² = 0.992)}{images/fig_loglog_regret.pdf}
+\fg[Figure 14. LinUCB cumulative regret on log–log axes with linear fit]{0.85\textwidth}{Figure 14. Cumulative regret of LinUCB on log–log axes (mean across 20 seeds with per-seed traces overlaid) with a linear fit over rounds 200–5,000 (burn-in 200 removes high-variance early rounds; Table~14). Theoretical slope under $R\_T = O(\sqrt T)$ is 0.5; empirical mean-curve slope is 0.572 (R² = 0.992).}{images/fig_loglog_regret.pdf}
 
 \subsection{Motivation}\label{motivation}
 
@@ -576,7 +576,7 @@ The Greedy-only variant additionally beats Static XGB by +\$18,969 in cumulative
 
 Figure 15 plots these paired differences as a forest of (variant \(-\) Full LinUCB) cumulative reward, with the per-seed differences overlaid: the No-REFER and Greedy-only points sit at or just right of the Full-LinUCB reference with per-seed spreads that span zero, while Static XGB sits far to the left (a \$18,248 loss, \(d = -2.98\)) --- visually isolating online adaptive estimation as the load-bearing component.
 
-\fg{0.85\textwidth}{Figure 15. Ablation effects as a forest plot: mean paired difference in cumulative reward (variant \(-\) Full LinUCB) with 95\% bootstrap CI over 20 seeds, per-seed differences overlaid, and Cohen's \(d\). The dashed line marks Full LinUCB. Removing the REFER arm (No-REFER) or the exploration bonus (Greedy-only, \(\alpha = 0\)) leaves cumulative reward close to Full LinUCB with per-seed differences spanning zero; only removing online adaptation (Static XGB) produces a large, consistent loss (\(d = -2.98\)). Online adaptive estimation is the load-bearing component; the exploration bonus and the REFER arm are not.}{images/fig_ablation_forest.pdf}
+\fg[Figure 15. Ablation effects as a forest plot (20 seeds)]{0.85\textwidth}{Figure 15. Ablation effects as a forest plot: mean paired difference in cumulative reward (variant \(-\) Full LinUCB) with 95\% bootstrap CI over 20 seeds, per-seed differences overlaid, and Cohen's \(d\). The dashed line marks Full LinUCB. Removing the REFER arm (No-REFER) or the exploration bonus (Greedy-only, \(\alpha = 0\)) leaves cumulative reward close to Full LinUCB with per-seed differences spanning zero; only removing online adaptation (Static XGB) produces a large, consistent loss (\(d = -2.98\)). Online adaptive estimation is the load-bearing component; the exploration bonus and the REFER arm are not.}{images/fig_ablation_forest.pdf}
 
 \subsection{Interpretation}\label{interpretation-1}
 
@@ -725,7 +725,7 @@ EXP-012: PASS.
 
 \section{EXP-009: Drift Adaptation under a Mid-Run Shock}\label{exp-009-drift-adaptation-under-a-mid-run-shock}
 
-\fg{0.85\textwidth}{Figure 16. Rolling 100-round mean regret per round for LinUCB, LinTS, and Static XGB (seed = 42) under a TB-prevalence × garment-income shock injected at round 1,500. Bandits' regret falls below pre-shock levels as learning continues; Static XGB's regret remains elevated}{images/fig_009_drift_adaptation.pdf}
+\fg[Figure 16. Rolling mean regret under the round-1,500 drift shock (seed 42)]{0.85\textwidth}{Figure 16. Rolling 100-round mean regret per round for LinUCB, LinTS, and Static XGB (seed = 42) under a TB-prevalence × garment-income shock injected at round 1,500. Bandits' regret falls below pre-shock levels as learning continues; Static XGB's regret remains elevated.}{images/fig_009_drift_adaptation.pdf}
 
 \subsection{Design}\label{design-2}
 
@@ -826,13 +826,13 @@ Static XGB & 52,715 & --- \\
 \end{longtable}
 }
 
-\fg{0.85\textwidth}{Figure 17. EXP-015 total reward across the full ladder under the EXP-009 shock; AlwaysRATED (constant) dominates every learner. A severe-shock companion figure (fig\_drift\_rescue\_ladder\_severe, supplementary) shows the learners turning net-negative while the constant stays positive}{images/fig_drift_rescue_ladder.pdf}
+\fg[Figure 17. EXP-015 drift-rescue ladder under the EXP-009 shock]{0.85\textwidth}{Figure 17. EXP-015 total reward across the full ladder under the EXP-009 shock; AlwaysRATED (constant) dominates every learner. A severe-shock companion figure (fig\_drift\_rescue\_ladder\_severe, supplementary) shows the learners turning net-negative while the constant stays positive.}{images/fig_drift_rescue_ladder.pdf}
 
 \textbf{Verdict.} Under the realistic shock, \textbf{no adaptive policy beats the best constant} --- the gap is \textasciitilde39 \% with d ≈ −4 to −5. Under the severe shock the learners go \textbf{net-negative while the constant stays positive} --- exactly when the book is most marginal, the bandit's exploration cost is most punishing. \textbf{Forgetting does not help at any \(\lambda\).} The reason is structural: the shock reshuffles \emph{who} falls in each risk bucket but does not change the near-constant \emph{character} of the optimal policy (``rate most, decline the clearly-uninsurable''), so a fixed ``rate everyone'' policy is barely hurt and there is little for an adaptive learner to exploit. Non-stationarity --- the last and most natural place to seek the bandit's value --- does not rescue it.
 
 \section{EXP-010: Cold-Start --- When Does the Bandit Catch Up?}\label{exp-010-cold-start-when-does-the-bandit-catch-up}
 
-\fg{0.85\textwidth}{Figure 18. Cumulative reward at horizons T ∈ {200, 500, 1,000, 2,000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (mean of 10 seeds). FreshXGB leads at T ≤ 500; LinTS crosses over by T = 2,000 (p = 0.0039), LinUCB draws level (p = 0.0840)}{images/fig_010_cold_start.pdf}
+\fg[Figure 18. Cold-start cumulative reward by horizon (LinUCB, LinTS, FreshXGB)]{0.85\textwidth}{Figure 18. Cumulative reward at horizons T ∈ {200, 500, 1,000, 2,000} for LinUCB, LinTS, and a freshly-trained XGBoost baseline (mean of 10 seeds). FreshXGB leads at T ≤ 500; LinTS crosses over by T = 2,000 (p = 0.0039), LinUCB draws level (p = 0.0840).}{images/fig_010_cold_start.pdf}
 
 \subsection{Design}\label{design-3}
 

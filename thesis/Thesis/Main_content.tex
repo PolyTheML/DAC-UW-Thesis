@@ -104,8 +104,11 @@
 
 % ── TOC ───────────────────────────────────────────────────────────────
 \usepackage{tocloft}
-\cftsetindents{table}{0em}{5em}
-\renewcommand\cfttabpresnum{Table }
+% LoF/LoT entries carry their own manual numbers inside the caption text
+% ("Figure 7.", "Table 9 ---"); the automatic counter number is suppressed via
+% listformat=empty (see Settings), so entries sit flush left with no number box.
+\cftsetindents{figure}{0em}{0em}
+\cftsetindents{table}{0em}{0em}
 \usepackage{chngcntr}
 \counterwithin{section}{chapter}
 \counterwithin{subsection}{section}
@@ -128,9 +131,12 @@
 \setcounter{secnumdepth}{3}
 
 % Captions carry their own manual number ("Figure 7.", "Table 9") to match
-% the in-text references, so suppress LaTeX's auto label but keep LoF/LoT entries.
-\captionsetup[figure]{labelformat=empty}
-\captionsetup[table]{labelformat=empty}
+% the in-text references, so suppress LaTeX's auto label in the caption
+% (labelformat=empty) AND the auto counter number in the LoF/LoT entries
+% (listformat=empty) --- otherwise every list line shows two disagreeing
+% numbers ("5.1  Figure 7. ..."). \caption still writes the entry + page.
+\captionsetup[figure]{labelformat=empty, listformat=empty}
+\captionsetup[table]{labelformat=empty, listformat=empty}
 % Pandoc emits \captionof{table}{...}\label{tab:N} before each longtable. With
 % labelformat=empty the caption establishes no counter, so the trailing \label
 % (and hyperref's \theHnone) reference an undefined 'none' counter -> hard
@@ -152,15 +158,17 @@
   \label{chap:\thechapter}
 }
 
-% Manual figure/table numbering: captions already carry "Figure N.N."/"Table X.Y"
-% (matching in-text references), so labelformat=empty (see Settings) hides LaTeX's
-% own label while \caption still registers the entry in the List of Figures/Tables.
-\newcommand{\fg}[3]{
+% Manual figure numbering: captions already carry "Figure N." (matching in-text
+% references), so labelformat=empty (see Settings) hides LaTeX's own label while
+% \caption still registers the entry in the List of Figures. The optional first
+% argument is a SHORT title for the List of Figures ("Figure N. <one line>", no
+% trailing period); without it the full caption is used as the list entry.
+\newcommand{\fg}[4][]{
     \begin{figure}[H]
         \centering
-        \includegraphics[width=#1]{#3}
-        \caption{#2}
-        \label{fig:#3}
+        \includegraphics[width=#2]{#4}
+        \ifblank{#1}{\caption{#3}}{\caption[#1]{#3}}
+        \label{fig:#4}
     \end{figure}
 }
 
