@@ -185,9 +185,8 @@ def _add_bullet_box(slide, left, top, width, height, bullets,
 
 
 def _add_filled_box(slide, left, top, width, height,
-                    fill_color: RGBColor, rounded: bool = False,
+                    fill_color: RGBColor,
                     line_color: RGBColor | None = None, line_width_pt: float = 0):
-    # 'rounded' is ignored: v2 is square-corner only (param removed in Task 9)
     box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
     _flat(box)
     _set_shape_fill(box, fill_color)

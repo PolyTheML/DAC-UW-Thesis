@@ -1,4 +1,4 @@
-"""Tests for the defense presentation generator (Sreynich-format, 32 slides)."""
+"""Tests for the defense presentation generator (v2 minimal-academic, 32 slides)."""
 import json
 import re
 import subprocess
@@ -185,3 +185,83 @@ def test_talking_points_helper_rejects_more_than_four():
     with pytest.raises(ValueError):
         builder._add_talking_points(slide, builder.MARGIN_LEFT, builder.CONTENT_TOP,
                                     builder.CONTENT_W, ["a", "b", "c", "d", "e"])
+
+
+# ---------------------------------------------------------------------------
+# v2 style, density, and claim-armor guards
+# ---------------------------------------------------------------------------
+
+CONTENT_IDX = list(range(2, 21))            # slides 3-21 (01-19)
+NOTED_IDX = CONTENT_IDX + [21] + list(range(24, 32))   # + demo + A1-A8
+
+
+def test_presenter_notes_on_content_slides(built_presentation):
+    prs = Presentation(str(built_presentation))
+    for idx in NOTED_IDX:
+        slide = prs.slides[idx]
+        assert slide.has_notes_slide, f"Slide {idx + 1}: no notes slide"
+        text = slide.notes_slide.notes_text_frame.text
+        assert len(text) > 40, f"Slide {idx + 1}: notes too short ({len(text)} chars)"
+
+
+def test_no_serif_display_font(built_presentation):
+    """v2 is Calibri-only: Times New Roman must not appear on any slide."""
+    prs = Presentation(str(built_presentation))
+    for s_i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            if not shape.has_text_frame:
+                continue
+            for para in shape.text_frame.paragraphs:
+                assert para.font.name != "Times New Roman", (
+                    f"Slide {s_i + 1}: Times New Roman paragraph '{para.text[:40]}'"
+                )
+                for run in para.runs:
+                    assert run.font.name != "Times New Roman", (
+                        f"Slide {s_i + 1}: Times New Roman run '{run.text[:40]}'"
+                    )
+
+
+def test_no_inherited_shadows(built_presentation):
+    """Every shape is created through a _flat()-calling helper."""
+    prs = Presentation(str(built_presentation))
+    for s_i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            assert shape.shadow.inherit is False, (
+                f"Slide {s_i + 1}: shape '{shape.shape_type}' inherits theme shadow"
+            )
+
+
+def test_claim_armor_footnotes_present(built_presentation):
+    """The four claim-critical lines must survive any future density edits."""
+    prs = Presentation(str(built_presentation))
+    checks = [
+        (12, "5.0.1"),                        # convergence: admissible scope
+        (14, "0.0840"),                       # cold-start: LinUCB softened p
+        (15, "AlwaysRATED"),                  # HITL: ceiling scope
+        (16, "FAILED-with-interpretation"),   # fairness: criterion 6
+        (19, "FALSIFIED"),                    # ladder: falsified expectation
+    ]
+    for idx, needle in checks:
+        combined = _all_text(prs, idx)
+        assert needle in combined, (
+            f"Slide {idx + 1}: armor text '{needle}' missing. Got: {combined[:300]}"
+        )
+
+
+def test_slide_scale_figures_exist():
+    slide_dir = ROOT / "thesis" / "health_rl" / "figures" / "slides"
+    for stem in ["slide_reward_curves", "slide_loglog_regret", "slide_cold_start",
+                 "slide_hitl", "slide_drift", "slide_ladder"]:
+        p = slide_dir / f"{stem}.png"
+        assert p.exists() and p.stat().st_size > 30_000, f"{p.name} missing or trivial"
+
+
+def test_logos_only_on_title_and_thanks(built_presentation):
+    """Content slides carry at most one picture (the chart); title/thanks carry logos."""
+    prs = Presentation(str(built_presentation))
+    def n_pics(idx):
+        return sum(1 for sh in prs.slides[idx].shapes if sh.shape_type == 13)
+    for idx in CONTENT_IDX:
+        assert n_pics(idx) <= 1, f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
+    assert n_pics(0) >= 2, "Title slide lost its logos"
+    assert n_pics(22) >= 2, "Thanks slide lost its logos"
