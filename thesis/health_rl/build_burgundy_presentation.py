@@ -1166,104 +1166,137 @@ def slide_achievements(prs: Presentation):
     lints_r  = next(r["reward"] for r in _LADDER["rows"] if r["policy"] == "LinTS")
     static_r = next(r["reward"] for r in _LADDER["rows"] if r["policy"] == "Static XGB")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.36),
-                  "Achievements", font_size=14, bold=True, color=ACCENT_GREEN)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), Inches(6.0), Inches(3.5), [
-        (f"LinTS leads every admissible policy: ${lints_r:,} vs. "
-         f"Static XGB ${static_r:,}  (+{_E005['lift_pct']}%, d={_E005['reward_cohen_d']})", True),
-        "LinTS cold-start crossover certified: Wilcoxon PASSED at T=2,000 (p=0.0039, d=1.48)",
-        f"HITL augmentation: +{_E008['lift_pct']}% at {_E008['referral_pct']}% review cost "
-        f"(p{_E008['lift_p']}, d={_E008['lift_cohen_d']})",
-        "Region PSI GREEN (0.0821); occupation PSI AMBER (0.1225) -- within threshold",
-        "5 of 6 pre-registered fairness criteria PASSED",
-        f"Log-log regret slope {_E013['slope']} (R²={_E013['r2']}) consistent with O(√T·d)",
-    ], font_size=13)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.05), Inches(5.9),
+                        Inches(0.32), "ACHIEVEMENTS", font_size=11, bold=True,
+                        color=ACCENT_GREEN)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.5), Inches(5.9), [
+        f"Leads every admissible policy (+{_E005['lift_pct']}%, d={_E005['reward_cohen_d']})",
+        "LinTS cold-start crossover certified (p=0.0039)",
+        f"HITL +{_E008['lift_pct']}% at {_E008['referral_pct']}% referrals",
+        "5 of 6 fairness criteria PASSED",
+    ], font_size=15, line_h=Inches(0.78))
 
-    _add_text_box(slide, Inches(6.8), CONTENT_TOP, Inches(5.8), Inches(0.36),
-                  "Limitations", font_size=14, bold=True, color=ACCENT_RED)
-    _add_bullet_box(slide, Inches(6.8), CONTENT_TOP + Inches(0.42), Inches(5.8), Inches(3.5), [
-        ("AlwaysRATED ($122,287) is the inadmissible ceiling -- see §6.2", True),
-        "Synthetic data limits external validity; real claims data needed for production",
-        "PSI monitors but does not constrain -- enforcement layer is future work",
-        "Criterion-6 FAILED-with-interpretation (occupation–action, p < 0.001)",
-        "Cold-start period ~1,000 rounds requires warm-start in deployment",
-    ], font_size=13)
+    lab = _add_text_box(slide, Inches(6.9), CONTENT_TOP + Inches(0.05), Inches(5.9),
+                        Inches(0.32), "LESSONS / LIMITS", font_size=11, bold=True,
+                        color=ACCENT_RED)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, Inches(6.9), CONTENT_TOP + Inches(0.5), Inches(5.9), [
+        f"AlwaysRATED ceiling sits above (→ 6.2)",
+        "Synthetic data limits external validity",
+        "PSI monitors; it does not enforce",
+        "Cold-start needs warm-start in production",
+    ], font_size=15, line_h=Inches(0.78))
 
-    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.05), CONTENT_W, Inches(0.65),
-                 "Overall: contextual bandits provide a principled, adaptive, and auditable "
-                 "alternative to static rule-based underwriting in the Cambodian insurance context.",
-                 font_size=13, bold=True)
+    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.0), CONTENT_W, Inches(0.85),
+                 "Contextual bandits give a principled, adaptive, auditable alternative "
+                 "to static rule-based underwriting in the Cambodian context.",
+                 font_size=15, bold=True)
+
+    _add_notes(slide,
+        f"Balance sheet. Wins: LinTS leads every admissible policy at ${lints_r:,} versus "
+        f"static ${static_r:,}; the cold-start crossover is certified for LinTS; HITL adds "
+        f"{_E008['lift_pct']} percent at {_E008['referral_pct']} percent referrals; five of "
+        f"six fairness criteria pass; log-log slope {_E013['slope']} matches theory. "
+        f"Honest limits: the inadmissible AlwaysRATED constant scores higher - next slide "
+        f"is devoted to it; data is synthetic; PSI only monitors; criterion 6 failed with "
+        f"interpretation; cold-start needs warm-start. Net: adaptive, auditable, and "
+        f"honest about scope.")
 
 
 def slide_baseline_ladder(prs: Presentation):
     """Slide 20 (18) -- Q1 armor slide."""
     slide = _content_slide(prs, "vi", "6.2.  Limitation: Baseline Ladder  (EXP-014)", "18")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.38),
-                  "Why AlwaysRATED is inadmissible -- and why the headline claim is still valid",
-                  font_size=12, italic=True, color=SOFT_TEXT)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.02), CONTENT_W, Inches(0.42),
+                  "Why AlwaysRATED is inadmissible -- and why the headline claim still holds",
+                  font_size=15, bold=True, color=DARK_TEXT)
 
-    _add_picture_fit(slide, str(FIG_DIR / "fig_exp_014_baseline_ladder.png"),
-                     MARGIN_LEFT, CONTENT_TOP + Inches(0.45),
-                     Inches(7.2), CONTENT_H - Inches(0.6))
+    _add_picture_fit(slide, str(SLIDE_FIG_DIR / "slide_ladder.png"),
+                     MARGIN_LEFT, CONTENT_TOP + Inches(0.5),
+                     Inches(7.2), CONTENT_H - Inches(0.95))
 
-    _add_text_box(slide, Inches(8.1), CONTENT_TOP + Inches(0.45), Inches(4.8), Inches(0.36),
-                  "Admissibility verdicts", font_size=13, bold=True, color=BURGUNDY)
+    panel_policies = ["LinTS", "LinUCB", "Static XGB", "AlwaysRATED"]
+    by_name = {r["policy"]: r for r in _LADDER["rows"]}
+    rows = [(p, f"${by_name[p]['reward']:,}", by_name[p]["status"])
+            for p in panel_policies]
 
-    panel_policies = {"LinTS", "LinUCB", "AlwaysRATED", "Static XGB"}
-    panel_rows = [r for r in _LADDER["rows"] if r["policy"] in panel_policies]
-    rr_top = CONTENT_TOP + Inches(0.9)
-    for i, row in enumerate(panel_rows):
-        ry = rr_top + i * Inches(0.8)
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        _add_filled_box(slide, Inches(8.1), ry, Inches(4.8), Inches(0.76), bg)
-        sc = ACCENT_RED if row["status"] == "inadmissible" else ACCENT_GREEN
-        _add_text_box(slide, Inches(8.2), ry + Inches(0.1), Inches(2.0), Inches(0.56),
-                      row["policy"], font_size=12, bold=True, color=DARK_TEXT)
-        _add_text_box(slide, Inches(10.3), ry + Inches(0.1), Inches(2.5), Inches(0.56),
-                      row["status"], font_size=12, bold=True, color=sc, align=PP_ALIGN.RIGHT)
+    def _status_style(i, c, text):
+        if c == 2:
+            return (True, ACCENT_RED if text == "inadmissible" else ACCENT_GREEN)
+        return (c == 0, DARK_TEXT)
 
-    _add_callout(slide, Inches(8.1), CONTENT_TOP + Inches(4.1), Inches(4.8), Inches(1.45),
-                 "AlwaysRATED ($122,287) rates 100% at +25% loading -- "
-                 "not commercially or regulatorily viable → inadmissible. "
-                 "Within the admissible set, LinTS ($93,723) and LinUCB ($91,864) "
-                 "rank 1st and 2nd.",
-                 font_size=11)
+    _add_flat_table(slide, Inches(8.0), CONTENT_TOP + Inches(0.7),
+                    [Inches(1.9), Inches(1.5), Inches(1.5)],
+                    ["Policy", "Reward", "Status"],
+                    rows, font_size=13, row_h=Inches(0.6), cell_style=_status_style)
+
+    _add_talking_points(slide, Inches(8.0), CONTENT_TOP + Inches(3.7), Inches(4.8), [
+        "Rates 100% at flat +25% loading",
+        "Not commercially / regulatorily viable",
+        "Bandits rank 1-2 of admissible set",
+    ], font_size=13, line_h=Inches(0.55))
+
+    ar = by_name["AlwaysRATED"]["reward"]
+    _add_footnote(slide,
+        f"Pre-registered expectation FALSIFIED: AlwaysRATED ${ar:,} tops the ladder "
+        f"(§5.0.1) -- reported as the scientifically informative outcome; headline is "
+        f"scoped to admissible policies.")
+    _add_notes(slide,
+        f"This is the anticipated question, so we lead with it. The full baseline ladder "
+        f"shows AlwaysRATED - rate every applicant at a flat 25 percent loading - at "
+        f"${ar:,}, above LinTS ${by_name['LinTS']['reward']:,} and LinUCB "
+        f"${by_name['LinUCB']['reward']:,}. Our pre-registered expectation that the "
+        f"bandit beats every simple baseline was FALSIFIED, and we report that. Why the "
+        f"thesis still stands: AlwaysRATED is inadmissible - loading every customer 25 "
+        f"percent collapses commercially (adverse selection drives good risks away) and "
+        f"would not survive regulatory scrutiny - per the admissibility definition in "
+        f"section 5.0.1. Within the admissible set the bandits rank first and second. "
+        f"If pressed on number differences across sections: appendix A1 reconciles "
+        f"+25.2 / +27.2 / +29.8 percent.")
 
 
 def slide_other_limitations(prs: Presentation):
     """Slide 21 (19)."""
     slide = _content_slide(prs, "vi", "6.3.  Other Limitations & Future Work", "19")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.36),
-                  "Remaining Limitations", font_size=14, bold=True, color=ACCENT_RED)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), Inches(6.0), Inches(3.5), [
-        ("Synthetic data", True),
-        "CDHS-anchored demographics; real insurer claims data unavailable",
-        "External validity limited -- proof-of-concept, not production estimates",
-        ("Monitoring-only fairness", True),
-        "PSI guardrail detects, does not prevent demographic concentration",
-        ("Cold-start penalty", True),
-        "Bandits underperform FreshXGB below T~1,000; warm-start essential",
-        ("Experiment scope", True),
-        "Single-market simulation; multi-product extension not tested",
-    ], font_size=13)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.05), Inches(5.9),
+                        Inches(0.32), "REMAINING LIMITATIONS", font_size=11, bold=True,
+                        color=ACCENT_RED)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.5), Inches(5.9), [
+        "Synthetic data -- proof of concept only",
+        "Fairness is monitored, not enforced",
+        "Cold-start penalty below T ≈ 1,000",
+        "Single market, single product",
+    ], font_size=15, line_h=Inches(0.78))
 
-    _add_text_box(slide, Inches(6.8), CONTENT_TOP, Inches(5.8), Inches(0.36),
-                  "Future Work", font_size=14, bold=True, color=ACCENT_BLUE)
-    _add_bullet_box(slide, Inches(6.8), CONTENT_TOP + Inches(0.42), Inches(5.8), Inches(3.5), [
-        "DiscountedLinUCB / SW-UCB for non-stationary / seasonal drift",
-        "Constrained contextual bandits for hard fairness enforcement",
-        "Real insurer pilot: replace synthetic rewards with observed claims data",
-        "Neural linear bandit for higher-dimensional feature spaces",
-        "Multi-product portfolio: life + health + motor underwriting",
-        "Formal regulatory engagement: SERC Cambodia approval pathway",
-    ], font_size=13)
+    lab = _add_text_box(slide, Inches(6.9), CONTENT_TOP + Inches(0.05), Inches(5.9),
+                        Inches(0.32), "FUTURE WORK", font_size=11, bold=True,
+                        color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, Inches(6.9), CONTENT_TOP + Inches(0.5), Inches(5.9), [
+        "DiscountedLinUCB for sustained drift",
+        "Constrained bandits: hard fairness limits",
+        "Real insurer pilot with observed claims",
+        "Multi-product portfolio underwriting",
+    ], font_size=15, line_h=Inches(0.78))
 
-    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.05), CONTENT_W, Inches(0.65),
-                 "Thesis contribution: end-to-end adaptive underwriting prototype + evaluation "
-                 "framework with demographic fairness monitoring for the Cambodian context.",
-                 font_size=13)
+    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.0), CONTENT_W, Inches(0.85),
+                 "Contribution: end-to-end adaptive underwriting prototype + evaluation "
+                 "framework with demographic fairness monitoring for Cambodia.",
+                 font_size=15, bold=True)
+
+    _add_notes(slide,
+        "Remaining limits beyond the ladder: demographics are CDHS-anchored but rewards "
+        "are simulated, so treat results as proof-of-concept, not production estimates; "
+        "the PSI guardrail detects concentration but cannot prevent it; bandits "
+        "underperform a fresh XGBoost below roughly a thousand rounds; and we tested one "
+        "market, one product. Future work in order of value: discounted or "
+        "sliding-window UCB for seasonal drift, constrained contextual bandits for hard "
+        "fairness enforcement, a real-insurer pilot replacing the simulator with observed "
+        "claims, neural-linear bandits for richer features, multi-product portfolios, and "
+        "a SERC Cambodia regulatory pathway.")
 
 
 # ===========================================================================
@@ -1373,260 +1406,208 @@ def slide_app_number_reconciliation(prs: Presentation):
     """A1 -- Q2: Why do percentage lifts differ between sections?"""
     slide = _content_slide(prs, "v", "A1.  Q2: Number Reconciliation", "A1")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "Why do different sections quote different percentage lifts?",
-                  font_size=12, italic=True, color=SOFT_TEXT)
-
-    col_ws = [Inches(4.2), Inches(1.4), Inches(6.5)]
-    col_xs = [MARGIN_LEFT,
-               MARGIN_LEFT + col_ws[0] + Inches(0.05),
-               MARGIN_LEFT + col_ws[0] + col_ws[1] + Inches(0.1)]
-    hdr_top = CONTENT_TOP + Inches(0.42)
-    for hdr, cw, cx in zip(["Comparison pair", "Lift", "Basis / why different"], col_ws, col_xs):
-        _add_filled_box(slide, cx, hdr_top, cw, Inches(0.38), BURGUNDY)
-        _add_text_box(slide, cx + Inches(0.06), hdr_top + Inches(0.05),
-                      cw - Inches(0.12), Inches(0.28),
-                      hdr, font_size=11, bold=True, color=WHITE)
-
-    recon_rows = [
-        ("LinUCB vs Static XGB (EXP-005)",
-         "+25.2%",
-         "Paired design, same seed sequence, standardised eval (primary metric, Table 5.1.1)"),
-        ("LinUCB vs Static XGB (EXP-014 ladder)",
-         "+27.2%",
-         "CRN harness, reward-maximising policy (Table 9 §5.0.1); larger due to CRN"),
-        ("LinTS vs Static XGB (EXP-014 ladder)",
-         "+29.8%",
-         "CRN harness, LinTS reward-maximising (Table 9 §5.0.1)"),
-        ("HITL vs vanilla LinUCB (EXP-008)",
-         "+14.8%",
-         "Augmented bandit vs. vanilla bandit -- different baseline entirely (Table 13)"),
+    lifts = _LADDER["ladder_basis_lift"]
+    rows = [
+        ("LinUCB vs Static XGB (EXP-005)", f"+{_E005['lift_pct']}%",
+         "Paired design, standardised eval -- the pre-registered primary metric"),
+        ("LinUCB vs Static XGB (EXP-014 ladder)", f"+{lifts['linucb_vs_static_pct']}%",
+         "CRN harness, reward-maximising policy (Table 9, §5.0.1)"),
+        ("LinTS vs Static XGB (EXP-014 ladder)", f"+{lifts['lints_vs_static_pct']}%",
+         "CRN harness, LinTS reward-maximising (Table 9, §5.0.1)"),
+        ("HITL vs vanilla LinUCB (EXP-008)", f"+{_E008['lift_pct']}%",
+         "Augmented bandit vs vanilla bandit -- different baseline entirely"),
     ]
-    row_h = Inches(0.82)
-    for i, (pair, lift, basis) in enumerate(recon_rows):
-        ry = hdr_top + Inches(0.42) + i * row_h
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        for cx, cw in zip(col_xs, col_ws):
-            _add_filled_box(slide, cx, ry, cw, row_h, bg)
-        for cx, cw, text, bold_f in zip(col_xs, col_ws,
-                                         [pair, lift, basis],
-                                         [False, True, False]):
-            col = ACCENT_GREEN if (bold_f and i > 0) else DARK_TEXT
-            _add_text_box(slide, cx + Inches(0.06), ry + Inches(0.06),
-                          cw - Inches(0.12), row_h - Inches(0.1),
-                          text, font_size=11, bold=bold_f, color=col)
 
-    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.1), CONTENT_W, Inches(1.05),
-                 "Headline (+25.2%) uses the conservative paired design. "
-                 "Ladder harness lifts are larger due to CRN setup -- all three answer "
-                 "different questions and are mutually consistent. "
-                 "EXP-005 is the pre-registered primary metric.",
-                 font_size=12)
+    def _lift_style(i, c, text):
+        return (c == 1, BURGUNDY if c == 1 else DARK_TEXT)
+
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.2),
+                    [Inches(4.4), Inches(1.4), Inches(6.4)],
+                    ["Comparison pair", "Lift", "Basis / why different"],
+                    rows, font_size=13, row_h=Inches(0.85), cell_style=_lift_style)
+
+    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.3), CONTENT_W, Inches(0.9),
+                 "All three answer different questions and are mutually consistent. "
+                 "EXP-005 (+25.2%) is the conservative pre-registered primary.",
+                 font_size=14)
+    _add_notes(slide,
+        "If asked why 25.2, 27.2 and 29.8 percent all appear: the headline uses the "
+        "paired EXP-005 design; the ladder harness uses common random numbers which "
+        "yields larger separations; HITL's 14.8 percent is against the vanilla bandit, a "
+        "different baseline. Same code, different pre-registered questions.")
 
 
 def slide_app_fairness_detail(prs: Presentation):
     """A2 -- Fairness criterion-6 detail."""
     slide = _content_slide(prs, "v", "A2.  Fairness Criterion-6 Detail", "A2")
 
-    occ = _E006["occupation"]
-    reg = _E006["region"]
+    occ, reg = _E006["occupation"], _E006["region"]
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.02), CONTENT_W, Inches(0.4),
+                  "Occupation → action association: FAILED-with-interpretation",
+                  font_size=16, bold=True, color=DARK_TEXT)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.55), Inches(6.2), [
+        f"Permutation p {occ['permutation_p']} (PASS needs ≥ 0.05)",
+        f"EEOC parity {occ['parity_pct']}% (floor 80%)",
+        f"PSI AMBER {occ['psi_max_sliding']} < 0.25 RED",
+        "Significant, but practically small",
+    ], font_size=15, line_h=Inches(0.7))
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "Occupation → action association (criterion 6 -- FAILED-with-interpretation)",
-                  font_size=14, bold=True, color=BURGUNDY)
+    _add_callout(slide, Inches(7.1), CONTENT_TOP + Inches(0.55), Inches(5.7), Inches(2.6),
+                 "Interpretation: occupation is an actuarially valid risk predictor; the "
+                 "bandit prices legitimate risk differences, not protected-class membership. "
+                 "Marked FAILED for honesty (§5.2.3-5.2.4).",
+                 font_size=14)
 
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), CONTENT_W, Inches(2.1), [
-        ("FAILED verdict -- reported in the interest of scientific honesty", True),
-        f"Permutation test: p = {occ['permutation_p']} (criterion: p ≥ 0.05 to PASS)",
-        f"EEOC parity: {occ['parity_pct']}%  (well above 80% regulatory floor)",
-        f"PSI AMBER: {occ['psi_max_sliding']} < 0.25 RED threshold",
-        "The association is statistically significant but practically small.",
-        "Interpretation: occupation is an actuarially valid risk predictor; the bandit adjusts",
-        "  premiums for legitimate risk differences, NOT for discriminatory reasons.",
-    ], font_size=13)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.5), Inches(6.2), Inches(0.4),
+                  "Region (PASSED, for reference)", font_size=14, bold=True,
+                  color=ACCENT_GREEN)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.95), Inches(6.2), Inches(0.8),
+                  f"PSI GREEN {reg['psi_max_sliding']}  ·  parity {reg['parity_pct']}%  ·  "
+                  f"permutation p = {reg['permutation_p']} (n.s.)",
+                  font_size=13, color=SOFT_TEXT)
 
-    _add_filled_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.65),
-                    CONTENT_W, Inches(0.03), BURGUNDY)
-
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.76), Inches(6.0), Inches(0.36),
-                  "Region (PASSED -- for reference)", font_size=13, bold=True, color=ACCENT_GREEN)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.18), Inches(6.0), Inches(1.55), [
-        f"PSI GREEN: {reg['psi_max_sliding']} < 0.10",
-        f"Parity: {reg['parity_pct']}%  |  Permutation p = {reg['permutation_p']} (ns)",
-        "Region criterion 6: PASSED",
-    ], font_size=13)
-
-    _add_callout(slide, Inches(6.8), CONTENT_TOP + Inches(2.76), Inches(5.8), Inches(2.4),
-                 "Regulatory position:\n\n"
-                 "No formal algorithmic fairness standard exists for insurance in Cambodia. "
-                 "The EEOC 80% rule is applied as an international best-practice benchmark. "
-                 "All EEOC parity criteria PASS (both region and occupation).",
-                 font_size=12)
+    _add_footnote(slide,
+        "No formal algorithmic-fairness standard exists for Cambodian insurance; EEOC 80% "
+        "is applied as international best practice.")
+    _add_notes(slide,
+        "Deep-dive armor for criterion 6. The permutation test rejects independence at p "
+        "below 0.001, so by our own pre-registered rule it is FAILED. Context: parity is "
+        "90 percent against an 80 percent floor, PSI stays under the RED threshold, and "
+        "occupation is an actuarially priced factor everywhere. Region passes everything. "
+        "Regulatory framing: Cambodia has no algorithmic fairness standard, so EEOC 80 "
+        "percent is the borrowed benchmark - and it passes for both attributes.")
 
 
 def slide_app_psi_mechanics(prs: Presentation):
     """A3 -- PSI guardrail mechanics."""
     slide = _content_slide(prs, "iv", "A3.  PSI Guardrail Mechanics", "A3")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "Population Stability Index -- definition and thresholds",
-                  font_size=14, bold=True, color=BURGUNDY)
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.44), Inches(10.0), Inches(0.42),
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.05), Inches(10.5), Inches(0.5),
                   "PSI = Σ (Actual% − Expected%) × ln(Actual% / Expected%)",
-                  font_size=16, bold=True, color=DARK_TEXT, font_name="Courier New")
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.96), CONTENT_W, Inches(1.7), [
-        "Actual%  = fraction of applicants in each demographic bucket (rolling window)",
-        "Expected% = reference distribution (training-set proportions)",
-        "Computed on region and occupation every 500 rounds in EXP-006",
-    ], font_size=13)
+                  font_size=20, bold=True, color=DARK_TEXT, font_name="Consolas")
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.75), CONTENT_W, [
+        "Actual% = bucket share, rolling 500-round window",
+        "Expected% = training-set reference distribution",
+        "Computed on region and occupation (EXP-006)",
+    ], font_size=15, line_h=Inches(0.62))
 
     psi_zones = [
-        (ACCENT_GREEN, "GREEN   PSI < 0.10",       "Stable -- no corrective action required"),
-        (ACCENT_AMBER, "AMBER  0.10 ≤ PSI < 0.25", "Monitor closely -- investigate trend"),
-        (ACCENT_RED,   "RED      PSI ≥ 0.25",  "Trigger mandatory review; consider policy rollback"),
+        (ACCENT_GREEN, "GREEN", "PSI < 0.10", "stable -- no action"),
+        (ACCENT_AMBER, "AMBER", "0.10 ≤ PSI < 0.25", "monitor closely"),
+        (ACCENT_RED,   "RED",   "PSI ≥ 0.25", "mandatory review / rollback"),
     ]
-    zy = CONTENT_TOP + Inches(2.8)
-    for color, label, action in psi_zones:
-        _add_filled_box(slide, MARGIN_LEFT, zy, Inches(3.8), Inches(0.62), color, rounded=True)
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.1), zy + Inches(0.1),
-                      Inches(3.6), Inches(0.44),
-                      label, font_size=13, bold=True, color=WHITE)
-        _add_text_box(slide, Inches(4.8), zy + Inches(0.1),
-                      Inches(7.8), Inches(0.44),
-                      action, font_size=13, color=DARK_TEXT)
-        zy += Inches(0.73)
+    zy = CONTENT_TOP + Inches(2.85)
+    for color, label, threshold, action in psi_zones:
+        _add_filled_box(slide, MARGIN_LEFT, zy, Inches(0.16), Inches(0.5), color)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.4), zy, Inches(1.4), Inches(0.5),
+                      label, font_size=16, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(1.9), zy + Inches(0.04), Inches(2.6),
+                      Inches(0.45), threshold, font_size=14, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(4.7), zy + Inches(0.04), Inches(7.5),
+                      Inches(0.45), action, font_size=14, color=SOFT_TEXT)
+        zy += Inches(0.7)
 
-    _add_text_box(slide, MARGIN_LEFT, zy + Inches(0.25), CONTENT_W, Inches(0.38),
-                  "EXP-006 results: region PSI = 0.0821 (GREEN), "
-                  "occupation PSI max = 0.1225 (AMBER) -- both within threshold",
-                  font_size=13, italic=True, color=SOFT_TEXT)
+    _add_footnote(slide,
+        f"EXP-006: region PSI {_E006['region']['psi_max_sliding']} (GREEN) · occupation "
+        f"max {_E006['occupation']['psi_max_sliding']} (AMBER) -- both within threshold.")
+    _add_notes(slide,
+        "PSI mechanics if asked: it is the symmetrised relative-entropy-style sum over "
+        "demographic buckets comparing the rolling 500-round window against the training "
+        "reference. Standard industry thresholds: 0.10 and 0.25. In our audit region "
+        "peaks at 0.0821, occupation at 0.1225.")
 
 
 def slide_app_bandit_math(prs: Presentation):
     """A4 -- LinUCB / LinTS update equations."""
     slide = _content_slide(prs, "iv", "A4.  LinUCB / LinTS Update Equations", "A4")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.36),
-                  "LinUCB (OFUL)", font_size=14, bold=True, color=BURGUNDY)
-    linucb_eqs = [
-        "A_a  ←  A_a + x_t x_tᵀ          (gram matrix update)",
-        "b_a  ←  b_a + r_t x_t            (reward accumulation)",
-        "θ_a  =  A_a⁻¹ b_a             (ridge-regression estimate)",
-        "a*  =  argmax  θ_aᵀ x_t + α √(x_tᵀ A_a⁻¹ x_t)   (UCB selection)",
-    ]
-    for i, eq in enumerate(linucb_eqs):
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.2),
-                      CONTENT_TOP + Inches(0.42) + i * Inches(0.58),
-                      Inches(5.8), Inches(0.52),
-                      eq, font_size=13, color=DARK_TEXT, font_name="Courier New")
+    for cx, head, eqs in [
+        (MARGIN_LEFT, "LinUCB (OFUL)", [
+            "A_a ← A_a + x_t x_tᵀ",
+            "b_a ← b_a + r_t x_t",
+            "θ_a = A_a⁻¹ b_a",
+            "a* = argmax θ_aᵀx_t + α√(x_tᵀA_a⁻¹x_t)",
+        ]),
+        (Inches(7.0), "LinTS (Thompson)", [
+            "Prior: θ_a ~ N(μ_a, λ⁻¹I)",
+            "Σ_a⁻¹ = λI + A_a ;  μ_a = Σ_a b_a",
+            "Sample: θ̃_a ~ N(μ_a, v²Σ_a)",
+            "Select: a* = argmax θ̃_aᵀ x_t",
+        ]),
+    ]:
+        _add_text_box(slide, cx, CONTENT_TOP + Inches(0.05), Inches(5.8), Inches(0.4),
+                      head, font_size=16, bold=True, color=BURGUNDY)
+        for i, eq in enumerate(eqs):
+            _add_text_box(slide, cx + Inches(0.15),
+                          CONTENT_TOP + Inches(0.55) + i * Inches(0.56),
+                          Inches(5.7), Inches(0.5), eq, font_size=15,
+                          color=DARK_TEXT, font_name="Consolas")
 
-    _add_text_box(slide, Inches(7.0), CONTENT_TOP, Inches(5.8), Inches(0.36),
-                  "LinTS (Thompson Sampling)", font_size=14, bold=True, color=BURGUNDY)
-    lints_eqs = [
-        "Prior:   θ_a ~ N(μ_a, λ⁻¹ I)",
-        "Update:  Σ_a⁻¹ = λ I + A_a  ;  μ_a = Σ_a b_a",
-        "Sample:  θ̃_a ~ N(μ_a, v² Σ_a)   per round",
-        "Select:  a*  =  argmax  θ̃_aᵀ x_t",
-    ]
-    for i, eq in enumerate(lints_eqs):
-        _add_text_box(slide, Inches(7.0) + Inches(0.2),
-                      CONTENT_TOP + Inches(0.42) + i * Inches(0.58),
-                      Inches(5.6), Inches(0.52),
-                      eq, font_size=13, color=DARK_TEXT, font_name="Courier New")
-
-    _add_filled_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.85), CONTENT_W, Inches(0.03), BURGUNDY)
-
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.0), CONTENT_W, Inches(0.36),
-                  "Key hyperparameters used", font_size=13, bold=True, color=BURGUNDY)
     hp_rows = [
-        ("α (LinUCB exploration)", "1.0 (regret-minimising from EXP-012)"),
-        ("v (LinTS variance)",          "0.1 (posterior width calibration)"),
-        ("λ (ridge penalty)",      "1.0 (L2 regulariser, identity prior)"),
-        ("κ (HITL conservatism)",  "0.7 (headline; 0.3/0.5 also tested in EXP-008)"),
+        ("α  (LinUCB exploration)", "1.0 -- regret-minimising (EXP-012)"),
+        ("v  (LinTS variance)", "0.1 -- posterior width calibration"),
+        ("λ  (ridge penalty)", "1.0 -- identity prior"),
+        ("κ  (HITL conservatism)", "0.7 headline; 0.3 / 0.5 also tested"),
     ]
-    hp_top = CONTENT_TOP + Inches(3.45)
-    for i, (key, val) in enumerate(hp_rows):
-        hy = hp_top + i * Inches(0.62)
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        _add_filled_box(slide, MARGIN_LEFT, hy, CONTENT_W, Inches(0.58), bg)
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.1), hy + Inches(0.08),
-                      Inches(4.0), Inches(0.44), key, font_size=12, bold=True, color=DARK_TEXT)
-        _add_text_box(slide, MARGIN_LEFT + Inches(4.2), hy + Inches(0.08),
-                      Inches(8.0), Inches(0.44), val, font_size=12, color=SOFT_TEXT)
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.35),
+                    [Inches(4.2), Inches(8.1)], ["Hyperparameter", "Value"],
+                    hp_rows, font_size=13, row_h=Inches(0.56))
+    _add_notes(slide,
+        "Math armor. LinUCB maintains a per-arm gram matrix and reward vector, solves "
+        "ridge regression, and adds the alpha-scaled confidence width - optimism in the "
+        "face of uncertainty. LinTS instead samples theta from the posterior and picks "
+        "the argmax - exploration through randomisation. Hyperparameters: alpha 1.0 "
+        "chosen as regret-minimising in the EXP-012 sensitivity sweep, ridge lambda 1.0, "
+        "LinTS variance 0.1, HITL kappa 0.7.")
 
 
 def slide_app_dataset_construction(prs: Presentation):
     """A5 -- Dataset construction detail."""
     slide = _content_slide(prs, "iv", "A5.  Dataset Construction", "A5")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "CDHS / STEPS / ILO / WHO anchoring",
-                  font_size=14, bold=True, color=BURGUNDY)
-
-    sources = [
-        ("CDHS 2021-22",    "Age, sex, region, BMI distributions",
-         "Cambodia Demographic & Health Survey (NIS / ICF)"),
-        ("STEPS 2021",      "Hypertension / chronic disease prevalence by occupation",
-         "WHO STEPwise approach to NCD risk-factor surveillance"),
-        ("ILO Labour Force", "Income distribution by occupation / sector",
-         "Cambodia Labour Force & Child Labour Survey 2021"),
-        ("WHO SEARO",       "Health expenditure per capita by income quintile",
-         "WHO South-East Asia Regional Office data"),
+    src_rows = [
+        ("CDHS 2021-22", "Age, sex, region, BMI distributions"),
+        ("STEPS 2021", "Chronic-disease prevalence by occupation"),
+        ("ILO LFS 2021", "Income distribution by occupation / sector"),
+        ("WHO SEARO", "Health expenditure per capita by quintile"),
     ]
-    col_ws = [Inches(2.0), Inches(3.5), Inches(6.6)]
-    col_xs = [MARGIN_LEFT,
-               MARGIN_LEFT + col_ws[0] + Inches(0.05),
-               MARGIN_LEFT + col_ws[0] + col_ws[1] + Inches(0.1)]
-    hdr_top = CONTENT_TOP + Inches(0.42)
-    for hdr, cw, cx in zip(["Source", "Variable", "Full name"], col_ws, col_xs):
-        _add_filled_box(slide, cx, hdr_top, cw, Inches(0.38), BURGUNDY)
-        _add_text_box(slide, cx + Inches(0.06), hdr_top + Inches(0.05),
-                      cw - Inches(0.12), Inches(0.28),
-                      hdr, font_size=11, bold=True, color=WHITE)
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.15),
+                    [Inches(2.6), Inches(9.7)], ["Source", "Variables anchored"],
+                    src_rows, font_size=13, row_h=Inches(0.6))
 
-    row_h = Inches(0.75)
-    for i, (src, var, full) in enumerate(sources):
-        ry = hdr_top + Inches(0.42) + i * row_h
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        for cx, cw in zip(col_xs, col_ws):
-            _add_filled_box(slide, cx, ry, cw, row_h, bg)
-        for cx, cw, text in zip(col_xs, col_ws, [src, var, full]):
-            _add_text_box(slide, cx + Inches(0.06), ry + Inches(0.08),
-                          cw - Inches(0.12), row_h - Inches(0.1),
-                          text, font_size=11, color=DARK_TEXT)
-
-    _add_text_box(slide, MARGIN_LEFT, hdr_top + Inches(3.45), CONTENT_W, Inches(0.36),
-                  "Simulator parameters", font_size=13, bold=True, color=BURGUNDY)
-    sim_params = [
-        ("N", "2,000 applicants / 20 seeds, 5,000 rounds each"),
-        ("Adverse-selection factor AF", "1.35 (calibrated from DAC actuarial priors)"),
-        ("Price elasticity slope β", "3.5 (base case; 2.5 and 4.5 tested in EXP-012)"),
-        ("Claim probability", "Logistic function of BMI, age, chronic disease status"),
+    sim_rows = [
+        ("Scale", "2,000 applicants · 20 seeds · 5,000 rounds"),
+        ("Adverse-selection AF", "1.35 (DAC actuarial priors)"),
+        ("Price elasticity β", "3.5 base; 2.5 / 4.5 in EXP-012"),
+        ("Claim probability", "Logistic in BMI, age, chronic status"),
     ]
-    sp_top = hdr_top + Inches(3.85)
-    for i, (key, val) in enumerate(sim_params):
-        sy = sp_top + i * Inches(0.58)
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        _add_filled_box(slide, MARGIN_LEFT, sy, CONTENT_W, Inches(0.54), bg)
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.1), sy + Inches(0.07),
-                      Inches(3.8), Inches(0.42), key, font_size=12, bold=True, color=DARK_TEXT)
-        _add_text_box(slide, MARGIN_LEFT + Inches(4.0), sy + Inches(0.07),
-                      Inches(8.0), Inches(0.42), val, font_size=12, color=SOFT_TEXT)
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.2),
+                    [Inches(2.6), Inches(9.7)], ["Simulator parameter", "Value"],
+                    sim_rows, font_size=13, row_h=Inches(0.6))
+
+    _add_footnote(slide, "Fully synthetic -- no real applicant PII anywhere in the pipeline.")
+    _add_notes(slide,
+        "Dataset armor: every marginal is anchored to a public source - CDHS for "
+        "demographics and BMI, WHO STEPS for chronic prevalence by occupation, ILO "
+        "labour-force surveys for income, WHO SEARO for expenditure. The simulator adds "
+        "adverse selection at 1.35 and elasticity 3.5 from DAC priors, both stress-tested "
+        "in EXP-012. No real applicant data exists anywhere in the pipeline.")
 
 
 def _slide_demo_screenshot(prs: Presentation, label: str, page_num: str, caption: str):
-    """Generic demo screenshot placeholder slide."""
+    """Generic demo screenshot placeholder slide (real captures: pre-defense task)."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     _add_bottom_bar(slide, page_num)
-    _add_text_box(slide, MARGIN_LEFT, Inches(0.2), Inches(4.0), Inches(0.45),
-                  label, font_size=16, bold=True, color=BURGUNDY)
-    _add_filled_box(slide, MARGIN_LEFT, Inches(0.8), CONTENT_W,
-                    BOTTOM_BAR_TOP - Inches(1.1), LIGHT_GRAY, rounded=True)
-    _add_text_box(slide, MARGIN_LEFT, Inches(0.8), CONTENT_W,
-                  BOTTOM_BAR_TOP - Inches(1.1),
+    _add_slide_title(slide, label)
+    _add_title_rule(slide)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.35), CONTENT_W,
+                    BOTTOM_BAR_TOP - Inches(1.7), PANEL)
+    _add_text_box(slide, MARGIN_LEFT, Inches(1.35), CONTENT_W,
+                  BOTTOM_BAR_TOP - Inches(1.7),
                   f"[Demo screenshot placeholder]\n\n{caption}",
-                  font_size=16, color=MED_GRAY, align=PP_ALIGN.CENTER,
+                  font_size=16, color=GRAY_LABEL, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE)
+    _add_notes(slide, f"Fallback narration target: {caption}")
     return slide
 
 
