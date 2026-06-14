@@ -3,7 +3,33 @@
     "description": "Canonical thesis results transcribed verbatim from the Chapter V tables. These are the authoritative 20-seed (seeds 1-20, N=5000) headline numbers the demo must display. Single-seed live runs are illustrative only and must NOT be presented as these values.",
     "methodology": "20 independent seeds (1-20), N=5000 rounds; mean +/- std with 95% bootstrap CI; paired Wilcoxon signed-rank with Bonferroni; Cohen's d. EXP-009/013 also 20 seeds; EXP-010/012 use 10 seeds/cell by design.",
     "primary_illustrative_seed": 42,
-    "generated": "2026-06-01 (transcribed from thesis/health_rl/chapter05_results.md)"
+    "generated": "2026-06-10 (re-transcribed from thesis/Thesis/Chapters/ch5-Results.tex after the 2026-06-10 examiner revision pass: EXP-008 -> 20 seeds; EXP-010 Wilcoxon verdicts; EXP-006 criterion-6 verdict; section 5.0.1 baseline ladder added)",
+    "scope": "The headline claim is scoped to ADMISSIBLE policies (section 5.0.1): the bandits lead every admissible alternative, but an inadmissible constant (AlwaysRATED) sits above them as a theoretical ceiling. Any surface quoting the headline should carry this scope."
+  },
+  "ladder": {
+    "source": "Chapter V, section 5.0.1 Table 9 (EXP-014 complete baseline ladder, 20-seed common-random-number harness)",
+    "verdict": "The contextual bandit beats every admissible alternative on this problem; an inadmissible constant (AlwaysRATED) and two non-deployable oracles sit above it.",
+    "definitions": {
+      "deployable": "implementable in production from observable applicant features alone",
+      "admissible": "deployable AND commercially and regulatorily viable as an underwriting rule"
+    },
+    "rows": [
+      { "policy": "AlwaysDECLINE",  "reward": -50000, "pct_of_oracle": -39.6, "status": "admissible",     "note": "constant decline floor (deterministic)" },
+      { "policy": "Random",         "reward": 1980,   "ci": [739, 3209],      "pct_of_oracle": 1.6,   "status": "admissible",     "note": "uniform action floor" },
+      { "policy": "AlwaysSTANDARD", "reward": 34684,  "ci": [33694, 35871],   "pct_of_oracle": 27.5,  "status": "admissible",     "note": "conservative constant" },
+      { "policy": "Static XGB",     "reward": 72206,  "ci": [70125, 74352],   "pct_of_oracle": 57.1,  "status": "admissible",     "note": "the original sole baseline (hand-tuned rule)" },
+      { "policy": "LinUCB",         "reward": 91864,  "ci": [89139, 94702],   "pct_of_oracle": 72.7,  "status": "admissible",     "note": "proposed - rank-2 of the admissible policies" },
+      { "policy": "LinTS",          "reward": 93723,  "ci": [91105, 96481],   "pct_of_oracle": 74.2,  "status": "admissible",     "note": "proposed - rank-1 of the admissible policies" },
+      { "policy": "AlwaysRATED",    "reward": 122287, "ci": [119528, 124996], "pct_of_oracle": 96.8,  "status": "inadmissible",   "note": "best constant; rates 100% of applicants at a flat +25% loading - neither commercially nor regulatorily feasible (section 6.2)" },
+      { "policy": "LogisticOracle", "reward": 123977, "ci": [121794, 126126], "pct_of_oracle": 98.1,  "status": "not deployable", "note": "fit in-sample on oracle-optimal labels; optimistic static ceiling" },
+      { "policy": "Oracle",         "reward": 126351, "ci": [124187, 128428], "pct_of_oracle": 100.0, "status": "not deployable", "note": "upper bound" }
+    ],
+    "ladder_basis_lift": {
+      "linucb_vs_static_pct": 27.2,
+      "lints_vs_static_pct": 29.8,
+      "note": "ladder-harness basis; the standardized headline remains +25.2% / d = 2.98 (EXP-005 paired design)"
+    },
+    "falsified_expectation": "Pre-registered expectation 'bandit > best simple baseline' FALSIFIED: AlwaysRATED ($122,287) > LinTS ($93,723) > LinUCB ($91,864), p < 0.0001 (section 5.0.1). The falsification is reported as the scientifically informative outcome motivating the chapter's reframing."
   },
   "exp005": {
     "source": "Chapter V, Table 5.1.1 (convergence, 20 seeds)",
@@ -27,8 +53,10 @@
     "oracle_reward_recovered_pct": 72
   },
   "exp006": {
-    "source": "Chapter V, Table 5.2.1 + sec 5.2.1/5.2.3 (fairness, 20 seeds, converged rounds 3000-4999)",
+    "source": "Chapter V, Table 5.2.1 + sec 5.2.1/5.2.3/5.2.4 (fairness, 20 seeds, converged rounds 3000-4999)",
     "eeoc_threshold_pct": 80,
+    "criteria_summary": "5 of 6 pre-registered criteria PASSED; criterion 6 (occupation permutation independence) FAILED with interpretation - the association is statistically significant but practically small, and no regulatory threshold (EEOC 80% parity, PSI 0.25) is breached.",
+    "monitor_note": "The PSI/EEOC apparatus is a MONITOR, not an enforcer: it detects demographic concentration but does not constrain the policy. An enforcement layer (constrained-action) is future work (Chapter VI). Fairness is maintained and verified, not improved.",
     "region": {
       "parity_pct": 85.72,
       "approval_min": 0.6622,
@@ -37,7 +65,9 @@
       "psi_final_window": 0.0424,
       "psi_zone": "GREEN",
       "permutation_p": 0.1322,
-      "permutation_note": "null of action-region independence NOT rejected (no significant regional bias)"
+      "permutation_p_ci": [0.0733, 0.2017],
+      "permutation_verdict": "PASSED",
+      "permutation_note": "null of action-region independence NOT rejected (no significant regional bias; 20-seed mean p = 0.1322)"
     },
     "occupation": {
       "parity_pct": 90.12,
@@ -47,7 +77,8 @@
       "psi_final_window": 0.0710,
       "psi_zone": "AMBER",
       "permutation_p": "< 0.001",
-      "permutation_note": "statistically significant association but practically small; parity 90.12% >> 80% and PSI within threshold (sec 5.2.3)"
+      "permutation_verdict": "FAILED",
+      "permutation_note": "criterion 6: the null of action-occupation independence IS rejected (p < 0.001) - marked FAILED in the interest of honesty. The association is statistically significant but practically small: parity 90.12% >> 80% and PSI within threshold; the dependence reflects actuarially justified risk differences (sec 5.2.3/5.2.4)"
     }
   },
   "exp007": {
@@ -62,24 +93,42 @@
     "oracle": { "reward": 126318, "regret": -11597 }
   },
   "exp008": {
-    "source": "Chapter V, Table 5.4.1 (human-in-the-loop)",
+    "source": "Chapter V, Table 13 + sec 5.4.2-5.4.4 (human-in-the-loop, 20 seeds; updated 2026-06-10 examiner pass)",
+    "n_seeds": 20,
     "headline_conservatism": 0.7,
-    "hitl_reward": 102100,
-    "baseline_reward": 95872,
+    "hitl_reward": 103951,
+    "hitl_reward_std": 1852,
+    "hitl_reward_ci": [100869, 106503],
+    "baseline_reward": 90540,
+    "baseline_reward_std": 5382,
+    "baseline_note": "vanilla mathematical-REFER bandit (= EXP-005 LinUCB); the comparison certifies HITL relative to the bandit itself",
     "hitl_regret": 12555,
     "baseline_regret": 19289,
-    "lift_abs": 6228,
-    "lift_pct": 6.5,
-    "human_cost": 2625,
-    "human_cost_pct_of_reward": 2.6,
-    "referrals": 75,
-    "referral_pct": 1.5,
+    "lift_abs": 13411,
+    "lift_pct": 14.8,
+    "lift_p": "< 0.001",
+    "lift_cohen_d": 2.65,
+    "human_cost": 2263,
+    "human_cost_std": 322,
+    "human_cost_pct_of_reward": 2.2,
+    "referrals": 65,
+    "referrals_std": 9,
+    "referral_pct": 1.3,
     "alignment_pct": 60.0,
     "max_queue_depth": 0,
+    "scope_note": "The +14.8% is a comparison against the vanilla bandit, NOT against the constant: HITL does not beat the inadmissible AlwaysRATED ceiling (sec 5.4.2). At SEED=42 on EXP-008's deterministic reward basis, HITL ($102,100) is essentially level with AlwaysRATED ($103,062) and reaches that near-parity only by additionally spending $2,625 on human review.",
     "cells": {
-      "0.3": { "reward": 101646, "regret": 13009, "human_cost": 2555, "alignment_pct": 54.0, "overrides": 73 },
-      "0.5": { "reward": 101646, "regret": 13009, "human_cost": 2555, "alignment_pct": 54.0, "overrides": 73 },
-      "0.7": { "reward": 102100, "regret": 12555, "human_cost": 2625, "alignment_pct": 60.0, "overrides": 75 }
+      "0.3": { "reward": 104226, "reward_std": 1835, "human_cost": 2247, "human_cost_std": 296, "alignment_pct": 54.0, "overrides": 64, "overrides_std": 8 },
+      "0.5": { "reward": 104119, "reward_std": 1805, "human_cost": 2242, "human_cost_std": 308, "alignment_pct": 54.0, "overrides": 64, "overrides_std": 9 },
+      "0.7": { "reward": 103951, "reward_std": 1852, "human_cost": 2263, "human_cost_std": 322, "alignment_pct": 60.0, "overrides": 65, "overrides_std": 9 }
+    },
+    "illustrative_seed42": {
+      "note": "single-seed diagnostic trace (SEED=42) - illustrative only, superseded as the headline by the 20-seed row above",
+      "hitl_reward": 102100,
+      "baseline_reward": 95872,
+      "human_cost": 2625,
+      "referrals": 75,
+      "alwaysrated_reward_same_basis": 103062
     }
   },
   "exp009": {
@@ -105,16 +154,21 @@
     "bound": "O~(d sqrt(T)), Li et al. 2010"
   },
   "exp010": {
-    "source": "Chapter V, Table 5.10.1 (cold-start, 10 seeds/horizon)",
+    "source": "Chapter V, Table 21 + sec 5.10.4 (cold-start, 10 seeds/horizon; verdicts updated 2026-06-10 examiner pass)",
     "figure": "/static/fig_010_cold_start.png",
-    "crossover": "between T=1,000 and T=2,000",
+    "crossover": "between T=1,000 and T=2,000 - LinTS crosses over by T=2,000 (p = 0.0039); LinUCB draws level (p = 0.0840, n.s.)",
     "horizons": [
-      { "T": 200,  "linucb": 1313,  "lints": 1206,  "freshxgb": 2812,  "bandit_wins": false },
-      { "T": 500,  "linucb": 5593,  "lints": 5570,  "freshxgb": 7048,  "bandit_wins": false },
-      { "T": 1000, "linucb": 13033, "lints": 13496, "freshxgb": 13692, "bandit_wins": false },
-      { "T": 2000, "linucb": 31227, "lints": 31401, "freshxgb": 29267, "bandit_wins": true }
+      { "T": 200,  "linucb": 1313,  "linucb_std": 971,  "lints": 1206,  "lints_std": 1038, "freshxgb": 2812,  "freshxgb_std": 1115, "bandit_wins": false, "winner": "No - FreshXGB ~2.1x" },
+      { "T": 500,  "linucb": 5593,  "linucb_std": 1597, "lints": 5570,  "lints_std": 1051, "freshxgb": 7048,  "freshxgb_std": 1407, "bandit_wins": false, "winner": "No - FreshXGB ~1.26x" },
+      { "T": 1000, "linucb": 13033, "linucb_std": 2174, "lints": 13496, "lints_std": 949,  "freshxgb": 13692, "freshxgb_std": 1819, "bandit_wins": false, "winner": "Tie (within seed variance)" },
+      { "T": 2000, "linucb": 31227, "linucb_std": 2987, "lints": 31401, "lints_std": 2187, "freshxgb": 29267, "freshxgb_std": 1731, "bandit_wins": true,  "winner": "LinTS crosses over; LinUCB draws level" }
     ],
-    "implication": "Deploy with warm-start (pre-train or shadow mode) for the first ~1,000 applications; a fresh XGBoost wins below the crossover."
+    "wilcoxon_t2000": {
+      "linucb_vs_freshxgb": { "p": 0.0840, "d": 0.55, "verdict": "SOFTENED - point estimate exceeds FreshXGB but does not reach significance; claim softened to 'draws level'" },
+      "lints_vs_freshxgb":  { "p": 0.0039, "d": 1.48, "verdict": "PASSED - significant at the Bonferroni-corrected threshold" }
+    },
+    "implication": "Deploy with warm-start (pre-train or shadow mode) for the first ~1,000 applications; a fresh XGBoost wins below the crossover. At T=2,000 the LinTS crossover is significant (p = 0.0039, d = 1.48); LinUCB's lead is positive but not significant (p = 0.0840, d = 0.55) and is reported as 'draws level'.",
+    "scope_note": "The crossover is the horizon at which online adaptation beats a FROZEN RULE - it does not show the bandit overtaking the constant: up to 20,000 rounds the bandit never crosses AlwaysRATED (sec 5.13)."
   },
   "exp011": {
     "source": "Chapter V, Table 5.7.1 (ablation, 20 seeds)",

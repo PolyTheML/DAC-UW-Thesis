@@ -1,4 +1,6 @@
-"""Tests for the defense presentation generator."""
+"""Tests for the defense presentation generator (Sreynich-format, 32 slides)."""
+import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -6,17 +8,19 @@ from pathlib import Path
 import pytest
 from pptx import Presentation
 
-SCRIPT = Path("thesis/health_rl/build_presentation.py")
-OUTPUT = Path(__file__).parent.parent / "thesis/health_rl/health_rl_defense_presentation.pptx"
+ROOT   = Path(__file__).parent.parent
+SCRIPT = ROOT / "thesis" / "health_rl" / "build_burgundy_presentation.py"
+OUTPUT = ROOT / "thesis" / "health_rl" / "burgundy_defense_presentation.pptx"
+RESULTS_JSON = ROOT / "demo" / "static" / "thesis_results.json"
 
 
 def _run_build():
     result = subprocess.run(
         [sys.executable, str(SCRIPT)],
         capture_output=True, text=True,
-        cwd=Path(__file__).parent.parent,
+        cwd=ROOT,
     )
-    assert result.returncode == 0, f"Script failed:\n{result.stderr}"
+    assert result.returncode == 0, f"Builder failed:\n{result.stderr}"
 
 
 @pytest.fixture(scope="session")
@@ -26,54 +30,140 @@ def built_presentation():
     return OUTPUT
 
 
-def test_generates_20_slides(built_presentation):
-    assert built_presentation.exists()
+def _all_text(prs, slide_idx: int) -> str:
+    return " ".join(
+        shape.text_frame.text
+        for shape in prs.slides[slide_idx].shapes
+        if shape.has_text_frame
+    )
+
+
+# ---------------------------------------------------------------------------
+# Structure
+# ---------------------------------------------------------------------------
+
+def test_generates_32_slides(built_presentation):
     prs = Presentation(str(built_presentation))
-    assert len(prs.slides) == 20, f"Expected 20 slides, got {len(prs.slides)}"
+    assert len(prs.slides) == 32, f"Expected 32 slides, got {len(prs.slides)}"
 
 
 def test_title_slide_has_presenter_name(built_presentation):
     prs = Presentation(str(built_presentation))
-    texts = [
-        shape.text_frame.text
-        for shape in prs.slides[0].shapes
-        if shape.has_text_frame
-    ]
-    combined = " ".join(texts)
-    assert "LUN CHANPOLY" in combined, f"Presenter name missing. Got: {combined}"
+    combined = _all_text(prs, 0)
+    assert "LUN CHANPOLY" in combined, f"Presenter name missing. Got: {combined[:200]}"
 
 
-def test_slide_titles_present(built_presentation):
+def test_title_slide_has_defense_date(built_presentation):
     prs = Presentation(str(built_presentation))
-    expected = [
-        ("Adaptive Underwriting", 0),
-        ("Agenda",                1),
-        ("Cambodia",              2),
-        ("Research Claim",        3),
-        ("Bandit",                4),
-        ("Dataset",               5),
-        ("Algorithms",            6),
-        ("Reward",                7),
-        ("Methodology",           8),
-        ("EXP-005",               9),
-        ("Learning Curves",      10),
-        ("Fairness",             11),
-        ("EXP-007",              12),
-        ("PSI",                  13),
-        ("Proposed Adaptive",    14),
-        ("Implementation",       15),
-        ("Social Impact",        16),
-        ("Discussion",           17),
-        ("Conclusion",           18),
-        ("Thank You",            19),
-    ]
-    for keyword, idx in expected:
-        texts = [
-            shape.text_frame.text
-            for shape in prs.slides[idx].shapes
-            if shape.has_text_frame
-        ]
-        combined = " ".join(texts)
-        assert keyword in combined, (
-            f"Slide {idx + 1}: '{keyword}' not found. Got: {combined[:200]}"
+    combined = _all_text(prs, 0)
+    assert "July 2026" in combined, f"Defense date missing. Got: {combined[:200]}"
+
+
+def test_toc_slide_has_six_sections(built_presentation):
+    prs = Presentation(str(built_presentation))
+    combined = _all_text(prs, 1)
+    for roman in ["i", "ii", "iii", "iv", "v", "vi"]:
+        assert roman in combined, f"ToC missing section '{roman}'. Got: {combined[:300]}"
+
+
+# ---------------------------------------------------------------------------
+# Section tags on content slides
+# ---------------------------------------------------------------------------
+
+def test_section_tags_present_on_content_slides(built_presentation):
+    """Every content slide (indices 2-20) must carry a roman-numeral section tag."""
+    prs = Presentation(str(built_presentation))
+    tag_pattern = re.compile(r"\b(i|ii|iii|iv|v|vi)\.")
+    for idx in range(2, 21):
+        combined = _all_text(prs, idx)
+        assert tag_pattern.search(combined), (
+            f"Slide {idx + 1}: no roman-numeral section tag found. Got: {combined[:200]}"
         )
+
+
+def test_appendix_slides_have_page_numbers(built_presentation):
+    """Appendix slides (indices 24-31) must have A1-A8 page numbers."""
+    prs = Presentation(str(built_presentation))
+    for i, label in enumerate(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]):
+        combined = _all_text(prs, 24 + i)
+        assert label in combined, (
+            f"Appendix slide {i + 1}: page number '{label}' not found. Got: {combined[:200]}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Decimal slide titles (1.1., 4.3., ...)
+# ---------------------------------------------------------------------------
+
+EXPECTED_DECIMAL_TITLES = [
+    (2,  r"1\.1"),   # 1.1. Research Background
+    (3,  r"1\.2"),   # 1.2. Research Problem
+    (4,  r"1\.3"),   # 1.3. Research Goal
+    (5,  r"2\.1"),   # 2.1. Internship at DAC
+    (6,  r"3\.1"),   # 3.1. Literature Summary
+    (7,  r"4\.1"),   # 4.1. System Pipeline
+    (8,  r"4\.2"),   # 4.2. Synthetic Cambodia Dataset
+    (9,  r"4\.3"),   # 4.3. Bandit Formulation
+    (10, r"4\.4"),   # 4.4. Algorithms & Baselines
+    (11, r"4\.5"),   # 4.5. Guardrail + HITL Design
+    (12, r"5\.1"),   # 5.1. Convergence
+    (13, r"5\.2"),   # 5.2. Benchmark
+    (14, r"5\.3"),   # 5.3. Cold-start
+    (15, r"5\.4"),   # 5.4. HITL Results
+    (16, r"5\.5"),   # 5.5. Fairness Audit
+    (17, r"5\.6"),   # 5.6. Drift Adaptation
+    (18, r"6\.1"),   # 6.1. Achievements
+    (19, r"6\.2"),   # 6.2. Limitation: Baseline Ladder
+    (20, r"6\.3"),   # 6.3. Other Limitations
+]
+
+
+def test_decimal_titles_on_content_slides(built_presentation):
+    prs = Presentation(str(built_presentation))
+    for idx, pattern in EXPECTED_DECIMAL_TITLES:
+        combined = _all_text(prs, idx)
+        assert re.search(pattern, combined), (
+            f"Slide {idx + 1}: decimal title pattern '{pattern}' not found. "
+            f"Got: {combined[:200]}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Numbers match thesis_results.json
+# ---------------------------------------------------------------------------
+
+def test_headline_numbers_match_json(built_presentation):
+    """Key headline numbers from JSON appear verbatim in the relevant slides."""
+    prs = Presentation(str(built_presentation))
+    with open(RESULTS_JSON) as f:
+        results = json.load(f)
+
+    # +25.2% lift appears in slide 13 (5.1. Convergence)
+    lift_pct = str(results["exp005"]["lift_pct"])
+    slide_13_text = _all_text(prs, 12)
+    assert lift_pct in slide_13_text, (
+        f"EXP-005 lift_pct '{lift_pct}' not found in slide 13. Got: {slide_13_text[:300]}"
+    )
+
+    # +14.8% HITL lift appears in slide 16 (5.4. HITL)
+    hitl_lift = str(results["exp008"]["lift_pct"])
+    slide_16_text = _all_text(prs, 15)
+    assert hitl_lift in slide_16_text, (
+        f"EXP-008 lift_pct '{hitl_lift}' not found in slide 16. Got: {slide_16_text[:300]}"
+    )
+
+    # AlwaysRATED reward appears in slide 20 (6.2. Ladder) -- formatted with comma
+    always_rated_r = f"{results['ladder']['rows'][-3]['reward']:,}"  # "122,287"
+    slide_20_text = _all_text(prs, 19)
+    assert always_rated_r in slide_20_text, (
+        f"AlwaysRATED reward '{always_rated_r}' not found in slide 20. "
+        f"Got: {slide_20_text[:300]}"
+    )
+
+    # Cold-start LinTS p-value appears in slide 15 (5.3. Cold-start)
+    lints_p = str(results["exp010"]["wilcoxon_t2000"]["lints_vs_freshxgb"]["p"])
+    slide_15_text = _all_text(prs, 14)
+    assert lints_p in slide_15_text, (
+        f"EXP-010 LinTS p-value '{lints_p}' not found in slide 15. "
+        f"Got: {slide_15_text[:300]}"
+    )
