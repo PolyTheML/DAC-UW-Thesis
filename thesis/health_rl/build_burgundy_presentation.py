@@ -997,7 +997,7 @@ def slide_cold_start(prs: Presentation):
         ("PASSED", "lints @ t = 2,000"),
         (f"p = {lints['p']}", f"wilcoxon · d = {lints['d']}"),
         ("DRAWS LEVEL", "linucb @ t = 2,000"),
-        (f"p = {linucb['p']}", f"n.s. · d = {linucb['d']}"),
+        (f"p = {linucb['p']:.4f}", f"n.s. · d = {linucb['d']}"),
     ], value_colors=[ACCENT_GREEN, DARK_TEXT, ACCENT_AMBER, DARK_TEXT])
 
     _add_picture_fit(slide, str(SLIDE_FIG_DIR / "slide_cold_start.png"),
@@ -1012,13 +1012,13 @@ def slide_cold_start(prs: Presentation):
 
     _add_footnote(slide,
         f"Only LinTS is certified at T = 2,000 (p = {lints['p']}); LinUCB's lead is not "
-        f"significant (p = {linucb['p']}, d = {linucb['d']}) and is reported as 'draws level'.")
+        f"significant (p = {linucb['p']:.4f}, d = {linucb['d']}) and is reported as 'draws level'.")
     _add_notes(slide,
         f"Honest cold-start picture: below a thousand rounds a freshly trained XGBoost "
         f"beats both bandits - at T=200 it is roughly twice as good. The crossover comes "
         f"between one and two thousand rounds. At T=2,000 LinTS's lead is significant at "
         f"the Bonferroni-corrected threshold (p = {lints['p']}, d = {lints['d']}); "
-        f"LinUCB's is positive but NOT significant (p = {linucb['p']}, d = {linucb['d']}) "
+        f"LinUCB's is positive but NOT significant (p = {linucb['p']:.4f}, d = {linucb['d']}) "
         f"- we softened that claim to 'draws level'. Deployment implication: warm-start "
         f"or shadow mode for the first thousand applications. Note this crossover is "
         f"against a frozen rule, not against the AlwaysRATED constant.")
@@ -1139,9 +1139,11 @@ def slide_drift_adaptation(prs: Presentation):
                     [Inches(2.6), Inches(2.0)], ["Algorithm", "Ratio"],
                     rows, font_size=14, row_h=Inches(0.66), cell_style=_ratio_style)
 
+    _static_ratio = next(r["post_pre_ratio"] for r in _E009["rows"]
+                         if r["algorithm"] == "StaticXGB")
     _add_footnote(slide,
-        "Pre/post windows also differ in learning-curve position; the static baseline's "
-        "0.85× is the cleanest comparator (§5.9.3).")
+        f"Pre/post windows also differ in learning-curve position; the static baseline's "
+        f"{_static_ratio}× is the cleanest comparator (§5.9.3).")
     _add_notes(slide,
         "Stress test: at round 1,500 we double TB prevalence and cut garment-worker "
         "income 30 percent. The bandits re-converge within their learning window - "
