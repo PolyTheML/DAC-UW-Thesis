@@ -241,6 +241,90 @@ def _add_picture_fit(slide, path: str, left, top, max_w, max_h):
 
 
 # ===========================================================================
+# v2 layout helpers (Minimal Academic)
+# ===========================================================================
+
+def _add_stat_row(slide, top, stats, hero_idx: int = 0, height=Inches(1.05),
+                  left=None, width=None, value_colors=None):
+    """Flat big-number stat row: value over small gray caps label, hairline-separated.
+
+    stats: list of (value, label). hero_idx gets BURGUNDY; value_colors overrides per-stat.
+    """
+    left = MARGIN_LEFT if left is None else left
+    width = CONTENT_W if width is None else width
+    n = len(stats)
+    col_w = int(width / n)
+    for i, (val, label) in enumerate(stats):
+        cx = left + i * col_w
+        color = (value_colors[i] if value_colors and value_colors[i] is not None
+                 else (BURGUNDY if i == hero_idx else DARK_TEXT))
+        _add_text_box(slide, cx, top, col_w - Inches(0.15), Inches(0.62),
+                      str(val), font_size=30, bold=True, color=color)
+        lab = _add_text_box(slide, cx, top + Inches(0.62), col_w - Inches(0.15),
+                            Inches(0.36), label.upper(), font_size=10, color=GRAY_LABEL)
+        _letterspace(lab.text_frame.paragraphs[0], 80)
+        if i > 0:
+            _add_filled_box(slide, cx - Inches(0.12), top + Inches(0.05),
+                            Inches(0.012), height - Inches(0.15), HAIRLINE)
+
+
+def _add_talking_points(slide, left, top, width, points, font_size: int = 17,
+                        line_h=Inches(0.62)):
+    """<=4 short points, burgundy square marker + charcoal text. Returns bottom y.
+
+    Density rule (spec section 4) is enforced here: more than 4 points raises.
+    """
+    if len(points) > 4:
+        raise ValueError(f"talking points rule: max 4 per slide, got {len(points)}")
+    y = top
+    for text in points:
+        _add_filled_box(slide, left, y + Inches(0.12), Inches(0.1), Inches(0.1), BURGUNDY)
+        _add_text_box(slide, left + Inches(0.28), y, width - Inches(0.28),
+                      line_h, text, font_size=font_size, color=DARK_TEXT)
+        y += line_h
+    return y
+
+
+def _add_footnote(slide, text: str):
+    """Claim-critical small gray footnote pinned above the bottom bar."""
+    _add_text_box(slide, MARGIN_LEFT, FOOTNOTE_TOP, CONTENT_W, Inches(0.36),
+                  text, font_size=10.5, italic=True, color=GRAY_LABEL)
+
+
+def _add_notes(slide, text: str):
+    """Presenter notes = the rehearsal script for this slide."""
+    slide.notes_slide.notes_text_frame.text = text
+
+
+def _add_flat_table(slide, left, top, col_ws, header, rows, font_size: int = 12,
+                    row_h=Inches(0.5), cell_style=None):
+    """Flat table: bold charcoal header over a burgundy hairline, PANEL/white zebra rows.
+
+    cell_style: optional fn(r, c, text) -> (bold, RGBColor) for emphasis cells.
+    """
+    col_xs = [left]
+    for w in col_ws[:-1]:
+        col_xs.append(col_xs[-1] + w)
+    for cx, cw, h in zip(col_xs, col_ws, header):
+        _add_text_box(slide, cx + Inches(0.06), top, cw - Inches(0.12), Inches(0.34),
+                      h, font_size=font_size, bold=True, color=DARK_TEXT)
+    _add_filled_box(slide, left, top + Inches(0.36), sum(col_ws, Inches(0)),
+                    Inches(0.025), BURGUNDY)
+    for i, row in enumerate(rows):
+        ry = top + Inches(0.44) + i * row_h
+        if i % 2 == 0:
+            _add_filled_box(slide, left, ry, sum(col_ws, Inches(0)), row_h, PANEL)
+        for c, (cx, cw, text) in enumerate(zip(col_xs, col_ws, row)):
+            bold, color = (False, DARK_TEXT)
+            if cell_style is not None:
+                bold, color = cell_style(i, c, text)
+            _add_text_box(slide, cx + Inches(0.06), ry + Inches(0.04),
+                          cw - Inches(0.12), row_h - Inches(0.08),
+                          text, font_size=font_size, bold=bold, color=color)
+    return top + Inches(0.44) + len(rows) * row_h
+
+
+# ===========================================================================
 # Chrome (section tag, title, bottom bar)
 # ===========================================================================
 

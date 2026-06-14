@@ -167,3 +167,21 @@ def test_headline_numbers_match_json(built_presentation):
         f"EXP-010 LinTS p-value '{lints_p}' not found in slide 15. "
         f"Got: {slide_15_text[:300]}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Density rule is enforced in code
+# ---------------------------------------------------------------------------
+
+def test_talking_points_helper_rejects_more_than_four():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("builder", SCRIPT)
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    prs = Presentation()
+    prs.slide_width = builder.SLIDE_WIDTH
+    prs.slide_height = builder.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    with pytest.raises(ValueError):
+        builder._add_talking_points(slide, builder.MARGIN_LEFT, builder.CONTENT_TOP,
+                                    builder.CONTENT_W, ["a", "b", "c", "d", "e"])
