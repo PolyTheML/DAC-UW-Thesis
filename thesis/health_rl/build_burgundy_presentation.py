@@ -488,32 +488,34 @@ def slide_research_background(prs: Presentation):
     """Slide 3 (01)."""
     slide = _content_slide(prs, "i", "1.1.  Research Background", "01")
 
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.5), Inches(5.2), [
-        ("Cambodia health insurance landscape:", True),
-        "National Social Security Fund (NSSF) covers formal-sector workers only (~16%)",
-        "Private voluntary insurance nascent; underwriting mostly manual rule-based",
-        "Actuaries apply fixed premium rules without learning from outcomes",
-        ("The underwriting bottleneck:", True),
-        "Static thresholds are set at training time and never updated",
-        "Suboptimal decisions compound over a growing applicant pool",
-        "No systematic demographic-parity monitoring in current practice",
-    ], font_size=13)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.1), Inches(6.4), Inches(0.9),
+                  "< 10 %", font_size=60, bold=True, color=BURGUNDY)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.05), Inches(6.4),
+                        Inches(0.36), "HEALTH-INSURANCE PENETRATION IN CAMBODIA (2023 EST.)",
+                        font_size=10, color=GRAY_LABEL)
+    _letterspace(lab.text_frame.paragraphs[0], 80)
 
-    stat_box = _add_filled_box(slide, Inches(7.3), CONTENT_TOP,
-                               Inches(5.5), Inches(1.9), BURGUNDY, rounded=True)
-    _add_text_box(slide, Inches(7.3), CONTENT_TOP + Inches(0.1), Inches(5.5), Inches(0.85),
-                  "< 10 %", font_size=52, bold=True, color=WHITE,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
-    _add_text_box(slide, Inches(7.3), CONTENT_TOP + Inches(1.0), Inches(5.5), Inches(0.7),
-                  "Health insurance penetration rate in Cambodia (2023 estimate)",
-                  font_size=13, color=WHITE, align=PP_ALIGN.CENTER)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.8), Inches(6.4), [
+        "NSSF covers formal-sector workers only (~16%)",
+        "Private underwriting is manual and rule-based",
+        "Static rules never learn from outcomes",
+        "No demographic-parity monitoring in practice",
+    ])
 
-    _add_callout(slide, Inches(7.3), CONTENT_TOP + Inches(2.1), Inches(5.5), Inches(2.7),
-                 "Research opportunity:\n\n"
-                 "Contextual bandits can learn from underwriting decisions in real time, "
-                 "adapting to Cambodia-specific risk patterns while monitoring demographic "
-                 "fairness automatically.",
-                 font_size=13)
+    _add_callout(slide, Inches(7.3), CONTENT_TOP + Inches(0.1), Inches(5.5), Inches(4.6),
+                 "Research opportunity\n\nContextual bandits can learn from every "
+                 "underwriting decision in real time, adapting to Cambodia-specific risk "
+                 "patterns while demographic fairness is monitored automatically.",
+                 font_size=15)
+
+    _add_notes(slide,
+        "Cambodia context: the National Social Security Fund covers only formal-sector "
+        "workers, roughly 16 percent; private voluntary insurance is nascent and "
+        "underwriting is mostly manual and rule-based. Actuaries apply fixed premium rules "
+        "without learning from outcomes, suboptimal decisions compound over a growing "
+        "applicant pool, and penetration is below 10 percent (2023 estimate). The "
+        "opportunity: a contextual bandit learns online from each decision while a PSI "
+        "guardrail watches demographic fairness.")
 
 
 def slide_research_problem(prs: Presentation):
@@ -521,52 +523,53 @@ def slide_research_problem(prs: Presentation):
     slide = _content_slide(prs, "i", "1.2.  Research Problem", "02")
 
     problems = [
-        ("Static thresholds",
-         "Fixed age/BMI/income cutoffs ignore applicant context. "
-         "A high-risk applicant misclassified as low-risk generates uncorrected losses."),
-        ("No online adaptation",
-         "Reward signal (claims) is never fed back to the model. "
-         "Accuracy degrades silently as population demographics shift."),
-        ("Demographic blindspot",
-         "No parity metric is tracked. Rule-based systems can develop "
-         "regional or occupational concentration entirely undetected."),
-        ("No triage mechanism",
-         "Low-confidence borderline cases are not flagged. Actuaries "
-         "review high-volume routine cases instead of genuine edge cases."),
+        ("Static thresholds", "Fixed cutoffs ignore applicant context"),
+        ("No online adaptation", "Claims feedback never reaches the model"),
+        ("Demographic blindspot", "No parity metric is tracked"),
+        ("No triage", "Experts review routine, not borderline, cases"),
     ]
-    card_w, card_h = Inches(5.9), Inches(2.3)
+    card_w, card_h = Inches(6.0), Inches(2.35)
     positions = [
-        (MARGIN_LEFT,              CONTENT_TOP),
-        (MARGIN_LEFT + Inches(6.6), CONTENT_TOP),
-        (MARGIN_LEFT,              CONTENT_TOP + Inches(2.55)),
-        (MARGIN_LEFT + Inches(6.6), CONTENT_TOP + Inches(2.55)),
+        (MARGIN_LEFT,               CONTENT_TOP + Inches(0.2)),
+        (MARGIN_LEFT + Inches(6.4), CONTENT_TOP + Inches(0.2)),
+        (MARGIN_LEFT,               CONTENT_TOP + Inches(2.85)),
+        (MARGIN_LEFT + Inches(6.4), CONTENT_TOP + Inches(2.85)),
     ]
     for (title, desc), (lx, ly) in zip(problems, positions):
-        _add_filled_box(slide, lx, ly, card_w, card_h, LIGHT_GRAY, rounded=True)
-        _add_filled_box(slide, lx, ly, card_w, Inches(0.42), BURGUNDY, rounded=False)
-        _add_text_box(slide, lx + Inches(0.12), ly + Inches(0.06),
-                      card_w - Inches(0.2), Inches(0.32),
-                      title, font_size=14, bold=True, color=WHITE)
-        _add_text_box(slide, lx + Inches(0.15), ly + Inches(0.52),
-                      card_w - Inches(0.3), card_h - Inches(0.62),
-                      desc, font_size=12, color=DARK_TEXT)
+        _add_filled_box(slide, lx, ly, card_w, card_h, PANEL)
+        _add_filled_box(slide, lx, ly, Inches(0.07), card_h, BURGUNDY)
+        _add_text_box(slide, lx + Inches(0.3), ly + Inches(0.35),
+                      card_w - Inches(0.6), Inches(0.5),
+                      title, font_size=20, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, lx + Inches(0.3), ly + Inches(1.0),
+                      card_w - Inches(0.6), Inches(1.1),
+                      desc, font_size=15, color=SOFT_TEXT)
+
+    _add_notes(slide,
+        "Four concrete failures of the status quo. One: fixed age/BMI/income cutoffs "
+        "ignore context, so a misclassified high-risk applicant generates uncorrected "
+        "losses. Two: the claims signal is never fed back, so accuracy degrades silently "
+        "as demographics shift. Three: no parity metric is tracked, so regional or "
+        "occupational concentration can develop undetected. Four: there is no triage - "
+        "actuaries spend time on high-volume routine cases instead of genuine edge cases.")
 
 
 def slide_goal_objectives(prs: Presentation):
-    """Slide 5 (03)."""
+    """Slide 5 (03). Objectives verbatim from the thesis -- do not paraphrase."""
     slide = _content_slide(prs, "i", "1.3.  Research Goal & Objectives", "03")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "Research Goal", font_size=15, bold=True, color=BURGUNDY)
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.4), CONTENT_W, Inches(0.7),
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(4.0), Inches(0.32),
+                        "RESEARCH GOAL", font_size=11, bold=True, color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.38), CONTENT_W, Inches(0.75),
                   "Design and evaluate an adaptive health insurance underwriting system using "
                   "contextual bandit algorithms on a synthetic Cambodia applicant dataset, "
                   "incorporating demographic fairness monitoring and human-in-the-loop augmentation.",
-                  font_size=13, color=DARK_TEXT)
+                  font_size=15, color=DARK_TEXT)
 
-    _add_filled_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.18), CONTENT_W, Inches(0.03), BURGUNDY)
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.3), CONTENT_W, Inches(0.36),
-                  "Objectives", font_size=15, bold=True, color=BURGUNDY)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.35), Inches(4.0),
+                        Inches(0.32), "OBJECTIVES", font_size=11, bold=True, color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
 
     objs = [
         ("O1", "Implement and adapt linear contextual bandit algorithms (LinUCB, LinTS) "
@@ -578,21 +581,23 @@ def slide_goal_objectives(prs: Presentation):
         ("O4", "Assess demographic fairness via PSI monitoring across region and occupation, "
                "and integrate a human-in-the-loop underwriting wrapper."),
     ]
-    top = CONTENT_TOP + Inches(1.78)
+    top = CONTENT_TOP + Inches(1.8)
     for i, (label, text) in enumerate(objs):
-        y = top + i * Inches(1.08)
-        sq = _add_filled_box(slide, MARGIN_LEFT, y, Inches(0.45), Inches(0.45), BURGUNDY)
-        tf = sq.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]
-        p.text = label
-        p.font.size = Pt(11)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
-        p.alignment = PP_ALIGN.CENTER
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.6), y,
-                      CONTENT_W - Inches(0.6), Inches(0.95),
-                      text, font_size=13, color=DARK_TEXT)
+        y = top + i * Inches(0.95)
+        _add_text_box(slide, MARGIN_LEFT, y, Inches(0.75), Inches(0.5),
+                      label, font_size=20, bold=True, color=BURGUNDY)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.85), y + Inches(0.02),
+                      CONTENT_W - Inches(0.85), Inches(0.85),
+                      text, font_size=14, color=DARK_TEXT)
+        if i > 0:
+            _add_filled_box(slide, MARGIN_LEFT, y - Inches(0.1), CONTENT_W,
+                            Inches(0.012), HAIRLINE)
+
+    _add_notes(slide,
+        "Read the goal once, slowly. The four objectives map one-to-one onto the chapters: "
+        "O1 the algorithms (Chapter IV), O2 the dataset (Chapter IV), O3 the evaluation "
+        "(Chapter V), O4 fairness plus HITL (Chapter V). These are verbatim from the thesis "
+        "- the examiners will check the wording.")
 
 
 # ===========================================================================
@@ -603,42 +608,45 @@ def slide_dac_internship(prs: Presentation):
     """Slide 6 (04)."""
     slide = _content_slide(prs, "ii", "2.1.  Internship at DAC", "04")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.3), Inches(0.36),
-                  "About DAC", font_size=15, bold=True, color=BURGUNDY)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), Inches(6.3), Inches(2.5), [
-        "Decent Actuarial Consultants Co., Ltd. -- Phnom Penh, Cambodia",
-        "Actuarial consulting: life & health insurance, pension, regulatory advice",
-        "Clients: insurance companies, pension funds, and regulators across SE Asia",
-        "This thesis is embedded in a DAC-supervised research internship",
-    ], font_size=13)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.1), Inches(6.4), [
+        "DAC -- actuarial consulting, Phnom Penh",
+        "Clients: insurers, pension funds, regulators",
+        "Role: research intern, Mar-Jun 2026",
+        "Deliverable: underwriting prototype + thesis",
+    ])
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.1), Inches(6.3), Inches(0.36),
-                  "Internship Timeline", font_size=15, bold=True, color=BURGUNDY)
+    _add_callout(slide, Inches(7.3), CONTENT_TOP + Inches(0.1), Inches(5.5), Inches(2.5),
+                 f"Supervision\n\nThesis advisor: {SUPERVISOR} (ITC)\n"
+                 f"Field supervisor: {CO_SUPERVISOR} (DAC)",
+                 font_size=15)
+
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.05), Inches(4.0),
+                        Inches(0.32), "INTERNSHIP TIMELINE", font_size=11, bold=True,
+                        color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
     timeline = [
-        ("Mar 2026", "Problem scoping\n& dataset design"),
-        ("Apr 2026", "Algorithm\nimplementation"),
-        ("May 2026", "Experiments\n& analysis"),
-        ("Jun 2026", "Thesis writing\n& defense prep"),
+        ("Mar 2026", "Problem scoping & dataset design"),
+        ("Apr 2026", "Algorithm implementation"),
+        ("May 2026", "Experiments & analysis"),
+        ("Jun 2026", "Thesis writing & defense prep"),
     ]
-    seg_w = Inches(2.9)
-    strip_top = CONTENT_TOP + Inches(3.55)
+    seg_w = Inches(3.0)
+    strip_top = CONTENT_TOP + Inches(3.5)
     for i, (month, desc) in enumerate(timeline):
-        lx = MARGIN_LEFT + i * (seg_w + Inches(0.15))
-        fill = BURGUNDY if i % 2 == 0 else BURGUNDY_DARK
-        _add_filled_box(slide, lx, strip_top, seg_w, Inches(1.3), fill, rounded=True)
-        _add_text_box(slide, lx + Inches(0.1), strip_top + Inches(0.06),
-                      seg_w - Inches(0.2), Inches(0.38),
-                      month, font_size=13, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-        _add_text_box(slide, lx + Inches(0.1), strip_top + Inches(0.5),
-                      seg_w - Inches(0.2), Inches(0.65),
-                      desc, font_size=11, color=WHITE, align=PP_ALIGN.CENTER)
+        lx = MARGIN_LEFT + i * (seg_w + Inches(0.1))
+        _add_filled_box(slide, lx, strip_top, seg_w, Inches(0.05), BURGUNDY)
+        _add_text_box(slide, lx, strip_top + Inches(0.15), seg_w - Inches(0.2),
+                      Inches(0.36), month, font_size=14, bold=True, color=BURGUNDY)
+        _add_text_box(slide, lx, strip_top + Inches(0.55), seg_w - Inches(0.2),
+                      Inches(0.8), desc, font_size=12, color=SOFT_TEXT)
 
-    _add_callout(slide, Inches(7.2), CONTENT_TOP, Inches(5.6), Inches(3.2),
-                 "Role: Research Intern\n\n"
-                 "Deliverable: end-to-end adaptive underwriting prototype + thesis report\n\n"
-                 f"Duration: {DURATION}\n\n"
-                 f"Supervisor: {CO_SUPERVISOR} (DAC)  |  Thesis advisor: {SUPERVISOR} (ITC)",
-                 font_size=13)
+    _add_notes(slide,
+        "Decent Actuarial Consultants is a Phnom Penh actuarial consultancy serving "
+        "insurers, pension funds and regulators across Southeast Asia. The thesis is "
+        "embedded in a DAC-supervised research internship, March through June 2026; the "
+        "deliverable is the end-to-end adaptive underwriting prototype plus this report. "
+        "Timeline: March scoping and dataset design, April algorithms, May experiments, "
+        "June writing and defense preparation.")
 
 
 # ===========================================================================
@@ -649,51 +657,31 @@ def slide_lit_summary(prs: Presentation):
     """Slide 7 (05)."""
     slide = _content_slide(prs, "iii", "3.1.  Literature Summary", "05")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.32),
-                  "Key literature informing the methodology",
-                  font_size=12, italic=True, color=SOFT_TEXT)
-
-    col_ws = [Inches(3.1), Inches(3.5), Inches(5.6)]
-    col_xs = [MARGIN_LEFT,
-               MARGIN_LEFT + col_ws[0] + Inches(0.05),
-               MARGIN_LEFT + col_ws[0] + col_ws[1] + Inches(0.1)]
-    hdr_top = CONTENT_TOP + Inches(0.38)
-    for hdr, cw, cx in zip(["Topic", "Key Authors", "Contribution"], col_ws, col_xs):
-        _add_filled_box(slide, cx, hdr_top, cw, Inches(0.38), BURGUNDY)
-        _add_text_box(slide, cx + Inches(0.06), hdr_top + Inches(0.05),
-                      cw - Inches(0.12), Inches(0.28),
-                      hdr, font_size=12, bold=True, color=WHITE)
-
     rows = [
-        ("Contextual Bandits\nin Healthcare",
-         "Bouneffouf et al.\n(2017)",
+        ("Bandits in healthcare", "Bouneffouf et al. (2017)",
          "Clinical decision support via LinUCB; reward = patient outcome"),
-        ("LinUCB Theory",
-         "Li et al. (2010)",
-         "UCB exploration over linear model; O(√T·d·log T) regret bound"),
-        ("LinTS\n(Thompson Sampling)",
-         "Agrawal & Goyal\n(2013)",
-         "Posterior sampling achieves near-optimal regret; robust exploration"),
-        ("Fairness in\nInsurance ML",
-         "Frees et al. (2014);\nKusner et al. (2017)",
+        ("Linear bandit theory", "Li et al. (2010); Agrawal & Goyal (2013)",
+         "LinUCB O(sqrt(T) d log T) regret; LinTS posterior sampling, near-optimal"),
+        ("Fairness in insurance ML", "Frees et al. (2014); Kusner et al. (2017)",
          "Regulatory constraints on protected attributes; counterfactual fairness"),
-        ("PSI Model Monitoring",
-         "Yurdakul (2018)",
-         "Population Stability Index detects distribution shift; GREEN/AMBER/RED zones"),
-        ("Human-in-the-loop RL",
-         "Christiano et al.\n(2017)",
-         "Expert overrides improve alignment; cost-benefit of human referral"),
+        ("PSI model monitoring", "Yurdakul (2018)",
+         "Population Stability Index drift zones (GREEN / AMBER / RED)"),
+        ("Human-in-the-loop RL", "Christiano et al. (2017)",
+         "Expert overrides improve alignment; cost-benefit of referral"),
     ]
-    row_h = Inches(0.79)
-    for i, (topic, authors, method) in enumerate(rows):
-        ry = hdr_top + Inches(0.42) + i * row_h
-        bg = LIGHT_GRAY if i % 2 == 0 else WHITE
-        for cx, cw in zip(col_xs, col_ws):
-            _add_filled_box(slide, cx, ry, cw, row_h, bg)
-        for cx, cw, text in zip(col_xs, col_ws, [topic, authors, method]):
-            _add_text_box(slide, cx + Inches(0.06), ry + Inches(0.06),
-                          cw - Inches(0.12), row_h - Inches(0.1),
-                          text, font_size=11, color=DARK_TEXT)
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.15),
+                    [Inches(3.0), Inches(3.6), Inches(5.7)],
+                    ["Topic", "Key authors", "Contribution"],
+                    rows, font_size=13, row_h=Inches(0.85))
+
+    _add_footnote(slide, "Full review: thesis Chapter III (30+ sources).")
+    _add_notes(slide,
+        "Five strands inform the method. Bouneffouf showed LinUCB works for clinical "
+        "decisions. Li et al. 2010 give the LinUCB regret bound, Agrawal and Goyal 2013 "
+        "the LinTS guarantee - together they justify the two proposed policies. Frees and "
+        "Kusner frame insurance fairness constraints; Yurdakul's PSI gives the monitoring "
+        "metric with the 0.10/0.25 thresholds; Christiano motivates the human-in-the-loop "
+        "wrapper. The thesis reviews thirty-plus sources; this is the load-bearing subset.")
 
 
 # ===========================================================================
