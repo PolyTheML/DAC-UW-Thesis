@@ -1172,7 +1172,7 @@ def slide_achievements(prs: Presentation):
     _letterspace(lab.text_frame.paragraphs[0], 120)
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.5), Inches(5.9), [
         f"Leads every admissible policy (+{_E005['lift_pct']}%, d={_E005['reward_cohen_d']})",
-        "LinTS cold-start crossover certified (p=0.0039)",
+        f"LinTS cold-start crossover certified (p={_E010['wilcoxon_t2000']['lints_vs_freshxgb']['p']})",
         f"HITL +{_E008['lift_pct']}% at {_E008['referral_pct']}% referrals",
         "5 of 6 fairness criteria PASSED",
     ], font_size=15, line_h=Inches(0.78))
@@ -1428,7 +1428,7 @@ def slide_app_number_reconciliation(prs: Presentation):
 
     _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(4.3), CONTENT_W, Inches(0.9),
                  "All three answer different questions and are mutually consistent. "
-                 "EXP-005 (+25.2%) is the conservative pre-registered primary.",
+                 f"EXP-005 (+{_E005['lift_pct']}%) is the conservative pre-registered primary.",
                  font_size=14)
     _add_notes(slide,
         "If asked why 25.2, 27.2 and 29.8 percent all appear: the headline uses the "
