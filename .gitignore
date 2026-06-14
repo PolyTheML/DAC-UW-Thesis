@@ -1,3 +1,6 @@
+# Visual-companion brainstorm sessions
+.superpowers/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -72,3 +75,6 @@ analyze*.py
 
 # Audit pipeline cache (regenerated on each run)
 audit/cache/
+
+# Slide-figure data caches (regenerable, large)
+thesis/health_rl/figures/slides/_cache_*
