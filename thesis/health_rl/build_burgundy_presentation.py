@@ -689,205 +689,231 @@ def slide_lit_summary(prs: Presentation):
 # ===========================================================================
 
 def slide_system_pipeline(prs: Presentation):
-    """Slide 8 (06)."""
+    """Slide 8 (06) -- native-shape architecture (replaces fig_ch4_architecture.png)."""
     slide = _content_slide(prs, "iv", "4.1.  System Pipeline", "06")
-    _add_picture_fit(slide, str(FIG_DIR / "fig_ch4_architecture.png"),
-                     MARGIN_LEFT, CONTENT_TOP, CONTENT_W, CONTENT_H)
+
+    layers = [
+        ("BROWSER (SPA)", ["Applicant Simulator", "Premium Optimiser",
+                           "Bandit Arena", "PSI Monitor"]),
+        ("FASTAPI REST", ["/api/simulate", "/api/pricing/optimize",
+                          "/api/bandit/run", "/api/psi/audit"]),
+        ("PYTHON BACKEND", ["Actuarial Reward Sim", "Pricing Engine",
+                            "Bandit Algorithms (LinUCB / LinTS)", "PSI Compute"]),
+    ]
+    label_w, box_w, box_h, gap = Inches(1.7), Inches(2.55), Inches(0.78), Inches(0.18)
+    row_step = Inches(1.45)
+    top0 = CONTENT_TOP + Inches(0.25)
+    for li, (label, boxes) in enumerate(layers):
+        ly = top0 + li * row_step
+        lab = _add_text_box(slide, MARGIN_LEFT, ly + Inches(0.22), label_w, Inches(0.4),
+                            label, font_size=10, bold=True, color=BURGUNDY)
+        _letterspace(lab.text_frame.paragraphs[0], 80)
+        for bi, text in enumerate(boxes):
+            bx = MARGIN_LEFT + label_w + bi * (box_w + gap)
+            _add_filled_box(slide, bx, ly, box_w, box_h, PANEL,
+                            line_color=HAIRLINE, line_width_pt=1.0)
+            _add_text_box(slide, bx + Inches(0.08), ly, box_w - Inches(0.16), box_h,
+                          text, font_size=12, bold=(li == 2), color=DARK_TEXT,
+                          align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+            if li < 2:  # connector to the layer below
+                cx = bx + box_w / 2
+                _add_filled_box(slide, cx, ly + box_h, Inches(0.018),
+                                row_step - box_h, BURGUNDY)
+
+    src_y = top0 + 3 * row_step + Inches(0.1)
+    for sx, text in [(MARGIN_LEFT + label_w, "Cambodia synthetic dataset (2,000 applicants)"),
+                     (MARGIN_LEFT + label_w + 2 * (box_w + gap),
+                      "Static XGBoost baseline (mortality model)")]:
+        _add_filled_box(slide, sx, src_y, box_w * 2 + gap, Inches(0.6), WHITE,
+                        line_color=BURGUNDY, line_width_pt=1.2)
+        _add_text_box(slide, sx, src_y, box_w * 2 + gap, Inches(0.6),
+                      text, font_size=12, color=SOFT_TEXT,
+                      align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+    _add_notes(slide,
+        "Architecture in three layers. The browser SPA hosts four panels: applicant "
+        "simulator, premium optimiser, bandit arena, PSI monitor. Each maps to a FastAPI "
+        "endpoint, backed by the Python core: the actuarial reward simulator, the pricing "
+        "engine, the bandit algorithms LinUCB and LinTS, and the PSI computation. "
+        "Everything is fed by the 2,000-applicant synthetic Cambodia dataset, with the "
+        "static XGBoost mortality model as the incumbent baseline. This same stack powers "
+        "the live demo later.")
 
 
 def slide_cambodia_dataset(prs: Presentation):
     """Slide 9 (07)."""
     slide = _content_slide(prs, "iv", "4.2.  Synthetic Cambodia Dataset", "07")
 
-    stats = [
-        ("2,000", "Synthetic\nApplications"),
-        ("5",     "Demographic\nFeatures"),
-        ("4",     "Underwriting\nArms"),
-        ("4",     "Anchoring\nSources"),
-    ]
-    card_w = Inches(2.8)
-    for i, (val, label) in enumerate(stats):
-        lx = MARGIN_LEFT + i * (card_w + Inches(0.2))
-        _add_filled_box(slide, lx, CONTENT_TOP, card_w, Inches(1.55), BURGUNDY, rounded=True)
-        _add_text_box(slide, lx, CONTENT_TOP + Inches(0.08), card_w, Inches(0.78),
-                      val, font_size=40, bold=True, color=WHITE,
-                      align=PP_ALIGN.CENTER, font_name="Times New Roman")
-        _add_text_box(slide, lx, CONTENT_TOP + Inches(0.88), card_w, Inches(0.55),
-                      label, font_size=12, color=WHITE, align=PP_ALIGN.CENTER)
+    _add_stat_row(slide, CONTENT_TOP + Inches(0.05), [
+        ("2,000", "synthetic applications"),
+        ("5", "demographic features"),
+        ("4", "underwriting arms"),
+        ("4", "anchoring sources"),
+    ])
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.72), Inches(6.0), Inches(0.36),
-                  "Dataset construction", font_size=14, bold=True, color=BURGUNDY)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.12), Inches(6.0), Inches(3.2), [
-        "Age, sex, region, occupation, BMI from CDHS 2021-22 & STEPS 2021",
-        "Income distribution anchored on ILO Cambodia labour force surveys",
-        "Claim probabilities calibrated from WHO SEARO health expenditure data",
-        "Adverse-selection factor AF = 1.35; price elasticity slope β = 3.5",
-        "Fully synthetic -- no real applicant PII included",
-    ], font_size=13)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.45), Inches(6.2), [
+        "Anchored on CDHS, STEPS, ILO, WHO data",
+        "Adverse selection AF = 1.35; elasticity 3.5",
+        "Fully synthetic -- no real applicant PII",
+    ])
 
-    _add_text_box(slide, Inches(6.8), CONTENT_TOP + Inches(1.72), Inches(5.9), Inches(0.36),
-                  "Underwriting arms", font_size=14, bold=True, color=BURGUNDY)
     arms = [
         ("RATED",    "Accept + premium loading (+25%)"),
-        ("STANDARD", "Accept at standard premium rate"),
+        ("STANDARD", "Accept at standard premium"),
         ("DECLINE",  "Reject application"),
         ("REFER",    "Escalate to human underwriter"),
     ]
-    arm_top = CONTENT_TOP + Inches(2.12)
+    ay = CONTENT_TOP + Inches(1.5)
     for i, (arm, desc) in enumerate(arms):
-        ay = arm_top + i * Inches(0.77)
-        fill = BURGUNDY if i % 2 == 0 else BURGUNDY_DARK
-        _add_filled_box(slide, Inches(6.8), ay, Inches(1.55), Inches(0.7), fill)
-        _add_text_box(slide, Inches(6.88), ay + Inches(0.12), Inches(1.38), Inches(0.48),
-                      arm, font_size=13, bold=True, color=WHITE)
-        _add_text_box(slide, Inches(8.5), ay + Inches(0.12), Inches(4.15), Inches(0.55),
-                      desc, font_size=12, color=DARK_TEXT)
+        ry = ay + i * Inches(0.78)
+        _add_text_box(slide, Inches(7.1), ry, Inches(1.9), Inches(0.4),
+                      arm, font_size=15, bold=True, color=BURGUNDY)
+        _add_text_box(slide, Inches(9.1), ry + Inches(0.02), Inches(3.7), Inches(0.5),
+                      desc, font_size=13, color=SOFT_TEXT)
+        if i > 0:
+            _add_filled_box(slide, Inches(7.1), ry - Inches(0.14), Inches(5.7),
+                            Inches(0.012), HAIRLINE)
+
+    _add_footnote(slide, "Construction detail: appendix A5 (sources, simulator parameters).")
+    _add_notes(slide,
+        "The dataset is 2,000 synthetic applicants with five features: age, sex, region, "
+        "occupation, BMI. Distributions are anchored on CDHS 2021-22 and STEPS 2021; "
+        "income on ILO labour-force surveys; claim probabilities calibrated from WHO SEARO "
+        "health-expenditure data. Adverse-selection factor 1.35 and price-elasticity slope "
+        "3.5 come from DAC actuarial priors. Four arms: RATED accepts with a 25 percent "
+        "loading, STANDARD accepts at standard rate, DECLINE rejects, REFER escalates to a "
+        "human. No real applicant data is used anywhere.")
 
 
 def slide_bandit_formulation(prs: Presentation):
     """Slide 10 (08)."""
     slide = _content_slide(prs, "iv", "4.3.  Bandit Formulation", "08")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.36),
-                  "Problem setup", font_size=14, bold=True, color=BURGUNDY)
-    _add_bullet_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), Inches(6.0), Inches(2.75), [
-        ("Context  x_t ∈ ℝ⁵:", True),
-        "Age, sex, region, occupation, BMI -- standardised at application time",
-        ("Action  a_t ∈ {RATED, STANDARD, DECLINE, REFER}:", True),
-        "Policy selects one arm per applicant per round",
-        ("Reward  r_t:", True),
-        "Revenue-minus-claims actuarial simulator",
-        "Adverse-selection penalises premium-heavy arms for low-risk applicants",
-    ], font_size=13)
+    defs = [
+        ("Context  x_t ∈ R^5", "age, sex, region, occupation, BMI -- standardised"),
+        ("Action  a_t", "one of RATED / STANDARD / DECLINE / REFER"),
+        ("Reward  r_t", "revenue minus claims, actuarial simulator"),
+    ]
+    dy = CONTENT_TOP + Inches(0.15)
+    for i, (term, desc) in enumerate(defs):
+        ry = dy + i * Inches(0.95)
+        _add_text_box(slide, MARGIN_LEFT, ry, Inches(2.9), Inches(0.45),
+                      term, font_size=16, bold=True, color=BURGUNDY)
+        _add_text_box(slide, MARGIN_LEFT, ry + Inches(0.42), Inches(5.9), Inches(0.4),
+                      desc, font_size=13, color=SOFT_TEXT)
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.35), Inches(6.0), Inches(0.36),
-                  "Objective", font_size=14, bold=True, color=BURGUNDY)
-    _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.78), Inches(6.0), Inches(0.85),
-                 "Maximise cumulative reward Σ r_t over T rounds, "
+    _add_callout(slide, MARGIN_LEFT, dy + Inches(3.05), Inches(5.9), Inches(1.0),
+                 "Objective: maximise cumulative reward Σ r_t over T rounds, "
                  "subject to demographic PSI guardrails.",
-                 font_size=13)
+                 font_size=14, bold=True)
 
-    _add_text_box(slide, Inches(7.0), CONTENT_TOP, Inches(5.8), Inches(0.36),
-                  "Reward structure (illustrative)", font_size=14, bold=True, color=BURGUNDY)
-    reward_rows = [
-        ("Action",   "High-risk applicant",   "Low-risk applicant"),
+    rows = [
         ("RATED",    "+premium − claims", "− adverse-sel. penalty"),
         ("STANDARD", "+premium − claims", "+optimal margin"),
-        ("DECLINE",  "0 (avoided loss)",       "− missed revenue"),
-        ("REFER",    "+human decision net",    "+human decision net"),
+        ("DECLINE",  "0 (avoided loss)",  "− missed revenue"),
+        ("REFER",    "+human decision net", "+human decision net"),
     ]
-    rr_top = CONTENT_TOP + Inches(0.44)
-    for i, cols in enumerate(reward_rows):
-        ry = rr_top + i * Inches(0.87)
-        bg = BURGUNDY if i == 0 else (LIGHT_GRAY if i % 2 == 1 else WHITE)
-        col_ws = [Inches(1.55), Inches(2.1), Inches(2.0)]
-        col_xs = [Inches(7.0), Inches(8.6), Inches(10.75)]
-        _add_filled_box(slide, Inches(7.0), ry, Inches(5.8), Inches(0.83), bg)
-        for j, (cx, cw, text) in enumerate(zip(col_xs, col_ws, cols)):
-            fc = WHITE if i == 0 else DARK_TEXT
-            _add_text_box(slide, cx + Inches(0.05), ry + Inches(0.08),
-                          cw - Inches(0.1), Inches(0.67),
-                          text, font_size=11, bold=(i == 0), color=fc,
-                          anchor=MSO_ANCHOR.MIDDLE)
+    _add_flat_table(slide, Inches(7.0), CONTENT_TOP + Inches(0.15),
+                    [Inches(1.7), Inches(2.1), Inches(2.0)],
+                    ["Action", "High-risk", "Low-risk"],
+                    rows, font_size=12, row_h=Inches(0.72))
+
+    _add_notes(slide,
+        "Formally: at each round the context is the standardised five-feature applicant "
+        "vector, the action is one of four arms, and the reward is revenue minus claims "
+        "from the actuarial simulator, with adverse selection penalising premium-heavy "
+        "arms on low-risk applicants. The objective is cumulative reward over T rounds "
+        "subject to the PSI guardrail. The table sketches the reward structure: for a "
+        "high-risk applicant DECLINE avoids a loss; for a low-risk one it forfeits "
+        "revenue; REFER nets the human decision either way.")
 
 
 def slide_algorithms_baselines(prs: Presentation):
     """Slide 11 (09)."""
     slide = _content_slide(prs, "iv", "4.4.  Algorithms & Baselines", "09")
 
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, CONTENT_W, Inches(0.36),
-                  "Proposed policies (ranked by admissibility)", font_size=14,
-                  bold=True, color=BURGUNDY)
-
     algos = [
-        (ACCENT_GREEN,  "LinUCB",
-         "Upper Confidence Bound over a linear reward model. "
-         "Optimism in the face of uncertainty; O(√T·d·log T) regret."),
-        (ACCENT_GREEN,  "LinTS",
-         "Thompson Sampling from posterior over reward parameters. "
-         "Near-optimal regret; naturally calibrated uncertainty."),
-        (ACCENT_AMBER,  "ε-Greedy",
-         "Uniform exploration with probability ε. Simple baseline; "
-         "suboptimal O(T^{2/3}) regret asymptotics."),
-        (MED_GRAY,      "Static XGB",
-         "XGBoost trained once on a historical snapshot. "
-         "Incumbent production baseline."),
-        (ACCENT_RED,    "AlwaysRATED",
-         "Constant: rate 100% of applicants at +25% loading. Inadmissible ceiling "
-         "(not commercially/regulatorily viable -- §5.0.1 / §6.2)."),
+        (ACCENT_GREEN, "LinUCB",      "Optimism under uncertainty -- O(sqrt(T) d log T) regret"),
+        (ACCENT_GREEN, "LinTS",       "Posterior sampling -- near-optimal regret"),
+        (ACCENT_AMBER, "ε-Greedy",    "Uniform exploration -- suboptimal O(T^2/3)"),
+        (MED_GRAY,     "Static XGB",  "Train-once incumbent baseline"),
+        (ACCENT_RED,   "AlwaysRATED", "Constant +25% loading -- inadmissible ceiling"),
     ]
-    ay = CONTENT_TOP + Inches(0.45)
-    for color, name, desc in algos:
-        _add_filled_box(slide, MARGIN_LEFT, ay + Inches(0.07), Inches(0.22), Inches(0.48), color)
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.32), ay, Inches(1.85), Inches(0.62),
-                      name, font_size=14, bold=True, color=DARK_TEXT)
-        _add_text_box(slide, MARGIN_LEFT + Inches(2.25), ay, Inches(10.1), Inches(0.62),
-                      desc, font_size=12, color=SOFT_TEXT)
-        ay += Inches(0.68)
+    ay = CONTENT_TOP + Inches(0.25)
+    for i, (color, name, desc) in enumerate(algos):
+        ry = ay + i * Inches(0.85)
+        _add_filled_box(slide, MARGIN_LEFT, ry + Inches(0.06), Inches(0.16),
+                        Inches(0.5), color)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.4), ry, Inches(2.6), Inches(0.5),
+                      name, font_size=18, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(3.2), ry + Inches(0.05),
+                      Inches(9.2), Inches(0.5), desc, font_size=15, color=SOFT_TEXT)
+        if i > 0:
+            _add_filled_box(slide, MARGIN_LEFT, ry - Inches(0.17), CONTENT_W,
+                            Inches(0.012), HAIRLINE)
 
-    _add_filled_box(slide, MARGIN_LEFT, ay + Inches(0.08), CONTENT_W, Inches(0.03), MED_GRAY)
-
-    _add_text_box(slide, MARGIN_LEFT, ay + Inches(0.18), CONTENT_W, Inches(0.35),
-                  "Other constants (inadmissible floor/ceiling): AlwaysSTANDARD, AlwaysDECLINE, Random  "
-                  "|  Not deployable: LogisticOracle, Oracle",
-                  font_size=11, italic=True, color=SOFT_TEXT)
-
-    _add_callout(slide, MARGIN_LEFT, ay + Inches(0.65), CONTENT_W, Inches(0.8),
-                 "Admissibility (§5.0.1): a policy is admissible if it is both deployable "
-                 "(uses only observable features) AND commercially/regulatorily viable as an "
-                 "underwriting rule. LinUCB and LinTS are the top-2 admissible policies.",
-                 font_size=12)
+    _add_footnote(slide,
+        "Admissibility (§5.0.1): deployable AND commercially/regulatorily viable. "
+        "LinUCB and LinTS are the top-2 admissible policies. "
+        "Other reference policies: AlwaysSTANDARD, AlwaysDECLINE, Random, LogisticOracle, Oracle.")
+    _add_notes(slide,
+        "Two proposed policies and three reference points. LinUCB plays optimism in the "
+        "face of uncertainty over a linear reward model with the square-root-T regret "
+        "bound; LinTS samples from the posterior and is near-optimal with naturally "
+        "calibrated uncertainty. Epsilon-greedy is the naive explorer with provably worse "
+        "T-to-the-two-thirds regret. Static XGB is the train-once incumbent. AlwaysRATED "
+        "rates everyone at +25 percent loading - it scores highest but is neither "
+        "commercially nor regulatorily viable, which is exactly the admissibility "
+        "distinction in section 5.0.1 and the dedicated limitation slide 6.2.")
 
 
 def slide_guardrail_hitl_design(prs: Presentation):
     """Slide 12 (10)."""
     slide = _content_slide(prs, "iv", "4.5.  Guardrail + HITL Design", "10")
 
-    # Left: PSI guardrail
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.36),
-                  "PSI Demographic Guardrail", font_size=14, bold=True, color=BURGUNDY)
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.42), Inches(6.0), Inches(0.55),
-                  "Population Stability Index computed on region and occupation "
-                  "in a rolling 500-round window.",
-                  font_size=13, color=DARK_TEXT)
-
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(5.9), Inches(0.32),
+                        "PSI DEMOGRAPHIC GUARDRAIL", font_size=11, bold=True, color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
     psi_zones = [
-        (ACCENT_GREEN, "GREEN",  "PSI < 0.10",       "Stable -- no action"),
-        (ACCENT_AMBER, "AMBER",  "0.10 ≤ PSI < 0.25", "Monitor closely"),
-        (ACCENT_RED,   "RED",    "PSI ≥ 0.25",   "Trigger review"),
+        (ACCENT_GREEN, "GREEN", "PSI < 0.10", "stable"),
+        (ACCENT_AMBER, "AMBER", "0.10-0.25", "monitor"),
+        (ACCENT_RED,   "RED",   "PSI ≥ 0.25", "review"),
     ]
-    zy = CONTENT_TOP + Inches(1.05)
+    zy = CONTENT_TOP + Inches(0.5)
     for color, label, threshold, action in psi_zones:
-        _add_filled_box(slide, MARGIN_LEFT, zy, Inches(1.15), Inches(0.55), color, rounded=True)
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.06), zy + Inches(0.1),
-                      Inches(1.03), Inches(0.38),
-                      label, font_size=13, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-        _add_text_box(slide, MARGIN_LEFT + Inches(1.3), zy, Inches(2.1), Inches(0.55),
-                      threshold, font_size=13, bold=True, color=DARK_TEXT)
-        _add_text_box(slide, MARGIN_LEFT + Inches(3.5), zy, Inches(2.4), Inches(0.55),
-                      action, font_size=13, color=SOFT_TEXT)
-        zy += Inches(0.65)
+        _add_filled_box(slide, MARGIN_LEFT, zy, Inches(0.16), Inches(0.5), color)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.4), zy, Inches(1.5), Inches(0.5),
+                      label, font_size=16, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(2.0), zy + Inches(0.04),
+                      Inches(2.1), Inches(0.45), threshold, font_size=14, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(4.2), zy + Inches(0.04),
+                      Inches(1.7), Inches(0.45), action, font_size=14, color=SOFT_TEXT)
+        zy += Inches(0.72)
+    _add_text_box(slide, MARGIN_LEFT, zy + Inches(0.1), Inches(5.9), Inches(0.7),
+                  "Computed on region & occupation, rolling 500-round window.",
+                  font_size=13, color=SOFT_TEXT)
 
-    _add_text_box(slide, MARGIN_LEFT, zy + Inches(0.12), Inches(6.0), Inches(0.45),
-                  "Note: PSI is a MONITOR, not an enforcer. Constrained-action "
-                  "enforcement is deferred to future work.",
-                  font_size=11, italic=True, color=SOFT_TEXT)
+    lab = _add_text_box(slide, Inches(7.1), CONTENT_TOP, Inches(5.7), Inches(0.32),
+                        "HUMAN-IN-THE-LOOP WRAPPER", font_size=11, bold=True, color=BURGUNDY)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, Inches(7.1), CONTENT_TOP + Inches(0.5), Inches(5.7), [
+        "Uncertainty > κ  →  REFER to actuary",
+        "Conservatism κ ∈ {0.3, 0.5, 0.7}",
+        "Human decides; reward still trains bandit",
+        "Target: review cost < 2% of reward",
+    ], font_size=15)
 
-    # Right: HITL
-    _add_text_box(slide, Inches(7.1), CONTENT_TOP, Inches(5.7), Inches(0.36),
-                  "Human-in-the-loop Wrapper", font_size=14, bold=True, color=BURGUNDY)
-    _add_bullet_box(slide, Inches(7.1), CONTENT_TOP + Inches(0.42), Inches(5.7), Inches(3.0), [
-        "Bandit selects arm; if predicted uncertainty > κ threshold → REFER to actuary",
-        "Conservatism κ ∈ {0.3, 0.5, 0.7} controls referral rate",
-        "Human overrides bandit action; outcome reward used for bandit update",
-        "Alignment rate: 60% of overrides agree with bandit (κ=0.7)",
-        "Review cost charged per referral; net benefit computed over N=5,000 rounds",
-    ], font_size=13)
-
-    _add_callout(slide, Inches(7.1), CONTENT_TOP + Inches(3.55), Inches(5.7), Inches(0.95),
-                 "Design target: reduce worst-case regret via human expertise while "
-                 "keeping review cost below 2% of gross reward.",
-                 font_size=12)
+    _add_footnote(slide,
+        "PSI is a monitor, not an enforcer -- constrained-action enforcement is future work.")
+    _add_notes(slide,
+        "Two safety layers. The PSI guardrail computes the Population Stability Index on "
+        "region and occupation over a rolling 500-round window: GREEN below 0.10, AMBER to "
+        "0.25, RED above. It detects concentration; it does not constrain the policy - "
+        "enforcement is future work, stated honestly. The HITL wrapper REFERs an applicant "
+        "to the actuary whenever predicted uncertainty exceeds the conservatism threshold "
+        "kappa, tested at 0.3, 0.5, 0.7; the human's decision is final and its observed "
+        "reward still updates the bandit. Design target: keep review cost under two "
+        "percent of gross reward.")
 
 
 # ===========================================================================
