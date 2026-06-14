@@ -71,13 +71,13 @@ def test_toc_slide_has_six_sections(built_presentation):
 # ---------------------------------------------------------------------------
 
 def test_section_tags_present_on_content_slides(built_presentation):
-    """Every content slide (indices 2-20) must carry a roman-numeral section tag."""
+    """Every content slide (indices 2-20) carries an uppercase 'ROMAN · NAME' tag."""
     prs = Presentation(str(built_presentation))
-    tag_pattern = re.compile(r"\b(i|ii|iii|iv|v|vi)\.")
+    tag_pattern = re.compile(r"\b(I|II|III|IV|V|VI) · [A-Z&\s]+")
     for idx in range(2, 21):
         combined = _all_text(prs, idx)
         assert tag_pattern.search(combined), (
-            f"Slide {idx + 1}: no roman-numeral section tag found. Got: {combined[:200]}"
+            f"Slide {idx + 1}: no uppercase section tag found. Got: {combined[:200]}"
         )
 
 

@@ -8,6 +8,7 @@ Conventions (matching Nang Sreynich's ITC DS defense deck, July 2025):
   * No section-divider slides
   * All headline statistics read from demo/static/thesis_results.json at build time
     (build fails loudly on missing key -- no silent hardcoded fallbacks)
+  * Minimal Academic restyle (v2): flat white, Calibri-only, burgundy accents, thin bottom bar
 
 Output: thesis/health_rl/burgundy_defense_presentation.pptx  (32 slides)
 
@@ -18,6 +19,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 from pptx import Presentation
@@ -35,6 +37,7 @@ LOGO_ITC    = str(ROOT / "thesis" / "ITC.jpg")
 LOGO_AMS    = str(ROOT / "thesis" / "AMS.png")
 LOGO_DAC    = str(ROOT / "thesis" / "DAC.jpg")
 FIG_DIR     = ROOT / "thesis" / "health_rl" / "figures"
+SLIDE_FIG_DIR = FIG_DIR / "slides"
 
 RESULTS_JSON = ROOT / "demo" / "static" / "thesis_results.json"
 with open(RESULTS_JSON) as _f:
@@ -64,6 +67,9 @@ ACCENT_RED    = RGBColor(0xD9, 0x3B, 0x3B)
 ACCENT_GREEN  = RGBColor(0x2E, 0x8B, 0x57)
 ACCENT_AMBER  = RGBColor(0xE6, 0xA6, 0x2E)
 ACCENT_BLUE   = RGBColor(0x3B, 0x6E, 0xA5)
+GRAY_LABEL    = RGBColor(0x77, 0x77, 0x77)   # stat labels / footnotes
+HAIRLINE      = RGBColor(0xDD, 0xDD, 0xDD)   # 1px separators
+PANEL         = RGBColor(0xF7, 0xF5, 0xF6)   # flat panel fill (no borders)
 
 # ---------------------------------------------------------------------------
 # Dimensions (16:9 widescreen)
@@ -71,11 +77,12 @@ ACCENT_BLUE   = RGBColor(0x3B, 0x6E, 0xA5)
 SLIDE_WIDTH       = Inches(13.333)
 SLIDE_HEIGHT      = Inches(7.5)
 MARGIN_LEFT       = Inches(0.5)
-CONTENT_TOP       = Inches(1.35)   # below section tag + title + divider
-BOTTOM_BAR_TOP    = Inches(6.85)
-BOTTOM_BAR_HEIGHT = Inches(0.65)
+CONTENT_TOP       = Inches(1.32)   # below tag + title + accent
+BOTTOM_BAR_TOP    = Inches(7.28)
+BOTTOM_BAR_HEIGHT = Inches(0.22)
 CONTENT_W         = SLIDE_WIDTH - MARGIN_LEFT - Inches(0.5)
-CONTENT_H         = BOTTOM_BAR_TOP - CONTENT_TOP - Inches(0.1)
+CONTENT_H         = BOTTOM_BAR_TOP - CONTENT_TOP - Inches(0.15)
+FOOTNOTE_TOP      = BOTTOM_BAR_TOP - Inches(0.42)
 
 # ---------------------------------------------------------------------------
 # Thesis metadata
@@ -117,11 +124,23 @@ def _no_line(shape):
     shape.line.fill.background()
 
 
+def _flat(shape):
+    """Kill the theme's inherited drop shadow -- v2 is shadow-free everywhere."""
+    shape.shadow.inherit = False
+
+
+def _letterspace(paragraph, spc: int = 140):
+    """Letter-space a paragraph's runs (OOXML 'spc' is in 1/100 pt)."""
+    for r in paragraph.runs:
+        r.font._rPr.set("spc", str(spc))
+
+
 def _add_text_box(slide, left, top, width, height, text: str,
                   font_size: int = 18, bold: bool = False, italic: bool = False,
                   color: RGBColor = DARK_TEXT, align=PP_ALIGN.LEFT,
                   font_name: str = "Calibri", anchor=MSO_ANCHOR.TOP):
     box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
+    _flat(box)
     box.fill.background()
     _no_line(box)
     tf = box.text_frame
@@ -146,6 +165,7 @@ def _add_bullet_box(slide, left, top, width, height, bullets,
                     font_size: int = 14, color: RGBColor = DARK_TEXT,
                     font_name: str = "Calibri", bullet_char: str = "•"):
     box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
+    _flat(box)
     box.fill.background()
     _no_line(box)
     tf = box.text_frame
@@ -167,8 +187,9 @@ def _add_bullet_box(slide, left, top, width, height, bullets,
 def _add_filled_box(slide, left, top, width, height,
                     fill_color: RGBColor, rounded: bool = False,
                     line_color: RGBColor | None = None, line_width_pt: float = 0):
-    shape_type = MSO_SHAPE.ROUNDED_RECTANGLE if rounded else MSO_SHAPE.RECTANGLE
-    box = slide.shapes.add_shape(shape_type, left, top, width, height)
+    # 'rounded' is ignored: v2 is square-corner only (param removed in Task 9)
+    box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
+    _flat(box)
     _set_shape_fill(box, fill_color)
     if line_color is None:
         _no_line(box)
@@ -180,17 +201,17 @@ def _add_filled_box(slide, left, top, width, height,
 
 def _add_callout(slide, left, top, width, height, text: str,
                  font_size: int = 13, bold: bool = False,
-                 color: RGBColor = BURGUNDY, font_name: str = "Calibri"):
-    box = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
-    box.fill.background()
-    box.line.color.rgb = BURGUNDY
-    box.line.width = Pt(1.5)
+                 color: RGBColor = DARK_TEXT, font_name: str = "Calibri"):
+    """v2: flat light panel, square corners, charcoal text, no border."""
+    box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, left, top, width, height)
+    _flat(box)
+    _set_shape_fill(box, PANEL)
+    _no_line(box)
     tf = box.text_frame
     tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.TOP
-    tf.margin_left = Inches(0.15)
-    tf.margin_right = Inches(0.15)
-    tf.margin_top = Inches(0.1)
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    tf.margin_left = Inches(0.18)
+    tf.margin_right = Inches(0.18)
     p = tf.paragraphs[0]
     p.text = text
     p.font.size = Pt(font_size)
@@ -210,6 +231,7 @@ def _add_picture_fit(slide, path: str, left, top, max_w, max_h):
                       anchor=MSO_ANCHOR.MIDDLE)
         return
     pic = slide.shapes.add_picture(path, left, top, width=max_w)
+    _flat(pic)
     if pic.height > max_h:
         ratio = max_h / pic.height
         pic.height = int(pic.height * ratio)
@@ -223,63 +245,65 @@ def _add_picture_fit(slide, path: str, left, top, max_w, max_h):
 # ===========================================================================
 
 def _add_section_tag(slide, sec_key: str):
-    """Persistent roman-numeral section chip in top-left of every content slide."""
-    chip = slide.shapes.add_shape(
-        MSO_SHAPE.ROUNDED_RECTANGLE,
-        MARGIN_LEFT, Inches(0.12), Inches(2.9), Inches(0.36)
-    )
-    _set_shape_fill(chip, BURGUNDY_DARK)
-    _no_line(chip)
-    tf = chip.text_frame
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    tf.margin_left = Inches(0.12)
-    tf.margin_right = Inches(0.05)
-    p = tf.paragraphs[0]
-    p.text = _SEC[sec_key]
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = WHITE
-    p.font.name = "Calibri"
-    p.alignment = PP_ALIGN.LEFT
+    """Plain-text uppercase letter-spaced section tag, top-left (no chip)."""
+    num, name = next((n, t) for n, t in SECTIONS if n == sec_key)
+    box = _add_text_box(slide, MARGIN_LEFT, Inches(0.16), Inches(7.0), Inches(0.3),
+                        f"{num.upper()} · {name.upper()}",
+                        font_size=10, bold=True, color=BURGUNDY)
+    _letterspace(box.text_frame.paragraphs[0])
+
+
+_TITLE_RX = re.compile(r"^([A-Za-z]?\d+(?:\.\d+)?)\.?\s+(.*)$")
 
 
 def _add_slide_title(slide, text: str):
-    _add_text_box(slide, MARGIN_LEFT, Inches(0.53), Inches(10.5), Inches(0.72),
-                  text, font_size=27, bold=True, color=BURGUNDY,
-                  align=PP_ALIGN.LEFT, font_name="Times New Roman")
+    """Burgundy decimal run + charcoal title run, Calibri 26 bold."""
+    m = _TITLE_RX.match(text.strip())
+    num, rest = (m.group(1), m.group(2).strip()) if m else ("", text.strip())
+    box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, MARGIN_LEFT, Inches(0.46),
+                                 Inches(12.3), Inches(0.62))
+    _flat(box)
+    box.fill.background()
+    _no_line(box)
+    tf = box.text_frame
+    tf.word_wrap = False
+    p = tf.paragraphs[0]
+    for run_text, run_color in ((f"{num}  ", BURGUNDY), (rest, DARK_TEXT)):
+        if run_text.strip():
+            r = p.add_run()
+            r.text = run_text
+            r.font.size = Pt(26)
+            r.font.bold = True
+            r.font.color.rgb = run_color
+            r.font.name = "Calibri"
 
 
 def _add_title_rule(slide):
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.27),
-                    CONTENT_W, Inches(0.03), BURGUNDY)
+    """Short burgundy accent under the title (replaces the full-width rule)."""
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.14), Inches(0.55), Inches(0.045), BURGUNDY)
 
 
 def _add_bottom_bar(slide, page_num: str | None = None):
-    """Burgundy strip with logos and optional corner page number."""
+    """Thin burgundy strip; white right-aligned page number; NO logos."""
     bar = slide.shapes.add_shape(
-        MSO_SHAPE.RECTANGLE,
-        Inches(0), BOTTOM_BAR_TOP, SLIDE_WIDTH, BOTTOM_BAR_HEIGHT
-    )
+        MSO_SHAPE.RECTANGLE, Inches(0), BOTTOM_BAR_TOP, SLIDE_WIDTH, BOTTOM_BAR_HEIGHT)
+    _flat(bar)
     _set_shape_fill(bar, BURGUNDY)
     _no_line(bar)
-
-    for path, lx in [(LOGO_ITC, 10.3), (LOGO_AMS, 10.95), (LOGO_DAC, 11.65)]:
-        if os.path.exists(path):
-            slide.shapes.add_picture(path, Inches(lx), Inches(6.35), width=Inches(0.65))
-
     if page_num is not None:
         pg = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE,
-            Inches(12.2), BOTTOM_BAR_TOP + Inches(0.12),
-            Inches(1.0), Inches(0.42)
-        )
+            MSO_SHAPE.RECTANGLE, Inches(12.3), BOTTOM_BAR_TOP - Inches(0.02),
+            Inches(0.9), Inches(0.26))
+        _flat(pg)
         pg.fill.background()
         _no_line(pg)
         tf = pg.text_frame
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_top = Inches(0)
+        tf.margin_bottom = Inches(0)
         p = tf.paragraphs[0]
         p.text = page_num
-        p.font.size = Pt(14)
+        p.font.size = Pt(11)
         p.font.bold = True
         p.font.color.rgb = WHITE
         p.font.name = "Calibri"
