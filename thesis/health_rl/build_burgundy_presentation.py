@@ -412,53 +412,46 @@ def slide_title(prs: Presentation):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
     for path, lx, ly, lw in [
-        (LOGO_ITC, 0.6,  0.30, 1.1),
-        (LOGO_AMS, 1.85, 0.40, 1.6),
-        (LOGO_DAC, 11.1, 0.35, 1.6),
+        (LOGO_ITC, 0.6,  0.30, 1.0),
+        (LOGO_AMS, 1.75, 0.40, 1.45),
+        (LOGO_DAC, 11.3, 0.35, 1.45),
     ]:
         if os.path.exists(path):
-            slide.shapes.add_picture(path, Inches(lx), Inches(ly), width=Inches(lw))
+            pic = slide.shapes.add_picture(path, Inches(lx), Inches(ly), width=Inches(lw))
+            _flat(pic)
 
-    _add_text_box(slide, Inches(3.5), Inches(0.45), Inches(7.0), Inches(0.5),
-                  INSTITUTION, font_size=24, bold=True, color=DARK_TEXT,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
-    _add_text_box(slide, Inches(3.5), Inches(0.93), Inches(7.0), Inches(0.4),
-                  DEPARTMENT, font_size=17, color=DARK_TEXT,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
+    _add_text_box(slide, Inches(3.4), Inches(0.42), Inches(7.2), Inches(0.5),
+                  INSTITUTION, font_size=22, bold=True, color=DARK_TEXT,
+                  align=PP_ALIGN.CENTER)
+    _add_text_box(slide, Inches(3.4), Inches(0.92), Inches(7.2), Inches(0.4),
+                  DEPARTMENT, font_size=15, color=GRAY_LABEL, align=PP_ALIGN.CENTER)
 
-    box_w = Inches(11.6)
-    title_box = _add_filled_box(slide, (SLIDE_WIDTH - box_w) / 2, Inches(2.1),
-                                box_w, Inches(2.2), BURGUNDY, rounded=True)
-    tf = title_box.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    tf.margin_left = Inches(0.4)
-    tf.margin_right = Inches(0.4)
-    p = tf.paragraphs[0]
-    p.text = THESIS_TITLE.upper()
-    p.font.size = Pt(24)
-    p.font.bold = True
-    p.font.color.rgb = WHITE
-    p.font.name = "Times New Roman"
-    p.alignment = PP_ALIGN.CENTER
+    _add_filled_box(slide, Inches(5.92), Inches(2.05), Inches(1.5), Inches(0.045), BURGUNDY)
+    box = _add_text_box(slide, Inches(0.9), Inches(2.35), Inches(11.5), Inches(1.7),
+                        THESIS_TITLE.upper(), font_size=27, bold=True, color=DARK_TEXT,
+                        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    box.text_frame.word_wrap = True
+    _add_filled_box(slide, Inches(5.92), Inches(4.25), Inches(1.5), Inches(0.045), BURGUNDY)
 
-    _add_text_box(slide, Inches(0), Inches(4.65), SLIDE_WIDTH, Inches(0.38),
-                  "Presented by:", font_size=17, color=DARK_TEXT, align=PP_ALIGN.CENTER)
-    _add_text_box(slide, Inches(0), Inches(5.02), SLIDE_WIDTH, Inches(0.5),
-                  PRESENTER, font_size=28, bold=True, color=DARK_TEXT,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
+    _add_text_box(slide, Inches(0), Inches(4.62), SLIDE_WIDTH, Inches(0.34),
+                  "Thesis Defense — Presented by", font_size=14, color=GRAY_LABEL,
+                  align=PP_ALIGN.CENTER)
+    _add_text_box(slide, Inches(0), Inches(4.96), SLIDE_WIDTH, Inches(0.5),
+                  PRESENTER, font_size=27, bold=True, color=BURGUNDY,
+                  align=PP_ALIGN.CENTER)
 
     lx, rx = Inches(1.5), Inches(7.5)
     for i, (lt, rt) in enumerate([
         (f"Supervisor      :  {SUPERVISOR}",    f"Organization :  {ORGANIZATION}"),
         (f"Co-Supervisor  :  {CO_SUPERVISOR}", f"Duration        :  {DURATION}"),
     ]):
-        y = Inches(5.7) + i * Inches(0.36)
-        _add_text_box(slide, lx, y, Inches(5.6), Inches(0.34), lt, font_size=15, color=DARK_TEXT)
-        _add_text_box(slide, rx, y, Inches(5.6), Inches(0.34), rt, font_size=15, color=DARK_TEXT)
+        y = Inches(5.68) + i * Inches(0.36)
+        _add_text_box(slide, lx, y, Inches(5.6), Inches(0.34), lt, font_size=14, color=DARK_TEXT)
+        _add_text_box(slide, rx, y, Inches(5.6), Inches(0.34), rt, font_size=14, color=DARK_TEXT)
 
     _add_text_box(slide, Inches(0), Inches(6.6), SLIDE_WIDTH, Inches(0.38),
-                  DEFENSE_DATE, font_size=17, color=DARK_TEXT, align=PP_ALIGN.CENTER)
+                  DEFENSE_DATE, font_size=15, bold=True, color=GRAY_LABEL,
+                  align=PP_ALIGN.CENTER)
 
 
 # ===========================================================================
@@ -468,49 +461,23 @@ def slide_title(prs: Presentation):
 def slide_toc(prs: Presentation):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    _add_filled_box(slide, Inches(0), Inches(0), Inches(2.3), SLIDE_HEIGHT, BURGUNDY)
-    for i in range(3):
-        _add_filled_box(slide, Inches(0.55), Inches(0.45 + i * 0.18),
-                        Inches(0.55), Inches(0.05), WHITE)
-    circle = _add_filled_box(slide, Inches(0.65), Inches(3.0), Inches(0.85), Inches(0.85), WHITE)
-    tf = circle.text_frame
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    p = tf.paragraphs[0]
-    p.text = "\U0001F393"
-    p.font.size = Pt(28)
-    p.alignment = PP_ALIGN.CENTER
-    for i in range(3):
-        _add_filled_box(slide, Inches(0.55 + i * 0.28), Inches(6.85),
-                        Inches(0.13), Inches(0.13), WHITE)
+    _add_text_box(slide, MARGIN_LEFT, Inches(0.55), Inches(9.0), Inches(0.7),
+                  "Table of Contents", font_size=30, bold=True, color=DARK_TEXT)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.32), Inches(0.55), Inches(0.045), BURGUNDY)
 
-    _add_text_box(slide, Inches(2.9), Inches(0.4), Inches(9.0), Inches(0.85),
-                  "TABLE OF CONTENT", font_size=36, bold=True, color=DARK_TEXT,
-                  align=PP_ALIGN.LEFT, font_name="Times New Roman")
-
-    # 6 sections, 2 columns of 3
-    col_xs = [Inches(3.0), Inches(8.1)]
-    row_h = Inches(1.6)
+    col_xs = [Inches(0.9), Inches(7.1)]
+    row_h = Inches(1.55)
     for idx, (num, name) in enumerate(SECTIONS):
         cx = col_xs[idx // 3]
-        cy = Inches(1.45) + (idx % 3) * row_h
-
-        sq = _add_filled_box(slide, cx, cy, Inches(0.7), Inches(0.7), BURGUNDY)
-        tf = sq.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]
-        p.text = num
-        p.font.size = Pt(22)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
-        p.alignment = PP_ALIGN.CENTER
-        p.font.name = "Times New Roman"
-
-        _add_text_box(slide, cx + Inches(0.9), cy + Inches(0.04),
-                      Inches(4.2), Inches(0.45),
-                      name, font_size=18, bold=True, color=DARK_TEXT,
-                      align=PP_ALIGN.LEFT, font_name="Times New Roman")
-        _add_filled_box(slide, cx + Inches(0.9), cy + Inches(0.58),
-                        Inches(1.4), Inches(0.04), BURGUNDY)
+        cy = Inches(1.95) + (idx % 3) * row_h
+        _add_text_box(slide, cx, cy, Inches(1.1), Inches(0.65),
+                      num, font_size=30, bold=True, color=BURGUNDY)
+        _add_text_box(slide, cx + Inches(1.25), cy + Inches(0.06),
+                      Inches(4.6), Inches(0.5),
+                      name, font_size=19, bold=True, color=DARK_TEXT)
+        _add_filled_box(slide, cx + Inches(1.25), cy + Inches(0.62),
+                        Inches(4.3), Inches(0.012), HAIRLINE)
+    _add_bottom_bar(slide)
 
 
 # ===========================================================================
@@ -1294,86 +1261,71 @@ def slide_other_limitations(prs: Presentation):
 # ===========================================================================
 
 def slide_demo(prs: Presentation):
-    """Slide 22."""
+    """Slide 22 -- live demo cue."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    _add_filled_box(slide, Inches(0), Inches(0), SLIDE_WIDTH, Inches(2.0), BURGUNDY)
-    _add_text_box(slide, Inches(0), Inches(0.5), SLIDE_WIDTH, Inches(1.0),
-                  "DEMONSTRATION", font_size=52, bold=True, color=WHITE,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
-
-    _add_text_box(slide, MARGIN_LEFT, Inches(2.3), CONTENT_W, Inches(0.5),
-                  "Live Adaptive Underwriting Dashboard",
-                  font_size=24, bold=True, color=BURGUNDY,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
+    tag = _add_text_box(slide, MARGIN_LEFT, Inches(0.7), Inches(6.0), Inches(0.34),
+                        "LIVE DEMONSTRATION", font_size=12, bold=True, color=BURGUNDY)
+    _letterspace(tag.text_frame.paragraphs[0], 200)
+    _add_text_box(slide, MARGIN_LEFT, Inches(1.1), Inches(12.0), Inches(0.7),
+                  "Adaptive Underwriting Dashboard", font_size=30, bold=True,
+                  color=DARK_TEXT)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.92), Inches(0.55), Inches(0.045), BURGUNDY)
 
     steps = [
         ("1", "Run",  "uvicorn demo.main:app --reload --port 8000"),
         ("2", "Open", "http://localhost:8000"),
-        ("3", "Show", "Score applicant → bandit arm selection → PSI monitor panel"),
+        ("3", "Show", "Score applicant -> bandit arm selection -> PSI monitor panel"),
         ("4", "Show", "Human-in-the-loop referral queue + cost accounting"),
     ]
-    step_top = Inches(3.1)
+    step_top = Inches(2.6)
     for num, verb, detail in steps:
-        sq = _add_filled_box(slide, MARGIN_LEFT, step_top, Inches(0.5), Inches(0.5), BURGUNDY)
-        tf = sq.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]
-        p.text = num
-        p.font.size = Pt(18)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
-        p.alignment = PP_ALIGN.CENTER
-        _add_text_box(slide, MARGIN_LEFT + Inches(0.65), step_top,
-                      Inches(1.2), Inches(0.5),
-                      verb, font_size=16, bold=True, color=BURGUNDY)
-        _add_text_box(slide, MARGIN_LEFT + Inches(2.0), step_top,
-                      Inches(10.5), Inches(0.5),
-                      detail, font_size=14, color=DARK_TEXT, font_name="Courier New")
-        step_top += Inches(0.65)
+        _add_text_box(slide, MARGIN_LEFT, step_top, Inches(0.5), Inches(0.5),
+                      num, font_size=22, bold=True, color=BURGUNDY)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.65), step_top + Inches(0.05),
+                      Inches(1.2), Inches(0.45), verb, font_size=16, bold=True,
+                      color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(2.0), step_top + Inches(0.07),
+                      Inches(10.5), Inches(0.45), detail, font_size=14,
+                      color=SOFT_TEXT, font_name="Consolas")
+        _add_filled_box(slide, MARGIN_LEFT, step_top + Inches(0.58),
+                        Inches(11.9), Inches(0.012), HAIRLINE)
+        step_top += Inches(0.78)
 
-    _add_text_box(slide, MARGIN_LEFT, Inches(6.0), CONTENT_W, Inches(0.38),
-                  "Fallback: demo screenshots available in appendix (A6–A8).",
-                  font_size=13, italic=True, color=SOFT_TEXT, align=PP_ALIGN.CENTER)
-
+    _add_footnote(slide, "Fallback: demo screenshots in appendix (A6-A8) if the live run fails.")
     _add_bottom_bar(slide)
+    _add_notes(slide,
+        "Switch to the browser. Walk one applicant through scoring, show the arm the bandit "
+        "picks and the uncertainty-driven REFER, then the PSI monitor staying GREEN/AMBER, "
+        "and finally the HITL queue with per-referral cost. If anything breaks, jump to "
+        "appendix slides A6-A8 and narrate over the screenshots.")
 
 
 def slide_thanks(prs: Presentation):
     """Slide 23."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    box_w = Inches(11.6)
-    title_box = _add_filled_box(slide, (SLIDE_WIDTH - box_w) / 2, Inches(1.9),
-                                box_w, Inches(2.6), BURGUNDY, rounded=True)
-    tf = title_box.text_frame
-    tf.word_wrap = True
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    tf.margin_left = Inches(0.4)
-    tf.margin_right = Inches(0.4)
-    p1 = tf.paragraphs[0]
-    p1.text = "Thank You"
-    p1.font.size = Pt(52)
-    p1.font.bold = True
-    p1.font.color.rgb = WHITE
-    p1.font.name = "Times New Roman"
-    p1.alignment = PP_ALIGN.CENTER
-    p2 = tf.add_paragraph()
-    p2.text = "Questions & Answers"
-    p2.font.size = Pt(24)
-    p2.font.color.rgb = WHITE
-    p2.font.name = "Calibri"
-    p2.alignment = PP_ALIGN.CENTER
-
-    _add_text_box(slide, Inches(0), Inches(4.8), SLIDE_WIDTH, Inches(0.42),
-                  PRESENTER, font_size=22, bold=True, color=DARK_TEXT,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
-    _add_text_box(slide, Inches(0), Inches(5.28), SLIDE_WIDTH, Inches(0.38),
-                  "chanpoly3@gmail.com", font_size=17, color=SOFT_TEXT,
+    _add_filled_box(slide, Inches(5.92), Inches(2.0), Inches(1.5), Inches(0.045), BURGUNDY)
+    _add_text_box(slide, Inches(0), Inches(2.35), SLIDE_WIDTH, Inches(1.0),
+                  "Thank you.", font_size=54, bold=True, color=DARK_TEXT,
                   align=PP_ALIGN.CENTER)
-    _add_text_box(slide, Inches(0), Inches(5.72), SLIDE_WIDTH, Inches(0.38),
-                  INSTITUTION, font_size=16, color=SOFT_TEXT, align=PP_ALIGN.CENTER)
+    _add_text_box(slide, Inches(0), Inches(3.45), SLIDE_WIDTH, Inches(0.5),
+                  "Questions & Answers", font_size=20, color=BURGUNDY,
+                  align=PP_ALIGN.CENTER)
 
+    _add_text_box(slide, Inches(0), Inches(4.7), SLIDE_WIDTH, Inches(0.42),
+                  PRESENTER, font_size=20, bold=True, color=DARK_TEXT,
+                  align=PP_ALIGN.CENTER)
+    _add_text_box(slide, Inches(0), Inches(5.15), SLIDE_WIDTH, Inches(0.38),
+                  "chanpoly3@gmail.com", font_size=15, color=GRAY_LABEL,
+                  align=PP_ALIGN.CENTER)
+    _add_text_box(slide, Inches(0), Inches(5.55), SLIDE_WIDTH, Inches(0.38),
+                  INSTITUTION, font_size=14, color=GRAY_LABEL, align=PP_ALIGN.CENTER)
+
+    for path, lx in [(LOGO_ITC, 5.45), (LOGO_AMS, 6.25), (LOGO_DAC, 7.15)]:
+        if os.path.exists(path):
+            pic = slide.shapes.add_picture(path, Inches(lx), Inches(6.15), width=Inches(0.7))
+            _flat(pic)
     _add_bottom_bar(slide)
 
 
@@ -1381,10 +1333,9 @@ def slide_appendix_divider(prs: Presentation):
     """Slide 24."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    _add_filled_box(slide, Inches(0), Inches(0), SLIDE_WIDTH, Inches(2.0), BURGUNDY)
-    _add_text_box(slide, Inches(0), Inches(0.5), SLIDE_WIDTH, Inches(1.0),
-                  "APPENDIX", font_size=52, bold=True, color=WHITE,
-                  align=PP_ALIGN.CENTER, font_name="Times New Roman")
+    _add_text_box(slide, MARGIN_LEFT, Inches(0.9), Inches(10.0), Inches(1.0),
+                  "APPENDIX", font_size=48, bold=True, color=BURGUNDY)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(2.05), Inches(0.55), Inches(0.045), BURGUNDY)
 
     items = [
         ("A1", "Q2: Number Reconciliation -- EXP-005 vs ladder harness"),
@@ -1392,24 +1343,15 @@ def slide_appendix_divider(prs: Presentation):
         ("A3", "PSI Guardrail Mechanics"),
         ("A4", "LinUCB / LinTS Update Equations"),
         ("A5", "Dataset Construction -- CDHS / STEPS / ILO / WHO anchoring"),
-        ("A6–A8", "Demo Screenshots (fallback if live demo fails)"),
+        ("A6-A8", "Demo Screenshots (fallback if live demo fails)"),
     ]
-    item_top = Inches(2.3)
+    item_top = Inches(2.55)
     for i, (label, desc) in enumerate(items):
-        iy = item_top + i * Inches(0.65)
-        sq = _add_filled_box(slide, Inches(1.2), iy, Inches(0.9), Inches(0.5), BURGUNDY)
-        tf = sq.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.paragraphs[0]
-        p.text = label
-        p.font.size = Pt(11)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
-        p.alignment = PP_ALIGN.CENTER
-        _add_text_box(slide, Inches(2.3), iy + Inches(0.08),
-                      Inches(10.0), Inches(0.38),
+        iy = item_top + i * Inches(0.68)
+        _add_text_box(slide, Inches(1.0), iy, Inches(1.2), Inches(0.4),
+                      label, font_size=15, bold=True, color=BURGUNDY)
+        _add_text_box(slide, Inches(2.4), iy, Inches(10.0), Inches(0.4),
                       desc, font_size=15, color=DARK_TEXT)
-
     _add_bottom_bar(slide)
 
 
