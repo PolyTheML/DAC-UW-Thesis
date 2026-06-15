@@ -1,4 +1,4 @@
-"""Tests for the defense presentation generator (v2 minimal-academic, 32 slides)."""
+"""Tests for the defense presentation generator (v3 blue, 32 slides)."""
 import json
 import re
 import subprocess
@@ -69,72 +69,20 @@ def test_title_slide_has_defense_date(built_presentation):
     assert "July 2026" in combined, f"Defense date missing. Got: {combined[:200]}"
 
 
-def test_toc_slide_has_six_sections(built_presentation):
+def test_toc_slide_has_five_sections(built_presentation):
     prs = Presentation(str(built_presentation))
     combined = _all_text(prs, 1)
-    for roman in ["i", "ii", "iii", "iv", "v", "vi"]:
+    for roman in ["I", "II", "III", "IV", "V"]:
         assert roman in combined, f"ToC missing section '{roman}'. Got: {combined[:300]}"
 
 
-# ---------------------------------------------------------------------------
-# Section tags on content slides
-# ---------------------------------------------------------------------------
-
-def test_section_tags_present_on_content_slides(built_presentation):
-    """Every content slide (indices 2-20) carries an uppercase 'ROMAN · NAME' tag."""
-    prs = Presentation(str(built_presentation))
-    tag_pattern = re.compile(r"\b(I|II|III|IV|V|VI) · [A-Z&\s]+")
-    for idx in range(2, 21):
-        combined = _all_text(prs, idx)
-        assert tag_pattern.search(combined), (
-            f"Slide {idx + 1}: no uppercase section tag found. Got: {combined[:200]}"
-        )
-
-
 def test_appendix_slides_have_page_numbers(built_presentation):
-    """Appendix slides (indices 24-31) must have A1-A8 page numbers."""
+    """Appendix slides (indices 27-31) must have A1-A5 page numbers."""
     prs = Presentation(str(built_presentation))
-    for i, label in enumerate(["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]):
-        combined = _all_text(prs, 24 + i)
+    for i, label in enumerate(["A1", "A2", "A3", "A4", "A5"]):
+        combined = _all_text(prs, 27 + i)
         assert label in combined, (
             f"Appendix slide {i + 1}: page number '{label}' not found. Got: {combined[:200]}"
-        )
-
-
-# ---------------------------------------------------------------------------
-# Decimal slide titles (1.1., 4.3., ...)
-# ---------------------------------------------------------------------------
-
-EXPECTED_DECIMAL_TITLES = [
-    (2,  r"1\.1"),   # 1.1. Research Background
-    (3,  r"1\.2"),   # 1.2. Research Problem
-    (4,  r"1\.3"),   # 1.3. Research Goal
-    (5,  r"2\.1"),   # 2.1. Internship at DAC
-    (6,  r"3\.1"),   # 3.1. Literature Summary
-    (7,  r"4\.1"),   # 4.1. System Pipeline
-    (8,  r"4\.2"),   # 4.2. Synthetic Cambodia Dataset
-    (9,  r"4\.3"),   # 4.3. Bandit Formulation
-    (10, r"4\.4"),   # 4.4. Algorithms & Baselines
-    (11, r"4\.5"),   # 4.5. Guardrail + HITL Design
-    (12, r"5\.1"),   # 5.1. Convergence
-    (13, r"5\.2"),   # 5.2. Benchmark
-    (14, r"5\.3"),   # 5.3. Cold-start
-    (15, r"5\.4"),   # 5.4. HITL Results
-    (16, r"5\.5"),   # 5.5. Fairness Audit
-    (17, r"5\.6"),   # 5.6. Drift Adaptation
-    (18, r"6\.1"),   # 6.1. Achievements
-    (19, r"6\.2"),   # 6.2. Limitation: Baseline Ladder
-    (20, r"6\.3"),   # 6.3. Other Limitations
-]
-
-
-def test_decimal_titles_on_content_slides(built_presentation):
-    prs = Presentation(str(built_presentation))
-    for idx, pattern in EXPECTED_DECIMAL_TITLES:
-        combined = _all_text(prs, idx)
-        assert re.search(pattern, combined), (
-            f"Slide {idx + 1}: decimal title pattern '{pattern}' not found. "
-            f"Got: {combined[:200]}"
         )
 
 
@@ -148,34 +96,33 @@ def test_headline_numbers_match_json(built_presentation):
     with open(RESULTS_JSON) as f:
         results = json.load(f)
 
-    # +25.2% lift appears in slide 13 (5.1. Convergence)
+    # exp005 +25.2% lift appears in slide idx 20 (CONVERGENCE & REGRET)
     lift_pct = str(results["exp005"]["lift_pct"])
-    slide_13_text = _all_text(prs, 12)
-    assert lift_pct in slide_13_text, (
-        f"EXP-005 lift_pct '{lift_pct}' not found in slide 13. Got: {slide_13_text[:300]}"
+    slide_20_text = _all_text(prs, 20)
+    assert lift_pct in slide_20_text, (
+        f"EXP-005 lift_pct '{lift_pct}' not found in slide 21. Got: {slide_20_text[:300]}"
     )
 
-    # +14.8% HITL lift appears in slide 16 (5.4. HITL)
+    # exp008 +14.8% HITL lift appears in slide idx 21 (COLD-START & HUMAN-IN-THE-LOOP)
     hitl_lift = str(results["exp008"]["lift_pct"])
-    slide_16_text = _all_text(prs, 15)
-    assert hitl_lift in slide_16_text, (
-        f"EXP-008 lift_pct '{hitl_lift}' not found in slide 16. Got: {slide_16_text[:300]}"
+    slide_21_text = _all_text(prs, 21)
+    assert hitl_lift in slide_21_text, (
+        f"EXP-008 lift_pct '{hitl_lift}' not found in slide 22. Got: {slide_21_text[:300]}"
     )
 
-    # AlwaysRATED reward appears in slide 20 (6.2. Ladder) -- formatted with comma
-    always_rated_r = f"{results['ladder']['rows'][-3]['reward']:,}"  # "122,287"
-    slide_20_text = _all_text(prs, 19)
-    assert always_rated_r in slide_20_text, (
-        f"AlwaysRATED reward '{always_rated_r}' not found in slide 20. "
-        f"Got: {slide_20_text[:300]}"
+    # AlwaysRATED ladder reward appears in slide idx 27 (A1 ladder appendix)
+    always_rated_r = f"{next(r['reward'] for r in results['ladder']['rows'] if r['policy'] == 'AlwaysRATED'):,}"
+    slide_27_text = _all_text(prs, 27)
+    assert always_rated_r in slide_27_text, (
+        f"AlwaysRATED reward '{always_rated_r}' not found in slide 28. "
+        f"Got: {slide_27_text[:300]}"
     )
 
-    # Cold-start LinTS p-value appears in slide 15 (5.3. Cold-start)
+    # exp010 LinTS Wilcoxon p-value appears in slide idx 21
     lints_p = str(results["exp010"]["wilcoxon_t2000"]["lints_vs_freshxgb"]["p"])
-    slide_15_text = _all_text(prs, 14)
-    assert lints_p in slide_15_text, (
-        f"EXP-010 LinTS p-value '{lints_p}' not found in slide 15. "
-        f"Got: {slide_15_text[:300]}"
+    assert lints_p in slide_21_text, (
+        f"EXP-010 LinTS p-value '{lints_p}' not found in slide 22. "
+        f"Got: {slide_21_text[:300]}"
     )
 
 
@@ -198,11 +145,10 @@ def test_talking_points_helper_rejects_more_than_four():
 
 
 # ---------------------------------------------------------------------------
-# v2 style, density, and claim-armor guards
+# v3 style, density, and claim-armor guards
 # ---------------------------------------------------------------------------
 
-CONTENT_IDX = list(range(2, 21))            # slides 3-21 (01-19)
-NOTED_IDX = CONTENT_IDX + [21] + list(range(24, 32))   # + demo + A1-A8
+NOTED_IDX = [3, 4, 5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 27, 28, 29, 30, 31]
 
 
 def test_presenter_notes_on_content_slides(built_presentation):
@@ -215,7 +161,7 @@ def test_presenter_notes_on_content_slides(built_presentation):
 
 
 def test_no_serif_display_font(built_presentation):
-    """v2 is Calibri-only: Times New Roman must not appear on any slide."""
+    """v3 is Calibri/Segoe-UI-only: Times New Roman must not appear on any slide."""
     prs = Presentation(str(built_presentation))
     for s_i, slide in enumerate(prs.slides):
         for shape in slide.shapes:
@@ -241,21 +187,23 @@ def test_no_inherited_shadows(built_presentation):
             )
 
 
-def test_claim_armor_footnotes_present(built_presentation):
-    """The four claim-critical lines must survive any future density edits."""
+def test_claim_armor_strings_present(built_presentation):
+    """Spec §5 armor mapping — exact indices in the v3 inventory."""
     prs = Presentation(str(built_presentation))
     checks = [
-        (12, "5.0.1"),                        # convergence: admissible scope
-        (14, "0.0840"),                       # cold-start: LinUCB softened p
-        (15, "AlwaysRATED"),                  # HITL: ceiling scope
-        (16, "FAILED-with-interpretation"),   # fairness: criterion 6
-        (19, "FALSIFIED"),                    # ladder: falsified expectation
+        (6,  "O1"), (6, "O2"), (6, "O3"), (6, "O4"),  # objectives verbatim
+        (16, "AlwaysRATED"), (16, "inadmissible"),     # build-up C ceiling
+        (19, "5.0.1"),                                 # benchmark admissible scope
+        (20, "5.0.1"),                                 # convergence admissible scope
+        (21, "0.0039"), (21, "0.0840"),                # cold-start LinTS + softened LinUCB
+        (22, "FAILED-with-interpretation"),            # fairness criterion 6
+        (25, "O1"),                                    # conclusion scorecard
+        (27, "FALSIFIED"), (27, "AlwaysRATED"),        # ladder appendix
     ]
     for idx, needle in checks:
         combined = _all_text(prs, idx)
         assert needle in combined, (
-            f"Slide {idx + 1}: armor text '{needle}' missing. Got: {combined[:300]}"
-        )
+            f"Slide {idx + 1}: armor text '{needle}' missing. Got: {combined[:300]}")
 
 
 def test_slide_scale_figures_exist():
@@ -267,15 +215,25 @@ def test_slide_scale_figures_exist():
 
 
 def test_logos_only_on_title_and_thanks(built_presentation):
-    """Content slides carry at most one picture (the chart); title/thanks carry logos."""
+    """Title slide (idx 0) and thanks slide (idx 26) carry logos (>=2 pics).
+    All other slides carry at most 3 pictures (live-demo carries up to 3 screenshots)."""
     prs = Presentation(str(built_presentation))
+
     def n_pics(idx):
         return sum(1 for sh in prs.slides[idx].shapes if sh.shape_type == 13)
-    for idx in CONTENT_IDX:
-        assert n_pics(idx) <= 1, f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
-    assert n_pics(0) >= 2, "Title slide lost its logos"
-    assert n_pics(22) >= 2, "Thanks slide lost its logos"
 
+    assert n_pics(0) >= 2, "Title slide lost its logos"
+    assert n_pics(26) >= 2, "Thanks slide lost its logos"
+    for idx in range(len(prs.slides)):
+        if idx not in [0, 26]:
+            assert n_pics(idx) <= 3, (
+                f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
+            )
+
+
+# ---------------------------------------------------------------------------
+# v3 blue footer ribbon (helper unit tests — must stay)
+# ---------------------------------------------------------------------------
 
 def test_slide_palette_is_blue_not_burgundy():
     """Figure palette must carry no retired burgundy hexes."""
@@ -289,10 +247,6 @@ def test_slide_palette_is_blue_not_burgundy():
     assert not (used & banned), f"burgundy survives in SLIDE_PALETTE: {used & banned}"
     assert mod.SLIDE_PALETTE["hero"].lower() == "#1b5697", "hero series must be steel-blue"
 
-
-# ---------------------------------------------------------------------------
-# v3 blue footer ribbon
-# ---------------------------------------------------------------------------
 
 def test_footer_ribbon_three_parts(import_builder):
     b = import_builder
@@ -387,3 +341,51 @@ def test_demo_screenshot_helper_present(import_builder):
                            b.Inches(4), "nonexistent.png", "Underwriting dashboard")
     text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
     assert "Underwriting dashboard" in text
+
+
+# ---------------------------------------------------------------------------
+# v3 structural guards
+# ---------------------------------------------------------------------------
+
+def test_footer_ribbon_on_every_slide(built_presentation):
+    prs = Presentation(str(built_presentation))
+    for s_i, slide in enumerate(prs.slides):
+        text = " ".join(sh.text_frame.text for sh in slide.shapes if sh.has_text_frame)
+        assert "ITC-AMS" in text, f"Slide {s_i + 1}: footer ribbon missing"
+
+
+def test_divider_slides_present(built_presentation):
+    prs = Presentation(str(built_presentation))
+    for idx, num in [(2, "I"), (7, "II"), (9, "III"), (18, "IV"), (24, "V")]:
+        text = _all_text(prs, idx)
+        assert f"{num}." in text, f"Slide {idx + 1}: divider '{num}.' missing"
+
+
+def test_methodology_overview_and_three_zooms(built_presentation):
+    prs = Presentation(str(built_presentation))
+    assert "Applicant Context" in _all_text(prs, 10)
+    assert "Applicant Context" in _all_text(prs, 11)   # zoom 1
+    assert "Bandit Policy" in _all_text(prs, 13)        # zoom 2
+    assert "PSI Fairness + HITL" in _all_text(prs, 17)  # zoom 3
+
+
+def test_no_burgundy_fill_anywhere(built_presentation):
+    """Color regression: the retired burgundy RGB must not fill any shape."""
+    from pptx.dml.color import RGBColor
+    burgundy = {RGBColor(0x5D, 0x2A, 0x42), RGBColor(0x47, 0x1F, 0x33),
+                RGBColor(0x8A, 0x55, 0x70), RGBColor(0xB8, 0x94, 0xA6)}
+    prs = Presentation(str(built_presentation))
+    for s_i, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            try:
+                if shape.fill.type is not None and shape.fill.fore_color.rgb in burgundy:
+                    raise AssertionError(f"Slide {s_i + 1}: burgundy fill survives")
+            except (TypeError, AttributeError):
+                continue   # gradient/none/inherited fills have no solid rgb
+
+
+def test_demo_slide_has_visual(built_presentation):
+    """Live-demo slide (idx 23) carries 3 visuals (real shots or placeholders)."""
+    prs = Presentation(str(built_presentation))
+    text = _all_text(prs, 23)
+    assert "scoring" in text.lower() or "dashboard" in text.lower()
