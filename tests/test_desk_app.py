@@ -111,3 +111,24 @@ def test_score_validation_rejects_bad_age():
     bad = dict(SAMPLE_APPLICANT, age=5)
     r = client.post("/api/score", json=bad)
     assert r.status_code == 422
+
+
+def test_score_includes_model_fairness():
+    data = client.post("/api/score", json=SAMPLE_APPLICANT).json()
+    fair = data["fairness"]
+    assert fair["badge_status"] in ("GREEN", "AMBER", "RED")
+    for key in ("region", "occupation"):
+        assert fair[key]["status"] in ("GREEN", "AMBER", "RED")
+        assert isinstance(fair[key]["psi"], (int, float))
+    # Canonical EXP-006 footnote (read from thesis_results.json, not invented).
+    assert fair["canonical"]["region_zone"] == "GREEN"
+    assert fair["canonical"]["occupation_zone"] == "AMBER"
+
+
+def test_model_fairness_is_constant_across_applicants():
+    """Model-level (not per-applicant): identical for any applicant."""
+    a = client.post("/api/score", json=SAMPLE_APPLICANT).json()["fairness"]
+    other = dict(SAMPLE_APPLICANT, region="Siem Reap", occupation="Rice Farmer", age=70)
+    b = client.post("/api/score", json=other).json()["fairness"]
+    assert a["region"]["psi"] == b["region"]["psi"]
+    assert a["occupation"]["psi"] == b["occupation"]["psi"]

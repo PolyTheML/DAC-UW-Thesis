@@ -21,7 +21,7 @@ from healthrl.underwriting_bandit import (
     RewardConfig,
     preprocess_cambodia_data,
 )
-from demo.pricing_engine import optimize_premium
+from demo.pricing_engine import compute_psi, optimize_premium
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 COEFFS_PATH = ROOT / "demo" / "static" / "coefficients_linucb_seed42.json"
@@ -95,6 +95,49 @@ class DeskScorer:
         self.raw_base = pd.read_csv(DATA_PATH)
         self.config = RewardConfig()
 
+        self._canonical_zones = self._load_canonical_zones()
+        self.fairness = self._compute_model_fairness()  # cached at startup
+
+    def _load_canonical_zones(self) -> dict[str, Any]:
+        """Authoritative EXP-006 PSI zones from thesis_results.json (spec §8)."""
+        path = ROOT / "demo" / "static" / "thesis_results.json"
+        data = json.loads(path.read_text(encoding="utf-8"))["exp006"]
+        return {
+            "region_zone": data["region"]["psi_zone"],
+            "occupation_zone": data["occupation"]["psi_zone"],
+            "region_psi": data["region"]["psi_final_window"],
+            "occupation_psi": data["occupation"]["psi_final_window"],
+        }
+
+    def _compute_model_fairness(self) -> dict[str, Any]:
+        """Standing model-level PSI: trained policy's approved pool vs population.
+
+        Approved = the policy issues a policy (STANDARD or RATED). PSI compares
+        the approved subpopulation's group distribution against the full
+        population (spec §3.5/§6). Cached; never per-applicant.
+        """
+        actions = np.argmax(self.X_full @ self.theta.T, axis=1)  # (N,)
+        approved = np.isin(actions, [0, 1])  # STANDARD, RATED
+        out: dict[str, Any] = {}
+        zones = []
+        for col, label in (("region", "Region"), ("occupation", "Occupation")):
+            ref = self.df_raw[col].value_counts().sort_index()
+            act = self.df_raw.loc[approved, col].value_counts().reindex(
+                ref.index, fill_value=0
+            )
+            psi = compute_psi(ref.values.astype(float), act.values.astype(float))
+            status = "GREEN" if psi < 0.10 else "AMBER" if psi < 0.25 else "RED"
+            out[col] = {"label": label, "psi": round(psi, 4), "status": status}
+            zones.append(status)
+        order = {"GREEN": 0, "AMBER": 1, "RED": 2}
+        out["badge_status"] = max(zones, key=lambda z: order[z])
+        out["canonical"] = self._canonical_zones
+        out["note"] = (
+            "Model-level guardrail: trained-policy approved pool vs population "
+            "(illustrative). Authoritative zones: EXP-006, 20 seeds."
+        )
+        return out
+
     def featurize(self, applicant: dict[str, Any]) -> np.ndarray:
         """Normalized 34-dim feature vector for a single applicant (spec §6)."""
         combined = pd.concat(
@@ -162,6 +205,7 @@ class DeskScorer:
             },
             "drivers": drivers,
             "premium": self._premium(decision, applicant),
+            "fairness": self.fairness,
             "illustrative_note": (
                 "Illustrative · single seed (42) · representative trained LinUCB policy"
             ),
