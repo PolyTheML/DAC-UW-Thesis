@@ -1,5 +1,141 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Underwriting Desk</title></head>
-<body><h1>Underwriting Desk</h1><p>Loading…</p></body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adaptive Underwriting Desk</title>
+  <style>
+    :root {
+      --bg:#0f1419; --panel:#1a2230; --panel2:#222c3c; --ink:#e8edf4;
+      --muted:#93a1b5; --line:#2c3a4e; --accent:#3b82f6; --accent2:#22d3ee;
+      --green:#22c55e; --amber:#f59e0b; --red:#ef4444;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:"Segoe UI",Calibri,system-ui,sans-serif;
+           background:var(--bg); color:var(--ink); }
+    header { display:flex; align-items:center; gap:1.5rem; padding:1rem 1.5rem;
+             border-bottom:1px solid var(--line); background:var(--panel); }
+    header h1 { font-size:1.1rem; margin:0; font-weight:600; }
+    header .sub { color:var(--muted); font-size:.8rem; }
+    .toggle { margin-left:auto; display:flex; gap:.25rem; background:var(--panel2);
+              padding:.25rem; border-radius:999px; }
+    .toggle button { border:0; background:transparent; color:var(--muted);
+                     padding:.5rem 1rem; border-radius:999px; cursor:pointer;
+                     font-size:.85rem; font-weight:600; }
+    .toggle button.active { background:var(--accent); color:#fff; }
+    main { padding:1.5rem; max-width:1200px; margin:0 auto; }
+    .view { display:none; }
+    .view.active { display:block; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    .card { background:var(--panel); border:1px solid var(--line);
+            border-radius:12px; padding:1.25rem; }
+    .card h2 { margin:0 0 1rem; font-size:.95rem; font-weight:600; }
+    label { display:block; font-size:.75rem; color:var(--muted); margin:.6rem 0 .2rem; }
+    input, select { width:100%; padding:.5rem; background:var(--panel2);
+                    border:1px solid var(--line); border-radius:8px; color:var(--ink); }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+    .group-title { font-size:.7rem; text-transform:uppercase; letter-spacing:.05em;
+                   color:var(--accent2); margin:1rem 0 .25rem; }
+    .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .chip { padding:.3rem .6rem; border:1px solid var(--line); border-radius:999px;
+            font-size:.75rem; cursor:pointer; user-select:none; }
+    .chip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .btn { padding:.6rem 1rem; border:0; border-radius:8px; background:var(--accent);
+           color:#fff; font-weight:600; cursor:pointer; }
+    .btn.ghost { background:var(--panel2); color:var(--ink); border:1px solid var(--line); }
+    .btn-row { display:flex; gap:.5rem; margin-top:1rem; }
+    .badge { display:inline-block; padding:.25rem .6rem; border-radius:6px;
+             font-weight:700; font-size:.8rem; }
+    .decision-badge { font-size:1.5rem; padding:.5rem 1rem; }
+    .b-STANDARD { background:rgba(34,197,94,.15); color:var(--green); }
+    .b-RATED { background:rgba(245,158,11,.15); color:var(--amber); }
+    .b-DECLINE { background:rgba(239,68,68,.15); color:var(--red); }
+    .b-REFER { background:rgba(59,130,246,.15); color:var(--accent); }
+    .z-GREEN { background:rgba(34,197,94,.15); color:var(--green); }
+    .z-AMBER { background:rgba(245,158,11,.15); color:var(--amber); }
+    .z-RED { background:rgba(239,68,68,.15); color:var(--red); }
+    .bar { height:22px; border-radius:5px; background:var(--accent2); }
+    .bar-track { background:var(--panel2); border-radius:5px; }
+    .bar-row { display:grid; grid-template-columns:90px 1fr 70px; gap:.5rem;
+               align-items:center; margin:.35rem 0; font-size:.8rem; }
+    .bar-row.win .bar { background:var(--accent); }
+    .driver { display:flex; justify-content:space-between; padding:.35rem 0;
+              border-bottom:1px solid var(--line); font-size:.85rem; }
+    .up { color:var(--green); } .down { color:var(--red); }
+    .note { color:var(--muted); font-size:.72rem; margin-top:.75rem; font-style:italic; }
+    .headline { display:flex; gap:1.5rem; flex-wrap:wrap; align-items:baseline;
+                background:var(--panel2); border-radius:10px; padding:1rem 1.25rem;
+                margin-bottom:1.25rem; }
+    .headline .big { font-size:1.8rem; font-weight:800; color:var(--accent2); }
+    .headline .tag { color:var(--muted); font-size:.78rem; }
+    canvas { background:var(--panel2); border-radius:8px; padding:.5rem; }
+    .muted { color:var(--muted); font-size:.8rem; }
+    .err { color:var(--red); font-size:.85rem; }
+    .mix-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Adaptive Underwriting Desk</h1>
+      <div class="sub">Contextual-bandit underwriting · Cambodia (CDHS-anchored)</div>
+    </div>
+    <div class="toggle">
+      <button id="tab-desk" class="active">Underwriting Desk</button>
+      <button id="tab-learn">Watch it Learn</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- VIEW 1: UNDERWRITING DESK -->
+    <section id="view-desk" class="view active">
+      <div class="grid">
+        <div class="card" id="form-card">
+          <h2>Applicant</h2>
+          <div class="btn-row">
+            <button class="btn ghost" id="btn-load">⟳ Load CDHS sample</button>
+            <button class="btn ghost" id="btn-clear">Clear</button>
+          </div>
+          <div id="form"></div>
+          <div class="btn-row">
+            <button class="btn" id="btn-score">Score applicant →</button>
+          </div>
+          <div id="form-err" class="err"></div>
+        </div>
+        <div class="card" id="result-card">
+          <h2>Underwriting decision</h2>
+          <div id="result"><p class="muted">Load a sample or fill the form, then
+            score.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: WATCH IT LEARN -->
+    <section id="view-learn" class="view">
+      <div id="headline" class="headline"><span class="muted">Loading headline…</span></div>
+      <div class="card">
+        <h2>Cumulative reward — adaptive policy vs Static XGB</h2>
+        <div class="btn-row">
+          <select id="algo"><option>LinUCB</option><option>LinTS</option></select>
+          <button class="btn" id="btn-play">▶ Play</button>
+          <button class="btn ghost" id="btn-reset">Reset</button>
+          <span class="muted" id="round-readout">round 0</span>
+          <span class="muted" id="lift-readout"></span>
+        </div>
+        <canvas id="chart" height="120"></canvas>
+        <div class="note" id="learn-note"></div>
+        <div class="mix-wrap">
+          <div><div class="group-title">Early (exploring)</div><div id="mix-early"></div></div>
+          <div><div class="group-title">Late (exploiting)</div><div id="mix-late"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/chart.umd.min.js"></script>
+  <script src="/static/api.js"></script>
+  <script src="/static/desk.js"></script>
+  <script src="/static/learn.js"></script>
+  <script src="/static/main.js"></script>
+</body>
 </html>
