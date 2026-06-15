@@ -132,3 +132,27 @@ def test_model_fairness_is_constant_across_applicants():
     b = client.post("/api/score", json=other).json()["fairness"]
     assert a["region"]["psi"] == b["region"]["psi"]
     assert a["occupation"]["psi"] == b["occupation"]["psi"]
+
+
+def test_learn_run_trajectories():
+    payload = {"algorithm": "LinUCB", "seed": 42, "n_rounds": 300}
+    r = client.post("/api/learn/run", json=payload)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["algorithm"] == "LinUCB"
+    assert data["n_rounds"] == 300
+    assert len(data["adaptive"]["cumulative"]) == 300
+    assert len(data["static"]["cumulative"]) == 300
+    assert len(data["rounds"]) == 300
+    # Early/late action mixes are distributions over the 4 actions.
+    for mix in (data["adaptive"]["early_mix"], data["adaptive"]["late_mix"]):
+        # Components are rounded to 4 dp for the payload, so sum ≈ 1 (not exact).
+        assert abs(sum(mix.values()) - 1.0) < 1e-3
+        assert set(mix.keys()) == set(ACTION_NAMES)
+    # Illustrative lift readout present and labelled.
+    assert "lift_pct" in data and isinstance(data["lift_pct"], (int, float))
+
+
+def test_learn_run_rejects_bad_algorithm():
+    r = client.post("/api/learn/run", json={"algorithm": "Nope", "n_rounds": 300})
+    assert r.status_code == 422

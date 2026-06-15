@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT))
 
 from healthrl.underwriting_bandit import preprocess_cambodia_data  # noqa: E402
 from demo.desk import scoring  # noqa: E402
+from demo.desk import learning  # noqa: E402
 
 DESK_DIR = Path(__file__).resolve().parent
 STATIC_DIR = DESK_DIR / "static"
@@ -138,3 +139,14 @@ class ApplicantIn(BaseModel):
 @app.post("/api/score")
 async def score(payload: ApplicantIn) -> dict[str, Any]:
     return scoring.SCORER.score(payload.model_dump())
+
+
+class LearnRunIn(BaseModel):
+    algorithm: str = Field("LinUCB", pattern="^(LinUCB|LinTS)$")
+    seed: int = Field(42, ge=0, le=10_000)
+    n_rounds: int = Field(2000, ge=300, le=5000)
+
+
+@app.post("/api/learn/run")
+async def learn_run(payload: LearnRunIn) -> dict[str, Any]:
+    return learning.run_learn(payload.algorithm, payload.seed, payload.n_rounds)
