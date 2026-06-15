@@ -56,20 +56,28 @@ _LADDER = RESULTS["ladder"]
 # ---------------------------------------------------------------------------
 # Colors
 # ---------------------------------------------------------------------------
-BURGUNDY      = RGBColor(0x5D, 0x2A, 0x42)
-BURGUNDY_DARK = RGBColor(0x47, 0x1F, 0x33)
+BLUE_TITLE    = RGBColor(0x1B, 0x56, 0x97)   # content titles + underline accent
+BLUE_DIVIDER  = RGBColor(0x1F, 0x6F, 0xC4)   # divider numerals/titles
+BLUE_DEEP     = RGBColor(0x14, 0x3D, 0x6B)   # footer org block / deep accent
+BLUE_TINT     = RGBColor(0xAF, 0xC4, 0xE4)   # footer center block tint
+BLUE_NODE     = RGBColor(0xDC, 0xE8, 0xF6)   # flowchart node fill (pale blue)
+NODE_START    = RGBColor(0x2E, 0x9E, 0x5B)   # flowchart Start node (green)
+NODE_END      = RGBColor(0xE6, 0x8A, 0x2E)   # flowchart End node (orange)
+GREEN_HILITE  = RGBColor(0x2E, 0x9E, 0x5B)   # methodology "you are here" outline
 WHITE         = RGBColor(0xFF, 0xFF, 0xFF)
 DARK_TEXT     = RGBColor(0x1A, 0x1A, 0x1A)
 SOFT_TEXT     = RGBColor(0x3A, 0x3A, 0x3A)
-LIGHT_GRAY    = RGBColor(0xF2, 0xEE, 0xEF)
+LIGHT_GRAY    = RGBColor(0xF2, 0xF4, 0xF7)
 MED_GRAY      = RGBColor(0x80, 0x80, 0x80)
 ACCENT_RED    = RGBColor(0xD9, 0x3B, 0x3B)
 ACCENT_GREEN  = RGBColor(0x2E, 0x8B, 0x57)
 ACCENT_AMBER  = RGBColor(0xE6, 0xA6, 0x2E)
-ACCENT_BLUE   = RGBColor(0x3B, 0x6E, 0xA5)
+ACCENT_BLUE   = RGBColor(0x1F, 0x6F, 0xC4)
 GRAY_LABEL    = RGBColor(0x77, 0x77, 0x77)   # stat labels / footnotes
 HAIRLINE      = RGBColor(0xDD, 0xDD, 0xDD)   # 1px separators
-PANEL         = RGBColor(0xF7, 0xF5, 0xF6)   # flat panel fill (no borders)
+PANEL         = RGBColor(0xF3, 0xF6, 0xFB)   # flat panel fill (pale blue-gray)
+HEAD_FONT     = "Segoe UI"                    # headings (rounded reference feel)
+BODY_FONT     = "Calibri"                     # body text
 
 # ---------------------------------------------------------------------------
 # Dimensions (16:9 widescreen)
@@ -78,11 +86,11 @@ SLIDE_WIDTH       = Inches(13.333)
 SLIDE_HEIGHT      = Inches(7.5)
 MARGIN_LEFT       = Inches(0.5)
 CONTENT_TOP       = Inches(1.32)   # below tag + title + accent
-BOTTOM_BAR_TOP    = Inches(7.28)
-BOTTOM_BAR_HEIGHT = Inches(0.22)
+FOOTER_TOP        = Inches(7.04)
+FOOTER_HEIGHT     = Inches(0.46)
 CONTENT_W         = SLIDE_WIDTH - MARGIN_LEFT - Inches(0.5)
-CONTENT_H         = BOTTOM_BAR_TOP - CONTENT_TOP - Inches(0.15)
-FOOTNOTE_TOP      = BOTTOM_BAR_TOP - Inches(0.42)
+CONTENT_H         = FOOTER_TOP - CONTENT_TOP - Inches(0.15)
+FOOTNOTE_TOP      = FOOTER_TOP - Inches(0.42)
 
 # ---------------------------------------------------------------------------
 # Thesis metadata
@@ -247,7 +255,7 @@ def _add_stat_row(slide, top, stats, hero_idx: int = 0, height=Inches(1.05),
                   left=None, width=None, value_colors=None):
     """Flat big-number stat row: value over small gray caps label, hairline-separated.
 
-    stats: list of (value, label). hero_idx gets BURGUNDY; value_colors overrides per-stat.
+    stats: list of (value, label). hero_idx gets BLUE_TITLE; value_colors overrides per-stat.
     """
     left = MARGIN_LEFT if left is None else left
     width = CONTENT_W if width is None else width
@@ -256,7 +264,7 @@ def _add_stat_row(slide, top, stats, hero_idx: int = 0, height=Inches(1.05),
     for i, (val, label) in enumerate(stats):
         cx = left + i * col_w
         color = (value_colors[i] if value_colors and value_colors[i] is not None
-                 else (BURGUNDY if i == hero_idx else DARK_TEXT))
+                 else (BLUE_TITLE if i == hero_idx else DARK_TEXT))
         _add_text_box(slide, cx, top, col_w - Inches(0.15), Inches(0.62),
                       str(val), font_size=30, bold=True, color=color)
         lab = _add_text_box(slide, cx, top + Inches(0.62), col_w - Inches(0.15),
@@ -277,7 +285,7 @@ def _add_talking_points(slide, left, top, width, points, font_size: int = 17,
         raise ValueError(f"talking points rule: max 4 per slide, got {len(points)}")
     y = top
     for text in points:
-        _add_filled_box(slide, left, y + Inches(0.12), Inches(0.1), Inches(0.1), BURGUNDY)
+        _add_filled_box(slide, left, y + Inches(0.12), Inches(0.1), Inches(0.1), BLUE_TITLE)
         _add_text_box(slide, left + Inches(0.28), y, width - Inches(0.28),
                       line_h, text, font_size=font_size, color=DARK_TEXT)
         y += line_h
@@ -308,7 +316,7 @@ def _add_flat_table(slide, left, top, col_ws, header, rows, font_size: int = 12,
         _add_text_box(slide, cx + Inches(0.06), top, cw - Inches(0.12), Inches(0.34),
                       h, font_size=font_size, bold=True, color=DARK_TEXT)
     _add_filled_box(slide, left, top + Inches(0.36), sum(col_ws, Inches(0)),
-                    Inches(0.025), BURGUNDY)
+                    Inches(0.025), BLUE_TITLE)
     for i, row in enumerate(rows):
         ry = top + Inches(0.44) + i * row_h
         if i % 2 == 0:
@@ -332,7 +340,7 @@ def _add_section_tag(slide, sec_key: str):
     num, name = next((n, t) for n, t in SECTIONS if n == sec_key)
     box = _add_text_box(slide, MARGIN_LEFT, Inches(0.16), Inches(7.0), Inches(0.3),
                         f"{num.upper()} · {name.upper()}",
-                        font_size=10, bold=True, color=BURGUNDY)
+                        font_size=10, bold=True, color=BLUE_TITLE)
     _letterspace(box.text_frame.paragraphs[0])
 
 
@@ -351,7 +359,7 @@ def _add_slide_title(slide, text: str):
     tf = box.text_frame
     tf.word_wrap = False
     p = tf.paragraphs[0]
-    for run_text, run_color in ((f"{num}  ", BURGUNDY), (rest, DARK_TEXT)):
+    for run_text, run_color in ((f"{num}  ", BLUE_TITLE), (rest, DARK_TEXT)):
         if run_text.strip():
             r = p.add_run()
             r.text = run_text
@@ -363,34 +371,28 @@ def _add_slide_title(slide, text: str):
 
 def _add_title_rule(slide):
     """Short burgundy accent under the title (replaces the full-width rule)."""
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.14), Inches(0.55), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.14), Inches(0.55), Inches(0.045), BLUE_TITLE)
 
 
-def _add_bottom_bar(slide, page_num: str | None = None):
-    """Thin burgundy strip; white right-aligned page number; NO logos."""
-    bar = slide.shapes.add_shape(
-        MSO_SHAPE.RECTANGLE, Inches(0), BOTTOM_BAR_TOP, SLIDE_WIDTH, BOTTOM_BAR_HEIGHT)
-    _flat(bar)
-    _set_shape_fill(bar, BURGUNDY)
-    _no_line(bar)
-    if page_num is not None:
-        pg = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE, Inches(12.3), BOTTOM_BAR_TOP - Inches(0.02),
-            Inches(0.9), Inches(0.26))
-        _flat(pg)
-        pg.fill.background()
-        _no_line(pg)
-        tf = pg.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        tf.margin_top = Inches(0)
-        tf.margin_bottom = Inches(0)
-        p = tf.paragraphs[0]
-        p.text = page_num
-        p.font.size = Pt(11)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
-        p.font.name = "Calibri"
-        p.alignment = PP_ALIGN.RIGHT
+def _add_footer_ribbon(slide, page_label: str | None = None):
+    """3-part footer: blue org block | center deck title (tint) | date + page (right)."""
+    # left org block
+    _add_filled_box(slide, Inches(0), FOOTER_TOP, Inches(3.4), FOOTER_HEIGHT, BLUE_DEEP)
+    _add_text_box(slide, Inches(0.18), FOOTER_TOP, Inches(3.1), FOOTER_HEIGHT,
+                  "DAC  ·  ITC-AMS", font_size=11, bold=True, color=WHITE,
+                  font_name=HEAD_FONT, anchor=MSO_ANCHOR.MIDDLE)
+    # center deck-title block (lighter tint)
+    _add_filled_box(slide, Inches(3.4), FOOTER_TOP, Inches(6.7), FOOTER_HEIGHT, BLUE_TITLE)
+    _add_text_box(slide, Inches(3.5), FOOTER_TOP, Inches(6.5), FOOTER_HEIGHT,
+                  "Adaptive Underwriting via Contextual Bandits", font_size=11,
+                  color=WHITE, font_name=BODY_FONT, align=PP_ALIGN.CENTER,
+                  anchor=MSO_ANCHOR.MIDDLE)
+    # right date + page block
+    _add_filled_box(slide, Inches(10.1), FOOTER_TOP, Inches(3.233), FOOTER_HEIGHT, BLUE_DEEP)
+    page = f"July 2026   ·   {page_label}" if page_label else "July 2026"
+    _add_text_box(slide, Inches(10.2), FOOTER_TOP, Inches(3.0), FOOTER_HEIGHT,
+                  page, font_size=11, bold=True, color=WHITE, font_name=HEAD_FONT,
+                  align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE)
 
 
 def _content_slide(prs, sec_key: str, title: str, page_num: str):
@@ -425,18 +427,18 @@ def slide_title(prs: Presentation):
     _add_text_box(slide, Inches(3.4), Inches(0.92), Inches(7.2), Inches(0.4),
                   DEPARTMENT, font_size=15, color=GRAY_LABEL, align=PP_ALIGN.CENTER)
 
-    _add_filled_box(slide, Inches(5.92), Inches(2.05), Inches(1.5), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, Inches(5.92), Inches(2.05), Inches(1.5), Inches(0.045), BLUE_TITLE)
     box = _add_text_box(slide, Inches(0.9), Inches(2.35), Inches(11.5), Inches(1.7),
                         THESIS_TITLE.upper(), font_size=27, bold=True, color=DARK_TEXT,
                         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
     box.text_frame.word_wrap = True
-    _add_filled_box(slide, Inches(5.92), Inches(4.25), Inches(1.5), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, Inches(5.92), Inches(4.25), Inches(1.5), Inches(0.045), BLUE_TITLE)
 
     _add_text_box(slide, Inches(0), Inches(4.62), SLIDE_WIDTH, Inches(0.34),
                   "Thesis Defense — Presented by", font_size=14, color=GRAY_LABEL,
                   align=PP_ALIGN.CENTER)
     _add_text_box(slide, Inches(0), Inches(4.96), SLIDE_WIDTH, Inches(0.5),
-                  PRESENTER, font_size=27, bold=True, color=BURGUNDY,
+                  PRESENTER, font_size=27, bold=True, color=BLUE_TITLE,
                   align=PP_ALIGN.CENTER)
 
     lx, rx = Inches(1.5), Inches(7.5)
@@ -462,7 +464,7 @@ def slide_toc(prs: Presentation):
 
     _add_text_box(slide, MARGIN_LEFT, Inches(0.55), Inches(9.0), Inches(0.7),
                   "Table of Contents", font_size=30, bold=True, color=DARK_TEXT)
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.32), Inches(0.55), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.32), Inches(0.55), Inches(0.045), BLUE_TITLE)
 
     col_xs = [Inches(0.9), Inches(7.1)]
     row_h = Inches(1.55)
@@ -470,7 +472,7 @@ def slide_toc(prs: Presentation):
         cx = col_xs[idx // 3]
         cy = Inches(1.95) + (idx % 3) * row_h
         _add_text_box(slide, cx, cy, Inches(1.1), Inches(0.65),
-                      num, font_size=30, bold=True, color=BURGUNDY)
+                      num, font_size=30, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, cx + Inches(1.25), cy + Inches(0.06),
                       Inches(4.6), Inches(0.5),
                       name, font_size=19, bold=True, color=DARK_TEXT)
@@ -488,7 +490,7 @@ def slide_research_background(prs: Presentation):
     slide = _content_slide(prs, "i", "1.1.  Research Background", "01")
 
     _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.1), Inches(6.4), Inches(0.9),
-                  "< 10 %", font_size=60, bold=True, color=BURGUNDY)
+                  "< 10 %", font_size=60, bold=True, color=BLUE_TITLE)
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.05), Inches(6.4),
                         Inches(0.36), "HEALTH-INSURANCE PENETRATION IN CAMBODIA (2023 EST.)",
                         font_size=10, color=GRAY_LABEL)
@@ -536,7 +538,7 @@ def slide_research_problem(prs: Presentation):
     ]
     for (title, desc), (lx, ly) in zip(problems, positions):
         _add_filled_box(slide, lx, ly, card_w, card_h, PANEL)
-        _add_filled_box(slide, lx, ly, Inches(0.07), card_h, BURGUNDY)
+        _add_filled_box(slide, lx, ly, Inches(0.07), card_h, BLUE_TITLE)
         _add_text_box(slide, lx + Inches(0.3), ly + Inches(0.35),
                       card_w - Inches(0.6), Inches(0.5),
                       title, font_size=20, bold=True, color=DARK_TEXT)
@@ -558,7 +560,7 @@ def slide_goal_objectives(prs: Presentation):
     slide = _content_slide(prs, "i", "1.3.  Research Goal & Objectives", "03")
 
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(4.0), Inches(0.32),
-                        "RESEARCH GOAL", font_size=11, bold=True, color=BURGUNDY)
+                        "RESEARCH GOAL", font_size=11, bold=True, color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
     _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.38), CONTENT_W, Inches(0.75),
                   "Design and evaluate an adaptive health insurance underwriting system using "
@@ -567,7 +569,7 @@ def slide_goal_objectives(prs: Presentation):
                   font_size=15, color=DARK_TEXT)
 
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.35), Inches(4.0),
-                        Inches(0.32), "OBJECTIVES", font_size=11, bold=True, color=BURGUNDY)
+                        Inches(0.32), "OBJECTIVES", font_size=11, bold=True, color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
 
     objs = [
@@ -584,7 +586,7 @@ def slide_goal_objectives(prs: Presentation):
     for i, (label, text) in enumerate(objs):
         y = top + i * Inches(0.95)
         _add_text_box(slide, MARGIN_LEFT, y, Inches(0.75), Inches(0.5),
-                      label, font_size=20, bold=True, color=BURGUNDY)
+                      label, font_size=20, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, MARGIN_LEFT + Inches(0.85), y + Inches(0.02),
                       CONTENT_W - Inches(0.85), Inches(0.85),
                       text, font_size=14, color=DARK_TEXT)
@@ -621,7 +623,7 @@ def slide_dac_internship(prs: Presentation):
 
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.05), Inches(4.0),
                         Inches(0.32), "INTERNSHIP TIMELINE", font_size=11, bold=True,
-                        color=BURGUNDY)
+                        color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
     timeline = [
         ("Mar 2026", "Problem scoping & dataset design"),
@@ -633,9 +635,9 @@ def slide_dac_internship(prs: Presentation):
     strip_top = CONTENT_TOP + Inches(3.5)
     for i, (month, desc) in enumerate(timeline):
         lx = MARGIN_LEFT + i * (seg_w + Inches(0.1))
-        _add_filled_box(slide, lx, strip_top, seg_w, Inches(0.05), BURGUNDY)
+        _add_filled_box(slide, lx, strip_top, seg_w, Inches(0.05), BLUE_TITLE)
         _add_text_box(slide, lx, strip_top + Inches(0.15), seg_w - Inches(0.2),
-                      Inches(0.36), month, font_size=14, bold=True, color=BURGUNDY)
+                      Inches(0.36), month, font_size=14, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, lx, strip_top + Inches(0.55), seg_w - Inches(0.2),
                       Inches(0.8), desc, font_size=12, color=SOFT_TEXT)
 
@@ -705,7 +707,7 @@ def slide_system_pipeline(prs: Presentation):
     for li, (label, boxes) in enumerate(layers):
         ly = top0 + li * row_step
         lab = _add_text_box(slide, MARGIN_LEFT, ly + Inches(0.22), label_w, Inches(0.4),
-                            label, font_size=10, bold=True, color=BURGUNDY)
+                            label, font_size=10, bold=True, color=BLUE_TITLE)
         _letterspace(lab.text_frame.paragraphs[0], 80)
         for bi, text in enumerate(boxes):
             bx = MARGIN_LEFT + label_w + bi * (box_w + gap)
@@ -717,14 +719,14 @@ def slide_system_pipeline(prs: Presentation):
             if li < 2:  # connector to the layer below
                 cx = bx + box_w / 2
                 _add_filled_box(slide, cx, ly + box_h, Inches(0.018),
-                                row_step - box_h, BURGUNDY)
+                                row_step - box_h, BLUE_TITLE)
 
     src_y = top0 + 3 * row_step + Inches(0.1)
     for sx, text in [(MARGIN_LEFT + label_w, "Cambodia synthetic dataset (2,000 applicants)"),
                      (MARGIN_LEFT + label_w + 2 * (box_w + gap),
                       "Static XGBoost baseline (mortality model)")]:
         _add_filled_box(slide, sx, src_y, box_w * 2 + gap, Inches(0.6), WHITE,
-                        line_color=BURGUNDY, line_width_pt=1.2)
+                        line_color=BLUE_TITLE, line_width_pt=1.2)
         _add_text_box(slide, sx, src_y, box_w * 2 + gap, Inches(0.6),
                       text, font_size=12, color=SOFT_TEXT,
                       align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
@@ -766,7 +768,7 @@ def slide_cambodia_dataset(prs: Presentation):
     for i, (arm, desc) in enumerate(arms):
         ry = ay + i * Inches(0.78)
         _add_text_box(slide, Inches(7.1), ry, Inches(1.9), Inches(0.4),
-                      arm, font_size=15, bold=True, color=BURGUNDY)
+                      arm, font_size=15, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, Inches(9.1), ry + Inches(0.02), Inches(3.7), Inches(0.5),
                       desc, font_size=13, color=SOFT_TEXT)
         if i > 0:
@@ -797,7 +799,7 @@ def slide_bandit_formulation(prs: Presentation):
     for i, (term, desc) in enumerate(defs):
         ry = dy + i * Inches(0.95)
         _add_text_box(slide, MARGIN_LEFT, ry, Inches(2.9), Inches(0.45),
-                      term, font_size=16, bold=True, color=BURGUNDY)
+                      term, font_size=16, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, MARGIN_LEFT, ry + Inches(0.42), Inches(5.9), Inches(0.4),
                       desc, font_size=13, color=SOFT_TEXT)
 
@@ -871,7 +873,7 @@ def slide_guardrail_hitl_design(prs: Presentation):
     slide = _content_slide(prs, "iv", "4.5.  Guardrail + HITL Design", "10")
 
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(5.9), Inches(0.32),
-                        "PSI DEMOGRAPHIC GUARDRAIL", font_size=11, bold=True, color=BURGUNDY)
+                        "PSI DEMOGRAPHIC GUARDRAIL", font_size=11, bold=True, color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
     psi_zones = [
         (ACCENT_GREEN, "GREEN", "PSI < 0.10", "stable"),
@@ -893,7 +895,7 @@ def slide_guardrail_hitl_design(prs: Presentation):
                   font_size=13, color=SOFT_TEXT)
 
     lab = _add_text_box(slide, Inches(7.1), CONTENT_TOP, Inches(5.7), Inches(0.32),
-                        "HUMAN-IN-THE-LOOP WRAPPER", font_size=11, bold=True, color=BURGUNDY)
+                        "HUMAN-IN-THE-LOOP WRAPPER", font_size=11, bold=True, color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
     _add_talking_points(slide, Inches(7.1), CONTENT_TOP + Inches(0.5), Inches(5.7), [
         "Uncertainty > κ  →  REFER to actuary",
@@ -961,7 +963,7 @@ def slide_benchmark(prs: Presentation):
 
     def _rank_style(i, c, text):
         top2 = i < 2
-        return (top2, BURGUNDY if top2 else DARK_TEXT)
+        return (top2, BLUE_TITLE if top2 else DARK_TEXT)
 
     _add_flat_table(slide, Inches(7.5), CONTENT_TOP + Inches(0.35),
                     [Inches(0.8), Inches(2.4), Inches(2.1)],
@@ -1085,7 +1087,7 @@ def slide_fairness_audit(prs: Presentation):
             return (c == 1, DARK_TEXT)
 
         _add_text_box(slide, cx, CONTENT_TOP + Inches(0.7), Inches(5.9), Inches(0.4),
-                      attr, font_size=16, bold=True, color=BURGUNDY)
+                      attr, font_size=16, bold=True, color=BLUE_TITLE)
         _add_flat_table(slide, cx, CONTENT_TOP + Inches(1.2),
                         [Inches(2.2), Inches(3.7)], ["Check", "Result"],
                         rows, font_size=14, row_h=Inches(0.66), cell_style=_style)
@@ -1133,7 +1135,7 @@ def slide_drift_adaptation(prs: Presentation):
         return (False, DARK_TEXT)
 
     _add_text_box(slide, Inches(8.0), CONTENT_TOP + Inches(0.6), Inches(4.8), Inches(0.4),
-                  "Post/pre regret ratio", font_size=16, bold=True, color=BURGUNDY)
+                  "Post/pre regret ratio", font_size=16, bold=True, color=BLUE_TITLE)
     _add_flat_table(slide, Inches(8.0), CONTENT_TOP + Inches(1.1),
                     [Inches(2.6), Inches(2.0)], ["Algorithm", "Ratio"],
                     rows, font_size=14, row_h=Inches(0.66), cell_style=_ratio_style)
@@ -1272,7 +1274,7 @@ def slide_other_limitations(prs: Presentation):
 
     lab = _add_text_box(slide, Inches(6.9), CONTENT_TOP + Inches(0.05), Inches(5.9),
                         Inches(0.32), "FUTURE WORK", font_size=11, bold=True,
-                        color=BURGUNDY)
+                        color=BLUE_TITLE)
     _letterspace(lab.text_frame.paragraphs[0], 120)
     _add_talking_points(slide, Inches(6.9), CONTENT_TOP + Inches(0.5), Inches(5.9), [
         "DiscountedLinUCB for sustained drift",
@@ -1307,12 +1309,12 @@ def slide_demo(prs: Presentation):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
     tag = _add_text_box(slide, MARGIN_LEFT, Inches(0.7), Inches(6.0), Inches(0.34),
-                        "LIVE DEMONSTRATION", font_size=12, bold=True, color=BURGUNDY)
+                        "LIVE DEMONSTRATION", font_size=12, bold=True, color=BLUE_TITLE)
     _letterspace(tag.text_frame.paragraphs[0], 200)
     _add_text_box(slide, MARGIN_LEFT, Inches(1.1), Inches(12.0), Inches(0.7),
                   "Adaptive Underwriting Dashboard", font_size=30, bold=True,
                   color=DARK_TEXT)
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.92), Inches(0.55), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(1.92), Inches(0.55), Inches(0.045), BLUE_TITLE)
 
     steps = [
         ("1", "Run",  "uvicorn demo.main:app --reload --port 8000"),
@@ -1323,7 +1325,7 @@ def slide_demo(prs: Presentation):
     step_top = Inches(2.6)
     for num, verb, detail in steps:
         _add_text_box(slide, MARGIN_LEFT, step_top, Inches(0.5), Inches(0.5),
-                      num, font_size=22, bold=True, color=BURGUNDY)
+                      num, font_size=22, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, MARGIN_LEFT + Inches(0.65), step_top + Inches(0.05),
                       Inches(1.2), Inches(0.45), verb, font_size=16, bold=True,
                       color=DARK_TEXT)
@@ -1347,12 +1349,12 @@ def slide_thanks(prs: Presentation):
     """Slide 23."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
-    _add_filled_box(slide, Inches(5.92), Inches(2.0), Inches(1.5), Inches(0.045), BURGUNDY)
+    _add_filled_box(slide, Inches(5.92), Inches(2.0), Inches(1.5), Inches(0.045), BLUE_TITLE)
     _add_text_box(slide, Inches(0), Inches(2.35), SLIDE_WIDTH, Inches(1.0),
                   "Thank you.", font_size=54, bold=True, color=DARK_TEXT,
                   align=PP_ALIGN.CENTER)
     _add_text_box(slide, Inches(0), Inches(3.45), SLIDE_WIDTH, Inches(0.5),
-                  "Questions & Answers", font_size=20, color=BURGUNDY,
+                  "Questions & Answers", font_size=20, color=BLUE_TITLE,
                   align=PP_ALIGN.CENTER)
 
     _add_text_box(slide, Inches(0), Inches(4.7), SLIDE_WIDTH, Inches(0.42),
@@ -1376,8 +1378,8 @@ def slide_appendix_divider(prs: Presentation):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
 
     _add_text_box(slide, MARGIN_LEFT, Inches(0.9), Inches(10.0), Inches(1.0),
-                  "APPENDIX", font_size=48, bold=True, color=BURGUNDY)
-    _add_filled_box(slide, MARGIN_LEFT, Inches(2.05), Inches(0.55), Inches(0.045), BURGUNDY)
+                  "APPENDIX", font_size=48, bold=True, color=BLUE_TITLE)
+    _add_filled_box(slide, MARGIN_LEFT, Inches(2.05), Inches(0.55), Inches(0.045), BLUE_TITLE)
 
     items = [
         ("A1", "Q2: Number Reconciliation -- EXP-005 vs ladder harness"),
@@ -1391,7 +1393,7 @@ def slide_appendix_divider(prs: Presentation):
     for i, (label, desc) in enumerate(items):
         iy = item_top + i * Inches(0.68)
         _add_text_box(slide, Inches(1.0), iy, Inches(1.2), Inches(0.4),
-                      label, font_size=15, bold=True, color=BURGUNDY)
+                      label, font_size=15, bold=True, color=BLUE_TITLE)
         _add_text_box(slide, Inches(2.4), iy, Inches(10.0), Inches(0.4),
                       desc, font_size=15, color=DARK_TEXT)
     _add_bottom_bar(slide)
@@ -1418,7 +1420,7 @@ def slide_app_number_reconciliation(prs: Presentation):
     ]
 
     def _lift_style(i, c, text):
-        return (c == 1, BURGUNDY if c == 1 else DARK_TEXT)
+        return (c == 1, BLUE_TITLE if c == 1 else DARK_TEXT)
 
     _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.2),
                     [Inches(4.4), Inches(1.4), Inches(6.4)],
@@ -1535,7 +1537,7 @@ def slide_app_bandit_math(prs: Presentation):
         ]),
     ]:
         _add_text_box(slide, cx, CONTENT_TOP + Inches(0.05), Inches(5.8), Inches(0.4),
-                      head, font_size=16, bold=True, color=BURGUNDY)
+                      head, font_size=16, bold=True, color=BLUE_TITLE)
         for i, eq in enumerate(eqs):
             _add_text_box(slide, cx + Inches(0.15),
                           CONTENT_TOP + Inches(0.55) + i * Inches(0.56),
@@ -1600,9 +1602,9 @@ def _slide_demo_screenshot(prs: Presentation, label: str, page_num: str, caption
     _add_slide_title(slide, label)
     _add_title_rule(slide)
     _add_filled_box(slide, MARGIN_LEFT, Inches(1.35), CONTENT_W,
-                    BOTTOM_BAR_TOP - Inches(1.7), PANEL)
+                    FOOTER_TOP - Inches(1.7), PANEL)
     _add_text_box(slide, MARGIN_LEFT, Inches(1.35), CONTENT_W,
-                  BOTTOM_BAR_TOP - Inches(1.7),
+                  FOOTER_TOP - Inches(1.7),
                   f"[Demo screenshot placeholder]\n\n{caption}",
                   font_size=16, color=GRAY_LABEL, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE)

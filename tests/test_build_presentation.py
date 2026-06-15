@@ -30,6 +30,15 @@ def built_presentation():
     return OUTPUT
 
 
+@pytest.fixture(scope="session")
+def import_builder():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("builder", SCRIPT)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def _all_text(prs, slide_idx: int) -> str:
     return " ".join(
         shape.text_frame.text
@@ -278,3 +287,20 @@ def test_slide_palette_is_blue_not_burgundy():
     used = {v.lower() for v in mod.SLIDE_PALETTE.values()}
     assert not (used & banned), f"burgundy survives in SLIDE_PALETTE: {used & banned}"
     assert mod.SLIDE_PALETTE["hero"].lower() == "#1b5697", "hero series must be steel-blue"
+
+
+# ---------------------------------------------------------------------------
+# v3 blue footer ribbon
+# ---------------------------------------------------------------------------
+
+def test_footer_ribbon_three_parts(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    b._add_footer_ribbon(slide, "12 / 27")
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    assert "DAC" in text and "ITC-AMS" in text          # left org block
+    assert "12 / 27" in text                             # right page block
+    assert "July 2026" in text                           # right date
