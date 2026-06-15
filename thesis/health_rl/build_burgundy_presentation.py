@@ -110,14 +110,12 @@ DURATION      = "Mar 2026 – Jun 2026"
 DEFENSE_DATE  = "July 2026"
 
 SECTIONS = [
-    ("i",   "Introduction"),
-    ("ii",  "Internship at DAC"),
-    ("iii", "Literature Review"),
-    ("iv",  "Methodology"),
-    ("v",   "Results & Discussion"),
-    ("vi",  "Limitations & Conclusions"),
+    ("I",   "Introduction & Problem Background"),
+    ("II",  "Literature Review"),
+    ("III", "Methodology & Model Design"),
+    ("IV",  "Results & Evaluation"),
+    ("V",   "Conclusion & Future Work"),
 ]
-_SEC = {num: f"{num}. {name}" for num, name in SECTIONS}
 
 
 # ===========================================================================
@@ -532,7 +530,8 @@ def slide_title(prs: Presentation):
     _add_filled_box(slide, Inches(5.92), Inches(2.05), Inches(1.5), Inches(0.045), BLUE_TITLE)
     box = _add_text_box(slide, Inches(0.9), Inches(2.35), Inches(11.5), Inches(1.7),
                         THESIS_TITLE.upper(), font_size=27, bold=True, color=DARK_TEXT,
-                        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+                        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                        font_name=HEAD_FONT)
     box.text_frame.word_wrap = True
     _add_filled_box(slide, Inches(5.92), Inches(4.25), Inches(1.5), Inches(0.045), BLUE_TITLE)
 
@@ -555,6 +554,7 @@ def slide_title(prs: Presentation):
     _add_text_box(slide, Inches(0), Inches(6.6), SLIDE_WIDTH, Inches(0.38),
                   DEFENSE_DATE, font_size=15, bold=True, color=GRAY_LABEL,
                   align=PP_ALIGN.CENTER)
+    _add_footer_ribbon(slide, "1 / 27")
 
 
 # ===========================================================================
@@ -563,24 +563,18 @@ def slide_title(prs: Presentation):
 
 def slide_toc(prs: Presentation):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-
-    _add_text_box(slide, MARGIN_LEFT, Inches(0.55), Inches(9.0), Inches(0.7),
-                  "Table of Contents", font_size=30, bold=True, color=DARK_TEXT)
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.32), Inches(0.55), Inches(0.045), BLUE_TITLE)
-
-    col_xs = [Inches(0.9), Inches(7.1)]
-    row_h = Inches(1.55)
-    for idx, (num, name) in enumerate(SECTIONS):
-        cx = col_xs[idx // 3]
-        cy = Inches(1.95) + (idx % 3) * row_h
-        _add_text_box(slide, cx, cy, Inches(1.1), Inches(0.65),
-                      num, font_size=30, bold=True, color=BLUE_TITLE)
-        _add_text_box(slide, cx + Inches(1.25), cy + Inches(0.06),
-                      Inches(4.6), Inches(0.5),
-                      name, font_size=19, bold=True, color=DARK_TEXT)
-        _add_filled_box(slide, cx + Inches(1.25), cy + Inches(0.62),
-                        Inches(4.3), Inches(0.012), HAIRLINE)
-    _add_footer_ribbon(slide)
+    _add_content_title(slide, "Table of Contents")
+    row_h = Inches(1.0)
+    top = CONTENT_TOP + Inches(0.2)
+    for i, (num, name) in enumerate(SECTIONS):
+        y = top + i * row_h
+        _add_text_box(slide, Inches(2.2), y, Inches(1.4), Inches(0.7),
+                      num, font_size=34, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+        _add_text_box(slide, Inches(3.7), y + Inches(0.08), Inches(7.4), Inches(0.6),
+                      name, font_size=22, bold=True, color=DARK_TEXT, font_name=HEAD_FONT)
+        _add_filled_box(slide, Inches(3.7), y + Inches(0.72), Inches(7.0),
+                        Inches(0.012), HAIRLINE)
+    _add_footer_ribbon(slide, "2 / 27")
 
 def slide_thanks(prs: Presentation):
     """Slide 23."""
@@ -588,8 +582,8 @@ def slide_thanks(prs: Presentation):
 
     _add_filled_box(slide, Inches(5.92), Inches(2.0), Inches(1.5), Inches(0.045), BLUE_TITLE)
     _add_text_box(slide, Inches(0), Inches(2.35), SLIDE_WIDTH, Inches(1.0),
-                  "Thank you.", font_size=54, bold=True, color=DARK_TEXT,
-                  align=PP_ALIGN.CENTER)
+                  "Thank you.", font_size=54, bold=True, color=BLUE_TITLE,
+                  align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
     _add_text_box(slide, Inches(0), Inches(3.45), SLIDE_WIDTH, Inches(0.5),
                   "Questions & Answers", font_size=20, color=BLUE_TITLE,
                   align=PP_ALIGN.CENTER)
@@ -607,7 +601,7 @@ def slide_thanks(prs: Presentation):
         if os.path.exists(path):
             pic = slide.shapes.add_picture(path, Inches(lx), Inches(6.15), width=Inches(0.7))
             _flat(pic)
-    _add_footer_ribbon(slide)
+    _add_footer_ribbon(slide, "27 / 27")
 
 
 # ===========================================================================
