@@ -5,6 +5,7 @@ Run:
 """
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -28,6 +29,29 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Load dataset once at startup (df carries un-normalized feature columns).
 X_FULL, DF_RAW, FEATURES = preprocess_cambodia_data()
+
+THESIS_RESULTS_PATH = ROOT / "demo" / "static" / "thesis_results.json"
+
+
+def load_canonical_headline() -> dict[str, Any]:
+    """Authoritative 20-seed headline, read from thesis_results.json (no fallback)."""
+    data = json.loads(THESIS_RESULTS_PATH.read_text(encoding="utf-8"))
+    exp005 = data["exp005"]
+    ceiling = next(r for r in data["ladder"]["rows"] if r["policy"] == "AlwaysRATED")
+    return {
+        "lift_pct": exp005["lift_pct"],
+        "cohen_d": exp005["reward_cohen_d"],
+        "p_value": exp005["reward_p"],
+        "n_seeds": 20,
+        "comparator": "Static XGB",
+        "source": exp005["source"],
+        "scope": data["_meta"]["scope"],
+        "ceiling_policy": ceiling["policy"],
+        "ceiling_note": ceiling["note"],
+    }
+
+
+CANONICAL_HEADLINE = load_canonical_headline()
 
 
 def _row_to_applicant(row: pd.Series) -> dict[str, Any]:
@@ -83,3 +107,8 @@ async def applicant_fields() -> dict[str, Any]:
 async def random_applicant() -> dict[str, Any]:
     idx = int(np.random.default_rng().integers(len(DF_RAW)))
     return {"applicant": _row_to_applicant(DF_RAW.iloc[idx]), "index": int(idx)}
+
+
+@app.get("/api/canonical")
+async def canonical() -> dict[str, Any]:
+    return CANONICAL_HEADLINE
