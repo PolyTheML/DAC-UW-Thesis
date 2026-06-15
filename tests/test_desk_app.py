@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from demo.desk.app import app
+from healthrl.underwriting_bandit import ACTION_NAMES
 
 client = TestClient(app)
 
@@ -58,3 +59,55 @@ def test_canonical_reads_from_file():
     assert data["n_seeds"] == 20
     # Admissible-scope ceiling carried alongside the headline (_meta.scope).
     assert data["ceiling_policy"] == "AlwaysRATED"
+
+
+# A fixed manual applicant (mortality_multiplier defaults to neutral 1.0).
+SAMPLE_APPLICANT = {
+    "age": 45, "gender": "Female", "bmi": 24.5,
+    "is_smoking": 0, "alcohol_use": 0, "is_exercise": 1,
+    "has_family_history": 0, "monthly_income_usd": 350.0,
+    "pre_existing_conditions": "", "region": "Phnom Penh",
+    "occupation": "Civil Servant", "education": "Secondary",
+    "wealth_quintile": "Middle", "self_reported_health": "Good",
+}
+
+
+def test_score_card_well_formed():
+    r = client.post("/api/score", json=SAMPLE_APPLICANT)
+    assert r.status_code == 200, r.text
+    data = r.json()
+    # Decision is a valid action.
+    assert data["decision"] in ACTION_NAMES
+    assert data["decision_index"] == ACTION_NAMES.index(data["decision"])
+    # Four numeric estimated rewards, one per action.
+    er = data["estimated_rewards"]
+    assert set(er.keys()) == set(ACTION_NAMES)
+    assert all(isinstance(v, (int, float)) for v in er.values())
+    # Confidence is a probability-like scalar, non-degenerate range enforced elsewhere.
+    assert 0.0 <= data["confidence"] <= 1.0
+    # Exactly three drivers, each signed.
+    assert len(data["drivers"]) == 3
+    for d in data["drivers"]:
+        assert d["direction"] in ("up", "down")
+        assert isinstance(d["label"], str) and d["label"]
+    # Premium consistent with the decision.
+    prem = data["premium"]
+    if data["decision"] == "DECLINE":
+        assert prem["amount"] is None and prem["status"] == "declined"
+    elif data["decision"] == "REFER":
+        assert prem["amount"] is None and prem["status"] == "refer"
+    else:
+        assert isinstance(prem["amount"], (int, float)) and prem["amount"] > 0
+
+
+def test_score_decision_matches_theta_argmax():
+    r = client.post("/api/score", json=SAMPLE_APPLICANT).json()
+    er = r["estimated_rewards"]
+    best = max(er, key=er.get)
+    assert r["decision"] == best
+
+
+def test_score_validation_rejects_bad_age():
+    bad = dict(SAMPLE_APPLICANT, age=5)
+    r = client.post("/api/score", json=bad)
+    assert r.status_code == 422
