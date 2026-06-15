@@ -1,12 +1,20 @@
 // Watch it Learn view: canonical headline + animated divergence chart + action mix.
+// Two user controls (spec 2026-06-15-learn-speed-control-design):
+//   • Exploration preset (Greedy/Balanced/Exploratory) — re-runs the curve; the server
+//     resolves the preset to alpha (LinUCB) / v2 (LinTS) and echoes it in data.param.
+//   • Animation speed (Slow/Normal/Fast) — client-only playback pacing, applied live.
 const Learn = (function () {
   let chart = null;
   let data = null;       // last /api/learn/run payload
   let timer = null;
   let frame = 0;
+  let exploration = 'Balanced'; // default preset = today's behaviour (alpha/v2 = 1.0)
+  let speed = 'Normal';         // default pacing = today's behaviour (~80 frames)
   // Single-seed illustrative horizon: 3000 rounds reaches ≈ the canonical +25.2%
   // headline (single-seed +25.6%) and shows the full cold-start→divergence arc.
   const N_ROUNDS = 3000;
+  // Animation pacing (spec §5): fixed 40 ms tick; vary the number of frames.
+  const SPEED_FRAMES = { Slow: 160, Normal: 80, Fast: 40 };
   const ACTIONS = ['STANDARD', 'RATED', 'DECLINE', 'REFER'];
 
   async function renderHeadline() {
@@ -61,13 +69,19 @@ const Learn = (function () {
 
   function stop() { if (timer) { clearInterval(timer); timer = null; } }
 
+  // Frames-per-run depends on the live `speed` state, so the pace of an in-progress
+  // animation changes on the next tick when the user clicks a Speed segment (spec §5).
+  function currentStepSize() {
+    const total = data.rounds.length;
+    return Math.max(1, Math.ceil(total / SPEED_FRAMES[speed]));
+  }
+
   function play() {
     if (!data) return;
     stop();
     const total = data.rounds.length;
-    const stepSize = Math.max(1, Math.floor(total / 80)); // ~80 frames
     timer = setInterval(() => {
-      frame = Math.min(total, frame + stepSize);
+      frame = Math.min(total, frame + currentStepSize()); // read speed live each tick
       drawTo(frame);
       if (frame >= total) {
         stop();
@@ -77,13 +91,22 @@ const Learn = (function () {
     }, 40);
   }
 
+  function setActive(groupSel, btn) {
+    document.querySelectorAll(`${groupSel} .seg-btn`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
   async function loadAndReset() {
     stop(); frame = 0;
     document.getElementById('lift-readout').textContent = '';
     document.getElementById('learn-note').textContent = 'Running…';
     const algo = document.getElementById('algo').value;
-    data = await API.learn({ algorithm: algo, seed: 42, n_rounds: N_ROUNDS });
-    document.getElementById('learn-note').textContent = data.illustrative_note;
+    data = await API.learn({ algorithm: algo, seed: 42, n_rounds: N_ROUNDS, exploration });
+    const sym = data.param.name === 'alpha' ? 'α' : 'v²';
+    document.getElementById('param-readout').textContent =
+      `${sym} = ${data.param.value} · ${data.exploration}`;
+    document.getElementById('learn-note').textContent =
+      `${data.illustrative_note} · ${data.exploration}`;
     document.getElementById('mix-early').innerHTML = '';
     document.getElementById('mix-late').innerHTML = '';
     drawTo(1);
@@ -95,6 +118,18 @@ const Learn = (function () {
     document.getElementById('btn-play').addEventListener('click', play);
     document.getElementById('btn-reset').addEventListener('click', loadAndReset);
     document.getElementById('algo').addEventListener('change', loadAndReset);
+    document.querySelectorAll('#seg-exploration .seg-btn').forEach(btn =>
+      btn.addEventListener('click', () => {
+        exploration = btn.dataset.exploration;
+        setActive('#seg-exploration', btn);
+        loadAndReset(); // re-run the curve with the new preset
+      }));
+    document.querySelectorAll('#seg-speed .seg-btn').forEach(btn =>
+      btn.addEventListener('click', () => {
+        speed = btn.dataset.speed;
+        setActive('#seg-speed', btn);
+        // no re-run / no restart: a running animation picks up the new pace next tick
+      }));
     await loadAndReset();
   }
 

@@ -72,6 +72,15 @@
     .muted { color:var(--muted); font-size:.8rem; }
     .err { color:var(--red); font-size:.85rem; }
     .mix-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+    .seg-row { display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:.75rem; align-items:center; }
+    .seg-group { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+    .seg-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.05em;
+                 color:var(--accent2); }
+    .seg { display:inline-flex; background:var(--panel2); border:1px solid var(--line);
+           border-radius:8px; overflow:hidden; }
+    .seg-btn { border:0; background:transparent; color:var(--muted); padding:.4rem .8rem;
+               cursor:pointer; font-size:.8rem; font-weight:600; }
+    .seg-btn.active { background:var(--accent); color:#fff; }
   </style>
 </head>
 <body>
@@ -121,6 +130,25 @@
           <button class="btn ghost" id="btn-reset">Reset</button>
           <span class="muted" id="round-readout">round 0</span>
           <span class="muted" id="lift-readout"></span>
+        </div>
+        <div class="seg-row">
+          <div class="seg-group">
+            <span class="seg-label">Exploration</span>
+            <div class="seg" id="seg-exploration">
+              <button type="button" class="seg-btn" data-exploration="Greedy">Greedy</button>
+              <button type="button" class="seg-btn active" data-exploration="Balanced">Balanced</button>
+              <button type="button" class="seg-btn" data-exploration="Exploratory">Exploratory</button>
+            </div>
+            <span class="muted" id="param-readout"></span>
+          </div>
+          <div class="seg-group">
+            <span class="seg-label">Speed</span>
+            <div class="seg" id="seg-speed">
+              <button type="button" class="seg-btn" data-speed="Slow">Slow</button>
+              <button type="button" class="seg-btn active" data-speed="Normal">Normal</button>
+              <button type="button" class="seg-btn" data-speed="Fast">Fast</button>
+            </div>
+          </div>
         </div>
         <canvas id="chart" height="120"></canvas>
         <div class="note" id="learn-note"></div>
