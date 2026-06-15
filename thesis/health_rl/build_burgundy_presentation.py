@@ -103,12 +103,13 @@ THESIS_TITLE  = (
 )
 PRESENTER     = "LUN CHANPOLY"
 SUPERVISOR    = "Dr. HAS Sothea"
-CO_SUPERVISOR = "Mr. PHOK Ponna"
 ORGANIZATION  = "DAC (Decent Actuarial Consultants)"
 DEPARTMENT    = "Department of Applied Mathematics and Statistics"
 INSTITUTION   = "Institute of Technology of Cambodia"
 DURATION      = "Mar 2026 – Jun 2026"
 DEFENSE_DATE  = "July 2026"
+DECK_TITLE      = "Adaptive Underwriting via Contextual Bandits"
+CURRENT_SECTION = ""   # running footer-center label; main() sets it per section
 
 SECTIONS = [
     ("I",   "Introduction & Problem Background"),
@@ -467,7 +468,7 @@ def _add_footer_ribbon(slide, page_label: str | None = None):
     # center deck-title block (lighter tint, dark text for contrast)
     _add_filled_box(slide, Inches(3.4), FOOTER_TOP, Inches(6.7), FOOTER_HEIGHT, BLUE_TINT)
     _add_text_box(slide, Inches(3.5), FOOTER_TOP, Inches(6.5), FOOTER_HEIGHT,
-                  "Adaptive Underwriting via Contextual Bandits", font_size=11,
+                  CURRENT_SECTION or DECK_TITLE, font_size=11,
                   color=BLUE_DEEP, font_name=BODY_FONT, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE)
     # right date + page block
@@ -493,8 +494,8 @@ def _add_divider(prs, number: str, name: str, page_label: str):
 
 
 def _pg(n: int) -> str:
-    """Footer page label for a presented (main) slide: 'n / 27'."""
-    return f"{n} / 27"
+    """Footer page label for a presented (main) slide: 'n / 28'."""
+    return f"{n} / 28"
 
 
 def _stub(prs, title, page_label):
@@ -545,17 +546,19 @@ def slide_title(prs: Presentation):
 
     lx, rx = Inches(1.5), Inches(7.5)
     for i, (lt, rt) in enumerate([
-        (f"Supervisor      :  {SUPERVISOR}",    f"Organization :  {ORGANIZATION}"),
-        (f"Co-Supervisor  :  {CO_SUPERVISOR}", f"Duration        :  {DURATION}"),
+        (f"Supervisor  :  {SUPERVISOR}",  f"Organization :  {ORGANIZATION}"),
+        (f"Duration      :  {DURATION}",  ""),
     ]):
         y = Inches(5.68) + i * Inches(0.36)
-        _add_text_box(slide, lx, y, Inches(5.6), Inches(0.34), lt, font_size=14, color=DARK_TEXT)
-        _add_text_box(slide, rx, y, Inches(5.6), Inches(0.34), rt, font_size=14, color=DARK_TEXT)
+        if lt:
+            _add_text_box(slide, lx, y, Inches(5.6), Inches(0.34), lt, font_size=14, color=DARK_TEXT)
+        if rt:
+            _add_text_box(slide, rx, y, Inches(5.6), Inches(0.34), rt, font_size=14, color=DARK_TEXT)
 
     _add_text_box(slide, Inches(0), Inches(6.6), SLIDE_WIDTH, Inches(0.38),
                   DEFENSE_DATE, font_size=15, bold=True, color=GRAY_LABEL,
                   align=PP_ALIGN.CENTER)
-    _add_footer_ribbon(slide, "1 / 27")
+    _add_footer_ribbon(slide, "1 / 28")
 
 
 # ===========================================================================
@@ -575,7 +578,7 @@ def slide_toc(prs: Presentation):
                       name, font_size=22, bold=True, color=DARK_TEXT, font_name=HEAD_FONT)
         _add_filled_box(slide, Inches(3.7), y + Inches(0.72), Inches(7.0),
                         Inches(0.012), HAIRLINE)
-    _add_footer_ribbon(slide, "2 / 27")
+    _add_footer_ribbon(slide, "2 / 28")
 
 
 def slide_thanks(prs: Presentation):
@@ -603,7 +606,50 @@ def slide_thanks(prs: Presentation):
         if os.path.exists(path):
             pic = slide.shapes.add_picture(path, Inches(lx), Inches(6.15), width=Inches(0.7))
             _flat(pic)
-    _add_footer_ribbon(slide, "27 / 27")
+    _add_footer_ribbon(slide, "28 / 28")
+
+
+def slide_references(prs):
+    slide = _content_slide(prs, "References", _pg(22))
+    left_refs = [
+        "Li, L., Chu, W., Langford, J., & Schapire, R. (2010). A contextual-bandit "
+        "approach to personalized news article recommendation. WWW.",
+        "Agrawal, S., & Goyal, N. (2013). Thompson sampling for contextual bandits "
+        "with linear payoffs. ICML.",
+        "Bouneffouf, D., et al. (2017). Contextual bandits for clinical decision "
+        "support.",
+        "Frees, E. W., Derrig, R. A., & Meyers, G. (2014). Predictive Modeling "
+        "Applications in Actuarial Science. Cambridge Univ. Press.",
+        "Kusner, M., Loftus, J., Russell, C., & Silva, R. (2017). Counterfactual "
+        "fairness. NeurIPS.",
+        "Yurdakul, B. (2018). Statistical Properties of the Population Stability "
+        "Index (PSI). PhD diss., Western Michigan University.",
+        "Christiano, P., et al. (2017). Deep reinforcement learning from human "
+        "preferences. NeurIPS.",
+    ]
+    right_refs = [
+        "National Institute of Statistics (2022). Cambodia Demographic & Health "
+        "Survey 2021–22 (CDHS).",
+        "WHO (2021). Cambodia STEPS Survey — NCD risk factors.",
+        "International Labour Organization. Cambodia Labour Force Survey.",
+        "WHO SEARO. Health-expenditure statistics, Cambodia.",
+    ]
+    def _refs(col_x, refs, start):
+        y = CONTENT_TOP + Inches(0.1)
+        for i, r in enumerate(refs):
+            _add_text_box(slide, col_x, y, Inches(6.0), Inches(0.9),
+                          f"[{start + i}]  {r}", font_size=11, color=DARK_TEXT)
+            y += Inches(0.72)
+    _refs(MARGIN_LEFT, left_refs, 1)
+    _refs(Inches(6.9), right_refs, 8)
+    _add_footnote(slide, "Full bibliography: thesis Chapter III (30+ sources, APA).")
+    _add_notes(slide,
+        "Key sources behind the method and the dataset. Left: bandit theory (Li; Agrawal "
+        "& Goyal), healthcare bandits (Bouneffouf), actuarial modelling (Frees), fairness "
+        "(Kusner), PSI monitoring (Yurdakul), and human-in-the-loop RL (Christiano). "
+        "Right: the Cambodia data sources (CDHS, STEPS, ILO, WHO). Full APA list is in "
+        "thesis Chapter III.")
+    return slide
 
 
 # ===========================================================================
@@ -614,7 +660,7 @@ def slide_about_company(prs):
     slide = _content_slide(prs, "About Decent Actuarial Consultants", _pg(2))
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.2), Inches(6.2), [
         "DAC is a Phnom Penh actuarial consultancy",
-        "Clients: insurers, pension funds, regulators across SE Asia",
+        "Clients: life, non-life & general insurance companies",
         "This thesis is a DAC-supervised research internship (Mar–Jun 2026)",
         "Deliverable: an adaptive underwriting prototype + this report",
     ])
@@ -623,7 +669,7 @@ def slide_about_company(prs):
                            real_path=LOGO_DAC)
     _add_notes(slide,
         "Decent Actuarial Consultants is a Phnom Penh actuarial consultancy serving "
-        "insurers, pension funds and regulators across Southeast Asia. The thesis is "
+        "life, non-life and general insurance companies. The thesis is "
         "embedded in a DAC-supervised research internship, March through June 2026; the "
         "deliverable is the end-to-end adaptive underwriting prototype plus this report. "
         "Timeline: March scoping and dataset design, April algorithms, May experiments, "
@@ -1367,19 +1413,27 @@ def slide_app_math_psi(prs):
 
 
 def main():
+    global CURRENT_SECTION
     prs = Presentation()
     prs.slide_width  = SLIDE_WIDTH
     prs.slide_height = SLIDE_HEIGHT
 
+    CURRENT_SECTION = ""
     slide_title(prs)                                  # 0  Title
     slide_toc(prs)                                    # 1  ToC
+
+    CURRENT_SECTION = "Introduction & Problem Background"
     _add_divider(prs, "I", "Introduction & Problem Background", _pg(1))   # 2
     slide_about_company(prs)                          # 3  About DAC
     slide_introduction(prs)                           # 4  Introduction
     slide_problem_statement(prs)                      # 5  Problem
     slide_project_objective(prs)                      # 6  O1-O4
+
+    CURRENT_SECTION = "Literature Review"
     _add_divider(prs, "II", "Literature Review", _pg(7))                  # 7
     slide_literature_review(prs)                      # 8  Lit table
+
+    CURRENT_SECTION = "Methodology & Model Design"
     _add_divider(prs, "III", "Methodology & Model Design", _pg(9))       # 9
     slide_methodology_overview(prs)                   # 10 overview flowchart
     slide_zoom_dataset(prs)                           # 11 zoom 1
@@ -1389,24 +1443,34 @@ def main():
     slide_buildup_estimates(prs)                      # 15 build-up B
     slide_buildup_action(prs)                         # 16 build-up C (AlwaysRATED)
     slide_zoom_fairness(prs)                          # 17 zoom 3 (PSI+HITL)
+
+    CURRENT_SECTION = "Results & Evaluation"
     _add_divider(prs, "IV", "Results & Evaluation", _pg(18))             # 18
     slide_headline_benchmark(prs)                     # 19 EXP-007 (§5.0.1)
     slide_convergence_regret(prs)                     # 20 EXP-005/013 (§5.0.1)
     slide_coldstart_hitl(prs)                         # 21 EXP-008/010 (0.0840)
     slide_fairness_drift(prs)                         # 22 EXP-006/009 (FAILED-with-interpretation)
     slide_live_demo(prs)                              # 23 demo screenshots
+
+    CURRENT_SECTION = "Conclusion & Future Work"
     _add_divider(prs, "V", "Conclusion & Future Work", _pg(24))         # 24
     slide_conclusion(prs)                             # 25 O1-O4 scorecard
-    slide_thanks(prs)                                 # 26 Thank You
+
+    CURRENT_SECTION = "References"
+    slide_references(prs)                             # 26 References
+
+    CURRENT_SECTION = ""
+    slide_thanks(prs)                                 # 27 Thank You
 
     # ---- Appendix (backup, not walked) ----
-    slide_app_ladder(prs)                             # 27 A1 (FALSIFIED, AlwaysRATED)
-    slide_app_reconciliation(prs)                     # 28 A2
-    slide_app_criteria_matrix(prs)                    # 29 A3
-    slide_app_sensitivity(prs)                        # 30 A4
-    slide_app_math_psi(prs)                           # 31 A5
+    CURRENT_SECTION = "Appendix"
+    slide_app_ladder(prs)                             # 28 A1 (FALSIFIED, AlwaysRATED)
+    slide_app_reconciliation(prs)                     # 29 A2
+    slide_app_criteria_matrix(prs)                    # 30 A3
+    slide_app_sensitivity(prs)                        # 31 A4
+    slide_app_math_psi(prs)                           # 32 A5
 
-    assert len(prs.slides) == 32, f"Expected 32 slides, got {len(prs.slides)}"
+    assert len(prs.slides) == 33, f"Expected 33 slides, got {len(prs.slides)}"
     prs.save(OUTPUT_PATH)
     print(f"Saved {len(prs.slides)} slides -> {OUTPUT_PATH}")
 

@@ -51,9 +51,9 @@ def _all_text(prs, slide_idx: int) -> str:
 # Structure
 # ---------------------------------------------------------------------------
 
-def test_generates_32_slides(built_presentation):
+def test_generates_33_slides(built_presentation):
     prs = Presentation(str(built_presentation))
-    assert len(prs.slides) == 32, f"Expected 32 slides, got {len(prs.slides)}"
+    assert len(prs.slides) == 33, f"Expected 33 slides, got {len(prs.slides)}"
 
 
 def test_title_slide_has_presenter_name(built_presentation):
@@ -76,10 +76,10 @@ def test_toc_slide_has_five_sections(built_presentation):
 
 
 def test_appendix_slides_have_page_numbers(built_presentation):
-    """Appendix slides (indices 27-31) must have A1-A5 page numbers."""
+    """Appendix slides (indices 28-32) must have A1-A5 page numbers."""
     prs = Presentation(str(built_presentation))
     for i, label in enumerate(["A1", "A2", "A3", "A4", "A5"]):
-        combined = _all_text(prs, 27 + i)
+        combined = _all_text(prs, 28 + i)
         assert label in combined, (
             f"Appendix slide {i + 1}: page number '{label}' not found. Got: {combined[:200]}"
         )
@@ -109,12 +109,12 @@ def test_headline_numbers_match_json(built_presentation):
         f"EXP-008 lift_pct '{hitl_lift}' not found in slide 22. Got: {slide_21_text[:300]}"
     )
 
-    # AlwaysRATED ladder reward appears in slide idx 27 (A1 ladder appendix)
+    # AlwaysRATED ladder reward appears in slide idx 28 (A1 ladder appendix)
     always_rated_r = f"{next(r['reward'] for r in results['ladder']['rows'] if r['policy'] == 'AlwaysRATED'):,}"
-    slide_27_text = _all_text(prs, 27)
-    assert always_rated_r in slide_27_text, (
-        f"AlwaysRATED reward '{always_rated_r}' not found in slide 28. "
-        f"Got: {slide_27_text[:300]}"
+    slide_28_text = _all_text(prs, 28)
+    assert always_rated_r in slide_28_text, (
+        f"AlwaysRATED reward '{always_rated_r}' not found in slide 29. "
+        f"Got: {slide_28_text[:300]}"
     )
 
     # exp010 LinTS Wilcoxon p-value appears in slide idx 21
@@ -147,7 +147,7 @@ def test_talking_points_helper_rejects_more_than_four():
 # v3 style, density, and claim-armor guards
 # ---------------------------------------------------------------------------
 
-NOTED_IDX = [3, 4, 5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 25, 27, 28, 29, 30, 31]
+NOTED_IDX = [3,4,5,6,8,10,11,12,13,14,15,16,17,19,20,21,22,23,25,26,28,29,30,31,32]
 
 
 def test_presenter_notes_on_content_slides(built_presentation):
@@ -197,7 +197,7 @@ def test_claim_armor_strings_present(built_presentation):
         (21, "0.0039"), (21, "0.0840"),                # cold-start LinTS + softened LinUCB
         (22, "FAILED-with-interpretation"),            # fairness criterion 6
         (25, "O1"),                                    # conclusion scorecard
-        (27, "FALSIFIED"), (27, "AlwaysRATED"),        # ladder appendix
+        (28, "FALSIFIED"), (28, "AlwaysRATED"),        # ladder appendix
     ]
     for idx, needle in checks:
         combined = _all_text(prs, idx)
@@ -214,7 +214,7 @@ def test_slide_scale_figures_exist():
 
 
 def test_logos_only_on_title_and_thanks(built_presentation):
-    """Title slide (idx 0) and thanks slide (idx 26) carry logos (>=2 pics).
+    """Title slide (idx 0) and thanks slide (idx 27) carry logos (>=2 pics).
     All other slides carry at most 3 pictures (live-demo carries up to 3 screenshots)."""
     prs = Presentation(str(built_presentation))
 
@@ -222,12 +222,19 @@ def test_logos_only_on_title_and_thanks(built_presentation):
         return sum(1 for sh in prs.slides[idx].shapes if sh.shape_type == 13)
 
     assert n_pics(0) >= 2, "Title slide lost its logos"
-    assert n_pics(26) >= 2, "Thanks slide lost its logos"
+    assert n_pics(27) >= 2, "Thanks slide lost its logos"
     for idx in range(len(prs.slides)):
-        if idx not in [0, 26]:
+        if idx not in [0, 27]:
             assert n_pics(idx) <= 3, (
                 f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
             )
+
+
+def test_references_slide_present(built_presentation):
+    prs = Presentation(str(built_presentation))
+    text = _all_text(prs, 26)
+    assert "References" in text or "Li, L." in text, f"References slide missing. Got: {text[:200]}"
+    assert "Agrawal" in text and "CDHS" in text
 
 
 # ---------------------------------------------------------------------------
