@@ -375,6 +375,37 @@ def _add_overview_flowchart(slide, top, highlight=None, node_h=Inches(1.4)):
     return geom
 
 
+def _add_buildup_stage(slide, top, stages):
+    """Horizontal chain of (label, output_example) boxes; newest stage greened.
+
+    stages: list[(label, output_example)]. The last item is highlighted as 'new'.
+    """
+    n = len(stages)
+    box_w, box_h = Inches(3.5), Inches(1.5)
+    arrow_w = Inches(0.45)
+    total = n * box_w + (n - 1) * arrow_w
+    x = (SLIDE_WIDTH - total) / 2 if total <= CONTENT_W else MARGIN_LEFT
+    for i, (label, output) in enumerate(stages):
+        newest = (i == n - 1)
+        fill = PANEL
+        edge = GREEN_HILITE if newest else BLUE_TITLE
+        _add_filled_box(slide, x, top, box_w, box_h, fill,
+                        line_color=edge, line_width_pt=2.5 if newest else 1.0)
+        _add_text_box(slide, x + Inches(0.12), top + Inches(0.1), box_w - Inches(0.24),
+                      Inches(0.6), label, font_size=14, bold=True,
+                      color=GREEN_HILITE if newest else BLUE_TITLE,
+                      align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
+        _add_text_box(slide, x + Inches(0.12), top + Inches(0.72), box_w - Inches(0.24),
+                      Inches(0.7), f"output:\n{output}", font_size=12, color=SOFT_TEXT,
+                      align=PP_ALIGN.CENTER, font_name="Consolas")
+        if i < n - 1:
+            arr = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, x + box_w,
+                                         top + box_h / 2 - Inches(0.13),
+                                         arrow_w, Inches(0.26))
+            _flat(arr); _set_shape_fill(arr, BLUE_TITLE); _no_line(arr)
+        x += box_w + arrow_w
+
+
 # ===========================================================================
 # Chrome (section tag, title, bottom bar)
 # ===========================================================================

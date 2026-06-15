@@ -347,3 +347,17 @@ def test_overview_flowchart_six_stages_and_highlight(import_builder):
     greens = [s for s in slide.shapes
               if s.line.color.type is not None and s.line.color.rgb == b.GREEN_HILITE]
     assert greens, "no green highlight outline drawn"
+
+
+def test_buildup_stage_renders_labels_and_outputs(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    stages = [("Context vector x_t in R^5", "[0.4, -1.1, 0, 2, 0.8]"),
+              ("Per-arm value estimates", "RATED 0.31 / STD 0.52 / DEC 0.10 / REF 0.28")]
+    b._add_buildup_stage(slide, b.CONTENT_TOP, stages)
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    assert "Context vector" in text and "[0.4, -1.1, 0, 2, 0.8]" in text
+    assert "Per-arm value estimates" in text
