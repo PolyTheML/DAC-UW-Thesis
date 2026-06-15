@@ -22,17 +22,39 @@ X_FULL, DF_RAW, FEATURES = preprocess_cambodia_data()
 N_FEATURES = X_FULL.shape[1]
 
 
+# Exploration presets (spec §4): behaviour label → resolved engine knob per algorithm.
+# LinUCB reads `alpha` (UCB bonus scale); LinTS reads `v2` (posterior variance).
+# Balanced = the thesis default (today's behaviour). Anchors are thesis-grounded but
+# deliberately tunable constants — adjust here to sharpen the on-screen contrast.
+EXPLORATION_PRESETS: dict[str, dict[str, float]] = {
+    "Greedy": {"alpha": 0.0, "v2": 0.25},
+    "Balanced": {"alpha": 1.0, "v2": 1.0},
+    "Exploratory": {"alpha": 3.0, "v2": 4.0},
+}
+
+
 def _mix(actions: np.ndarray) -> dict[str, float]:
     counts = np.bincount(actions.astype(int), minlength=4)
     total = int(counts.sum()) or 1
     return {ACTION_NAMES[i]: round(float(counts[i] / total), 4) for i in range(4)}
 
 
-def run_learn(algorithm: str, seed: int = 42, n_rounds: int = 2000) -> dict[str, Any]:
+def run_learn(
+    algorithm: str,
+    seed: int = 42,
+    n_rounds: int = 2000,
+    exploration: str = "Balanced",
+) -> dict[str, Any]:
+    if exploration not in EXPLORATION_PRESETS:
+        raise ValueError(f"Unknown exploration preset: {exploration}")
+    preset = EXPLORATION_PRESETS[exploration]
+
     if algorithm == "LinUCB":
-        adaptive = LinUCB(n_actions=4, n_features=N_FEATURES, alpha=1.0)
+        adaptive = LinUCB(n_actions=4, n_features=N_FEATURES, alpha=preset["alpha"])
+        param = {"name": "alpha", "value": preset["alpha"]}
     elif algorithm == "LinTS":
-        adaptive = LinTS(n_actions=4, n_features=N_FEATURES, v2=1.0, seed=seed)
+        adaptive = LinTS(n_actions=4, n_features=N_FEATURES, v2=preset["v2"], seed=seed)
+        param = {"name": "v2", "value": preset["v2"]}
     else:
         raise ValueError(f"Unsupported algorithm: {algorithm}")
 
@@ -57,6 +79,8 @@ def run_learn(algorithm: str, seed: int = 42, n_rounds: int = 2000) -> dict[str,
         "algorithm": algorithm,
         "seed": seed,
         "n_rounds": n_rounds,
+        "exploration": exploration,
+        "param": param,
         "rounds": list(range(1, n_rounds + 1)),
         "adaptive": {
             "cumulative": [round(float(v), 2) for v in adaptive_res.cumulative_rewards],

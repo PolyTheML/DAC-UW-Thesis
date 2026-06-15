@@ -4,9 +4,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from demo.desk.app import app
+from demo.desk.learning import EXPLORATION_PRESETS, run_learn
 from healthrl.underwriting_bandit import ACTION_NAMES
 
 client = TestClient(app)
@@ -156,3 +158,36 @@ def test_learn_run_trajectories():
 def test_learn_run_rejects_bad_algorithm():
     r = client.post("/api/learn/run", json={"algorithm": "Nope", "n_rounds": 300})
     assert r.status_code == 422
+
+
+# ---- Exploration speed-control: backend (spec 2026-06-15-learn-speed-control §4/§6/§9) ----
+
+def test_exploration_presets_table():
+    # Anchor constants must match spec §4 exactly.
+    assert EXPLORATION_PRESETS["Greedy"] == {"alpha": 0.0, "v2": 0.25}
+    assert EXPLORATION_PRESETS["Balanced"] == {"alpha": 1.0, "v2": 1.0}
+    assert EXPLORATION_PRESETS["Exploratory"] == {"alpha": 3.0, "v2": 4.0}
+
+
+def test_run_learn_greedy_linucb_echoes_alpha():
+    out = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Greedy")
+    assert out["exploration"] == "Greedy"
+    assert out["param"] == {"name": "alpha", "value": 0.0}
+
+
+def test_run_learn_exploratory_lints_echoes_v2():
+    out = run_learn("LinTS", seed=42, n_rounds=300, exploration="Exploratory")
+    assert out["exploration"] == "Exploratory"
+    assert out["param"] == {"name": "v2", "value": 4.0}
+
+
+def test_run_learn_presets_change_trajectory():
+    # The knob is actually wired through: Greedy and Exploratory diverge.
+    greedy = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Greedy")
+    explor = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Exploratory")
+    assert greedy["adaptive"]["cumulative"] != explor["adaptive"]["cumulative"]
+
+
+def test_run_learn_rejects_unknown_preset():
+    with pytest.raises(ValueError):
+        run_learn("LinUCB", n_rounds=300, exploration="Wild")
