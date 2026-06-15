@@ -757,14 +757,222 @@ def slide_literature_review(prs):
         "metric with the 0.10/0.25 thresholds; Christiano motivates the human-in-the-loop "
         "wrapper. The thesis reviews thirty-plus sources; this is the load-bearing subset.")
     return slide
-def slide_methodology_overview(prs): return _stub(prs, "Methodology Overview", _pg(8))
-def slide_zoom_dataset(prs):      return _stub(prs, "Dataset", _pg(9))
-def slide_reward_simulator(prs):  return _stub(prs, "Reward Simulator", _pg(10))
-def slide_zoom_bandit(prs):       return _stub(prs, "Bandit Policy", _pg(11))
-def slide_buildup_context(prs):   return _stub(prs, "Bandit: Applicant Context", _pg(12))
-def slide_buildup_estimates(prs): return _stub(prs, "Bandit: Arm Value Estimates", _pg(13))
-def slide_buildup_action(prs):    return _stub(prs, "Bandit: Selection and Action", _pg(14))
-def slide_zoom_fairness(prs):     return _stub(prs, "Fairness Guardrail and HITL", _pg(15))
+def slide_methodology_overview(prs):
+    slide = _content_slide(prs, "Methodology Overview", _pg(8))
+    _add_overview_flowchart(slide, CONTENT_TOP + Inches(0.3), highlight=None)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.4), CONTENT_W, Inches(1.6),
+                  "Each applicant flows left to right: their context drives a bandit policy "
+                  "that picks an underwriting action; the actuarial simulator returns a "
+                  "reward that updates the policy; a PSI guardrail and a human-in-the-loop "
+                  "wrapper watch fairness before the final decision.",
+                  font_size=16, color=SOFT_TEXT)
+    _add_notes(slide, "Walk the whole pipeline once, left to right, naming each of the six "
+               "stages. Tell the panel we will now zoom into three of them in turn.")
+    return slide
+
+
+def slide_zoom_dataset(prs):
+    slide = _content_slide(prs, "Zoom-in: Dataset & Context", _pg(9))
+    _add_overview_flowchart(slide, CONTENT_TOP, highlight="Applicant Context",
+                            node_h=Inches(0.95))
+    _add_stat_row(slide, CONTENT_TOP + Inches(1.3), [
+        ("2,000", "synthetic applications"),
+        ("5", "demographic features"),
+        ("4", "underwriting arms"),
+        ("4", "anchoring sources"),
+    ])
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.6), Inches(6.2), [
+        "Anchored on CDHS, STEPS, ILO, WHO data",
+        "Adverse selection AF = 1.35; elasticity 3.5",
+        "Fully synthetic — no real applicant PII",
+    ])
+    arms = [("RATED", "Accept + premium loading (+25%)"),
+            ("STANDARD", "Accept at standard premium"),
+            ("DECLINE", "Reject application"),
+            ("REFER", "Escalate to human underwriter")]
+    ay = CONTENT_TOP + Inches(2.5)
+    for i, (arm, desc) in enumerate(arms):
+        ry = ay + i * Inches(0.6)
+        _add_text_box(slide, Inches(7.3), ry, Inches(1.9), Inches(0.4), arm,
+                      font_size=14, bold=True, color=BLUE_TITLE)
+        _add_text_box(slide, Inches(9.2), ry + Inches(0.02), Inches(3.6), Inches(0.5),
+                      desc, font_size=12, color=SOFT_TEXT)
+    _add_notes(slide,
+        "The dataset is 2,000 synthetic applicants with five features: age, sex, region, "
+        "occupation, BMI. Distributions are anchored on CDHS 2021-22 and STEPS 2021; "
+        "income on ILO labour-force surveys; claim probabilities calibrated from WHO SEARO "
+        "health-expenditure data. Adverse-selection factor 1.35 and price-elasticity slope "
+        "3.5 come from DAC actuarial priors. Four arms: RATED accepts with a 25 percent "
+        "loading, STANDARD accepts at standard rate, DECLINE rejects, REFER escalates to a "
+        "human. No real applicant data is used anywhere.")
+    return slide
+
+
+def slide_reward_simulator(prs):
+    slide = _content_slide(prs, "Reward Simulator", _pg(10))
+    defs = [
+        ("Context  x_t ∈ R^5", "age, sex, region, occupation, BMI -- standardised"),
+        ("Action  a_t", "one of RATED / STANDARD / DECLINE / REFER"),
+        ("Reward  r_t", "revenue minus claims, actuarial simulator"),
+    ]
+    dy = CONTENT_TOP + Inches(0.15)
+    for i, (term, desc) in enumerate(defs):
+        ry = dy + i * Inches(0.95)
+        _add_text_box(slide, MARGIN_LEFT, ry, Inches(2.9), Inches(0.45),
+                      term, font_size=16, bold=True, color=BLUE_TITLE)
+        _add_text_box(slide, MARGIN_LEFT, ry + Inches(0.42), Inches(5.9), Inches(0.4),
+                      desc, font_size=13, color=SOFT_TEXT)
+    _add_callout(slide, MARGIN_LEFT, dy + Inches(3.05), Inches(5.9), Inches(1.0),
+                 "Objective: maximise cumulative reward Σ r_t over T rounds, "
+                 "subject to demographic PSI guardrails.",
+                 font_size=14, bold=True)
+    rows = [
+        ("RATED",    "+premium − claims", "− adverse-sel. penalty"),
+        ("STANDARD", "+premium − claims", "+optimal margin"),
+        ("DECLINE",  "0 (avoided loss)",  "− missed revenue"),
+        ("REFER",    "+human decision net", "+human decision net"),
+    ]
+    _add_flat_table(slide, Inches(7.0), CONTENT_TOP + Inches(0.15),
+                    [Inches(1.7), Inches(2.1), Inches(2.0)],
+                    ["Action", "High-risk", "Low-risk"],
+                    rows, font_size=12, row_h=Inches(0.72))
+    _add_notes(slide,
+        "Formally: at each round the context is the standardised five-feature applicant "
+        "vector, the action is one of four arms, and the reward is revenue minus claims "
+        "from the actuarial simulator, with adverse selection penalising premium-heavy "
+        "arms on low-risk applicants. The objective is cumulative reward over T rounds "
+        "subject to the PSI guardrail. The table sketches the reward structure: for a "
+        "high-risk applicant DECLINE avoids a loss; for a low-risk one it forfeits "
+        "revenue; REFER nets the human decision either way.")
+    return slide
+
+
+def slide_zoom_bandit(prs):
+    slide = _content_slide(prs, "Zoom-in: Bandit Policy", _pg(11))
+    _add_overview_flowchart(slide, CONTENT_TOP, highlight="Bandit Policy",
+                            node_h=Inches(0.95))
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.4), CONTENT_W, Inches(1.0),
+                  "We now build the bandit policy one component at a time — context in, "
+                  "value estimates, then selection — each step with a concrete output.",
+                  font_size=17, color=SOFT_TEXT, align=PP_ALIGN.CENTER)
+    _add_notes(slide, "Signpost the build-up: three slides, each adds one box to the "
+               "policy and shows what that box outputs for a single applicant.")
+    return slide
+
+
+def slide_buildup_context(prs):
+    slide = _content_slide(prs, "Bandit Build-up: Context", _pg(12))
+    _add_buildup_stage(slide, CONTENT_TOP + Inches(0.5), [
+        ("Context vector  x_t ∈ R^5", "[age 0.4, sex -1.1, region 0, occ 2, BMI 0.8]"),
+    ])
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.6), CONTENT_W, [
+        "Five standardised features: age, sex, region, occupation, BMI",
+        "This is the bandit's only view of each applicant",
+    ])
+    _add_notes(slide, "Start the build-up with the input: the standardised five-feature "
+               "context vector — show the example numbers.")
+    return slide
+
+
+def slide_buildup_estimates(prs):
+    slide = _content_slide(prs, "Bandit Build-up: Value Estimates", _pg(13))
+    _add_buildup_stage(slide, CONTENT_TOP + Inches(0.5), [
+        ("Context  x_t", "[0.4, -1.1, 0, 2, 0.8]"),
+        ("Per-arm value\n(LinUCB / LinTS)", "RATED 0.31 · STD 0.52 · DEC 0.10 · REF 0.28"),
+    ])
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.6), CONTENT_W, [
+        "LinUCB: θ̂ᵀx + α·√(xᵀA⁻¹x)  — optimism under uncertainty",
+        "LinTS: sample θ̃ from the posterior — exploration by randomisation",
+    ])
+    _add_notes(slide, "Add the value-estimation box: each arm gets a score; explain the "
+               "LinUCB optimism bonus and the LinTS posterior sample.")
+    return slide
+
+
+def slide_buildup_action(prs):
+    slide = _content_slide(prs, "Bandit Build-up: Selection & Action", _pg(14))
+    _add_buildup_stage(slide, CONTENT_TOP + Inches(0.3), [
+        ("Context  x_t", "[0.4, -1.1, 0, 2, 0.8]"),
+        ("Per-arm value", "RATED 0.31 · STD 0.52 · DEC 0.10 · REF 0.28"),
+        ("argmax → action\n+ reward update", "STANDARD; r_t = +premium − claims; A←A+xxᵀ"),
+    ])
+    algos = [
+        (ACCENT_GREEN, "LinUCB / LinTS", "the two proposed admissible policies"),
+        (ACCENT_AMBER, "ε-Greedy", "naive explorer — provably worse O(T^2/3)"),
+        (MED_GRAY,     "Static XGB", "train-once incumbent baseline"),
+        (ACCENT_RED,   "AlwaysRATED", "constant +25% loading — inadmissible ceiling"),
+    ]
+    ay = CONTENT_TOP + Inches(2.4)
+    for i, (color, name, desc) in enumerate(algos):
+        ry = ay + i * Inches(0.52)
+        _add_filled_box(slide, MARGIN_LEFT, ry + Inches(0.04), Inches(0.16), Inches(0.34), color)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.4), ry, Inches(3.0), Inches(0.42),
+                      name, font_size=15, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(3.6), ry + Inches(0.03), Inches(8.6),
+                      Inches(0.42), desc, font_size=14, color=SOFT_TEXT)
+    _add_footnote(slide,
+        "Admissibility (§5.0.1): deployable AND commercially/regulatorily viable. "
+        "AlwaysRATED is the inadmissible ceiling; LinUCB/LinTS are the top-2 admissible policies.")
+    _add_notes(slide,
+        "Two proposed policies and three reference points. LinUCB plays optimism in the "
+        "face of uncertainty over a linear reward model with the square-root-T regret "
+        "bound; LinTS samples from the posterior and is near-optimal with naturally "
+        "calibrated uncertainty. Epsilon-greedy is the naive explorer with provably worse "
+        "T-to-the-two-thirds regret. Static XGB is the train-once incumbent. AlwaysRATED "
+        "rates everyone at +25 percent loading - it scores highest but is neither "
+        "commercially nor regulatorily viable, which is exactly the admissibility "
+        "distinction in section 5.0.1 and the baseline-ladder appendix (A1).")
+    return slide
+
+
+def slide_zoom_fairness(prs):
+    slide = _content_slide(prs, "Zoom-in: Fairness Guardrail & HITL", _pg(15))
+    _add_overview_flowchart(slide, CONTENT_TOP, highlight="PSI Fairness + HITL",
+                            node_h=Inches(0.95))
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.25), Inches(5.9),
+                        Inches(0.32), "PSI DEMOGRAPHIC GUARDRAIL", font_size=11, bold=True,
+                        color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    psi_zones = [
+        (ACCENT_GREEN, "GREEN", "PSI < 0.10", "stable"),
+        (ACCENT_AMBER, "AMBER", "0.10-0.25", "monitor"),
+        (ACCENT_RED,   "RED",   "PSI ≥ 0.25", "review"),
+    ]
+    zy = CONTENT_TOP + Inches(1.75)
+    for color, label, threshold, action in psi_zones:
+        _add_filled_box(slide, MARGIN_LEFT, zy, Inches(0.16), Inches(0.5), color)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.4), zy, Inches(1.5), Inches(0.5),
+                      label, font_size=16, bold=True, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(2.0), zy + Inches(0.04),
+                      Inches(2.1), Inches(0.45), threshold, font_size=14, color=DARK_TEXT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(4.2), zy + Inches(0.04),
+                      Inches(1.7), Inches(0.45), action, font_size=14, color=SOFT_TEXT)
+        zy += Inches(0.62)
+    _add_text_box(slide, MARGIN_LEFT, zy + Inches(0.05), Inches(5.9), Inches(0.6),
+                  "Computed on region & occupation, rolling 500-round window.",
+                  font_size=13, color=SOFT_TEXT)
+    lab = _add_text_box(slide, Inches(7.1), CONTENT_TOP + Inches(1.25), Inches(5.7),
+                        Inches(0.32), "HUMAN-IN-THE-LOOP WRAPPER", font_size=11, bold=True,
+                        color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_talking_points(slide, Inches(7.1), CONTENT_TOP + Inches(1.75), Inches(5.7), [
+        "Uncertainty > κ  →  REFER to actuary",
+        "Conservatism κ ∈ {0.3, 0.5, 0.7}",
+        "Human decides; reward still trains bandit",
+        "Target: review cost < 2% of reward",
+    ], font_size=15)
+    _add_footnote(slide,
+        "PSI is a monitor, not an enforcer -- constrained-action enforcement is future work.")
+    _add_notes(slide,
+        "Two safety layers. The PSI guardrail computes the Population Stability Index on "
+        "region and occupation over a rolling 500-round window: GREEN below 0.10, AMBER to "
+        "0.25, RED above. It detects concentration; it does not constrain the policy - "
+        "enforcement is future work, stated honestly. The HITL wrapper REFERs an applicant "
+        "to the actuary whenever predicted uncertainty exceeds the conservatism threshold "
+        "kappa, tested at 0.3, 0.5, 0.7; the human's decision is final and its observed "
+        "reward still updates the bandit. Design target: keep review cost under two "
+        "percent of gross reward.")
+    return slide
 def slide_headline_benchmark(prs): return _stub(prs, "Headline Benchmark", _pg(16))
 def slide_convergence_regret(prs): return _stub(prs, "Convergence and Regret", _pg(17))
 def slide_coldstart_hitl(prs):    return _stub(prs, "Cold-start and HITL", _pg(18))
