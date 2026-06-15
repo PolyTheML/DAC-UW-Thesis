@@ -376,6 +376,20 @@ def _add_footer_ribbon(slide, page_label: str | None = None):
                   align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE)
 
 
+def _add_divider(prs, number: str, name: str, page_label: str):
+    """Full-bleed cobalt divider: big 'N.' over the section name, left-aligned."""
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    _add_filled_box(slide, Inches(0), Inches(0), SLIDE_WIDTH, SLIDE_HEIGHT, BLUE_DIVIDER)
+    _add_text_box(slide, Inches(0.9), Inches(2.35), Inches(11.0), Inches(1.6),
+                  f"{number}.", font_size=120, bold=True, color=WHITE,
+                  font_name=HEAD_FONT, anchor=MSO_ANCHOR.MIDDLE)
+    _add_filled_box(slide, Inches(1.0), Inches(4.15), Inches(3.2), Inches(0.06), WHITE)
+    _add_text_box(slide, Inches(0.95), Inches(4.35), Inches(11.4), Inches(0.9),
+                  name, font_size=32, bold=True, color=WHITE, font_name=HEAD_FONT)
+    _add_footer_ribbon(slide, page_label)
+    return slide
+
+
 # ===========================================================================
 # Slide 1 -- Title
 # ===========================================================================

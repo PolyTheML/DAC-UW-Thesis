@@ -319,3 +319,14 @@ def test_content_title_centered_caps(import_builder):
     assert titled, "title not rendered ALL-CAPS"
     p = titled[0].text_frame.paragraphs[0]
     assert p.alignment == PP_ALIGN.CENTER
+
+
+def test_divider_slide_renders_number_and_name(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    b._add_divider(prs, "III", "Methodology & Model Design", "10 / 27")
+    slide = prs.slides[0]
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    assert "III" in text and "Methodology & Model Design" in text
