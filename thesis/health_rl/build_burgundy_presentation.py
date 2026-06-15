@@ -277,7 +277,7 @@ def _add_stat_row(slide, top, stats, hero_idx: int = 0, height=Inches(1.05),
 
 def _add_talking_points(slide, left, top, width, points, font_size: int = 17,
                         line_h=Inches(0.62)):
-    """<=4 short points, burgundy square marker + charcoal text. Returns bottom y.
+    """<=4 short points, blue square marker + charcoal text. Returns bottom y.
 
     Density rule (spec section 4) is enforced here: more than 4 points raises.
     """
@@ -305,7 +305,7 @@ def _add_notes(slide, text: str):
 
 def _add_flat_table(slide, left, top, col_ws, header, rows, font_size: int = 12,
                     row_h=Inches(0.5), cell_style=None):
-    """Flat table: bold charcoal header over a burgundy hairline, PANEL/white zebra rows.
+    """Flat table: bold charcoal header over a blue hairline, PANEL/white zebra rows.
 
     cell_style: optional fn(r, c, text) -> (bold, RGBColor) for emphasis cells.
     """
@@ -381,11 +381,11 @@ def _add_footer_ribbon(slide, page_label: str | None = None):
     _add_text_box(slide, Inches(0.18), FOOTER_TOP, Inches(3.1), FOOTER_HEIGHT,
                   "DAC  ·  ITC-AMS", font_size=11, bold=True, color=WHITE,
                   font_name=HEAD_FONT, anchor=MSO_ANCHOR.MIDDLE)
-    # center deck-title block (lighter tint)
-    _add_filled_box(slide, Inches(3.4), FOOTER_TOP, Inches(6.7), FOOTER_HEIGHT, BLUE_TITLE)
+    # center deck-title block (lighter tint, dark text for contrast)
+    _add_filled_box(slide, Inches(3.4), FOOTER_TOP, Inches(6.7), FOOTER_HEIGHT, BLUE_TINT)
     _add_text_box(slide, Inches(3.5), FOOTER_TOP, Inches(6.5), FOOTER_HEIGHT,
                   "Adaptive Underwriting via Contextual Bandits", font_size=11,
-                  color=WHITE, font_name=BODY_FONT, align=PP_ALIGN.CENTER,
+                  color=BLUE_DEEP, font_name=BODY_FONT, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE)
     # right date + page block
     _add_filled_box(slide, Inches(10.1), FOOTER_TOP, Inches(3.233), FOOTER_HEIGHT, BLUE_DEEP)
