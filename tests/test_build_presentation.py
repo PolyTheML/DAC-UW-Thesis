@@ -265,3 +265,16 @@ def test_logos_only_on_title_and_thanks(built_presentation):
         assert n_pics(idx) <= 1, f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
     assert n_pics(0) >= 2, "Title slide lost its logos"
     assert n_pics(22) >= 2, "Thanks slide lost its logos"
+
+
+def test_slide_palette_is_blue_not_burgundy():
+    """Figure palette must carry no retired burgundy hexes."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "slide_style", ROOT / "thesis" / "health_rl" / "figures" / "_slide_style.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    banned = {"#5d2a42", "#8a5570", "#b894a6", "#471f33"}
+    used = {v.lower() for v in mod.SLIDE_PALETTE.values()}
+    assert not (used & banned), f"burgundy survives in SLIDE_PALETTE: {used & banned}"
+    assert mod.SLIDE_PALETTE["hero"].lower() == "#1b5697", "hero series must be steel-blue"

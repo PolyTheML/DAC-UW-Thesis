@@ -1,4 +1,4 @@
-"""Slide-scale figure style for the defense deck (v2 Minimal Academic).
+"""Slide-scale figure style for the defense deck (v3 blue Yuth-reference).
 
 Sans type >= 14 pt, thick lines, deck palette, PNG-only into figures/slides/.
 Companion to _style.py (publication style) -- thesis report figures are NOT touched.
@@ -14,10 +14,10 @@ import matplotlib.pyplot as plt
 SLIDE_DIR = Path(__file__).resolve().parent / "slides"
 
 SLIDE_PALETTE = {
-    "hero":    "#5D2A42",   # burgundy -- headline series (LinUCB unless noted)
-    "hero2":   "#8A5570",   # lighter burgundy variants (HITL conservatism cells)
-    "hero3":   "#B894A6",
-    "lints":   "#3B6EA5",   # blue -- only when a third series is unavoidable
+    "hero":    "#1B5697",   # steel-blue -- headline series (LinUCB unless noted)
+    "hero2":   "#3E7CC0",   # mid-blue variant (HITL conservatism cells)
+    "hero3":   "#7FA8D8",   # light-blue variant
+    "lints":   "#1F6FC4",   # cobalt -- second bandit series
     "compare": "#9AA0A6",   # warm gray -- the baseline being beaten
     "amber":   "#E6A62E",
     "green":   "#2E8B57",
