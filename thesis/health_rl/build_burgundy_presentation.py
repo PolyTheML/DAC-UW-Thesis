@@ -608,10 +608,128 @@ def slide_thanks(prs: Presentation):
 # Stub aliases — v3 inventory (content filled in Tasks 12-17)
 # ===========================================================================
 
-def slide_about_company(prs):     return _stub(prs, "About Decent Actuarial Consultants", _pg(2))
-def slide_introduction(prs):      return _stub(prs, "Introduction", _pg(3))
-def slide_problem_statement(prs): return _stub(prs, "Problem Statement", _pg(4))
-def slide_project_objective(prs): return _stub(prs, "Project Objective", _pg(5))
+def slide_about_company(prs):
+    slide = _content_slide(prs, "About Decent Actuarial Consultants", _pg(2))
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.2), Inches(6.2), [
+        "DAC is a Phnom Penh actuarial consultancy",
+        "Clients: insurers, pension funds, regulators across SE Asia",
+        "This thesis is a DAC-supervised research internship (Mar–Jun 2026)",
+        "Deliverable: an adaptive underwriting prototype + this report",
+    ])
+    _add_placeholder_image(slide, Inches(7.1), CONTENT_TOP + Inches(0.1),
+                           Inches(5.7), Inches(4.4), "Phnom Penh — DAC office",
+                           real_path=LOGO_DAC)
+    _add_notes(slide,
+        "Decent Actuarial Consultants is a Phnom Penh actuarial consultancy serving "
+        "insurers, pension funds and regulators across Southeast Asia. The thesis is "
+        "embedded in a DAC-supervised research internship, March through June 2026; the "
+        "deliverable is the end-to-end adaptive underwriting prototype plus this report. "
+        "Timeline: March scoping and dataset design, April algorithms, May experiments, "
+        "June writing and defense preparation.")
+    return slide
+
+
+def slide_introduction(prs):
+    slide = _content_slide(prs, "Introduction", _pg(3))
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.9),
+                  "< 10 %", font_size=56, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.95), Inches(6.0),
+                        Inches(0.36), "HEALTH-INSURANCE PENETRATION IN CAMBODIA (2023 EST.)",
+                        font_size=10, color=GRAY_LABEL)
+    _letterspace(lab.text_frame.paragraphs[0], 80)
+    _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.6), Inches(6.0), [
+        "NSSF covers formal-sector workers only (~16%)",
+        "Private underwriting is manual and rule-based",
+        "Static rules never learn from outcomes",
+        "No demographic-parity monitoring in practice",
+    ])
+    _add_placeholder_image(slide, Inches(7.1), CONTENT_TOP, Inches(5.7), Inches(4.6),
+                           "Cambodian clinic / insurance context")
+    _add_notes(slide,
+        "Cambodia context: the National Social Security Fund covers only formal-sector "
+        "workers, roughly 16 percent; private voluntary insurance is nascent and "
+        "underwriting is mostly manual and rule-based. Actuaries apply fixed premium rules "
+        "without learning from outcomes, suboptimal decisions compound over a growing "
+        "applicant pool, and penetration is below 10 percent (2023 estimate). The "
+        "opportunity: a contextual bandit learns online from each decision while a PSI "
+        "guardrail watches demographic fairness.")
+    return slide
+
+
+def slide_problem_statement(prs):
+    slide = _content_slide(prs, "Problem Statement", _pg(4))
+    problems = [
+        ("Static thresholds", "Fixed cutoffs ignore applicant context"),
+        ("No online adaptation", "Claims feedback never reaches the model"),
+        ("Demographic blindspot", "No parity metric is tracked"),
+        ("No triage", "Experts review routine, not borderline, cases"),
+    ]
+    card_w, card_h = Inches(6.0), Inches(2.3)
+    positions = [
+        (MARGIN_LEFT,               CONTENT_TOP + Inches(0.2)),
+        (MARGIN_LEFT + Inches(6.4), CONTENT_TOP + Inches(0.2)),
+        (MARGIN_LEFT,               CONTENT_TOP + Inches(2.75)),
+        (MARGIN_LEFT + Inches(6.4), CONTENT_TOP + Inches(2.75)),
+    ]
+    for (title, desc), (lx, ly) in zip(problems, positions):
+        _add_filled_box(slide, lx, ly, card_w, card_h, PANEL)
+        _add_filled_box(slide, lx, ly, Inches(0.07), card_h, BLUE_TITLE)
+        _add_text_box(slide, lx + Inches(0.3), ly + Inches(0.3),
+                      card_w - Inches(0.6), Inches(0.5),
+                      title, font_size=20, bold=True, color=DARK_TEXT, font_name=HEAD_FONT)
+        _add_text_box(slide, lx + Inches(0.3), ly + Inches(0.95),
+                      card_w - Inches(0.6), Inches(1.1),
+                      desc, font_size=15, color=SOFT_TEXT)
+    _add_notes(slide,
+        "Four concrete failures of the status quo. One: fixed age/BMI/income cutoffs "
+        "ignore context, so a misclassified high-risk applicant generates uncorrected "
+        "losses. Two: the claims signal is never fed back, so accuracy degrades silently "
+        "as demographics shift. Three: no parity metric is tracked, so regional or "
+        "occupational concentration can develop undetected. Four: there is no triage - "
+        "actuaries spend time on high-volume routine cases instead of genuine edge cases.")
+    return slide
+
+
+def slide_project_objective(prs):
+    slide = _content_slide(prs, "Project Objective", _pg(5))
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(4.0), Inches(0.32),
+                        "RESEARCH GOAL", font_size=11, bold=True, color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.38), CONTENT_W, Inches(0.75),
+                  "Design and evaluate an adaptive health insurance underwriting system using "
+                  "contextual bandit algorithms on a synthetic Cambodia applicant dataset, "
+                  "incorporating demographic fairness monitoring and human-in-the-loop augmentation.",
+                  font_size=15, color=DARK_TEXT)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.35), Inches(4.0),
+                        Inches(0.32), "OBJECTIVES", font_size=11, bold=True, color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 120)
+    objs = [
+        ("O1", "Implement and adapt linear contextual bandit algorithms (LinUCB, LinTS) "
+               "for multi-arm health insurance underwriting decisions."),
+        ("O2", "Construct a 2,000-record synthetic Cambodia applicant dataset anchored "
+               "on CDHS, STEPS, ILO, and WHO demographic distributions."),
+        ("O3", "Evaluate bandit performance versus static rule-based baselines via "
+               "20-seed multi-run trials, bootstrap CIs, and paired Wilcoxon tests."),
+        ("O4", "Assess demographic fairness via PSI monitoring across region and occupation, "
+               "and integrate a human-in-the-loop underwriting wrapper."),
+    ]
+    top = CONTENT_TOP + Inches(1.8)
+    for i, (label, text) in enumerate(objs):
+        y = top + i * Inches(0.95)
+        _add_text_box(slide, MARGIN_LEFT, y, Inches(0.75), Inches(0.5),
+                      label, font_size=20, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+        _add_text_box(slide, MARGIN_LEFT + Inches(0.85), y + Inches(0.02),
+                      CONTENT_W - Inches(0.85), Inches(0.85),
+                      text, font_size=14, color=DARK_TEXT)
+        if i > 0:
+            _add_filled_box(slide, MARGIN_LEFT, y - Inches(0.1), CONTENT_W,
+                            Inches(0.012), HAIRLINE)
+    _add_notes(slide,
+        "Read the goal once, slowly. The four objectives map one-to-one onto the chapters: "
+        "O1 the algorithms (Chapter IV), O2 the dataset (Chapter IV), O3 the evaluation "
+        "(Chapter V), O4 fairness plus HITL (Chapter V). These are verbatim from the thesis "
+        "- the examiners will check the wording.")
+    return slide
 def slide_literature_review(prs): return _stub(prs, "Literature Review", _pg(6))
 def slide_methodology_overview(prs): return _stub(prs, "Methodology Overview", _pg(8))
 def slide_zoom_dataset(prs):      return _stub(prs, "Dataset", _pg(9))
