@@ -374,3 +374,16 @@ def test_placeholder_image_shows_swap_caption(import_builder):
     text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
     assert "PHOTO" in text.upper() and "Phnom Penh DAC office" in text
     assert "swap" in text.lower()
+
+
+def test_demo_screenshot_helper_present(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    # missing path -> labeled placeholder (deck never breaks)
+    b._add_demo_screenshot(slide, b.MARGIN_LEFT, b.CONTENT_TOP, b.Inches(6),
+                           b.Inches(4), "nonexistent.png", "Underwriting dashboard")
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    assert "Underwriting dashboard" in text

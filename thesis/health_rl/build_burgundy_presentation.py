@@ -38,6 +38,7 @@ LOGO_AMS    = str(ROOT / "thesis" / "AMS.png")
 LOGO_DAC    = str(ROOT / "thesis" / "DAC.jpg")
 FIG_DIR     = ROOT / "thesis" / "health_rl" / "figures"
 SLIDE_FIG_DIR = FIG_DIR / "slides"
+DEMO_SHOT_DIR = FIG_DIR / "demo_shots"
 
 RESULTS_JSON = ROOT / "demo" / "static" / "thesis_results.json"
 with open(RESULTS_JSON) as _f:
@@ -418,6 +419,19 @@ def _add_placeholder_image(slide, left, top, width, height, caption: str,
                   f"[ PHOTO PLACEHOLDER ]\n\n{caption}\n\n(swap in a real photo before defense)",
                   font_size=14, color=GRAY_LABEL, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE, font_name=BODY_FONT)
+
+
+def _add_demo_screenshot(slide, left, top, width, height, filename: str, caption: str):
+    """Embed a real demo screenshot if present, else a labeled placeholder frame."""
+    path = str(DEMO_SHOT_DIR / filename)
+    if os.path.exists(path):
+        _add_picture_fit(slide, path, left, top, width, height)
+        _add_text_box(slide, left, top + height + Inches(0.02), width, Inches(0.3),
+                      caption, font_size=11, italic=True, color=GRAY_LABEL,
+                      align=PP_ALIGN.CENTER)
+    else:
+        _add_placeholder_image(slide, left, top, width, height,
+                               f"Demo screenshot: {caption}")
 
 
 # ===========================================================================
