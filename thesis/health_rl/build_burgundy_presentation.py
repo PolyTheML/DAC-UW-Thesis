@@ -85,7 +85,7 @@ BODY_FONT     = "Calibri"                     # body text
 SLIDE_WIDTH       = Inches(13.333)
 SLIDE_HEIGHT      = Inches(7.5)
 MARGIN_LEFT       = Inches(0.5)
-CONTENT_TOP       = Inches(1.32)   # below tag + title + accent
+CONTENT_TOP       = Inches(1.30)   # below underline (v3: centered title at 0.34, underline at 1.02)
 FOOTER_TOP        = Inches(7.04)
 FOOTER_HEIGHT     = Inches(0.46)
 CONTENT_W         = SLIDE_WIDTH - MARGIN_LEFT - Inches(0.5)
@@ -335,43 +335,24 @@ def _add_flat_table(slide, left, top, col_ws, header, rows, font_size: int = 12,
 # Chrome (section tag, title, bottom bar)
 # ===========================================================================
 
-def _add_section_tag(slide, sec_key: str):
-    """Plain-text uppercase letter-spaced section tag, top-left (no chip)."""
-    num, name = next((n, t) for n, t in SECTIONS if n == sec_key)
-    box = _add_text_box(slide, MARGIN_LEFT, Inches(0.16), Inches(7.0), Inches(0.3),
-                        f"{num.upper()} · {name.upper()}",
-                        font_size=10, bold=True, color=BLUE_TITLE)
-    _letterspace(box.text_frame.paragraphs[0])
+def _add_content_title(slide, text: str):
+    """Centered ALL-CAPS bold steel-blue title + short centered underline."""
+    box = _add_text_box(slide, MARGIN_LEFT, Inches(0.34), CONTENT_W, Inches(0.62),
+                        text.upper(), font_size=26, bold=True, color=BLUE_TITLE,
+                        align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
+    box.text_frame.word_wrap = True
+    # short centered underline
+    rule_w = Inches(2.2)
+    _add_filled_box(slide, (SLIDE_WIDTH - rule_w) / 2, Inches(1.02), rule_w,
+                    Inches(0.04), BLUE_TITLE)
 
 
-_TITLE_RX = re.compile(r"^([A-Za-z]?\d+(?:\.\d+)?)\.?\s+(.*)$")
-
-
-def _add_slide_title(slide, text: str):
-    """Burgundy decimal run + charcoal title run, Calibri 26 bold."""
-    m = _TITLE_RX.match(text.strip())
-    num, rest = (m.group(1), m.group(2).strip()) if m else ("", text.strip())
-    box = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, MARGIN_LEFT, Inches(0.46),
-                                 Inches(12.3), Inches(0.62))
-    _flat(box)
-    box.fill.background()
-    _no_line(box)
-    tf = box.text_frame
-    tf.word_wrap = False
-    p = tf.paragraphs[0]
-    for run_text, run_color in ((f"{num}  ", BLUE_TITLE), (rest, DARK_TEXT)):
-        if run_text.strip():
-            r = p.add_run()
-            r.text = run_text
-            r.font.size = Pt(26)
-            r.font.bold = True
-            r.font.color.rgb = run_color
-            r.font.name = "Calibri"
-
-
-def _add_title_rule(slide):
-    """Short burgundy accent under the title (replaces the full-width rule)."""
-    _add_filled_box(slide, MARGIN_LEFT, Inches(1.14), Inches(0.55), Inches(0.045), BLUE_TITLE)
+def _content_slide(prs, title: str, page_label: str):
+    """Blank slide with centered title + underline + footer ribbon."""
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    _add_content_title(slide, title)
+    _add_footer_ribbon(slide, page_label)
+    return slide
 
 
 def _add_footer_ribbon(slide, page_label: str | None = None):

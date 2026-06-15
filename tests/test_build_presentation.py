@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from pptx import Presentation
+from pptx.enum.text import PP_ALIGN
 
 ROOT   = Path(__file__).parent.parent
 SCRIPT = ROOT / "thesis" / "health_rl" / "build_burgundy_presentation.py"
@@ -304,3 +305,17 @@ def test_footer_ribbon_three_parts(import_builder):
     assert "DAC" in text and "ITC-AMS" in text          # left org block
     assert "12 / 27" in text                             # right page block
     assert "July 2026" in text                           # right date
+
+
+def test_content_title_centered_caps(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    b._add_content_title(slide, "Synthetic Cambodia Dataset")
+    titled = [s for s in slide.shapes if s.has_text_frame
+              and "SYNTHETIC CAMBODIA DATASET" in s.text_frame.text]
+    assert titled, "title not rendered ALL-CAPS"
+    p = titled[0].text_frame.paragraphs[0]
+    assert p.alignment == PP_ALIGN.CENTER
