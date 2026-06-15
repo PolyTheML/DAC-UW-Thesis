@@ -730,7 +730,33 @@ def slide_project_objective(prs):
         "(Chapter V), O4 fairness plus HITL (Chapter V). These are verbatim from the thesis "
         "- the examiners will check the wording.")
     return slide
-def slide_literature_review(prs): return _stub(prs, "Literature Review", _pg(6))
+def slide_literature_review(prs):
+    slide = _content_slide(prs, "Literature Review", _pg(6))
+    rows = [
+        ("Bandits in healthcare", "Bouneffouf et al. (2017)",
+         "Clinical decision support via LinUCB; reward = patient outcome"),
+        ("Linear bandit theory", "Li et al. (2010); Agrawal & Goyal (2013)",
+         "LinUCB O(sqrt(T) d log T) regret; LinTS posterior sampling, near-optimal"),
+        ("Fairness in insurance ML", "Frees et al. (2014); Kusner et al. (2017)",
+         "Regulatory constraints on protected attributes; counterfactual fairness"),
+        ("PSI model monitoring", "Yurdakul (2018)",
+         "Population Stability Index drift zones (GREEN / AMBER / RED)"),
+        ("Human-in-the-loop RL", "Christiano et al. (2017)",
+         "Expert overrides improve alignment; cost-benefit of referral"),
+    ]
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.15),
+                    [Inches(3.0), Inches(3.6), Inches(5.7)],
+                    ["Topic", "Key authors", "Contribution"],
+                    rows, font_size=13, row_h=Inches(0.85))
+    _add_footnote(slide, "Full review: thesis Chapter III (30+ sources).")
+    _add_notes(slide,
+        "Five strands inform the method. Bouneffouf showed LinUCB works for clinical "
+        "decisions. Li et al. 2010 give the LinUCB regret bound, Agrawal and Goyal 2013 "
+        "the LinTS guarantee - together they justify the two proposed policies. Frees and "
+        "Kusner frame insurance fairness constraints; Yurdakul's PSI gives the monitoring "
+        "metric with the 0.10/0.25 thresholds; Christiano motivates the human-in-the-loop "
+        "wrapper. The thesis reviews thirty-plus sources; this is the load-bearing subset.")
+    return slide
 def slide_methodology_overview(prs): return _stub(prs, "Methodology Overview", _pg(8))
 def slide_zoom_dataset(prs):      return _stub(prs, "Dataset", _pg(9))
 def slide_reward_simulator(prs):  return _stub(prs, "Reward Simulator", _pg(10))
