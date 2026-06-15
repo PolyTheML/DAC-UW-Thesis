@@ -376,16 +376,6 @@ def _add_footer_ribbon(slide, page_label: str | None = None):
                   align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE)
 
 
-def _content_slide(prs, sec_key: str, title: str, page_num: str):
-    """Factory: blank slide with section tag, decimal title, rule, and bottom bar."""
-    slide = prs.slides.add_slide(prs.slide_layouts[6])
-    _add_section_tag(slide, sec_key)
-    _add_slide_title(slide, title)
-    _add_title_rule(slide)
-    _add_bottom_bar(slide, page_num)
-    return slide
-
-
 # ===========================================================================
 # Slide 1 -- Title
 # ===========================================================================
