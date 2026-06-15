@@ -330,3 +330,20 @@ def test_divider_slide_renders_number_and_name(import_builder):
     slide = prs.slides[0]
     text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
     assert "III" in text and "Methodology & Model Design" in text
+
+
+def test_overview_flowchart_six_stages_and_highlight(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    b._add_overview_flowchart(slide, b.CONTENT_TOP, highlight="Bandit Policy")
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    for stage in ["Applicant Context", "Bandit Policy", "Underwriting Action",
+                  "Actuarial Reward", "PSI Fairness + HITL", "Decision"]:
+        assert stage in text, f"flowchart missing stage '{stage}'"
+    # the highlight box uses GREEN_HILITE line color
+    greens = [s for s in slide.shapes
+              if s.line.color.type is not None and s.line.color.rgb == b.GREEN_HILITE]
+    assert greens, "no green highlight outline drawn"

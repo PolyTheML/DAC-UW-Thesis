@@ -331,6 +331,50 @@ def _add_flat_table(slide, left, top, col_ws, header, rows, font_size: int = 12,
     return top + Inches(0.44) + len(rows) * row_h
 
 
+FLOW_STAGES = ["Applicant Context", "Bandit Policy", "Underwriting Action",
+               "Actuarial Reward", "PSI Fairness + HITL", "Decision"]
+
+
+def _add_overview_flowchart(slide, top, highlight=None, node_h=Inches(1.4)):
+    """Single-row 6-node pipeline. `highlight` (str or list) gets a green outline box.
+
+    Returns dict[stage_name] -> (left, top, width, height) for callers that overlay.
+    """
+    if isinstance(highlight, str):
+        highlight = [highlight]
+    highlight = highlight or []
+    n = len(FLOW_STAGES)
+    node_w = Inches(1.72)
+    arrow_w = Inches(0.22)
+    total = n * node_w + (n - 1) * arrow_w
+    x0 = (SLIDE_WIDTH - total) / 2
+    geom = {}
+    x = x0
+    for i, stage in enumerate(FLOW_STAGES):
+        fill = NODE_START if i == 0 else NODE_END if i == n - 1 else BLUE_NODE
+        txt_color = WHITE if i in (0, n - 1) else DARK_TEXT
+        _add_filled_box(slide, x, top, node_w, node_h, fill,
+                        line_color=BLUE_TITLE, line_width_pt=1.0)
+        _add_text_box(slide, x + Inches(0.05), top, node_w - Inches(0.1), node_h,
+                      stage, font_size=11, bold=True, color=txt_color,
+                      align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        geom[stage] = (x, top, node_w, node_h)
+        if i < n - 1:
+            arr = slide.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, x + node_w,
+                                         top + node_h / 2 - Inches(0.12),
+                                         arrow_w, Inches(0.24))
+            _flat(arr); _set_shape_fill(arr, BLUE_TITLE); _no_line(arr)
+        x += node_w + arrow_w
+    # green "you are here" outline around highlighted node(s)
+    for stage in highlight:
+        gx, gy, gw, gh = geom[stage]
+        box = _add_filled_box(slide, gx - Inches(0.08), gy - Inches(0.08),
+                              gw + Inches(0.16), gh + Inches(0.16), WHITE,
+                              line_color=GREEN_HILITE, line_width_pt=3.0)
+        box.fill.background()   # outline only
+    return geom
+
+
 # ===========================================================================
 # Chrome (section tag, title, bottom bar)
 # ===========================================================================
