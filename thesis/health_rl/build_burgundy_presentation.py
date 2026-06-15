@@ -406,6 +406,20 @@ def _add_buildup_stage(slide, top, stages):
         x += box_w + arrow_w
 
 
+def _add_placeholder_image(slide, left, top, width, height, caption: str,
+                           real_path: str | None = None):
+    """Labeled swap-target frame. If real_path exists, embed it instead."""
+    if real_path and os.path.exists(real_path):
+        _add_picture_fit(slide, real_path, left, top, width, height)
+        return
+    _add_filled_box(slide, left, top, width, height, PANEL,
+                    line_color=BLUE_TINT, line_width_pt=1.5)
+    _add_text_box(slide, left, top, width, height,
+                  f"[ PHOTO PLACEHOLDER ]\n\n{caption}\n\n(swap in a real photo before defense)",
+                  font_size=14, color=GRAY_LABEL, align=PP_ALIGN.CENTER,
+                  anchor=MSO_ANCHOR.MIDDLE, font_name=BODY_FONT)
+
+
 # ===========================================================================
 # Chrome (section tag, title, bottom bar)
 # ===========================================================================

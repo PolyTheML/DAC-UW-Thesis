@@ -361,3 +361,16 @@ def test_buildup_stage_renders_labels_and_outputs(import_builder):
     text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
     assert "Context vector" in text and "[0.4, -1.1, 0, 2, 0.8]" in text
     assert "Per-arm value estimates" in text
+
+
+def test_placeholder_image_shows_swap_caption(import_builder):
+    b = import_builder
+    prs = Presentation()
+    prs.slide_width = b.SLIDE_WIDTH
+    prs.slide_height = b.SLIDE_HEIGHT
+    slide = prs.slides.add_slide(prs.slide_layouts[6])
+    b._add_placeholder_image(slide, b.Inches(7), b.CONTENT_TOP, b.Inches(5.5),
+                             b.Inches(4.0), "Phnom Penh DAC office")
+    text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
+    assert "PHOTO" in text.upper() and "Phnom Penh DAC office" in text
+    assert "swap" in text.lower()
