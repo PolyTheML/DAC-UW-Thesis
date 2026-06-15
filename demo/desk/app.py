@@ -145,8 +145,11 @@ class LearnRunIn(BaseModel):
     algorithm: str = Field("LinUCB", pattern="^(LinUCB|LinTS)$")
     seed: int = Field(42, ge=0, le=10_000)
     n_rounds: int = Field(2000, ge=300, le=5000)
+    exploration: str = Field("Balanced", pattern="^(Greedy|Balanced|Exploratory)$")
 
 
 @app.post("/api/learn/run")
 async def learn_run(payload: LearnRunIn) -> dict[str, Any]:
-    return learning.run_learn(payload.algorithm, payload.seed, payload.n_rounds)
+    return learning.run_learn(
+        payload.algorithm, payload.seed, payload.n_rounds, payload.exploration
+    )

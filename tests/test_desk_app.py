@@ -153,6 +153,9 @@ def test_learn_run_trajectories():
         assert set(mix.keys()) == set(ACTION_NAMES)
     # Illustrative lift readout present and labelled.
     assert "lift_pct" in data and isinstance(data["lift_pct"], (int, float))
+    # Default carries the Balanced preset + resolved param (spec §9).
+    assert data["exploration"] == "Balanced"
+    assert data["param"] == {"name": "alpha", "value": 1.0}
 
 
 def test_learn_run_rejects_bad_algorithm():
@@ -191,3 +194,24 @@ def test_run_learn_presets_change_trajectory():
 def test_run_learn_rejects_unknown_preset():
     with pytest.raises(ValueError):
         run_learn("LinUCB", n_rounds=300, exploration="Wild")
+
+
+# ---- Exploration speed-control: HTTP boundary (spec §6/§9) ----
+
+def test_learn_run_http_greedy_param():
+    r = client.post(
+        "/api/learn/run",
+        json={"algorithm": "LinUCB", "n_rounds": 300, "exploration": "Greedy"},
+    )
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["exploration"] == "Greedy"
+    assert data["param"] == {"name": "alpha", "value": 0.0}
+
+
+def test_learn_run_rejects_bad_exploration():
+    r = client.post(
+        "/api/learn/run",
+        json={"algorithm": "LinUCB", "n_rounds": 300, "exploration": "Wild"},
+    )
+    assert r.status_code == 422
