@@ -1,16 +1,17 @@
-"""
-Generate the thesis defense presentation — Sreynich-format structural pass.
+"""Generate the thesis defense presentation — v3 blue "Yuth-reference" redesign.
 
-Conventions (matching Nang Sreynich's ITC DS defense deck, July 2025):
-  * Persistent roman-numeral section tag on every content slide
-  * Decimal-numbered slide titles: "1.1. Research Background", "4.3. ..."
-  * Corner page numbers: 01-19 (content slides), A1-A8 (appendix); unnumbered otherwise
-  * No section-divider slides
-  * All headline statistics read from demo/static/thesis_results.json at build time
-    (build fails loudly on missing key -- no silent hardcoded fallbacks)
-  * Minimal Academic restyle (v2): flat white, Calibri-only, burgundy accents, thin bottom bar
+NOTE: filename/output keep the legacy 'burgundy' name to avoid test/render churn;
+the deck is now FULL BLUE (ITC-AMS match). v2 burgundy deck recoverable via git.
 
-Output: thesis/health_rl/burgundy_defense_presentation.pptx  (32 slides)
+Visual system (mirrors thesis/sample/Slide_[Yuth-Official].pdf):
+  * 3-part footer ribbon on every slide (org | deck title | date + page/total)
+  * centered ALL-CAPS underlined steel-blue content titles
+  * cobalt section-divider slides (I..V)
+  * methodology overview flowchart + green "you are here" zoom-ins + build-up
+  * every content slide carries a visual; bullets are real phrases
+  * all headline statistics load from demo/static/thesis_results.json (KeyError = drift bug)
+
+Output: thesis/health_rl/burgundy_defense_presentation.pptx  (32 slides: 27 main + 5 appendix)
 
 Run:
     python thesis/health_rl/build_burgundy_presentation.py
@@ -576,6 +577,7 @@ def slide_toc(prs: Presentation):
                         Inches(0.012), HAIRLINE)
     _add_footer_ribbon(slide, "2 / 27")
 
+
 def slide_thanks(prs: Presentation):
     """Slide 23."""
     slide = prs.slides.add_slide(prs.slide_layouts[6])
@@ -730,6 +732,8 @@ def slide_project_objective(prs):
         "(Chapter V), O4 fairness plus HITL (Chapter V). These are verbatim from the thesis "
         "- the examiners will check the wording.")
     return slide
+
+
 def slide_literature_review(prs):
     slide = _content_slide(prs, "Literature Review", _pg(6))
     rows = [
@@ -757,6 +761,8 @@ def slide_literature_review(prs):
         "metric with the 0.10/0.25 thresholds; Christiano motivates the human-in-the-loop "
         "wrapper. The thesis reviews thirty-plus sources; this is the load-bearing subset.")
     return slide
+
+
 def slide_methodology_overview(prs):
     slide = _content_slide(prs, "Methodology Overview", _pg(8))
     _add_overview_flowchart(slide, CONTENT_TOP + Inches(0.3), highlight=None)
@@ -973,6 +979,8 @@ def slide_zoom_fairness(prs):
         "reward still updates the bandit. Design target: keep review cost under two "
         "percent of gross reward.")
     return slide
+
+
 def slide_headline_benchmark(prs):
     slide = _content_slide(prs, "Headline Benchmark", _pg(16))
     _add_picture_fit(slide, str(SLIDE_FIG_DIR / "slide_loglog_regret.png"),
@@ -1142,6 +1150,8 @@ def slide_live_demo(prs):
                "arm the bandit picks, the PSI monitor, and the HITL queue. If the live run "
                "fails, narrate over these three screenshots.")
     return slide
+
+
 def slide_conclusion(prs):
     slide = _content_slide(prs, "Conclusion", _pg(21))
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.1), Inches(6.0), [
@@ -1248,9 +1258,10 @@ def slide_app_reconciliation(prs):
                  f"EXP-005 (+{_E005['lift_pct']}%) is the conservative pre-registered primary.",
                  font_size=14)
     _add_notes(slide,
-        "If asked why 25.2, 27.2 and 29.8 percent all appear: the headline uses the paired "
+        f"If asked why {_E005['lift_pct']}, {lifts['linucb_vs_static_pct']} and "
+        f"{lifts['lints_vs_static_pct']} percent all appear: the headline uses the paired "
         "EXP-005 design; the ladder harness uses common random numbers which yields larger "
-        "separations; HITL's 14.8 percent is against the vanilla bandit, a different "
+        f"separations; HITL's {_E008['lift_pct']} percent is against the vanilla bandit, a different "
         "baseline. Same code, different pre-registered questions.")
     return slide
 

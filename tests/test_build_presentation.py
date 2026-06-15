@@ -1,6 +1,5 @@
 """Tests for the defense presentation generator (v3 blue, 32 slides)."""
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
