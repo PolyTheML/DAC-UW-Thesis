@@ -158,6 +158,23 @@
   \label{chap:\thechapter}
 }
 
+% ── Numbered-chapter heading: "Chapter I. Title" ─────────────────────────────
+% The Roman numeral is shown in the heading text only (via \Roman{chapter}); we
+% do NOT redefine \thechapter, so section numbers stay arabic (4.1, 4.2, …) and
+% every manual "Section 4.x" reference remains valid. \chapter* (front matter,
+% TOC, bibliography, appendices) uses \@makeschapterhead and is left untouched.
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{30\p@}%
+  {\parindent \z@ \centering \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+        \LARGE\bfseries \@chapapp\space \Roman{chapter}.\space #1%
+    \else
+        \LARGE\bfseries #1%
+    \fi
+    \par\nobreak \vskip 30\p@ }}
+\makeatother
+
 % Manual figure numbering: captions already carry "Figure N." (matching in-text
 % references), so labelformat=empty (see Settings) hides LaTeX's own label while
 % \caption still registers the entry in the List of Figures. The optional first
@@ -183,6 +200,15 @@
         \caption{#2}
         \label{fig:#3}
     \end{figure}
+}
+
+% Unnumbered logo placeholder (no caption -> no figure number, no LoF entry, no
+% renumbering). Replace each \logoslot{Name} with, e.g.,
+% \begin{center}\includegraphics[width=0.22\textwidth]{images/logo_name.png}\end{center}
+\newcommand{\logoslot}[1]{%
+  \begin{center}%
+  \colorbox{gray!12}{\parbox[c][1.8cm][c]{0.36\textwidth}{\centering\itshape\color{gray}[#1 logo]}}%
+  \end{center}%
 }
 
 \newcommand{\unnumberdSection}[1]{
@@ -236,17 +262,10 @@
 % \thispagestyle{empty} % Remove page number if needed
 
 \newpage
+\input{Cover_Pages/Executive_Summary_KH}
+
+\newpage
 \input{Cover_Pages/Executive_Summary}
-
-\newpage
-\input{Cover_Pages/Abstract_KH}
-% \setmainfont{Times New Roman} % Reset font immediately after
-
-\newpage
-\input{Cover_Pages/Abstract_EN}
-
-\newpage
-\input{Cover_Pages/Resume_FR}
 
 \newpage
 \chapter*{\centering TABLE OF CONTENTS}
