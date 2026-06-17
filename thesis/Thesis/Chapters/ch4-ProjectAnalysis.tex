@@ -1,12 +1,38 @@
-\chapter{PROJECT ANALYSIS AND CONCEPTS}\label{chapter-iv.-project-analysis-and-concepts}
+\chapter{Methodology}\label{chapter-iv.-project-analysis-and-concepts}
 
-This chapter specifies the requirements that the proposed contextual bandit underwriting system must satisfy, identifies the technologies used to implement them, and documents the full methodology. Section 4.1 defines the functional capabilities, organised around the four operational modules of the system. Section 4.2 specifies the non-functional quality attributes. Section 4.3 enumerates the implementation tool stack. Section 4.4 closes with a focused exposition of the core technology --- the contextual bandit framework --- describing what it is, how it operates, its place in the overall system architecture, and the reasons it was selected over competing alternatives. Section 4.5 describes the synthetic dataset and feature engineering. Section 4.6 specifies the bandit algorithms and baselines. Section 4.7 details the reward design and actuarial simulator. Section 4.8 documents the PSI guardrails and fairness metrics. Section 4.9 presents the experimental design for the three core validation experiments (EXP-005 through EXP-007); the human-in-the-loop experiment (EXP-008) is reported in §5.4. Section 4.10 outlines the implementation and deployment roadmap.
+This chapter specifies the requirements that the proposed contextual bandit underwriting system must satisfy, identifies the technologies used to implement them, and documents the full methodology. Section 4.1 presents the general workflow of the methodology as an end-to-end pipeline and maps each subsequent section to a node of that pipeline. Section 4.2 defines the functional capabilities, organised around the four operational modules of the system. Section 4.3 specifies the non-functional quality attributes. Section 4.4 enumerates the implementation tool stack. Section 4.5 closes with a focused exposition of the core technology --- the contextual bandit framework --- describing what it is, how it operates, its place in the overall system architecture, and the reasons it was selected over competing alternatives. Section 4.6 describes the synthetic dataset and feature engineering. Section 4.7 specifies the bandit algorithms and baselines. Section 4.8 details the reward design and actuarial simulator. Section 4.9 documents the PSI guardrails and fairness metrics. Section 4.10 presents the experimental design for the three core validation experiments (EXP-005 through EXP-007); the human-in-the-loop experiment (EXP-008) is reported in §5.4. Section 4.11 outlines the implementation and deployment roadmap.
+
+\section{General Workflow}\label{general-workflow}
+
+Figure 4 presents the methodology of this thesis as a single end-to-end pipeline. Each node corresponds to a section of this chapter that explains it in detail: the synthetic dataset and feature engineering (\S4.6), the bandit algorithms and the static baseline (\S4.7), the profit-based actuarial reward simulator (\S4.8), the PSI and EEOC fairness guardrails (\S4.9), the three validation experiments (\S4.10), and the deployment roadmap (\S4.11). The sections that follow this workflow first establish the system requirements --- the functional capabilities (\S4.2), the non-functional quality attributes (\S4.3), and the implementation tool stack (\S4.4) --- and then the contextual-bandit concept that the pipeline operationalises (\S4.5), before the node-by-node exposition begins.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=6mm and 0mm]
+  \node[procnode] (data) {\textbf{Synthetic Cambodia Dataset}\\\footnotesize 2{,}000 applicants, CDHS 2021--22 calibrated\ (\S4.6)};
+  \node[procnode, below=of data] (feat) {\textbf{Feature Engineering}\\\footnotesize 34-dimensional context vector\ (\S4.6)};
+  \node[procnode, below=of feat] (algo) {\textbf{Bandit Algorithms + Static Baseline}\\\footnotesize LinUCB / LinTS / $\varepsilon$-Greedy vs Static XGB\ (\S4.7)};
+  \node[procnode, below=of algo] (rew) {\textbf{Actuarial Reward Simulator}\\\footnotesize profit-based; actions standard/rated/decline/refer\ (\S4.8)};
+  \node[procnode, below=of rew] (fair) {\textbf{PSI + EEOC Fairness Guardrails}\\\footnotesize sliding-window drift + four-fifths audit\ (\S4.9)};
+  \node[procnode, below=of fair] (exp) {\textbf{Experimental Validation}\\\footnotesize EXP-005 / 006 / 007 (HITL in \S5.4)\ (\S4.10)};
+  \node[procnode, below=of exp] (dep) {\textbf{Deployment Roadmap}\\\footnotesize shadow $\rightarrow$ assisted $\rightarrow$ automated\ (\S4.11)};
+  \draw[flowarrow] (data) -- (feat);
+  \draw[flowarrow] (feat) -- (algo);
+  \draw[flowarrow] (algo) -- (rew);
+  \draw[flowarrow] (rew) -- (fair);
+  \draw[flowarrow] (fair) -- (exp);
+  \draw[flowarrow] (exp) -- (dep);
+  \draw[feedbackarrow] (rew.east) to[out=20,in=-20] node[subnote, right=2mm]{online update} (algo.east);
+\end{tikzpicture}
+\caption[Figure 4. End-to-end methodology workflow]{Figure 4. End-to-end methodology workflow; each node is detailed in the chapter section noted beside it. The feedback arrow marks the online update by which realised reward refines the bandit's per-action coefficients.}
+\label{fig:methodology-workflow}
+\end{figure}
 
 \section{Functional Requirements}\label{functional-requirements}
 
-The functional requirements are organised into four module groups, each of which addresses one or more of the three problems identified in Section 1.2: suboptimal risk selection, inability to adapt to portfolio drift, and demographic fairness violations. Table 2 maps each module group to the problems it resolves, providing forward traceability between requirements and motivation.
+The functional requirements are organised into four module groups, each of which addresses one or more of the three problems identified in Section 1.2: suboptimal risk selection, inability to adapt to portfolio drift, and demographic fairness violations. Table 3 maps each module group to the problems it resolves, providing forward traceability between requirements and motivation.
 
-\captionof{table}{Table 2 --- Functional requirement groups mapped to research problems (§1.2).}\label{tab:4.1}
+\captionof{table}{Table 3 --- Functional requirement groups mapped to research problems (§1.2). \checkmark\ marks the problems each group addresses; $	imes$ marks those it does not.}\label{tab:4.1}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -31,10 +57,10 @@ Problem 3 (Fairness)
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-FR-1 & Applicant Simulation \& Risk Assessment & ● & ● & --- \\
-FR-2 & Dynamic Premium Optimisation & ● & --- & --- \\
-FR-3 & Bandit Algorithm Arena \& Benchmarking & ● & ● & --- \\
-FR-4 & PSI Drift Monitor \& Fairness Audit & --- & ● & ● \\
+FR-1 & Applicant Simulation \& Risk Assessment & \checkmark & \checkmark & $\times$ \\
+FR-2 & Dynamic Premium Optimisation & \checkmark & $\times$ & $\times$ \\
+FR-3 & Bandit Algorithm Arena \& Benchmarking & \checkmark & \checkmark & $\times$ \\
+FR-4 & PSI Drift Monitor \& Fairness Audit & $\times$ & \checkmark & \checkmark \\
 \end{longtable}
 }
 
@@ -97,14 +123,14 @@ The system implements Population Stability Index (PSI) guardrails to detect demo
 \item
   \textbf{FR-4.3} Render PSI bar charts for visual drift inspection.
 \item
-  \textbf{FR-4.4} Validate the fairness constraint that no regional or occupational segment exhibits an approval rate below 80\% of the maximum observed segment rate, in line with the U.S. EEOC four-fifths rule formalised in §4.8.2.
+  \textbf{FR-4.4} Validate the fairness constraint that no regional or occupational segment exhibits an approval rate below 80\% of the maximum observed segment rate, in line with the U.S. EEOC four-fifths rule formalised in §4.9.2.
 \end{itemize}
 
 \section{Non-Functional Requirements}\label{non-functional-requirements}
 
-Non-functional requirements specify the quality attributes and operational constraints under which the system must perform. The eight requirements in Table 3 reflect the deployment context --- low-resource mobile infrastructure in an emerging market --- and the academic context --- reproducibility for examiner replication and regulator audit.
+Non-functional requirements specify the quality attributes and operational constraints under which the system must perform. The eight requirements in Table 4 reflect the deployment context --- low-resource mobile infrastructure in an emerging market --- and the academic context --- reproducibility for examiner replication and regulator audit.
 
-\captionof{table}{Table 3 --- Non-functional requirements.}\label{tab:4.2}
+\captionof{table}{Table 4 --- Non-functional requirements.}\label{tab:4.2}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -133,17 +159,96 @@ NFR-4 & Portability & Pure Python stack deployable on any VPS or Render free tie
 NFR-5 & Maintainability & Modular code structure separating data generation, algorithm implementation, API routing, and frontend assets. & Enables extension with new algorithms or PSI dimensions without rewriting unrelated subsystems. \\
 NFR-6 & Accuracy & PSI computations in the demonstration interface match the values produced by experiment EXP-006 to four decimal places. & Guarantees consistency between research code and production demo so that reviewers can verify reported results. \\
 NFR-7 & Interpretability & Per-action coefficient vectors θ\_a remain inspectable for LinUCB and LinTS. & Linear bandits, unlike neural alternatives, expose explicit feature weights for actuarial review and regulatory explanation. \\
-NFR-8 & Auditability \emph{(design target)} & Every decision tuple (context, action, reward, PSI status, timestamp) shall be immutably logged once the Shadow Mode wrapper described in §4.10.1 is deployed. & The decision log is the regulator-facing artefact; auditors must be able to reconstruct any historical decision from it. The current \texttt{demo/} exposes the bandit policy but does not yet provide the persistent decision log; integrating that log is part of the production rollout (§4.10). \\
+NFR-8 & Auditability \emph{(design target)} & Every decision tuple (context, action, reward, PSI status, timestamp) shall be immutably logged once the Shadow Mode wrapper described in §4.11.1 is deployed. & The decision log is the regulator-facing artefact; auditors must be able to reconstruct any historical decision from it. The current \texttt{demo/} exposes the bandit policy but does not yet provide the persistent decision log; integrating that log is part of the production rollout (§4.11). \\
 \end{longtable}
 }
 
 \section{Tool and Technology Requirements}\label{tool-and-technology-requirements}
 
-The technology stack is selected to satisfy three constraints simultaneously: scientific reproducibility (NFR-3), low-resource deployability (NFR-1, NFR-4), and academic transparency. All components are open-source, well-documented, and widely adopted in either actuarial practice or machine learning research. The stack is grouped into three categories: backend and data science (Section 4.3.1), frontend and visualisation (Section 4.3.2), and deployment and development (Section 4.3.3).
+This section presents the tools and technologies used to build the system and explains why each was selected. The selection is driven by performance, reproducibility, and suitability for an adaptive-underwriting system that must run on modest infrastructure. The core components are introduced individually below, each accompanied by its logo (Figures~5--11); the complete stack, with version requirements, is then summarised by layer --- backend and data science, frontend and visualisation, and deployment and development --- in Tables 5--7. Every component is open-source, well-documented, and widely adopted in either actuarial practice or machine-learning research, satisfying the project's constraints of scientific reproducibility (NFR-3), low-resource deployability (NFR-1, NFR-4), and academic transparency.
+
+\subsection{Python}\label{tool-python}
+
+Python~3.11 is the primary implementation language for every part of the project --- the contextual-bandit learners, the synthetic-data generator, the experiment harness, and the demonstration backend are all written in it. It was chosen for its mature scientific-computing ecosystem, its clear and readable syntax (which directly supports the reproducibility constraint, NFR-3), and its first-class support for the numerical and web libraries on which the system depends. In practice Python expresses the closed-form LinUCB and LinTS updates, drives the 20-seed experiment runner, and exposes the trained policies through a REST API, giving the whole pipeline a single, consistent toolchain.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_python.png}
+\caption{Figure 5. Python logo}
+\label{fig:logo-5}
+\end{figure}
+
+\subsection{FastAPI}\label{tool-fastapi}
+
+FastAPI ($\geq$~0.110) is the web framework behind the live actuarial-underwriting demonstration. A modern, high-performance Python framework, its native asynchronous support lets the demonstration serve applicant-scoring, bandit-arena, and fairness-audit requests concurrently with low latency. FastAPI also generates interactive OpenAPI/Swagger documentation automatically and validates every request through Pydantic schemas, which reduces integration errors and makes the API self-describing --- a useful property for an academic artefact that others may inspect and extend.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_fastapi.png}
+\caption{Figure 6. FastAPI logo}
+\label{fig:logo-6}
+\end{figure}
+
+\subsection{NumPy and pandas}\label{tool-numpy-pandas}
+
+NumPy ($\geq$~1.26) provides the dense linear algebra at the heart of the bandit learners: the per-action design-matrix inversion, the outer-product updates, and the multivariate-normal sampling that define the LinUCB confidence bound and the LinTS posterior are all NumPy operations, executed in closed form in milliseconds. pandas ($\geq$~2.2) handles the tabular side of the pipeline --- generating and manipulating the 2{,}000-applicant dataset, engineering the 34-feature context vector, and batch-scoring applicants during evaluation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_numpy.png}\hspace{1cm}\includegraphics[height=2.2cm]{images/logo_pandas.png}
+\caption{Figure 7. NumPy and pandas logo}
+\label{fig:logo-7}
+\end{figure}
+
+\subsection{scikit-learn}\label{tool-sklearn}
+
+scikit-learn ($\geq$~1.4) supplies the preprocessing utilities that turn raw applicant records into model-ready context vectors: label encoding of categorical attributes such as region, occupation, and education, together with the scaling helpers applied before the features enter the linear estimators. Its stable, well-documented transformers keep the feature pipeline identical across data generation, training, and live scoring.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_sklearn.png}
+\caption{Figure 8. scikit-learn logo}
+\label{fig:logo-8}
+\end{figure}
+
+\subsection{Chart.js}\label{tool-chartjs}
+
+Chart.js (4.x) renders the interactive visualisations in the demonstration's browser interface --- the cumulative-reward and regret curves, the action-distribution charts, and the live PSI guardrail gauges. Because it runs entirely client-side, a user can watch the bandit learn in real time without a server round-trip for every redraw, keeping the demonstration responsive even on the free-tier host.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_chartjs.png}
+\caption{Figure 9. Chart.js logo}
+\label{fig:logo-9}
+\end{figure}
+
+\subsection{Matplotlib}\label{tool-matplotlib}
+
+Matplotlib ($\geq$~3.8) generates the static figures used throughout this thesis: the cumulative-reward and regret trajectories, the fairness diagnostics, and the experimental result plots. It produces publication-quality vector output (PDF) suitable for print, complementing the interactive, on-screen role that Chart.js plays inside the demonstration.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_matplotlib.png}
+\caption{Figure 10. Matplotlib logo}
+\label{fig:logo-10}
+\end{figure}
+
+\subsection{Render}\label{tool-render}
+
+Render is the cloud platform-as-a-service that hosts the live demonstration. Its free tier and automatic deploy-on-git-push workflow satisfy the low-resource, portable-deployment constraint (NFR-4): the entire system runs without dedicated infrastructure and can be reproduced by anyone with the public repository. Render serves the FastAPI application directly from the \texttt{demo.main:app} entry point declared in \texttt{render.yaml}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=2.2cm]{images/logo_render.png}
+\caption{Figure 11. Render logo}
+\label{fig:logo-11}
+\end{figure}
 
 \subsection{Backend and Data Science Stack}\label{backend-and-data-science-stack}
 
-\captionof{table}{Table 4 --- Backend and data science components.}\label{tab:4.3a}
+Table 5 reports backend and data science components.
+
+\captionof{table}{Table 5 --- Backend and data science components.}\label{tab:4.3a}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -170,13 +275,15 @@ NumPy & ≥ 1.26 & Dense linear algebra (matrix inversion, outer products, multi
 Pandas & ≥ 2.2 & Tabular data manipulation for dataset generation, feature engineering, and batch scoring. \\
 scikit-learn & ≥ 1.4 & Preprocessing utilities (LabelEncoder for categorical variables, scaling helpers). \\
 XGBoost & ≥ 2.0 & Gradient-boosted mortality predictor used as the static baseline against which bandits are benchmarked. \\
-SQLAlchemy \emph{(planned)} & 2.0 (async) & Object-relational mapper anticipated for the shadow-mode decision log (NFR-8) when §4.10.1 is implemented. Not currently used by \texttt{demo/}. \\
+SQLAlchemy \emph{(planned)} & 2.0 (async) & Object-relational mapper anticipated for the shadow-mode decision log (NFR-8) when §4.11.1 is implemented. Not currently used by \texttt{demo/}. \\
 \end{longtable}
 }
 
 \subsection{Frontend and Visualisation}\label{frontend-and-visualisation}
 
-\captionof{table}{Table 5 --- Frontend and visualisation components.}\label{tab:4.3b}
+Table 6 reports frontend and visualisation components.
+
+\captionof{table}{Table 6 --- Frontend and visualisation components.}\label{tab:4.3b}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -205,7 +312,9 @@ Matplotlib & ≥ 3.8 & Generation of all static figures used in this thesis (cum
 
 \subsection{Deployment and Development}\label{deployment-and-development}
 
-\captionof{table}{Table 6 --- Deployment and development components.}\label{tab:4.3c}
+Table 7 reports deployment and development components.
+
+\captionof{table}{Table 7 --- Deployment and development components.}\label{tab:4.3c}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -260,7 +369,7 @@ The contextual bandit underwriting loop proceeds in five steps per applicant.
 
 \subsection{Architecture}\label{architecture}
 
-Figure 4 shows the end-to-end architecture of the demonstration system as deployed on the Render platform (\texttt{render.yaml}, served by uvicorn). The browser frontend exposes seven interaction tabs (Applicant Simulator, Pricing Engine, Bandit Arena, Benchmark Race, Underwriter Review, Interpretability, More Experiments); each issues HTTP/JSON requests to the FastAPI application (\texttt{demo/main.py}), which serves fifteen routes organised into five \texttt{/api} groups --- applicant sampling, one-shot simulation, bandit run/compare, pricing optimisation, and human-in-the-loop review --- plus three utility routes (\texttt{/}, \texttt{/defense}, \texttt{/health}). The API layer dispatches to six backend modules: the dataset loader (\texttt{preprocess\_cambodia\_data}), the actuarial reward simulator (\texttt{RewardConfig}, \texttt{expected\_rewards}), the bandit algorithms (LinUCB, LinTS, $\varepsilon$-Greedy), the frozen Static-XGB baseline, the pricing engine (which also computes batch PSI), and the HITL review logic (\texttt{hitl\_db.py}, which persists underwriter decisions and computes approved-pool PSI). Two data stores back the modules: the 2,000-applicant Cambodia synthetic dataset (CSV/Parquet) and the HITL review database (SQLite). The bandit decision loop itself, isolated from infrastructural concerns, is shown in Figure 5.
+Figure 12 shows the end-to-end architecture of the demonstration system as deployed on the Render platform (\texttt{render.yaml}, served by uvicorn). The browser frontend exposes seven interaction tabs (Applicant Simulator, Pricing Engine, Bandit Arena, Benchmark Race, Underwriter Review, Interpretability, More Experiments); each issues HTTP/JSON requests to the FastAPI application (\texttt{demo/main.py}), which serves fifteen routes organised into five \texttt{/api} groups --- applicant sampling, one-shot simulation, bandit run/compare, pricing optimisation, and human-in-the-loop review --- plus three utility routes (\texttt{/}, \texttt{/defense}, \texttt{/health}). The API layer dispatches to six backend modules: the dataset loader (\texttt{preprocess\_cambodia\_data}), the actuarial reward simulator (\texttt{RewardConfig}, \texttt{expected\_rewards}), the bandit algorithms (LinUCB, LinTS, $\varepsilon$-Greedy), the frozen Static-XGB baseline, the pricing engine (which also computes batch PSI), and the HITL review logic (\texttt{hitl\_db.py}, which persists underwriter decisions and computes approved-pool PSI). Two data stores back the modules: the 2,000-applicant Cambodia synthetic dataset (CSV/Parquet) and the HITL review database (SQLite). The bandit decision loop itself, isolated from infrastructural concerns, is shown in Figure 13.
 
 \begin{figure}[H]
     \centering
@@ -363,7 +472,7 @@ Figure 4 shows the end-to-end architecture of the demonstration system as deploy
         \draw[ffarrow, draw=ffgold] (m0.south) -- (s1.north);
         \draw[ffarrow, draw=ffgold] (m5.south) -- (s2.north);
     \end{tikzpicture}
-    \caption[Figure 4. Demonstration-system architecture on Render]{Figure 4. Demonstration-system architecture — browser SPA (seven tabs) → FastAPI application (15 routes in five API groups + utility) → Python backend modules → data stores, deployed on Render.}
+    \caption[Figure 12. Demonstration-system architecture on Render]{Figure 12. Demonstration-system architecture — browser SPA (seven tabs) → FastAPI application (15 routes in five API groups + utility) → Python backend modules → data stores, deployed on Render.}
     \label{fig:ch4_architecture}
 \end{figure}
 
@@ -391,7 +500,7 @@ Figure 4 shows the end-to-end architecture of the demonstration system as deploy
             node[midway, left=1mm, text=dgnodeline, font=\footnotesize\itshape, align=center] {next\\ round}
             (n1.west);
     \end{tikzpicture}
-    \caption[Figure 5. Contextual bandit decision loop]{Figure 5. Contextual bandit decision loop — context x\_t → action selection → reward r\_t → parameter update (A\_a, b\_a) → next round.}
+    \caption[Figure 13. Contextual bandit decision loop]{Figure 13. Contextual bandit decision loop — context x\_t → action selection → reward r\_t → parameter update (A\_a, b\_a) → next round.}
     \label{fig:bandit_loop}
 \end{figure}
 
@@ -461,9 +570,9 @@ Multiple conditions can co-occur in a single applicant; the mean condition count
 
 \subsection{Feature Categories and Encoding}\label{feature-categories-and-encoding}
 
-After one-hot encoding of categorical variables and normalisation, each applicant is represented by a 34-dimensional real-valued context vector \(x_t \in \mathbb{R}^{34}\). Table 7 breaks the raw features into four categories.
+After one-hot encoding of categorical variables and normalisation, each applicant is represented by a 34-dimensional real-valued context vector \(x_t \in \mathbb{R}^{34}\). Table 8 breaks the raw features into four categories.
 
-\captionof{table}{Table 7 --- Feature categories and encoding scheme}\label{tab:4.5.2}
+\captionof{table}{Table 8 --- Feature categories and encoding scheme}\label{tab:4.5.2}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -592,9 +701,9 @@ The intercept 0.95 captures near-universal acceptance when the premium is neglig
 
 \subsection{Action-Specific Reward Functions}\label{action-specific-reward-functions}
 
-Table 8 summarises the reward computation for each of the four underwriting actions. All expressions use the expected-value formulation (deterministic oracle); the stochastic simulator adds claims noise \(\nu_t \sim \text{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw.
+Table 9 summarises the reward computation for each of the four underwriting actions. All expressions use the expected-value formulation (deterministic oracle); the stochastic simulator adds claims noise \(\nu_t \sim \text{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw.
 
-\captionof{table}{Table 8 --- Action-specific reward functions (expected value)}\label{tab:4.7.2}
+\captionof{table}{Table 9 --- Action-specific reward functions (expected value)}\label{tab:4.7.2}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -642,13 +751,13 @@ The reward design encodes three actuarial intuitions beyond simple profit maximi
 
 \subsection{PSI Computation}\label{psi-computation}
 
-The Population Stability Index measures the divergence between the demographic distribution of the approved portfolio and a reference distribution --- here, the approved pool of the first sliding window (§4.8.3). For categorical features (region, occupation, wealth quintile), each distinct category serves as a bin. For continuous features (age), the reference distribution is divided into four actuarially meaningful bands: 18--30, 31--45, 46--60, and 61+, consistent with standard life-insurance age grading.
+The Population Stability Index measures the divergence between the demographic distribution of the approved portfolio and a reference distribution --- here, the approved pool of the first sliding window (§4.9.3). For categorical features (region, occupation, wealth quintile), each distinct category serves as a bin. For continuous features (age), the reference distribution is divided into four actuarially meaningful bands: 18--30, 31--45, 46--60, and 61+, consistent with standard life-insurance age grading.
 
 The PSI is computed as:
 
 \[\text{PSI} = \sum_{i=1}^{B} (A_i - E_i) \times \ln\left(\frac{A_i}{E_i}\right)\]
 
-where \(E_i\) is the expected proportion (reference window; §4.8.3) and \(A_i\) is the actual proportion (approved portfolio) in bin \(i\). Zero-frequency bins are handled by adding a small epsilon (\(10^{-8}\)) before normalization, following standard practice to avoid division-by-zero in the logarithm term \citep{Siddiqi2006}.
+where \(E_i\) is the expected proportion (reference window; §4.9.3) and \(A_i\) is the actual proportion (approved portfolio) in bin \(i\). Zero-frequency bins are handled by adding a small epsilon (\(10^{-8}\)) before normalization, following standard practice to avoid division-by-zero in the logarithm term \citep{Siddiqi2006}.
 
 The traffic-light thresholds originate with Lewis \citeyearpar{Lewis1994}, were codified in credit-scoring textbooks by Thomas et al. \citeyearpar{Thomas2002}, and are statistically validated by Yurdakul and Naranjo \citeyearpar{Yurdakul2020}:
 
@@ -689,7 +798,7 @@ The 80 \% floor (EEOC 4/5 rule) is the widely cited regulatory benchmark for dis
 
 PSI is computed after each batch of 500 decisions (a sliding window) by comparing the demographic distribution of the \emph{approved} portfolio (STANDARD + RATED actions only) against the reference distribution of the \textbf{first 500 rounds of each seed} (window~0 of the sliding series, rounds 0--499). The reference proportions \(E_i\) are computed from the approved decisions in those first 500 rounds; the actual proportions \(A_i\) are updated window-by-window as new decisions accumulate. (Implementation: \texttt{exp\_006\_fairness\_audit.py::compute\_sliding\_psi}, docstring: ``Reference distribution = approved pool in window 0.'')
 
-In the experimental pipeline, PSI is treated as a \textbf{diagnostic metric} rather than a hard constraint: the bandit is allowed to continue learning regardless of the PSI value, and the experiment reports the maximum PSI observed across all windows. In a production deployment (§4.10), PSI would trigger escalation rules: a GREEN reading permits normal bandit operation; an AMBER reading routes new applications from the affected subgroup to junior underwriter review; a RED reading freezes automated decisions for that subgroup and escalates to the actuarial team for investigation. This layered response ensures that demographic drift is caught before it compounds into portfolio-level concentration risk.
+In the experimental pipeline, PSI is treated as a \textbf{diagnostic metric} rather than a hard constraint: the bandit is allowed to continue learning regardless of the PSI value, and the experiment reports the maximum PSI observed across all windows. In a production deployment (§4.11), PSI would trigger escalation rules: a GREEN reading permits normal bandit operation; an AMBER reading routes new applications from the affected subgroup to junior underwriter review; a RED reading freezes automated decisions for that subgroup and escalates to the actuarial team for investigation. This layered response ensures that demographic drift is caught before it compounds into portfolio-level concentration risk.
 
 \section{Experimental Design}\label{experimental-design}
 
@@ -706,7 +815,7 @@ EXP-005 tests whether LinUCB learns a profitable underwriting policy that domina
   \rho_t = \mathbb{E}\!\left[r_t \mid a^*_t\right] - r_t(a_t),
   \quad a^*_t = \arg\max_{a}\,\mathbb{E}[r_t(a)],
 \]
-where \(\mathbb{E}[r_t \mid a^*_t]\) is the Oracle's deterministic expected reward (computed via \texttt{expected\_rewards()} with no noise draws) and \(r_t(a_t)\) is the policy's stochastic realised reward (including claims noise \(\nu_t \sim \operatorname{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw). Because \(r_t(a_t)\) is stochastic, \(\rho_t < 0\) whenever favourable noise lifts the policy's realised reward above the Oracle's deterministic expectation; Oracle average pseudo-regret is therefore negative (Table~10: \(-3.06\)/round per seed).
+where \(\mathbb{E}[r_t \mid a^*_t]\) is the Oracle's deterministic expected reward (computed via \texttt{expected\_rewards()} with no noise draws) and \(r_t(a_t)\) is the policy's stochastic realised reward (including claims noise \(\nu_t \sim \operatorname{Uniform}(0.92, 1.08)\) and a Bernoulli acceptance draw). Because \(r_t(a_t)\) is stochastic, \(\rho_t < 0\) whenever favourable noise lifts the policy's realised reward above the Oracle's deterministic expectation; Oracle average pseudo-regret is therefore negative (Table~11: \(-3.06\)/round per seed).
 
 \textbf{Pass criteria.}
 1. LinUCB cumulative reward significantly exceeds Static XGB (\(p < 0.05\), Wilcoxon).
