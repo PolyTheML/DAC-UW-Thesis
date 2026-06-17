@@ -115,6 +115,18 @@ To design, implement, and empirically validate a contextual bandit framework for
   \textbf{RQ4.} Is the proposed framework technically feasible for deployment on low-resource mobile infrastructure, and what implementation pathway is required?
 \end{itemize}
 
+\section{Significance and Alignment with Cambodia's Sustainable Development Goals}\label{significance-and-sdg-alignment}
+
+Beyond its immediate actuarial contribution, this project speaks to Cambodia's broader development agenda. In 2015 the Royal Government endorsed the United Nations 2030 Agenda for Sustainable Development \citep{UN2015}, and in 2018 it adopted a localized framework --- the Cambodian Sustainable Development Goals (CSDGs) 2016--2030 \citep{RGC2018} --- that adapts the global goals to national priorities and feeds the National Strategic Development Plan. An adaptive, fairness-aware health insurance underwriting system contributes, in distinct ways, to three of these goals: good health and well-being (SDG~3), no poverty (SDG~1), and reduced inequalities (SDG~10).
+
+\textbf{SDG~3 --- Good Health and Well-being.} Target 3.8 calls for universal health coverage, including financial-risk protection and access to quality essential services \citep{WHO2023}. In Cambodia, mandatory coverage through the National Social Security Fund reaches mainly formal-sector workers, leaving informal workers, farmers, and the self-employed largely without health insurance \citep{ILO2022}. By making private voluntary underwriting more accurate and adaptive --- and by targeting low-latency decisions deployable over the country's near-universal mobile infrastructure --- the proposed framework lowers the operational cost of extending voluntary health coverage to these under-served segments, advancing the financial-protection objective at the heart of SDG~3.8.
+
+\textbf{SDG~1 --- No Poverty.} Out-of-pocket health payments are a well-documented driver of impoverishment: globally, catastrophic health spending --- out-of-pocket costs exceeding ten percent of a household budget --- affects roughly one in seven people, and such payments push or deepen poverty for well over a billion individuals \citep{WHO2023}. Where insurance penetration is low, a single hospitalization can exhaust a household's savings. By broadening access to affordable risk pooling, adaptive underwriting helps shield Cambodian households from catastrophic medical expenditure, directly supporting the social-protection target (1.3) of SDG~1.
+
+\textbf{SDG~10 --- Reduced Inequalities.} Algorithmic underwriting carries a risk of entrenching demographic exclusion if left unmonitored. The fairness-monitoring framework developed in this thesis --- Population Stability Index guardrails over region and occupation (\S\ref{fairness-and-demographic-parity}) --- is designed precisely to prevent the systematic decline of vulnerable segments such as the country's garment-sector and rural agricultural workforces \citep{ILO2022}. By holding algorithmic profitability to an explicit demographic-parity standard, the system supports SDG~10's aim of economic inclusion irrespective of occupation or economic status.
+
+This study does not measure SDG indicators directly; no health, poverty, or inequality outcome is evaluated empirically. The alignment described here is articulated as the project's \emph{intended societal contribution}, grounded in the access and fairness motivations developed throughout this chapter rather than in an impact evaluation. Establishing measured SDG impact would require the field deployment and longitudinal outcome data identified as future work in Chapter~VI.
+
 \section{Planning of Project}\label{planning-of-project}
 
 The project was executed according to the following schedule:
