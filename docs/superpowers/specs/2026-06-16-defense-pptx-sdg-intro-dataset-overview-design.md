@@ -20,8 +20,9 @@ Two content changes to the defense deck:
 |---|----------|--------|
 | 1 | SDG framing | SDG 3 (Good Health & Well-being) + SDG 1 (No Poverty) + SDG 10 (Reduced Inequalities) |
 | 2 | Intro layout | Keep `<10%` stat + problem bullets on the left; **replace the right panel** with an SDG-alignment block |
-| 3 | Dataset overview | **New slide**, a 2×2 distribution montage (age · region · occupation · BMI) + description |
+| 3 | Dataset overview | **New slide** — *revised 2026-06-16:* feature-category catalogue (Table 7) + 4-row data snapshot, **two flat tables, montage dropped** |
 | 4 | Placement | **Main flow**, inserted right after `slide_zoom_dataset` (current idx 11 → new slide becomes idx 12) |
+| 5 | Feature count | *added 2026-06-16:* reconcile the whole deck's "5 features / ℝ⁵" to the thesis's **34-dim** (`x_t ∈ ℝ^34`, Table 7) |
 
 ## Part 1 — Introduction reframe (`slide_introduction`, idx 4)
 
@@ -44,25 +45,34 @@ Two content changes to the defense deck:
 
 ## Part 2 — Dataset overview
 
-### 2a. Montage figure
-- New asset `thesis/health_rl/figures/slides/slide_dataset_montage.png`.
-- A single composited **2×2 matplotlib montage** generated from `data/cambodia/cambodia_dataset.parquet`:
-  age histogram · region bar · occupation bar · BMI histogram. Styled to the blue slide palette
-  (`figures/_slide_style.py` `SLIDE_PALETTE`), consistent with the existing `slide_*.png` figures.
-- **One** image → embedded as **1 picture** (stays under the `test_logos_only_on_title_and_thanks`
-  ≤3-picture guard; four separate images would trip it). Output > 30 KB so it passes the
-  figure-existence pattern.
-- Generator lives in the slide-figure pipeline (extend the existing slide-figure generator, or a
-  small standalone `generate_dataset_montage.py`); run once and commit the PNG (slide figures are
-  git-tracked).
-
-### 2b. New slide `slide_dataset_overview`
+### 2a. New slide `slide_dataset_overview` — feature catalogue + data snapshot
+> **Revised 2026-06-16 (user follow-up):** the slide now answers "how many features, what
+> they are, what category, and a snapshot." The distribution montage is **dropped** in favour
+> of two `_add_flat_table` tables. (The montage generator + PNG were created then removed —
+> never committed.)
 - `_content_slide(prs, "The Dataset at a Glance", _pg(10))`.
-- **Left:** short description + stat callouts — 2,000 synthetic applicants · 5 features ·
-  anchored on CDHS/STEPS/ILO/WHO · fully synthetic (no PII).
-- **Right / lower:** the montage via `_add_picture_fit`.
+- One-line caption: 2,000 applicants → **34-dimensional** standardised context vector, raw
+  features organised by category (thesis Table 7), fully synthetic / no PII.
+- **Left table — FEATURE CATEGORIES** (mirrors thesis Table 7): Category | Raw features | Dim,
+  7 category rows (Demographics & vitals 3 · Lifestyle 3 · Social determinants 3 · Economic 2 ·
+  Clinical 8 · Region 8 · Occupation 7) + bold **Total 34** row.
+- **Right table — DATA SNAPSHOT · 4 OF 2,000 RECORDS**: Age | Sex | Region | Occupation | BMI |
+  Smoker, four real rows from `df.head(4)` (pre-encoding values).
+- **Zero pictures** (both are flat tables) — comfortably under the ≤3-picture guard.
 - `_add_notes(...)` (>40 chars — it sits in `NOTED_IDX`).
 - Inserted in `main()` immediately after `slide_zoom_dataset(prs)`.
+
+### 2b. Deck-wide "5 features / x_t ∈ ℝ⁵" → ℝ³⁴ reconciliation
+> **Added 2026-06-16 (user follow-up).** The thesis is explicit (`x_t ∈ ℝ^34`, d = 34, Table 7);
+> the deck's "5 features / ℝ⁵" shorthand contradicted it. Aligned the whole deck to 34:
+- `slide_zoom_dataset` (idx 11): stat row `5 → 34` ("context features"); notes "five features…"
+  → "raw attributes one-hot encode into a 34-dimensional context vector (Table 7)".
+- `slide_reward_simulator` (idx 13): context label `x_t ∈ R^5 → R^34` + descriptor.
+- `slide_buildup_context` (idx 15): `x_t ∈ R^5 → R^34`, 5-element example → representative 34-dim
+  slice, talking point + notes reworded to "34 standardised dims".
+- `slide_reward_simulator` notes "standardised five-feature applicant vector" → "34-dimensional".
+- Test `test_buildup_stage_renders_labels_and_outputs`: its self-contained example `R^5`/
+  `[0.4,-1.1,0,2,0.8]` → `R^34`/`[0.4,-1.1,0, ... ,0.8]` (no built-deck test asserted `R^5`).
 
 ## Cross-cutting: index + page-number churn (main-flow cost)
 
@@ -96,11 +106,12 @@ Inserting one main-flow slide at idx 12 shifts every later slide +1. Required up
 
 ## Verification
 
-1. (figure) run the montage generator → `slide_dataset_montage.png` exists, > 30 KB, blue palette.
-2. `python thesis/health_rl/build_burgundy_presentation.py` → "Saved 34 slides".
-3. `python -m pytest tests/test_build_presentation.py -q` → all pass.
-4. Programmatic content check: SDG 3/1/10 strings on intro (idx 4); "Dataset at a Glance" +
-   1 picture on idx 12; footer denominators read "/ 29"; armor needles intact at new indices.
+1. `python thesis/health_rl/build_burgundy_presentation.py` → "Saved 34 slides".
+2. `python -m pytest tests/test_build_presentation.py -q` → all pass (27).
+3. Programmatic content check: SDG 3/1/10 strings on intro (idx 4); "Dataset at a Glance" +
+   feature-category table + snapshot + **0 pictures** on idx 12; footer denominators read "/ 29";
+   armor needles intact at new indices; **no `R^5` / "five feature" anywhere** in the built deck.
+4. PNG eyeball idx 4 (SDG), idx 12 (catalogue/snapshot), idx 13/15 (ℝ³⁴ reconciliation). *(done)*
 5. This change **stacks on top of** the in-flight 4-edits work (Edit 1/2/2b/3/4) — the pending
    HITL screenshot re-capture + final build + PNG eyeball still gate the single commit.
 

@@ -60,11 +60,13 @@ def main():
             page.screenshot(path=str(OUT_DIR / "shot_dashboard.png"))
             print("  captured shot_dashboard.png")
 
-            _click_panel(page, "Pricing")
+            page.locator("#tab-pricing").click()   # stable tab id, not fragile text
+            page.wait_for_timeout(1200)
             page.screenshot(path=str(OUT_DIR / "shot_pricing.png"))
             print("  captured shot_pricing.png")
 
-            _click_panel(page, "Human")        # 'Human-in-the-loop' tab
+            page.locator("#tab-hitl").click()      # Human-in-the-Loop tab
+            page.wait_for_timeout(1200)
             page.screenshot(path=str(OUT_DIR / "shot_hitl.png"))
             print("  captured shot_hitl.png")
             browser.close()

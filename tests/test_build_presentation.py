@@ -1,4 +1,4 @@
-"""Tests for the defense presentation generator (v3 blue, 32 slides)."""
+"""Tests for the defense presentation generator (v3 blue, 34 slides)."""
 import json
 import subprocess
 import sys
@@ -51,9 +51,9 @@ def _all_text(prs, slide_idx: int) -> str:
 # Structure
 # ---------------------------------------------------------------------------
 
-def test_generates_33_slides(built_presentation):
+def test_generates_34_slides(built_presentation):
     prs = Presentation(str(built_presentation))
-    assert len(prs.slides) == 33, f"Expected 33 slides, got {len(prs.slides)}"
+    assert len(prs.slides) == 34, f"Expected 34 slides, got {len(prs.slides)}"
 
 
 def test_title_slide_has_presenter_name(built_presentation):
@@ -76,10 +76,10 @@ def test_toc_slide_has_five_sections(built_presentation):
 
 
 def test_appendix_slides_have_page_numbers(built_presentation):
-    """Appendix slides (indices 28-32) must have A1-A5 page numbers."""
+    """Appendix slides (indices 29-33) must have A1-A5 page numbers."""
     prs = Presentation(str(built_presentation))
     for i, label in enumerate(["A1", "A2", "A3", "A4", "A5"]):
-        combined = _all_text(prs, 28 + i)
+        combined = _all_text(prs, 29 + i)
         assert label in combined, (
             f"Appendix slide {i + 1}: page number '{label}' not found. Got: {combined[:200]}"
         )
@@ -95,33 +95,33 @@ def test_headline_numbers_match_json(built_presentation):
     with open(RESULTS_JSON) as f:
         results = json.load(f)
 
-    # exp005 +25.2% lift appears in slide idx 20 (CONVERGENCE & REGRET)
+    # exp005 +25.2% lift appears in slide idx 21 (CONVERGENCE & REGRET)
     lift_pct = str(results["exp005"]["lift_pct"])
-    slide_20_text = _all_text(prs, 20)
-    assert lift_pct in slide_20_text, (
-        f"EXP-005 lift_pct '{lift_pct}' not found in slide 21. Got: {slide_20_text[:300]}"
-    )
-
-    # exp008 +14.8% HITL lift appears in slide idx 21 (COLD-START & HUMAN-IN-THE-LOOP)
-    hitl_lift = str(results["exp008"]["lift_pct"])
     slide_21_text = _all_text(prs, 21)
-    assert hitl_lift in slide_21_text, (
-        f"EXP-008 lift_pct '{hitl_lift}' not found in slide 22. Got: {slide_21_text[:300]}"
+    assert lift_pct in slide_21_text, (
+        f"EXP-005 lift_pct '{lift_pct}' not found in slide 22. Got: {slide_21_text[:300]}"
     )
 
-    # AlwaysRATED ladder reward appears in slide idx 28 (A1 ladder appendix)
+    # exp008 +14.8% HITL lift appears in slide idx 22 (COLD-START & HUMAN-IN-THE-LOOP)
+    hitl_lift = str(results["exp008"]["lift_pct"])
+    slide_22_text = _all_text(prs, 22)
+    assert hitl_lift in slide_22_text, (
+        f"EXP-008 lift_pct '{hitl_lift}' not found in slide 23. Got: {slide_22_text[:300]}"
+    )
+
+    # AlwaysRATED ladder reward appears in slide idx 29 (A1 ladder appendix)
     always_rated_r = f"{next(r['reward'] for r in results['ladder']['rows'] if r['policy'] == 'AlwaysRATED'):,}"
-    slide_28_text = _all_text(prs, 28)
-    assert always_rated_r in slide_28_text, (
-        f"AlwaysRATED reward '{always_rated_r}' not found in slide 29. "
-        f"Got: {slide_28_text[:300]}"
+    slide_29_text = _all_text(prs, 29)
+    assert always_rated_r in slide_29_text, (
+        f"AlwaysRATED reward '{always_rated_r}' not found in slide 30. "
+        f"Got: {slide_29_text[:300]}"
     )
 
-    # exp010 LinTS Wilcoxon p-value appears in slide idx 21
+    # exp010 LinTS Wilcoxon p-value appears in slide idx 22
     lints_p = str(results["exp010"]["wilcoxon_t2000"]["lints_vs_freshxgb"]["p"])
-    assert lints_p in slide_21_text, (
-        f"EXP-010 LinTS p-value '{lints_p}' not found in slide 22. "
-        f"Got: {slide_21_text[:300]}"
+    assert lints_p in slide_22_text, (
+        f"EXP-010 LinTS p-value '{lints_p}' not found in slide 23. "
+        f"Got: {slide_22_text[:300]}"
     )
 
 
@@ -147,7 +147,7 @@ def test_talking_points_helper_rejects_more_than_four():
 # v3 style, density, and claim-armor guards
 # ---------------------------------------------------------------------------
 
-NOTED_IDX = [3,4,5,6,8,10,11,12,13,14,15,16,17,19,20,21,22,23,25,26,28,29,30,31,32]
+NOTED_IDX = [3,4,5,6,8,10,11,12,13,14,15,16,17,18,20,21,22,23,24,26,27,29,30,31,32,33]
 
 
 def test_presenter_notes_on_content_slides(built_presentation):
@@ -191,13 +191,13 @@ def test_claim_armor_strings_present(built_presentation):
     prs = Presentation(str(built_presentation))
     checks = [
         (6,  "O1"), (6, "O2"), (6, "O3"), (6, "O4"),  # objectives verbatim
-        (16, "AlwaysRATED"), (16, "inadmissible"),     # build-up C ceiling
-        (19, "5.0.1"),                                 # benchmark admissible scope
-        (20, "5.0.1"),                                 # convergence admissible scope
-        (21, "0.0039"), (21, "0.0840"),                # cold-start LinTS + softened LinUCB
-        (22, "FAILED-with-interpretation"),            # fairness criterion 6
-        (25, "O1"),                                    # conclusion scorecard
-        (28, "FALSIFIED"), (28, "AlwaysRATED"),        # ladder appendix
+        (17, "AlwaysRATED"), (17, "inadmissible"),     # build-up C ceiling
+        (20, "5.0.1"),                                 # benchmark admissible scope
+        (21, "5.0.1"),                                 # convergence admissible scope
+        (22, "0.0039"), (22, "0.0840"),                # cold-start LinTS + softened LinUCB
+        (23, "FAILED-with-interpretation"),            # fairness criterion 6
+        (26, "O1"),                                    # conclusion scorecard
+        (29, "FALSIFIED"), (29, "AlwaysRATED"),        # ladder appendix
     ]
     for idx, needle in checks:
         combined = _all_text(prs, idx)
@@ -214,7 +214,7 @@ def test_slide_scale_figures_exist():
 
 
 def test_logos_only_on_title_and_thanks(built_presentation):
-    """Title slide (idx 0) and thanks slide (idx 27) carry logos (>=2 pics).
+    """Title slide (idx 0) and thanks slide (idx 28) carry logos (>=2 pics).
     All other slides carry at most 3 pictures (live-demo carries up to 3 screenshots)."""
     prs = Presentation(str(built_presentation))
 
@@ -222,9 +222,9 @@ def test_logos_only_on_title_and_thanks(built_presentation):
         return sum(1 for sh in prs.slides[idx].shapes if sh.shape_type == 13)
 
     assert n_pics(0) >= 2, "Title slide lost its logos"
-    assert n_pics(27) >= 2, "Thanks slide lost its logos"
+    assert n_pics(28) >= 2, "Thanks slide lost its logos"
     for idx in range(len(prs.slides)):
-        if idx not in [0, 27]:
+        if idx not in [0, 28]:
             assert n_pics(idx) <= 3, (
                 f"Slide {idx + 1}: {n_pics(idx)} pictures (logo creep?)"
             )
@@ -232,7 +232,7 @@ def test_logos_only_on_title_and_thanks(built_presentation):
 
 def test_references_slide_present(built_presentation):
     prs = Presentation(str(built_presentation))
-    text = _all_text(prs, 26)
+    text = _all_text(prs, 27)
     assert "References" in text or "Li, L." in text, f"References slide missing. Got: {text[:200]}"
     assert "Agrawal" in text and "CDHS" in text
 
@@ -315,11 +315,11 @@ def test_buildup_stage_renders_labels_and_outputs(import_builder):
     prs.slide_width = b.SLIDE_WIDTH
     prs.slide_height = b.SLIDE_HEIGHT
     slide = prs.slides.add_slide(prs.slide_layouts[6])
-    stages = [("Context vector x_t in R^5", "[0.4, -1.1, 0, 2, 0.8]"),
+    stages = [("Context vector x_t in R^34", "[0.4, -1.1, 0, ... , 0.8]"),
               ("Per-arm value estimates", "RATED 0.31 / STD 0.52 / DEC 0.10 / REF 0.28")]
     b._add_buildup_stage(slide, b.CONTENT_TOP, stages)
     text = " ".join(s.text_frame.text for s in slide.shapes if s.has_text_frame)
-    assert "Context vector" in text and "[0.4, -1.1, 0, 2, 0.8]" in text
+    assert "Context vector" in text and "[0.4, -1.1, 0, ... , 0.8]" in text
     assert "Per-arm value estimates" in text
 
 
@@ -362,7 +362,7 @@ def test_footer_ribbon_on_every_slide(built_presentation):
 
 def test_divider_slides_present(built_presentation):
     prs = Presentation(str(built_presentation))
-    for idx, num in [(2, "I"), (7, "II"), (9, "III"), (18, "IV"), (24, "V")]:
+    for idx, num in [(2, "I"), (7, "II"), (9, "III"), (19, "IV"), (25, "V")]:
         text = _all_text(prs, idx)
         assert f"{num}." in text, f"Slide {idx + 1}: divider '{num}.' missing"
 
@@ -371,8 +371,8 @@ def test_methodology_overview_and_three_zooms(built_presentation):
     prs = Presentation(str(built_presentation))
     assert "Applicant Context" in _all_text(prs, 10)
     assert "Applicant Context" in _all_text(prs, 11)   # zoom 1
-    assert "Bandit Policy" in _all_text(prs, 13)        # zoom 2
-    assert "PSI Fairness + HITL" in _all_text(prs, 17)  # zoom 3
+    assert "Bandit Policy" in _all_text(prs, 14)        # zoom 2
+    assert "PSI Fairness + HITL" in _all_text(prs, 18)  # zoom 3
 
 
 def test_no_burgundy_fill_anywhere(built_presentation):
@@ -391,7 +391,7 @@ def test_no_burgundy_fill_anywhere(built_presentation):
 
 
 def test_demo_slide_has_visual(built_presentation):
-    """Live-demo slide (idx 23) carries 3 visuals (real shots or placeholders)."""
+    """Live-demo slide (idx 24) carries 3 visuals (real shots or placeholders)."""
     prs = Presentation(str(built_presentation))
-    text = _all_text(prs, 23)
+    text = _all_text(prs, 24)
     assert "scoring" in text.lower() or "dashboard" in text.lower()

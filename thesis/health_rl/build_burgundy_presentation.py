@@ -408,15 +408,21 @@ def _add_buildup_stage(slide, top, stages):
 
 
 def _add_placeholder_image(slide, left, top, width, height, caption: str,
-                           real_path: str | None = None):
-    """Labeled swap-target frame. If real_path exists, embed it instead."""
+                           real_path: str | None = None, show_label: bool = True):
+    """Labeled swap-target frame. If real_path exists, embed it instead.
+
+    show_label=False renders a clean captioned panel (no '[ PHOTO PLACEHOLDER ]'
+    scaffolding) — used on the Introduction slide, which is defense-facing.
+    """
     if real_path and os.path.exists(real_path):
         _add_picture_fit(slide, real_path, left, top, width, height)
         return
     _add_filled_box(slide, left, top, width, height, PANEL,
                     line_color=BLUE_TINT, line_width_pt=1.5)
+    text = (caption if not show_label
+            else f"[ PHOTO PLACEHOLDER ]\n\n{caption}\n\n(swap in a real photo before defense)")
     _add_text_box(slide, left, top, width, height,
-                  f"[ PHOTO PLACEHOLDER ]\n\n{caption}\n\n(swap in a real photo before defense)",
+                  text,
                   font_size=14, color=GRAY_LABEL, align=PP_ALIGN.CENTER,
                   anchor=MSO_ANCHOR.MIDDLE, font_name=BODY_FONT)
 
@@ -473,7 +479,7 @@ def _add_footer_ribbon(slide, page_label: str | None = None):
                   anchor=MSO_ANCHOR.MIDDLE)
     # right date + page block
     _add_filled_box(slide, Inches(10.1), FOOTER_TOP, Inches(3.233), FOOTER_HEIGHT, BLUE_DEEP)
-    page = f"July 2026   ·   {page_label}" if page_label else "July 2026"
+    page = f"{DEFENSE_DATE}   ·   {page_label}" if page_label else DEFENSE_DATE
     _add_text_box(slide, Inches(10.2), FOOTER_TOP, Inches(3.0), FOOTER_HEIGHT,
                   page, font_size=11, bold=True, color=WHITE, font_name=HEAD_FONT,
                   align=PP_ALIGN.RIGHT, anchor=MSO_ANCHOR.MIDDLE)
@@ -495,7 +501,7 @@ def _add_divider(prs, number: str, name: str, page_label: str):
 
 def _pg(n: int) -> str:
     """Footer page label for a presented (main) slide: 'n / 28'."""
-    return f"{n} / 28"
+    return f"{n} / 29"
 
 
 def _stub(prs, title, page_label):
@@ -610,45 +616,59 @@ def slide_thanks(prs: Presentation):
 
 
 def slide_references(prs):
-    slide = _content_slide(prs, "References", _pg(22))
+    slide = _content_slide(prs, "References", _pg(23))
     left_refs = [
         "Li, L., Chu, W., Langford, J., & Schapire, R. (2010). A contextual-bandit "
         "approach to personalized news article recommendation. WWW.",
         "Agrawal, S., & Goyal, N. (2013). Thompson sampling for contextual bandits "
         "with linear payoffs. ICML.",
-        "Bouneffouf, D., et al. (2017). Contextual bandits for clinical decision "
-        "support.",
-        "Frees, E. W., Derrig, R. A., & Meyers, G. (2014). Predictive Modeling "
-        "Applications in Actuarial Science. Cambridge Univ. Press.",
-        "Kusner, M., Loftus, J., Russell, C., & Silva, R. (2017). Counterfactual "
-        "fairness. NeurIPS.",
-        "Yurdakul, B. (2018). Statistical Properties of the Population Stability "
-        "Index (PSI). PhD diss., Western Michigan University.",
-        "Christiano, P., et al. (2017). Deep reinforcement learning from human "
-        "preferences. NeurIPS.",
+        "Zhou, D., Li, L., & Gu, Q. (2020). Neural contextual bandits with "
+        "UCB-based exploration. ICML.",
+        "Zhang, W., Zhou, D., Li, L., & Gu, Q. (2021). Neural Thompson sampling. ICLR.",
+        "Ban, Y., Yan, Y., Banerjee, A., & He, J. (2022). EE-Net: Exploitation-"
+        "exploration neural networks in contextual bandits. ICLR.",
+        "Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An "
+        "Introduction (2nd ed.). MIT Press.",
+        "Lattimore, T., & Szepesvári, C. (2020). Bandit Algorithms. Cambridge "
+        "Univ. Press.",
+        "Barocas, S., Hardt, M., & Narayanan, A. (2019). Fairness and Machine "
+        "Learning. fairmlbook.org.",
     ]
     right_refs = [
-        "National Institute of Statistics (2022). Cambodia Demographic & Health "
-        "Survey 2021–22 (CDHS).",
-        "WHO (2021). Cambodia STEPS Survey — NCD risk factors.",
-        "International Labour Organization. Cambodia Labour Force Survey.",
-        "WHO SEARO. Health-expenditure statistics, Cambodia.",
+        "Ensign, D., Friedler, S. A., Neville, S., Scheidegger, C., & "
+        "Venkatasubramanian, S. (2018). Runaway feedback loops in predictive "
+        "policing. FAccT.",
+        "Yurdakul, B., & Naranjo, J. (2020). Statistical properties of the "
+        "population stability index. J. Risk Model Validation.",
+        "Lin, J. (1991). Divergence measures based on the Shannon entropy. "
+        "IEEE Trans. Information Theory.",
+        "National Institute of Statistics, MoH, & ICF (2023). Cambodia "
+        "Demographic & Health Survey 2021–22 (CDHS).",
+        "International Labour Organization (2022). Cambodian Garment & Footwear "
+        "Sector Bulletin.",
+        "Asian Development Bank (2023). Asian Development Outlook: Cambodia.",
+        "World Bank (2023). World Development Indicators: Cambodia.",
+        "Swiss Re Institute (2023). Sigma 3/2023: World insurance.",
     ]
     def _refs(col_x, refs, start):
-        y = CONTENT_TOP + Inches(0.1)
+        # 8 entries/column, several wrapping to 2 lines; tightened so the last
+        # entry's wrap clears the footnote at FOOTNOTE_TOP (6.62").
+        y = CONTENT_TOP
         for i, r in enumerate(refs):
             _add_text_box(slide, col_x, y, Inches(6.0), Inches(0.9),
                           f"[{start + i}]  {r}", font_size=11, color=DARK_TEXT)
-            y += Inches(0.72)
+            y += Inches(0.66)
     _refs(MARGIN_LEFT, left_refs, 1)
-    _refs(Inches(6.9), right_refs, 8)
-    _add_footnote(slide, "Full bibliography: thesis Chapter III (30+ sources, APA).")
+    _refs(Inches(6.9), right_refs, len(left_refs) + 1)
+    _add_footnote(slide, "Full bibliography: thesis Chapter III (25 cited sources, APA).")
     _add_notes(slide,
-        "Key sources behind the method and the dataset. Left: bandit theory (Li; Agrawal "
-        "& Goyal), healthcare bandits (Bouneffouf), actuarial modelling (Frees), fairness "
-        "(Kusner), PSI monitoring (Yurdakul), and human-in-the-loop RL (Christiano). "
-        "Right: the Cambodia data sources (CDHS, STEPS, ILO, WHO). Full APA list is in "
-        "thesis Chapter III.")
+        "The sources actually cited across this deck, every one traceable to the thesis "
+        "bibliography. Left: bandit theory and method - Li and Agrawal & Goyal for the "
+        "linear policies, Zhou, Zhang and Ban for the neural extensions, Sutton & Barto "
+        "and Lattimore & Szepesvari for foundations, Barocas for fairness. Right: Ensign "
+        "on feedback loops, Yurdakul & Naranjo and Lin for the PSI guardrail, then the "
+        "Cambodia data anchors - the CDHS, the ILO bulletin, ADB, World Bank and Swiss "
+        "Re. The full APA list lives in thesis Chapter III.")
     return slide
 
 
@@ -661,7 +681,7 @@ def slide_about_company(prs):
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.2), Inches(6.2), [
         "DAC is a Phnom Penh actuarial consultancy",
         "Clients: life, non-life & general insurance companies",
-        "This thesis is a DAC-supervised research internship (Mar–Jun 2026)",
+        "DAC-supervised research internship (Mar–Jun 2026); advisor Mr. ON Radet",
         "Deliverable: an adaptive underwriting prototype + this report",
     ])
     _add_placeholder_image(slide, Inches(7.1), CONTENT_TOP + Inches(0.1),
@@ -670,7 +690,8 @@ def slide_about_company(prs):
     _add_notes(slide,
         "Decent Actuarial Consultants is a Phnom Penh actuarial consultancy serving "
         "life, non-life and general insurance companies. The thesis is "
-        "embedded in a DAC-supervised research internship, March through June 2026; the "
+        "embedded in a DAC-supervised research internship, March through June 2026, "
+        "advised at DAC by Mr. ON Radet; the "
         "deliverable is the end-to-end adaptive underwriting prototype plus this report. "
         "Timeline: March scoping and dataset design, April algorithms, May experiments, "
         "June writing and defense preparation.")
@@ -691,8 +712,34 @@ def slide_introduction(prs):
         "Static rules never learn from outcomes",
         "No demographic-parity monitoring in practice",
     ])
-    _add_placeholder_image(slide, Inches(7.1), CONTENT_TOP, Inches(5.7), Inches(4.6),
-                           "Cambodian clinic / insurance context")
+    # Right panel: alignment with Cambodia's UN Sustainable Development Goals.
+    px, pw, ph = Inches(7.1), Inches(5.7), Inches(4.6)
+    _add_filled_box(slide, px, CONTENT_TOP, pw, ph, PANEL,
+                    line_color=BLUE_TINT, line_width_pt=1.5)
+    hdr = _add_text_box(slide, px + Inches(0.3), CONTENT_TOP + Inches(0.22),
+                        pw - Inches(0.6), Inches(0.4),
+                        "CONTRIBUTION TOWARD CAMBODIA'S SDGs", font_size=13, bold=True,
+                        color=BLUE_TITLE, font_name=HEAD_FONT)
+    _letterspace(hdr.text_frame.paragraphs[0], 60)
+    sdgs = [
+        ("SDG 3", "Good Health & Well-being",
+         "Widen voluntary health-insurance access beyond the ~16% NSSF formal sector"),
+        ("SDG 1", "No Poverty",
+         "Shield households from catastrophic out-of-pocket health costs"),
+        ("SDG 10", "Reduced Inequalities",
+         "PSI guardrail keeps underwriting demographically fair"),
+    ]
+    row_top = CONTENT_TOP + Inches(0.9)
+    for i, (num, name, line) in enumerate(sdgs):
+        ry = row_top + i * Inches(1.2)
+        _add_filled_box(slide, px + Inches(0.3), ry, Inches(1.35), Inches(0.55), BLUE_DEEP)
+        _add_text_box(slide, px + Inches(0.3), ry, Inches(1.35), Inches(0.55), num,
+                      font_size=15, bold=True, color=WHITE, font_name=HEAD_FONT,
+                      align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+        _add_text_box(slide, px + Inches(1.85), ry - Inches(0.04), Inches(3.6), Inches(0.4),
+                      name, font_size=14, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+        _add_text_box(slide, px + Inches(1.85), ry + Inches(0.36), Inches(3.55), Inches(0.78),
+                      line, font_size=11, color=SOFT_TEXT, font_name=BODY_FONT)
     _add_notes(slide,
         "Cambodia context: the National Social Security Fund covers only formal-sector "
         "workers, roughly 16 percent; private voluntary insurance is nascent and "
@@ -700,7 +747,12 @@ def slide_introduction(prs):
         "without learning from outcomes, suboptimal decisions compound over a growing "
         "applicant pool, and penetration is below 10 percent (2023 estimate). The "
         "opportunity: a contextual bandit learns online from each decision while a PSI "
-        "guardrail watches demographic fairness.")
+        "guardrail watches demographic fairness. This positions the work against Cambodia's "
+        "Sustainable Development Goals: SDG 3 good health and well-being through wider "
+        "insurance access, SDG 1 no poverty by shielding households from catastrophic "
+        "health costs, and SDG 10 reduced inequalities through the PSI fairness guardrail. "
+        "Frame these as the project's contribution - the report argues them through the "
+        "penetration gap and fairness monitoring, not as a separate SDG section.")
     return slide
 
 
@@ -783,29 +835,35 @@ def slide_project_objective(prs):
 def slide_literature_review(prs):
     slide = _content_slide(prs, "Literature Review", _pg(6))
     rows = [
-        ("Bandits in healthcare", "Bouneffouf et al. (2017)",
-         "Clinical decision support via LinUCB; reward = patient outcome"),
-        ("Linear bandit theory", "Li et al. (2010); Agrawal & Goyal (2013)",
-         "LinUCB O(sqrt(T) d log T) regret; LinTS posterior sampling, near-optimal"),
-        ("Fairness in insurance ML", "Frees et al. (2014); Kusner et al. (2017)",
-         "Regulatory constraints on protected attributes; counterfactual fairness"),
-        ("PSI model monitoring", "Yurdakul (2018)",
-         "Population Stability Index drift zones (GREEN / AMBER / RED)"),
-        ("Human-in-the-loop RL", "Christiano et al. (2017)",
-         "Expert overrides improve alignment; cost-benefit of referral"),
+        ("Underwriting in emerging markets", "NIS/CDHS (2023); ILO (2022); ADB (2023)",
+         "Cambodia: <10% penetration, manual rule-based underwriting, data anchors"),
+        ("Linear contextual bandits", "Li et al. (2010); Agrawal & Goyal (2013)",
+         "LinUCB O(sqrt(T) d log T) regret; LinTS posterior sampling - the two policies"),
+        ("Neural bandits & dynamic pricing", "Zhou (2020); Zhang (2021); Ban (2022)",
+         "NeuralUCB / NeuralTS / EE-Net relax the linear-reward assumption"),
+        ("Fairness in insurance ML", "Barocas et al. (2019); Ensign et al. (2018)",
+         "Protected-attribute constraints; runaway feedback loops"),
+        ("Population stability (PSI)", "Yurdakul & Naranjo (2020); Lin (1991)",
+         "PSI drift zones (GREEN / AMBER / RED); Jensen-Shannon basis"),
     ]
     _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.15),
                     [Inches(3.0), Inches(3.6), Inches(5.7)],
                     ["Topic", "Key authors", "Contribution"],
                     rows, font_size=13, row_h=Inches(0.85))
-    _add_footnote(slide, "Full review: thesis Chapter III (30+ sources).")
+    _add_footnote(slide, "Full review: thesis Chapter III (25 cited sources, APA).")
     _add_notes(slide,
-        "Five strands inform the method. Bouneffouf showed LinUCB works for clinical "
-        "decisions. Li et al. 2010 give the LinUCB regret bound, Agrawal and Goyal 2013 "
-        "the LinTS guarantee - together they justify the two proposed policies. Frees and "
-        "Kusner frame insurance fairness constraints; Yurdakul's PSI gives the monitoring "
-        "metric with the 0.10/0.25 thresholds; Christiano motivates the human-in-the-loop "
-        "wrapper. The thesis reviews thirty-plus sources; this is the load-bearing subset.")
+        "Five strands inform the method, mirroring Chapter III. First, underwriting in "
+        "emerging markets - the Cambodia data anchors (CDHS, ILO, ADB) and the sub-10-percent "
+        "penetration that motivates the work. Second, linear contextual bandits: Li et al. "
+        "2010 give the LinUCB regret bound and Agrawal and Goyal 2013 the LinTS guarantee - "
+        "together they justify the two proposed policies, on the multi-armed-bandit "
+        "foundations of Robbins, Sutton and Barto, and Lattimore and Szepesvari. Third, "
+        "neural bandits and dynamic pricing - Zhou, Zhang and Ban relax the linear-reward "
+        "assumption, scoped as future work. Fourth, fairness in insurance ML - Barocas and "
+        "Ensign frame protected-attribute constraints and feedback loops. Fifth, population "
+        "stability - Yurdakul and Naranjo's PSI, built on Lin's Jensen-Shannon divergence, "
+        "gives the monitoring metric with the 0.10/0.25 thresholds. Every source here is "
+        "cited in the thesis.")
     return slide
 
 
@@ -829,7 +887,7 @@ def slide_zoom_dataset(prs):
                             node_h=Inches(0.95))
     _add_stat_row(slide, CONTENT_TOP + Inches(1.3), [
         ("2,000", "synthetic applications"),
-        ("5", "demographic features"),
+        ("34", "context features"),
         ("4", "underwriting arms"),
         ("4", "anchoring sources"),
     ])
@@ -850,20 +908,81 @@ def slide_zoom_dataset(prs):
         _add_text_box(slide, Inches(9.2), ry + Inches(0.02), Inches(3.6), Inches(0.5),
                       desc, font_size=12, color=SOFT_TEXT)
     _add_notes(slide,
-        "The dataset is 2,000 synthetic applicants with five features: age, sex, region, "
-        "occupation, BMI. Distributions are anchored on CDHS 2021-22 and STEPS 2021; "
-        "income on ILO labour-force surveys; claim probabilities calibrated from WHO SEARO "
-        "health-expenditure data. Adverse-selection factor 1.35 and price-elasticity slope "
+        "The dataset is 2,000 synthetic applicants whose raw attributes one-hot encode "
+        "into a 34-dimensional standardised context vector (Table 7). Distributions are "
+        "anchored on CDHS 2021-22 and STEPS 2023; "
+        "income on ILO labour-force surveys; disease prevalence calibrated from WHO "
+        "disease-burden reports. Adverse-selection factor 1.35 and price-elasticity slope "
         "3.5 come from DAC actuarial priors. Four arms: RATED accepts with a 25 percent "
         "loading, STANDARD accepts at standard rate, DECLINE rejects, REFER escalates to a "
         "human. No real applicant data is used anywhere.")
     return slide
 
 
+def slide_dataset_overview(prs):
+    slide = _content_slide(prs, "The Dataset at a Glance", _pg(10))
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP - Inches(0.05), CONTENT_W, Inches(0.5),
+                  "2,000 synthetic applicants -> a 34-dimensional standardised context "
+                  "vector, from raw features organised by category (thesis Table 7). "
+                  "Fully synthetic — no real applicant PII.",
+                  font_size=14, color=SOFT_TEXT, font_name=BODY_FONT)
+    # Left: feature catalogue (thesis Table 7)
+    lab1 = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.55), Inches(6.0),
+                         Inches(0.32), "FEATURE CATEGORIES", font_size=11, bold=True,
+                         color=BLUE_TITLE, font_name=HEAD_FONT)
+    _letterspace(lab1.text_frame.paragraphs[0], 60)
+    feat_rows = [
+        ("Demographics & vitals", "age, gender, BMI", "3"),
+        ("Lifestyle", "smoking, alcohol, exercise", "3"),
+        ("Social determinants", "education, wealth, self-rated health", "3"),
+        ("Economic", "income, family history", "2"),
+        ("Clinical", "7 condition flags + count", "8"),
+        ("Region", "8 regions (one-hot)", "8"),
+        ("Occupation", "7 occupations (one-hot)", "7"),
+        ("Total", "", "34"),
+    ]
+
+    def _feat_style(r, c, text):
+        if r == len(feat_rows) - 1:          # bold the Total row
+            return (True, BLUE_TITLE)
+        return (False, DARK_TEXT)
+
+    _add_flat_table(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.92),
+                    [Inches(2.05), Inches(3.25), Inches(0.6)],
+                    ["Category", "Raw features", "Dim"],
+                    feat_rows, font_size=12, row_h=Inches(0.46), cell_style=_feat_style)
+    # Right: data snapshot (4 real records out of 2,000)
+    lab2 = _add_text_box(slide, Inches(6.95), CONTENT_TOP + Inches(0.55), Inches(6.0),
+                         Inches(0.32), "DATA SNAPSHOT  ·  4 OF 2,000 RECORDS",
+                         font_size=11, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+    _letterspace(lab2.text_frame.paragraphs[0], 60)
+    # Four genuine rows from the dataset (real indices 0, 2, 3, 6) chosen as an
+    # unremarkable representative sample; the label says "4 OF 2,000", not "first four".
+    snap_rows = [
+        ("36", "F", "Other Provinces", "Rice Farmer", "23.2", "No"),
+        ("34", "F", "Phnom Penh", "Rice Farmer", "27.0", "No"),
+        ("39", "M", "Other Provinces", "Civil Servant", "19.0", "No"),
+        ("43", "F", "Other Provinces", "Garment Worker", "25.7", "No"),
+    ]
+    _add_flat_table(slide, Inches(6.95), CONTENT_TOP + Inches(0.92),
+                    [Inches(0.6), Inches(0.5), Inches(1.7), Inches(1.75),
+                     Inches(0.6), Inches(0.75)],
+                    ["Age", "Sex", "Region", "Occupation", "BMI", "Smoker"],
+                    snap_rows, font_size=11, row_h=Inches(0.6))
+    _add_notes(slide,
+        "This is the dataset at a glance. Left, the feature catalogue from thesis Table 7: "
+        "raw applicant attributes fall into demographics and vitals, lifestyle behaviours, "
+        "social determinants, economic and clinical groups; after one-hot encoding region "
+        "and occupation and standardising, each applicant becomes a 34-dimensional context "
+        "vector. Right, a four-row snapshot of the 2,000 synthetic records - the real "
+        "column values before encoding. No real applicant data is used anywhere.")
+    return slide
+
+
 def slide_reward_simulator(prs):
-    slide = _content_slide(prs, "Reward Simulator", _pg(10))
+    slide = _content_slide(prs, "Reward Simulator", _pg(11))
     defs = [
-        ("Context  x_t ∈ R^5", "age, sex, region, occupation, BMI -- standardised"),
+        ("Context  x_t ∈ R^34", "age, BMI, region & occupation one-hots, clinical flags -- standardised"),
         ("Action  a_t", "one of RATED / STANDARD / DECLINE / REFER"),
         ("Reward  r_t", "revenue minus claims, actuarial simulator"),
     ]
@@ -889,7 +1008,7 @@ def slide_reward_simulator(prs):
                     ["Action", "High-risk", "Low-risk"],
                     rows, font_size=12, row_h=Inches(0.72))
     _add_notes(slide,
-        "Formally: at each round the context is the standardised five-feature applicant "
+        "Formally: at each round the context is the standardised 34-dimensional applicant "
         "vector, the action is one of four arms, and the reward is revenue minus claims "
         "from the actuarial simulator, with adverse selection penalising premium-heavy "
         "arms on low-risk applicants. The objective is cumulative reward over T rounds "
@@ -900,7 +1019,7 @@ def slide_reward_simulator(prs):
 
 
 def slide_zoom_bandit(prs):
-    slide = _content_slide(prs, "Zoom-in: Bandit Policy", _pg(11))
+    slide = _content_slide(prs, "Zoom-in: Bandit Policy", _pg(12))
     _add_overview_flowchart(slide, CONTENT_TOP, highlight="Bandit Policy",
                             node_h=Inches(0.95))
     _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.4), CONTENT_W, Inches(1.0),
@@ -913,21 +1032,22 @@ def slide_zoom_bandit(prs):
 
 
 def slide_buildup_context(prs):
-    slide = _content_slide(prs, "Bandit Build-up: Context", _pg(12))
+    slide = _content_slide(prs, "Bandit Build-up: Context", _pg(13))
     _add_buildup_stage(slide, CONTENT_TOP + Inches(0.5), [
-        ("Context vector  x_t ∈ R^5", "[age 0.4, sex -1.1, region 0, occ 2, BMI 0.8]"),
+        ("Context vector  x_t ∈ R^34", "[age 0.4, BMI 0.8, smoker 1, ... , PhnomPenh 1, RiceFarmer 0]"),
     ])
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(2.6), CONTENT_W, [
-        "Five standardised features: age, sex, region, occupation, BMI",
+        "34 standardised dims: demographics, lifestyle, clinical flags, region & occupation one-hots",
         "This is the bandit's only view of each applicant",
     ])
-    _add_notes(slide, "Start the build-up with the input: the standardised five-feature "
-               "context vector — show the example numbers.")
+    _add_notes(slide, "Start the build-up with the input: the standardised 34-dimensional "
+               "context vector — show the example slice, noting region and occupation are "
+               "one-hot encoded.")
     return slide
 
 
 def slide_buildup_estimates(prs):
-    slide = _content_slide(prs, "Bandit Build-up: Value Estimates", _pg(13))
+    slide = _content_slide(prs, "Bandit Build-up: Value Estimates", _pg(14))
     _add_buildup_stage(slide, CONTENT_TOP + Inches(0.5), [
         ("Context  x_t", "[0.4, -1.1, 0, 2, 0.8]"),
         ("Per-arm value\n(LinUCB / LinTS)", "RATED 0.31 · STD 0.52 · DEC 0.10 · REF 0.28"),
@@ -942,7 +1062,7 @@ def slide_buildup_estimates(prs):
 
 
 def slide_buildup_action(prs):
-    slide = _content_slide(prs, "Bandit Build-up: Selection & Action", _pg(14))
+    slide = _content_slide(prs, "Bandit Build-up: Selection & Action", _pg(15))
     _add_buildup_stage(slide, CONTENT_TOP + Inches(0.3), [
         ("Context  x_t", "[0.4, -1.1, 0, 2, 0.8]"),
         ("Per-arm value", "RATED 0.31 · STD 0.52 · DEC 0.10 · REF 0.28"),
@@ -978,7 +1098,7 @@ def slide_buildup_action(prs):
 
 
 def slide_zoom_fairness(prs):
-    slide = _content_slide(prs, "Zoom-in: Fairness Guardrail & HITL", _pg(15))
+    slide = _content_slide(prs, "Zoom-in: Fairness Guardrail & HITL", _pg(16))
     _add_overview_flowchart(slide, CONTENT_TOP, highlight="PSI Fairness + HITL",
                             node_h=Inches(0.95))
     lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.25), Inches(5.9),
@@ -1028,7 +1148,7 @@ def slide_zoom_fairness(prs):
 
 
 def slide_headline_benchmark(prs):
-    slide = _content_slide(prs, "Headline Benchmark", _pg(16))
+    slide = _content_slide(prs, "Headline Benchmark", _pg(17))
     _add_picture_fit(slide, str(SLIDE_FIG_DIR / "slide_loglog_regret.png"),
                      MARGIN_LEFT, CONTENT_TOP + Inches(0.1),
                      Inches(6.6), CONTENT_H - Inches(0.5))
@@ -1060,7 +1180,7 @@ def slide_headline_benchmark(prs):
 
 
 def slide_convergence_regret(prs):
-    slide = _content_slide(prs, "Convergence & Regret", _pg(17))
+    slide = _content_slide(prs, "Convergence & Regret", _pg(18))
     _add_stat_row(slide, CONTENT_TOP + Inches(0.05), [
         (f"+{_E005['lift_pct']}%", "reward lift vs static xgb"),
         (f"d = {_E005['reward_cohen_d']}", "effect size"),
@@ -1086,7 +1206,7 @@ def slide_convergence_regret(prs):
 
 
 def slide_coldstart_hitl(prs):
-    slide = _content_slide(prs, "Cold-start & Human-in-the-Loop", _pg(18))
+    slide = _content_slide(prs, "Cold-start & Human-in-the-Loop", _pg(19))
     w = _E010["wilcoxon_t2000"]
     lints, linucb = w["lints_vs_freshxgb"], w["linucb_vs_freshxgb"]
     _add_stat_row(slide, CONTENT_TOP + Inches(0.05), [
@@ -1121,7 +1241,7 @@ def slide_coldstart_hitl(prs):
 
 
 def slide_fairness_drift(prs):
-    slide = _content_slide(prs, "Fairness Audit & Drift", _pg(19))
+    slide = _content_slide(prs, "Fairness Audit & Drift", _pg(20))
     _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.02), Inches(6.4), Inches(0.45),
                   "5 of 6 fairness criteria PASSED", font_size=18, bold=True, color=DARK_TEXT)
     for col_i, (attr, data) in enumerate([("Region", _E006["region"]),
@@ -1180,7 +1300,7 @@ def slide_fairness_drift(prs):
 
 
 def slide_live_demo(prs):
-    slide = _content_slide(prs, "Live Demonstration", _pg(20))
+    slide = _content_slide(prs, "Live Demonstration", _pg(21))
     shots = [("shot_dashboard.png", "Applicant scoring & bandit arm selection"),
              ("shot_pricing.png",   "Premium optimiser & pricing curve"),
              ("shot_hitl.png",      "Human-in-the-loop referral queue & cost")]
@@ -1199,7 +1319,7 @@ def slide_live_demo(prs):
 
 
 def slide_conclusion(prs):
-    slide = _content_slide(prs, "Conclusion", _pg(21))
+    slide = _content_slide(prs, "Conclusion", _pg(22))
     _add_talking_points(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.1), Inches(6.0), [
         f"LinTS/LinUCB lead every admissible policy (+{_E005['lift_pct']}%, d={_E005['reward_cohen_d']})",
         f"HITL adds +{_E008['lift_pct']}% at {_E008['referral_pct']}% referrals",
@@ -1437,40 +1557,41 @@ def main():
     _add_divider(prs, "III", "Methodology & Model Design", _pg(9))       # 9
     slide_methodology_overview(prs)                   # 10 overview flowchart
     slide_zoom_dataset(prs)                           # 11 zoom 1
-    slide_reward_simulator(prs)                       # 12 reward
-    slide_zoom_bandit(prs)                            # 13 zoom 2
-    slide_buildup_context(prs)                        # 14 build-up A
-    slide_buildup_estimates(prs)                      # 15 build-up B
-    slide_buildup_action(prs)                         # 16 build-up C (AlwaysRATED)
-    slide_zoom_fairness(prs)                          # 17 zoom 3 (PSI+HITL)
+    slide_dataset_overview(prs)                        # 12 dataset catalog + snapshot
+    slide_reward_simulator(prs)                        # 13 reward
+    slide_zoom_bandit(prs)                            # 14 zoom 2
+    slide_buildup_context(prs)                        # 15 build-up A
+    slide_buildup_estimates(prs)                      # 16 build-up B
+    slide_buildup_action(prs)                         # 17 build-up C (AlwaysRATED)
+    slide_zoom_fairness(prs)                          # 18 zoom 3 (PSI+HITL)
 
     CURRENT_SECTION = "Results & Evaluation"
-    _add_divider(prs, "IV", "Results & Evaluation", _pg(18))             # 18
-    slide_headline_benchmark(prs)                     # 19 EXP-007 (§5.0.1)
-    slide_convergence_regret(prs)                     # 20 EXP-005/013 (§5.0.1)
-    slide_coldstart_hitl(prs)                         # 21 EXP-008/010 (0.0840)
-    slide_fairness_drift(prs)                         # 22 EXP-006/009 (FAILED-with-interpretation)
-    slide_live_demo(prs)                              # 23 demo screenshots
+    _add_divider(prs, "IV", "Results & Evaluation", _pg(19))             # 19
+    slide_headline_benchmark(prs)                     # 20 EXP-007 (§5.0.1)
+    slide_convergence_regret(prs)                     # 21 EXP-005/013 (§5.0.1)
+    slide_coldstart_hitl(prs)                         # 22 EXP-008/010 (0.0840)
+    slide_fairness_drift(prs)                         # 23 EXP-006/009 (FAILED-with-interpretation)
+    slide_live_demo(prs)                              # 24 demo screenshots
 
     CURRENT_SECTION = "Conclusion & Future Work"
-    _add_divider(prs, "V", "Conclusion & Future Work", _pg(24))         # 24
-    slide_conclusion(prs)                             # 25 O1-O4 scorecard
+    _add_divider(prs, "V", "Conclusion & Future Work", _pg(25))         # 25
+    slide_conclusion(prs)                             # 26 O1-O4 scorecard
 
     CURRENT_SECTION = "References"
-    slide_references(prs)                             # 26 References
+    slide_references(prs)                             # 27 References
 
     CURRENT_SECTION = ""
-    slide_thanks(prs)                                 # 27 Thank You
+    slide_thanks(prs)                                 # 28 Thank You
 
     # ---- Appendix (backup, not walked) ----
     CURRENT_SECTION = "Appendix"
-    slide_app_ladder(prs)                             # 28 A1 (FALSIFIED, AlwaysRATED)
-    slide_app_reconciliation(prs)                     # 29 A2
-    slide_app_criteria_matrix(prs)                    # 30 A3
-    slide_app_sensitivity(prs)                        # 31 A4
-    slide_app_math_psi(prs)                           # 32 A5
+    slide_app_ladder(prs)                             # 29 A1 (FALSIFIED, AlwaysRATED)
+    slide_app_reconciliation(prs)                     # 30 A2
+    slide_app_criteria_matrix(prs)                    # 31 A3
+    slide_app_sensitivity(prs)                        # 32 A4
+    slide_app_math_psi(prs)                           # 33 A5
 
-    assert len(prs.slides) == 33, f"Expected 33 slides, got {len(prs.slides)}"
+    assert len(prs.slides) == 34, f"Expected 34 slides, got {len(prs.slides)}"
     prs.save(OUTPUT_PATH)
     print(f"Saved {len(prs.slides)} slides -> {OUTPUT_PATH}")
 
