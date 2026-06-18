@@ -718,7 +718,7 @@ def slide_introduction(prs):
                     line_color=BLUE_TINT, line_width_pt=1.5)
     hdr = _add_text_box(slide, px + Inches(0.3), CONTENT_TOP + Inches(0.22),
                         pw - Inches(0.6), Inches(0.4),
-                        "CONTRIBUTION TOWARD CAMBODIA'S SDGs", font_size=13, bold=True,
+                        "ALIGNMENT WITH CAMBODIA'S SDGs", font_size=13, bold=True,
                         color=BLUE_TITLE, font_name=HEAD_FONT)
     _letterspace(hdr.text_frame.paragraphs[0], 60)
     sdgs = [
@@ -751,8 +751,11 @@ def slide_introduction(prs):
         "Sustainable Development Goals: SDG 3 good health and well-being through wider "
         "insurance access, SDG 1 no poverty by shielding households from catastrophic "
         "health costs, and SDG 10 reduced inequalities through the PSI fairness guardrail. "
-        "Frame these as the project's contribution - the report argues them through the "
-        "penetration gap and fairness monitoring, not as a separate SDG section.")
+        "The thesis now develops this in a dedicated section - chapter 2 section 2.4, "
+        "Significance and Alignment with Cambodia's SDGs - which maps the project to SDG 3, 1 "
+        "and 10. Frame it as the project's intended societal contribution argued through the "
+        "penetration gap and fairness monitoring; be ready to note this is an alignment "
+        "argument, not a measured SDG impact.")
     return slide
 
 
