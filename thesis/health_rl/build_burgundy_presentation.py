@@ -647,8 +647,6 @@ def slide_references(prs):
         "International Labour Organization (2022). Cambodian Garment & Footwear "
         "Sector Bulletin.",
         "Asian Development Bank (2023). Asian Development Outlook: Cambodia.",
-        "World Bank (2023). World Development Indicators: Cambodia.",
-        "Swiss Re Institute (2023). Sigma 3/2023: World insurance.",
     ]
     def _refs(col_x, refs, start):
         # 8 entries/column, several wrapping to 2 lines; tightened so the last
@@ -667,8 +665,8 @@ def slide_references(prs):
         "linear policies, Zhou, Zhang and Ban for the neural extensions, Sutton & Barto "
         "and Lattimore & Szepesvari for foundations, Barocas for fairness. Right: Ensign "
         "on feedback loops, Yurdakul & Naranjo and Lin for the PSI guardrail, then the "
-        "Cambodia data anchors - the CDHS, the ILO bulletin, ADB, World Bank and Swiss "
-        "Re. The full APA list lives in thesis Chapter III.")
+        "Cambodia data anchors - the CDHS, the ILO bulletin and ADB. The full APA list "
+        "lives in thesis Chapter III.")
     return slide
 
 
@@ -795,43 +793,51 @@ def slide_problem_statement(prs):
 
 def slide_project_objective(prs):
     slide = _content_slide(prs, "Project Objective", _pg(5))
-    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(4.0), Inches(0.32),
-                        "RESEARCH GOAL", font_size=11, bold=True, color=BLUE_TITLE)
-    _letterspace(lab.text_frame.paragraphs[0], 120)
-    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.38), CONTENT_W, Inches(0.75),
-                  "Design and evaluate an adaptive health insurance underwriting system using "
-                  "contextual bandit algorithms on a synthetic Cambodia applicant dataset, "
-                  "incorporating demographic fairness monitoring and human-in-the-loop augmentation.",
-                  font_size=15, color=DARK_TEXT)
-    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.35), Inches(4.0),
-                        Inches(0.32), "OBJECTIVES", font_size=11, bold=True, color=BLUE_TITLE)
-    _letterspace(lab.text_frame.paragraphs[0], 120)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP, Inches(6.0), Inches(0.32),
+                        "RESEARCH GOAL (PRIMARY OBJECTIVE)", font_size=11, bold=True,
+                        color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 80)
+    _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.36), CONTENT_W, Inches(0.78),
+                  "To design, implement, and empirically validate a contextual bandit framework "
+                  "for health insurance underwriting that outperforms static rule-based baselines "
+                  "on cumulative profitability while maintaining regional and occupational "
+                  "fairness on a synthetic Cambodia dataset.",
+                  font_size=14, color=DARK_TEXT)
+    lab = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(1.2), Inches(6.0),
+                        Inches(0.32), "SECONDARY OBJECTIVES", font_size=11, bold=True,
+                        color=BLUE_TITLE)
+    _letterspace(lab.text_frame.paragraphs[0], 80)
     objs = [
-        ("O1", "Implement and adapt linear contextual bandit algorithms (LinUCB, LinTS) "
-               "for multi-arm health insurance underwriting decisions."),
-        ("O2", "Construct a 2,000-record synthetic Cambodia applicant dataset anchored "
-               "on CDHS, STEPS, ILO, and WHO demographic distributions."),
-        ("O3", "Evaluate bandit performance versus static rule-based baselines via "
-               "20-seed multi-run trials, bootstrap CIs, and paired Wilcoxon tests."),
-        ("O4", "Assess demographic fairness via PSI monitoring across region and occupation, "
-               "and integrate a human-in-the-loop underwriting wrapper."),
+        ("O1", "Develop a reproducible 2,000-record synthetic Cambodia applicant dataset "
+               "anchored on the CDHS 2021-22: demographics, disease prevalence (incl. TB "
+               "and hepatitis B), and regional and occupational risk."),
+        ("O2", "Implement and compare three contextual bandit algorithms (LinUCB, LinTS, "
+               "and Epsilon-Greedy) against a static XGBoost rule baseline on cumulative "
+               "reward and regret over 5,000 rounds."),
+        ("O3", "Design and validate PSI-based fairness guardrails so the approved portfolio "
+               "does not drift demographically from the applicant population."),
+        ("O4", "Conduct a fairness audit verifying that no regional or occupational segment "
+               "falls below the EEOC four-fifths (80%) approval-rate benchmark."),
+        ("O5", "Design and evaluate a human-in-the-loop wrapper that escalates only the most "
+               "uncertain applicants, quantifying reward gain against review cost."),
     ]
-    top = CONTENT_TOP + Inches(1.8)
+    top = CONTENT_TOP + Inches(1.55)
     for i, (label, text) in enumerate(objs):
-        y = top + i * Inches(0.95)
+        y = top + i * Inches(0.80)
         _add_text_box(slide, MARGIN_LEFT, y, Inches(0.75), Inches(0.5),
-                      label, font_size=20, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
+                      label, font_size=17, bold=True, color=BLUE_TITLE, font_name=HEAD_FONT)
         _add_text_box(slide, MARGIN_LEFT + Inches(0.85), y + Inches(0.02),
-                      CONTENT_W - Inches(0.85), Inches(0.85),
-                      text, font_size=14, color=DARK_TEXT)
+                      CONTENT_W - Inches(0.85), Inches(0.74),
+                      text, font_size=12, color=DARK_TEXT)
         if i > 0:
-            _add_filled_box(slide, MARGIN_LEFT, y - Inches(0.1), CONTENT_W,
+            _add_filled_box(slide, MARGIN_LEFT, y - Inches(0.08), CONTENT_W,
                             Inches(0.012), HAIRLINE)
     _add_notes(slide,
-        "Read the goal once, slowly. The four objectives map one-to-one onto the chapters: "
-        "O1 the algorithms (Chapter IV), O2 the dataset (Chapter IV), O3 the evaluation "
-        "(Chapter V), O4 fairness plus HITL (Chapter V). These are verbatim from the thesis "
-        "- the examiners will check the wording.")
+        "Read the primary objective once, slowly, then the five secondary objectives - these "
+        "mirror the thesis, chapter 2 section 2.3. O1 the dataset and O2 the algorithms are "
+        "delivered in Chapter IV; O3 the fairness-guardrail design, O4 the fairness audit, and "
+        "O5 the human-in-the-loop integration are evaluated in Chapters IV-V. The wording is "
+        "drawn from the thesis objectives; if pressed, point the panel to section 2.3.")
     return slide
 
 
@@ -912,7 +918,7 @@ def slide_zoom_dataset(prs):
                       desc, font_size=12, color=SOFT_TEXT)
     _add_notes(slide,
         "The dataset is 2,000 synthetic applicants whose raw attributes one-hot encode "
-        "into a 34-dimensional standardised context vector (Table 7). Distributions are "
+        "into a 34-dimensional standardised context vector (Table 8). Distributions are "
         "anchored on CDHS 2021-22 and STEPS 2023; "
         "income on ILO labour-force surveys; disease prevalence calibrated from WHO "
         "disease-burden reports. Adverse-selection factor 1.35 and price-elasticity slope "
@@ -926,10 +932,10 @@ def slide_dataset_overview(prs):
     slide = _content_slide(prs, "The Dataset at a Glance", _pg(10))
     _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP - Inches(0.05), CONTENT_W, Inches(0.5),
                   "2,000 synthetic applicants -> a 34-dimensional standardised context "
-                  "vector, from raw features organised by category (thesis Table 7). "
+                  "vector, from raw features organised by category (thesis Table 8). "
                   "Fully synthetic — no real applicant PII.",
                   font_size=14, color=SOFT_TEXT, font_name=BODY_FONT)
-    # Left: feature catalogue (thesis Table 7)
+    # Left: feature catalogue (thesis Table 8)
     lab1 = _add_text_box(slide, MARGIN_LEFT, CONTENT_TOP + Inches(0.55), Inches(6.0),
                          Inches(0.32), "FEATURE CATEGORIES", font_size=11, bold=True,
                          color=BLUE_TITLE, font_name=HEAD_FONT)
@@ -973,7 +979,7 @@ def slide_dataset_overview(prs):
                     ["Age", "Sex", "Region", "Occupation", "BMI", "Smoker"],
                     snap_rows, font_size=11, row_h=Inches(0.6))
     _add_notes(slide,
-        "This is the dataset at a glance. Left, the feature catalogue from thesis Table 7: "
+        "This is the dataset at a glance. Left, the feature catalogue from thesis Table 8: "
         "raw applicant attributes fall into demographics and vitals, lifestyle behaviours, "
         "social determinants, economic and clinical groups; after one-hot encoding region "
         "and occupation and standardising, each applicant becomes a 34-dimensional context "
@@ -1155,8 +1161,16 @@ def slide_headline_benchmark(prs):
     _add_picture_fit(slide, str(SLIDE_FIG_DIR / "slide_loglog_regret.png"),
                      MARGIN_LEFT, CONTENT_TOP + Inches(0.1),
                      Inches(6.6), CONTENT_H - Inches(0.5))
-    rows = [(str(r["rank"]), r["algorithm"], f"${r['reward']:,}")
-            for r in _E007["ranking"]]
+    # Rewards on the CRN harness, matching thesis Table 13: LinTS, LinUCB and Static XGB
+    # take their harness values; Epsilon-Greedy is not in the harness and keeps its
+    # EXP-007 own-run value (thesis §5.3 reconciliation).
+    _lad = {r["policy"]: r for r in _LADDER["rows"]}
+    rows = [
+        ("1", "LinTS",          f"${_lad['LinTS']['reward']:,}"),
+        ("2", "LinUCB",         f"${_lad['LinUCB']['reward']:,}"),
+        ("3", "Epsilon-Greedy", f"${_E007['ranking'][2]['reward']:,}"),
+        ("4", "Static XGB",     f"${_lad['Static XGB']['reward']:,}"),
+    ]
     def _rank_style(i, c, text):
         top2 = i < 2
         return (top2, BLUE_TITLE if top2 else DARK_TEXT)
@@ -1172,9 +1186,9 @@ def slide_headline_benchmark(prs):
         f"Scope: admissible policies only (§5.0.1). LinTS vs LinUCB p = "
         f"{_E007['lints_vs_linucb_p']} (n.s. — tied at 20 seeds); same CRN harness.")
     _add_notes(slide,
-        f"All four algorithms under common random numbers. LinTS ranks first at "
-        f"${_E007['ranking'][0]['reward']:,}, LinUCB second at "
-        f"${_E007['ranking'][1]['reward']:,} - statistically tied "
+        f"All four algorithms on the common-random-number harness (thesis Table 13). LinTS "
+        f"ranks first at ${_lad['LinTS']['reward']:,}, LinUCB second at "
+        f"${_lad['LinUCB']['reward']:,} - statistically tied "
         f"(p = {_E007['lints_vs_linucb_p']}). Epsilon-greedy trails, static XGB last. "
         f"The log-log plot validates theory: fitted slope {_E013['slope']} with R squared "
         f"{_E013['r2']}, close to the 0.5 of the O(root-T d) bound - the bandit's regret "
@@ -1330,10 +1344,11 @@ def slide_conclusion(prs):
         "Honest scope: inadmissible AlwaysRATED ceiling sits above (§5.0.1)",
     ])
     rows = [
-        ("O1", "LinUCB + LinTS implemented & adapted", "ACHIEVED"),
-        ("O2", "2,000-record CDHS-anchored dataset built", "ACHIEVED"),
-        ("O3", "20-seed eval, bootstrap CI, Wilcoxon", "ACHIEVED"),
-        ("O4", "PSI fairness monitoring + HITL wrapper", "ACHIEVED"),
+        ("O1", "2,000-record CDHS-anchored dataset built", "ACHIEVED"),
+        ("O2", "LinUCB, LinTS, ε-Greedy vs Static XGB", "ACHIEVED"),
+        ("O3", "PSI fairness guardrails designed & validated", "ACHIEVED"),
+        ("O4", "EEOC four-fifths parity audit (≥ 80%)", "ACHIEVED"),
+        ("O5", "Human-in-the-loop wrapper evaluated", "ACHIEVED"),
     ]
     def _sc_style(i, c, text):
         if c == 2:
@@ -1342,7 +1357,7 @@ def slide_conclusion(prs):
     _add_flat_table(slide, Inches(7.0), CONTENT_TOP + Inches(0.2),
                     [Inches(0.8), Inches(4.0), Inches(1.5)],
                     ["#", "Objective outcome", "Status"],
-                    rows, font_size=13, row_h=Inches(0.7), cell_style=_sc_style)
+                    rows, font_size=12, row_h=Inches(0.56), cell_style=_sc_style)
     _add_callout(slide, MARGIN_LEFT, CONTENT_TOP + Inches(3.9), CONTENT_W, Inches(0.85),
                  "Contextual bandits give a principled, adaptive, auditable alternative to "
                  "static rule-based underwriting in the Cambodian context.",
@@ -1410,9 +1425,9 @@ def slide_app_reconciliation(prs):
         ("LinUCB vs Static XGB (EXP-005)", f"+{_E005['lift_pct']}%",
          "Paired design, standardised eval -- the pre-registered primary metric"),
         ("LinUCB vs Static XGB (EXP-014 ladder)", f"+{lifts['linucb_vs_static_pct']}%",
-         "CRN harness, reward-maximising policy (Table 9, §5.0.1)"),
+         "CRN harness, reward-maximising policy (Table 10, §5.0.1)"),
         ("LinTS vs Static XGB (EXP-014 ladder)", f"+{lifts['lints_vs_static_pct']}%",
-         "CRN harness, LinTS reward-maximising (Table 9, §5.0.1)"),
+         "CRN harness, LinTS reward-maximising (Table 10, §5.0.1)"),
         ("HITL vs vanilla LinUCB (EXP-008)", f"+{_E008['lift_pct']}%",
          "Augmented bandit vs vanilla bandit -- different baseline entirely"),
     ]
