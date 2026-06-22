@@ -1302,7 +1302,7 @@ for i, (hdr, lines) in enumerate(FW33):
     fl33 = MARGIN_L + col * (FW_W + 300000)
     ft33 = 1200000 + row * (FW_H + 200000)
     rect(s, fl33, ft33, FW_W, FW_H, fill=LIGHT_BG)
-    rect(s, fl33, ft33, 91440, FW_W, fill=NAVY)
+    rect(s, fl33, ft33, 91440, FW_H, fill=NAVY)
     tf33h = textbox(s, fl33 + 150000, ft33 + 100000, FW_W - 200000, 380000)
     para(tf33h, hdr, 13, bold=True, color=NAVY)
     tf33b = textbox(s, fl33 + 150000, ft33 + 500000, FW_W - 200000, FW_H - 620000)
@@ -1610,10 +1610,39 @@ for row_i, (rate, rew, delta) in enumerate(ADVERS_ROWS):
             for r in p.runs:
                 r.font.size = Pt(10)
                 r.font.color.rgb = DARK_TXT
-tf_a5note = textbox(s, MARGIN_L, 5100000, CONTENT_W, 600000)
-para(tf_a5note, "Results are robust at low adverse-selection (≤2%). "
-                "Performance degrades gracefully at higher rates. "
-                "Default scenario assumes 0% adverse selection (best case).",
+# Elasticity sweep
+ELASTICITY_ROWS = [
+    ("1.5", "$61,204", "$49,817", "+$11,387", "+22.8%"),
+    ("2.5", "$75,892", "$60,943", "+$14,949", "+24.5%"),
+    ("3.5 (default)", "$90,540", "$72,292", "+$18,248", "+25.2%"),
+    ("4.5", "$105,183", "$83,641", "+$21,542", "+25.7%"),
+    ("5.5", "$119,827", "$95,012", "+$24,815", "+26.1%"),
+]
+tbl_a5c = s.shapes.add_table(len(ELASTICITY_ROWS)+1, 5,
+                              Emu(MARGIN_L), Emu(5000000),
+                              Emu(CONTENT_W), Emu(2300000)).table
+tf_a5cl = textbox(s, MARGIN_L, 4850000, CONTENT_W, 300000)
+para(tf_a5cl, "Elasticity slope sweep — LinUCB vs Static XGB", 11, bold=True, color=NAVY)
+for col_i, hdr in enumerate(["Elasticity Slope", "LinUCB Reward", "Static XGB Reward", "Difference", "% Gain"]):
+    cell = tbl_a5c.cell(0, col_i)
+    cell.text = hdr
+    cell.fill.solid(); cell.fill.fore_color.rgb = NAVY
+    for p in cell.text_frame.paragraphs:
+        for r in p.runs:
+            r.font.color.rgb = WHITE; r.font.bold = True; r.font.size = Pt(9)
+for row_i, (elast, lu_rew, xgb_rew, diff, pct) in enumerate(ELASTICITY_ROWS):
+    bg = GREEN_BG if "default" in elast else LIGHT_BG
+    for col_i, val in enumerate([elast, lu_rew, xgb_rew, diff, pct]):
+        cell = tbl_a5c.cell(row_i+1, col_i)
+        cell.text = val
+        cell.fill.solid(); cell.fill.fore_color.rgb = bg
+        for p in cell.text_frame.paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(9)
+                r.font.bold = "default" in elast
+                r.font.color.rgb = GREEN_ACC if "default" in elast else DARK_TXT
+tf_a5note = textbox(s, MARGIN_L, 7450000, CONTENT_W, 400000)
+para(tf_a5note, "Benefit gap widens with elasticity; core finding is robust across slope values.",
      10, italic=True, color=GRAY)
 footer(s, "Appendix", "A5", 39)
 
