@@ -688,8 +688,9 @@ SLIDES = [
             "Finding 4 — EXP-008: HITL adds value at low cost. Plus 6.5 percent "
             "at 1.5 percent review rate. Alignment score 60 percent — human "
             "oversight is meaningful.\n\n"
-            "In 2023, the static system declined Sophea. In 2026, the bandit "
-            "issues STANDARD premium. That is the 25.2%. It is not everything "
+            "In 2023, the static system issued DECLINE. Sophea left without "
+            "coverage. In 2026, the bandit issues STANDARD premium — the correct "
+            "actuarial answer. That is the 25.2%. It is not everything "
             "— a trivial constant earns more. But it is a principled, fair, "
             "auditable step forward for an insurance market that needs one."
         ),
