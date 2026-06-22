@@ -365,9 +365,9 @@ HEADERS = ["Algorithm", "Exploration", "Regret", "Per-Round Cost", "Data Need"]
 ALG_ROWS = [
     ["LinUCB\n(Li et al. 2010)", "UCB bonus:\nα√(xᵀA⁻¹x)", "O(d√T log T)", "O(d²)", "Moderate"],
     ["LinTS\n(Agrawal & Goyal 2013)", "Posterior sampling:\nθ̃ ~ N(θ̂, v²A⁻¹)", "O(d√T log T)", "O(d²)", "Moderate"],
-    ["NeuralUCB\n(Zhou et al. 2020)", "Gradient confidence", "\xd5(d̃√T)", "O(‖θ‖·T)", "Large"],
+    ["NeuralUCB\n(Zhou et al. 2020)", "Gradient confidence", "Õ(d̃√T)", "O(‖θ‖·T)", "Large"],
     ["EE-Net\n(Ban et al. 2022)", "Learned exploration", "Empirical only", "O(‖θ‖·T)", "Large"],
-    ["Epsilon-Greedy", "ε-random (ε=0.15)", "O(T²⁻³)", "O(d²)", "Low"],
+    ["Epsilon-Greedy", "ε-random (ε=0.15)", "O(T^(2/3))", "O(d²)", "Low"],
 ]
 for col_i, hdr in enumerate(HEADERS):
     cell = tbl.cell(0, col_i)
