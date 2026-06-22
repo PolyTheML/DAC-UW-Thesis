@@ -4,11 +4,11 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 from pptx import Presentation
-from pptx.util import Emu, Pt
-from pptx.enum.text import PP_ALIGN
+from pptx.util import Emu, Pt, Inches
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from defense_tokens import *
 from defense_draw import (rect, textbox, para, new_para, add_run,
-                          title_block, footer, section_divider, card)
+                          title_block, footer, section_divider, card, outline)
 
 OUT = r"thesis\health_rl\Poly_defense_presentation_v3.pptx"
 
@@ -22,33 +22,106 @@ def new_slide():
     return prs.slides.add_slide(BLANK)
 
 
-# ── Slide 1: Title ────────────────────────────────────────────────────
+# ── Methodology "you are here" pipeline (for zoom-in interstitials) ─────
+PIPELINE_LABELS = ["Applicant\nContext", "Bandit\nPolicy", "Underwriting\nAction",
+                   "Actuarial\nReward", "PSI + HITL\nGuardrail", "Decision"]
+
+
+def pipeline_strip(s, top, highlight):
+    """Draw the 6-stage methodology pipeline. Stages whose index is in `highlight`
+    are full cobalt with a green 'you are here' frame; the rest are dimmed pale."""
+    box_w = 1500000; box_h = 760000; gap = 200000
+    total_w = len(PIPELINE_LABELS) * box_w + (len(PIPELINE_LABELS) - 1) * gap
+    start_l = (SW - total_w) // 2
+    for i, label in enumerate(PIPELINE_LABELS):
+        l = start_l + i * (box_w + gap)
+        on = i in highlight
+        rect(s, l, top, box_w, box_h, fill=(NAVY if on else LIGHT_BG))
+        if on:
+            outline(s, l - 45000, top - 45000, box_w + 90000, box_h + 90000,
+                    GREEN_ACC, width_pt=3.5)
+        tf = textbox(s, l + 50000, top + 110000, box_w - 100000, box_h - 150000)
+        para(tf, label, 12, bold=True, color=(WHITE if on else GRAY),
+             align=PP_ALIGN.CENTER)
+        if i < len(PIPELINE_LABELS) - 1:
+            tf2 = textbox(s, l + box_w, top + 230000, gap, 400000)
+            para(tf2, "→", 18, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
+
+
+def zoom_slide(title, highlight, caption, footer_num):
+    """Burgundy-style methodology zoom-in interstitial: pipeline with current
+    stage(s) highlighted + a one-line 'now examining' caption."""
+    s = new_slide()
+    rect(s, 0, 0, SW, SH, fill=WHITE)
+    title_block(s, title)
+    # green legend chip
+    tfl = textbox(s, MARGIN_L, 1700000, CONTENT_W, 320000)
+    para(tfl, "▸ YOU ARE HERE", 11, bold=True, color=GREEN_ACC, align=PP_ALIGN.CENTER)
+    pipeline_strip(s, 2550000, highlight)
+    tfc = textbox(s, MARGIN_L + 1000000, 3850000, CONTENT_W - 2000000, 700000)
+    para(tfc, caption, 16, italic=True, color=NAVY, align=PP_ALIGN.CENTER)
+    footer(s, "Methodology & Model Design", footer_num, 43)
+    return s
+
+
+# ── Slide 1: Title (burgundy-chrome classic layout, logos) ────────────
+_HERE     = os.path.dirname(__file__)
+LOGO_ITC  = os.path.join(_HERE, "..", "ITC.jpg")
+LOGO_AMS  = os.path.join(_HERE, "..", "AMS.png")
+LOGO_DAC  = os.path.join(_HERE, "..", "DAC.jpg")
+THESIS_TITLE = ("ADAPTIVE HEALTH INSURANCE UNDERWRITING VIA CONTEXTUAL BANDITS: "
+                "A REINFORCEMENT LEARNING APPROACH FOR CAMBODIA")
+
 s = new_slide()
 rect(s, 0, 0, SW, SH, fill=WHITE)
-# Navy top bar
-rect(s, 0, 0, SW, 1200000, fill=NAVY)
-# Title text
-tf = textbox(s, MARGIN_L, 200000, CONTENT_W, 700000)
-para(tf, "ADAPTIVE HEALTH INSURANCE UNDERWRITING", 24, bold=True,
-     color=WHITE, align=PP_ALIGN.CENTER)
-new_para(tf, "VIA CONTEXTUAL BANDITS", 24, bold=True, color=WHITE,
-         align=PP_ALIGN.CENTER, space_before=6)
-# Sub-title
-tf2 = textbox(s, MARGIN_L, 1300000, CONTENT_W, 600000)
-para(tf2, "A Reinforcement Learning Approach for Cambodia", 16,
-     italic=True, color=NAVY, align=PP_ALIGN.CENTER)
-# Presenter info card
-rect(s, MARGIN_L + 2000000, 2200000, CONTENT_W - 4000000, 800000, fill=LIGHT_BG)
-tf3 = textbox(s, MARGIN_L + 2150000, 2300000, CONTENT_W - 4300000, 700000)
-para(tf3, "LUN CHANPOLY", 16, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-new_para(tf3, "ITC-AMS  ·  July 2026", 12, color=GRAY, align=PP_ALIGN.CENTER, space_before=6)
-new_para(tf3, "Supervisor: Dr. HAS Sothea  ·  DAC Advisor: Mr. ON Radet", 11,
-         color=GRAY, align=PP_ALIGN.CENTER, space_before=4)
-# DAC logo placeholder text
-tf4 = textbox(s, MARGIN_L, 3300000, CONTENT_W, 400000)
-para(tf4, "Decent Actuarial Consultants Co., Ltd.", 12,
+
+# Logos (top): ITC left, AMS beside it, DAC right
+for _path, _lx, _ly, _lw in [
+    (LOGO_ITC, 0.6,  0.30, 1.0),
+    (LOGO_AMS, 1.75, 0.40, 1.45),
+    (LOGO_DAC, 11.3, 0.35, 1.45),
+]:
+    if os.path.exists(_path):
+        s.shapes.add_picture(_path, Inches(_lx), Inches(_ly), width=Inches(_lw))
+
+# Institution + department
+tf = textbox(s, Inches(3.4), Inches(0.42), Inches(7.2), Inches(0.5))
+para(tf, "Institute of Technology of Cambodia", 22, bold=True,
+     color=DARK_TXT, align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
+tf = textbox(s, Inches(3.4), Inches(0.92), Inches(7.2), Inches(0.4))
+para(tf, "Department of Applied Mathematics and Statistics", 15,
      color=GRAY, align=PP_ALIGN.CENTER)
-footer(s, "Title", "–", 39)
+
+# Cobalt underline accents framing the title
+rect(s, Inches(5.92), Inches(2.05), Inches(1.5), Inches(0.045), fill=NAVY)
+tf = textbox(s, Inches(0.9), Inches(2.35), Inches(11.5), Inches(1.7))
+tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+para(tf, THESIS_TITLE, 27, bold=True, color=DARK_TXT,
+     align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
+rect(s, Inches(5.92), Inches(4.25), Inches(1.5), Inches(0.045), fill=NAVY)
+
+# Presenter
+tf = textbox(s, 0, Inches(4.62), SW, Inches(0.34))
+para(tf, "Thesis Defense — Presented by", 14, color=GRAY, align=PP_ALIGN.CENTER)
+tf = textbox(s, 0, Inches(4.96), SW, Inches(0.5))
+para(tf, "LUN CHANPOLY", 27, bold=True, color=NAVY, align=PP_ALIGN.CENTER,
+     font_name=HEAD_FONT)
+
+# Metadata grid (ON Radet preserved as 4th cell)
+_lx, _rx = Inches(1.5), Inches(7.5)
+for _i, (_lt, _rt) in enumerate([
+    ("Supervisor   :  Dr. HAS Sothea",       "Organization  :  DAC (Decent Actuarial Consultants)"),
+    ("Duration       :  Mar 2026 – Jun 2026", "DAC Advisor  :  Mr. ON Radet"),
+]):
+    _y = Inches(5.68) + _i * Inches(0.36)
+    tf = textbox(s, _lx, _y, Inches(5.6), Inches(0.34))
+    para(tf, _lt, 14, color=DARK_TXT)
+    tf = textbox(s, _rx, _y, Inches(5.6), Inches(0.34))
+    para(tf, _rt, 14, color=DARK_TXT)
+
+tf = textbox(s, 0, Inches(6.6), SW, Inches(0.38))
+para(tf, "July 2026", 15, bold=True, color=GRAY, align=PP_ALIGN.CENTER)
+footer(s, "Title", "–", 43)
 
 # ── Slide 2: TOC ──────────────────────────────────────────────────────
 s = new_slide()
@@ -69,7 +142,7 @@ for i, (num, name) in enumerate(SECTIONS):
     para(tf, num, 18, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     tf2 = textbox(s, MARGIN_L + 500000, t + 200000, CONTENT_W - 600000, 350000)
     para(tf2, name, 16, color=NAVY)
-footer(s, "Contents", "–", 39)
+footer(s, "Contents", "–", 43)
 
 # ── Slide 3: Meet Sophea ──────────────────────────────────────────────
 s = new_slide()
@@ -132,7 +205,7 @@ tf7 = textbox(s, R_L, ct + 1380000, R_W, 500000)
 para(tf7, "Sophea leaves without coverage.", 12, italic=True, color=GRAY)
 new_para(tf7, "Was that the right answer?", 13, bold=True, color=NAVY,
          space_before=8)
-footer(s, "Introduction & Problem Background", "1", 39)
+footer(s, "Introduction & Problem Background", "1", 43)
 
 # ── Slide 4: About DAC ────────────────────────────────────────────────
 s = new_slide()
@@ -162,7 +235,7 @@ tf = textbox(s, MARGIN_L, 3950000, CONTENT_W, 400000)
 para(tf, "HQ: Taipei, Taiwan  ·  Regional offices: Phnom Penh, Vietnam, SEA  "
      "·  Internship: March–June 2026  ·  Advisor: Mr. ON Radet",
      11, italic=True, color=GRAY)
-footer(s, "Introduction & Problem Background", "2", 39)
+footer(s, "Introduction & Problem Background", "2", 43)
 
 # ── Slide 5: Cambodia Context ─────────────────────────────────────────
 s = new_slide()
@@ -216,7 +289,7 @@ for i, (num, name, desc) in enumerate(SDG_DATA):
 tf7 = textbox(s, MARGIN_L, 5600000, CONTENT_W, 400000)
 para(tf7, "Sophea represents the 98% the current system was not built for.", 12,
      bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-footer(s, "Introduction & Problem Background", "3", 39)
+footer(s, "Introduction & Problem Background", "3", 43)
 
 # ── Slide 6: Problem Statement ────────────────────────────────────────
 s = new_slide()
@@ -244,7 +317,7 @@ for i, (hdr, body) in enumerate(PROBLEMS):
     t = 1200000 + row * (card_h + 150000)
     card(s, l, t, card_w, card_h, header=hdr, body_lines=[body],
          header_size=14, body_size=12)
-footer(s, "Introduction & Problem Background", "4", 39)
+footer(s, "Introduction & Problem Background", "4", 43)
 
 # ── Slide 7: Research Questions ───────────────────────────────────────
 s = new_slide()
@@ -262,15 +335,17 @@ RQS = [
     ("RQ4", "Is the framework technically feasible for deployment on "
             "low-resource mobile infrastructure (<200 ms latency)?"),
 ]
-rq_h = 1050000
+rq_h = 900000; rq_gap = 250000; rq_top = 1550000
 for i, (num, text) in enumerate(RQS):
-    t = 1200000 + i * (rq_h + 100000)
+    t = rq_top + i * (rq_h + rq_gap)
     rect(s, MARGIN_L, t, 500000, rq_h, fill=NAVY)
-    tf = textbox(s, MARGIN_L + 80000, t + 330000, 340000, 400000)
+    tf = textbox(s, MARGIN_L + 80000, t, 340000, rq_h)
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
     para(tf, num, 16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    tf2 = textbox(s, MARGIN_L + 600000, t + 200000, CONTENT_W - 700000, rq_h - 400000)
-    para(tf2, text, 13, color=DARK_TXT)
-footer(s, "Introduction & Problem Background", "5", 39)
+    tf2 = textbox(s, MARGIN_L + 640000, t, CONTENT_W - 740000, rq_h)
+    tf2.vertical_anchor = MSO_ANCHOR.MIDDLE
+    para(tf2, text, 14, color=DARK_TXT)
+footer(s, "Introduction & Problem Background", "5", 43)
 
 # ── Slide 8: Objectives & Deliverables ───────────────────────────────
 s = new_slide()
@@ -287,12 +362,17 @@ DELIVERABLES = [
     ("D3", "Actuarial Reward Simulator\nProfit-based · adverse selection · elasticity model"),
     ("D4", "PSI Fairness Monitoring Framework\nGREEN/AMBER/RED alerts · region + occupation"),
 ]
+BAND_TOP = 1600000; BAND_BOT = 6050000
+L_CH = 800000
+L_STEP = (BAND_BOT - BAND_TOP - L_CH) // (len(DELIVERABLES) - 1)
 for i, (num, text) in enumerate(DELIVERABLES):
-    t = 1550000 + i * 1000000
-    rect(s, MARGIN_L, t, 300000, 800000, fill=NAVY)
-    tfn = textbox(s, MARGIN_L + 80000, t + 280000, 200000, 250000)
+    t = BAND_TOP + i * L_STEP
+    rect(s, MARGIN_L, t, 300000, L_CH, fill=NAVY)
+    tfn = textbox(s, MARGIN_L, t, 300000, L_CH)
+    tfn.vertical_anchor = MSO_ANCHOR.MIDDLE
     para(tfn, num, 14, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    tf2 = textbox(s, MARGIN_L + 380000, t + 100000, col_w - 450000, 700000)
+    tf2 = textbox(s, MARGIN_L + 380000, t, col_w - 450000, L_CH)
+    tf2.vertical_anchor = MSO_ANCHOR.MIDDLE
     lines = text.split('\n')
     para(tf2, lines[0], 12, bold=True, color=NAVY)
     if len(lines) > 1:
@@ -309,19 +389,23 @@ OBJECTIVES = [
     ("O4", "EEOC four-fifths approval-rate parity audit"),
     ("O5", "Human-in-the-loop wrapper — reward gain vs review cost"),
 ]
+R_CH = 750000
+R_STEP = (BAND_BOT - BAND_TOP - R_CH) // (len(OBJECTIVES) - 1)
 for i, (num, text) in enumerate(OBJECTIVES):
-    t = 1550000 + i * 950000
-    rect(s, r_l, t, 300000, 750000, fill=BLUE)
-    tfn = textbox(s, r_l + 80000, t + 260000, 200000, 250000)
+    t = BAND_TOP + i * R_STEP
+    rect(s, r_l, t, 300000, R_CH, fill=BLUE)
+    tfn = textbox(s, r_l, t, 300000, R_CH)
+    tfn.vertical_anchor = MSO_ANCHOR.MIDDLE
     para(tfn, num, 14, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    tf2 = textbox(s, r_l + 380000, t + 150000, col_w - 420000, 600000)
+    tf2 = textbox(s, r_l + 380000, t, col_w - 420000, R_CH)
+    tf2.vertical_anchor = MSO_ANCHOR.MIDDLE
     para(tf2, text, 12, color=DARK_TXT)
-footer(s, "Introduction & Problem Background", "6", 39)
+footer(s, "Introduction & Problem Background", "6", 43)
 
 
 # ── Slide 9: Literature Review Section Divider ────────────────────────
 s = new_slide()
-section_divider(s, "Literature Review", "7", "II.", 39)
+section_divider(s, "Literature Review", "7", "II.", 43)
 
 # ── Slide 10: Literature Review ───────────────────────────────────────
 s = new_slide()
@@ -350,7 +434,7 @@ for i, (hdr, body) in enumerate(THEMES):
     t = 1150000 + i * (THEME_H + 60000)
     card(s, MARGIN_L, t, CONTENT_W, THEME_H, header=hdr, body_lines=[body],
          header_size=12, body_size=10)
-footer(s, "Literature Review", "7", 39)
+footer(s, "Literature Review", "7", 43)
 
 # ── Slide 11: Algorithm Comparison Table ─────────────────────────────
 s = new_slide()
@@ -391,11 +475,11 @@ for row_i, row in enumerate(ALG_ROWS):
 for row_i in [1, 2]:
     tbl.cell(row_i, 0).fill.solid()
     tbl.cell(row_i, 0).fill.fore_color.rgb = RGBColor(0xD4, 0xE6, 0xF7)
-footer(s, "Literature Review", "8", 39)
+footer(s, "Literature Review", "8", 43)
 
 # ── Slide 12: Methodology Section Divider ────────────────────────────
 s = new_slide()
-section_divider(s, "Methodology & Model Design", "9", "III.", 39)
+section_divider(s, "Methodology & Model Design", "9", "III.", 43)
 
 # ── Slide 13: System Architecture ────────────────────────────────────
 s = new_slide()
@@ -432,7 +516,12 @@ for i, b in enumerate(BULLETS):
     rect(s, MARGIN_L, 2400000 + i * 600000, 40000, 400000, fill=BLUE)
     tf3 = textbox(s, MARGIN_L + 120000, 2440000 + i * 600000, CONTENT_W - 200000, 420000)
     para(tf3, b, 12, color=DARK_TXT)
-footer(s, "Methodology & Model Design", "9", 39)
+footer(s, "Methodology & Model Design", "9", 43)
+
+# ── Zoom-in 1: Applicant Context (you-are-here) ──────────────────────
+zoom_slide("ZOOM-IN: APPLICANT CONTEXT", {0},
+           "Now examining how each applicant becomes a 34-dimensional context vector.",
+           "10")
 
 # ── Slide 14: Dataset & Context ───────────────────────────────────────
 s = new_slide()
@@ -484,7 +573,12 @@ for row_i, (cat, feats, dims) in enumerate(FEAT_CATS):
                 r.font.size = Pt(9)
                 r.font.bold = (col_i == 0)
                 r.font.color.rgb = NAVY if col_i == 0 else DARK_TXT
-footer(s, "Methodology & Model Design", "10", 39)
+footer(s, "Methodology & Model Design", "10", 43)
+
+# ── Zoom-in 2: Actuarial Reward (you-are-here) ───────────────────────
+zoom_slide("ZOOM-IN: ACTUARIAL REWARD", {3},
+           "Now examining how each underwriting action is scored into an actuarial reward.",
+           "11")
 
 # ── Slide 15: Reward Simulator ────────────────────────────────────────
 s = new_slide()
@@ -556,7 +650,12 @@ tf_note = textbox(s, MARGIN_L, 5450000, CONTENT_W, 700000)
 para(tf_note, "Design rationale: DECLINE penalty prevents over-rejection; "
      "REFER formula incentivises selective escalation rather than blanket referral.", 11,
      italic=True, color=GRAY)
-footer(s, "Methodology & Model Design", "11", 39)
+footer(s, "Methodology & Model Design", "11", 43)
+
+# ── Zoom-in 3: Bandit Policy & Action (you-are-here) ─────────────────
+zoom_slide("ZOOM-IN: BANDIT POLICY & ACTION", {1, 2},
+           "Now examining how the bandit reads the context and selects an underwriting action.",
+           "12")
 
 # ── Slide 16: Bandit — Context + Values ───────────────────────────────
 s = new_slide()
@@ -625,7 +724,7 @@ for i, (arm, score, bg, fg) in enumerate(ARM_SCORE_DATA):
 tf_verdict = textbox(s, RIGHT_L, 6350000, RIGHT_W, 380000)
 para(tf_verdict, "→ argmax = STANDARD  (Sophea gets coverage)", 13,
      bold=True, color=NAVY)
-footer(s, "Methodology & Model Design", "12", 39)
+footer(s, "Methodology & Model Design", "12", 43)
 
 # ── Slide 17: Bandit — Selection + Policy Ladder ─────────────────────
 s = new_slide()
@@ -685,7 +784,12 @@ para(tf_note17,
      "Note: AlwaysRATED = 122,287 (between Oracle and LinTS) — inadmissible: "
      "denies all low-risk applicants coverage; discriminatory by design.",
      11, italic=True, color=GRAY)
-footer(s, "Methodology & Model Design", "13", 39)
+footer(s, "Methodology & Model Design", "13", 43)
+
+# ── Zoom-in 4: Fairness Guardrail & HITL (you-are-here) ──────────────
+zoom_slide("ZOOM-IN: FAIRNESS GUARDRAIL & HITL", {4},
+           "Now examining the PSI fairness guardrail and the human-in-the-loop review wrapper.",
+           "14")
 
 # ── Slide 18: PSI Guardrail ───────────────────────────────────────────
 s = new_slide()
@@ -734,7 +838,7 @@ para(tf_src,
      "(mean PSI 0.042 region / 0.037 occupation); criterion 6 FAILED-with-interpretation "
      "(EpsGreedy AMBER on 1 seed).",
      11, italic=True, color=GRAY)
-footer(s, "Methodology & Model Design", "14", 39)
+footer(s, "Methodology & Model Design", "14", 43)
 
 # ── Slide 19: Human-in-the-Loop (HITL) ───────────────────────────────
 s = new_slide()
@@ -797,7 +901,7 @@ card(s, RIGHT_L19, 4550000, RIGHT_W19, 1600000,
      ], header_size=12, body_size=11,
      bg=GREEN_BG, accent=GREEN_ACC)
 
-footer(s, "Methodology & Model Design", "15", 39)
+footer(s, "Methodology & Model Design", "15", 43)
 
 # ── Slide 20: Experimental Design ────────────────────────────────────
 s = new_slide()
@@ -846,12 +950,12 @@ for row_i, row in enumerate(EXP_ROWS):
                 r.font.size = Pt(10)
                 r.font.bold = (col_i == 0)
                 r.font.color.rgb = NAVY if col_i == 0 else DARK_TXT
-footer(s, "Methodology & Model Design", "16", 39)
+footer(s, "Methodology & Model Design", "16", 43)
 
 
 # ── Slide 21: Results Section Divider ────────────────────────────────
 s = new_slide()
-section_divider(s, "Results & Evaluation", "17", "IV.", 39)
+section_divider(s, "Results & Evaluation", "17", "IV.", 43)
 
 # ── Slide 22: The Baseline Ladder ────────────────────────────────────
 s = new_slide()
@@ -893,7 +997,7 @@ tf22n = textbox(s, MARGIN_L, 6200000, CONTENT_W, 300000)
 para(tf22n, "‡ LogisticOracle fit in-sample on oracle labels — not deployable (diagnostic only). "
             "AlwaysRATED is commercially & regulatorily inadmissible. "
             "Bandits lead every admissible alternative.", 9, italic=True, color=GRAY)
-footer(s, "Results & Evaluation", "18", 39)
+footer(s, "Results & Evaluation", "18", 43)
 
 # ── Slide 23: EXP-005 Convergence ────────────────────────────────────
 s = new_slide()
@@ -944,7 +1048,7 @@ for line in CONV23:
     new_para(tf23r, line, 10,
              color=GRAY if not line.startswith("All") else GREEN_ACC,
              bold=line.startswith("All"), space_before=6)
-footer(s, "Results & Evaluation", "19", 39)
+footer(s, "Results & Evaluation", "19", 43)
 
 # ── Slide 24: EXP-006 Fairness Audit ─────────────────────────────────
 s = new_slide()
@@ -977,7 +1081,7 @@ for i, (label, value, badge, bg, acc) in enumerate(FAIR_ITEMS):
 tf24n = textbox(s, MARGIN_L, 5900000, CONTENT_W, 350000)
 para(tf24n, "PSI is a MONITOR not an ENFORCER — constrained-action layer is future work.",
      10, italic=True, color=GRAY, align=PP_ALIGN.CENTER)
-footer(s, "Results & Evaluation", "20", 39)
+footer(s, "Results & Evaluation", "20", 43)
 
 # ── Slide 25: EXP-007 Benchmark ──────────────────────────────────────
 s = new_slide()
@@ -1031,7 +1135,7 @@ tf25note = textbox(s, MARGIN_L, 5200000, CONTENT_W, 600000)
 para(tf25note, "Two coexisting findings:", 11, bold=True, color=NAVY)
 new_para(tf25note, "(1) Adaptive bandits decisively beat the frozen Static XGB rule  (p < 0.001)", 10, color=DARK_TXT, space_before=6)
 new_para(tf25note, "(2) Trivial constant AlwaysRATED still beats all bandits — honestly reported", 10, color=AMBER_TXT, space_before=4)
-footer(s, "Results & Evaluation", "21", 39)
+footer(s, "Results & Evaluation", "21", 43)
 
 # ── Slide 26: EXP-008 HITL ───────────────────────────────────────────
 s = new_slide()
@@ -1062,7 +1166,7 @@ tf26cav = textbox(s, MARGIN_L, 5900000, CONTENT_W, 350000)
 para(tf26cav, "Scope: +6.5% is vs vanilla bandit (NOT vs AlwaysRATED). "
               "HITL adds genuine value at low review cost.",
      10, italic=True, color=GRAY, align=PP_ALIGN.CENTER)
-footer(s, "Results & Evaluation", "22", 39)
+footer(s, "Results & Evaluation", "22", 43)
 
 # ── Slide 27: EXP-011+015 — What drives the value? ───────────────────
 s = new_slide()
@@ -1100,7 +1204,7 @@ for j, (pol27, val27) in enumerate(DRIFT27):
     new_para(tf27rbody, f"{pol27}:", 10, color=GRAY, space_before=10)
     new_para(tf27rbody, val27, 12, bold=True, color=NAVY, space_before=2)
 new_para(tf27rbody, "Non-stationarity does NOT rescue the bandit.", 10, bold=True, color=AMBER_TXT, space_before=12)
-footer(s, "Results & Evaluation", "23", 39)
+footer(s, "Results & Evaluation", "23", 43)
 
 # ── Slide 28: EXP-010+013 — Cold Start & Regret Bound ────────────────
 s = new_slide()
@@ -1151,7 +1255,7 @@ new_para(tf28rb, "Excellent linear fit on log-log axes", 10, italic=True, color=
 new_para(tf28rb, "", 8)
 new_para(tf28rb, "85% of seeds in [0.30, 0.80]", 10, color=DARK_TXT, space_before=6)
 new_para(tf28rb, "Sublinear regret confirmed", 10, bold=True, color=GREEN_ACC, space_before=4)
-footer(s, "Results & Evaluation", "24", 39)
+footer(s, "Results & Evaluation", "24", 43)
 
 # ── Slide 29: Live Demo ───────────────────────────────────────────────
 s = new_slide()
@@ -1189,11 +1293,11 @@ for line in DEMO_LINES:
     else:
         new_para(tf29, line, 12, bold=is_step, italic=is_bracket, color=color29,
                  space_before=8 if is_step else 2)
-footer(s, "Results & Evaluation", "25", 39)
+footer(s, "Results & Evaluation", "25", 43)
 
 # ── Slide 30: Conclusion Section Divider ─────────────────────────────
 s = new_slide()
-section_divider(s, "Conclusion & Future Work", "26", "V.", 39)
+section_divider(s, "Conclusion & Future Work", "26", "V.", 43)
 
 # ── Slide 31: 4 Key Findings ──────────────────────────────────────────
 s = new_slide()
@@ -1236,7 +1340,7 @@ for i, (hdr, subhdr, lines) in enumerate(FINDINGS):
             para(tf31b, line, 11, color=DARK_TXT)
         else:
             new_para(tf31b, line, 11, color=GRAY, space_before=6)
-footer(s, "Conclusion & Future Work", "27", 39)
+footer(s, "Conclusion & Future Work", "27", 43)
 
 # ── Slide 32: Limitations ─────────────────────────────────────────────
 s = new_slide()
@@ -1274,7 +1378,7 @@ for i, (hdr, lines) in enumerate(LIM32):
             para(tf32b, line, 11, color=DARK_TXT)
         else:
             new_para(tf32b, line, 11, color=GRAY, space_before=5)
-footer(s, "Conclusion & Future Work", "28", 39)
+footer(s, "Conclusion & Future Work", "28", 43)
 
 # ── Slide 33: Future Work ─────────────────────────────────────────────
 s = new_slide()
@@ -1311,7 +1415,7 @@ for i, (hdr, lines) in enumerate(FW33):
             para(tf33b, line, 11, color=DARK_TXT)
         else:
             new_para(tf33b, line, 11, color=GRAY, space_before=5)
-footer(s, "Conclusion & Future Work", "29", 39)
+footer(s, "Conclusion & Future Work", "29", 43)
 
 # ── Slide 34: Thank You ───────────────────────────────────────────────
 s = new_slide()
@@ -1355,7 +1459,7 @@ para(tf34f1, "DAC  ·  ITC-AMS", 9, bold=True, color=WHITE)
 tf34f2 = textbox(s, 3200400, FOOTER_TOP, 5943600, h34)
 para(tf34f2, "Q & A", 9, color=RGBColor(0xBD, 0xCE, 0xE4), align=PP_ALIGN.CENTER)
 tf34f3 = textbox(s, 9326880, FOOTER_TOP, 2743200, h34)
-para(tf34f3, "July 2026  ·  34 / 39", 9, color=WHITE, align=PP_ALIGN.RIGHT)
+para(tf34f3, "July 2026  ·  34 / 43", 9, color=WHITE, align=PP_ALIGN.RIGHT)
 
 # ── Appendix A1: Complete Baseline Ladder ────────────────────────────
 s = new_slide()
@@ -1399,7 +1503,7 @@ para(tf_a1n,
      "AlwaysRATED is commercially & regulatorily inadmissible. "
      "Bandits lead every admissible alternative.",
      9, italic=True, color=GRAY)
-footer(s, "Appendix", "A1", 39)
+footer(s, "Appendix", "A1", 43)
 
 # ── Appendix A2: Number Reconciliation ───────────────────────────────
 s = new_slide()
@@ -1437,7 +1541,7 @@ for i, (pct, subtitle, lines) in enumerate(NUMS_A2):
             para(tf_a2b, line, 10, color=DARK_TXT)
         else:
             new_para(tf_a2b, line, 10, color=GRAY, space_before=5)
-footer(s, "Appendix", "A2", 39)
+footer(s, "Appendix", "A2", 43)
 
 # ── Appendix A3: All 6 Fairness Criteria ─────────────────────────────
 s = new_slide()
@@ -1471,7 +1575,7 @@ para(tf_a3note,
      "Criterion 6: statistically significant disparity detected under permutation test. "
      "PSI = 0.123 (AMBER — monitor only). Criterion 6 is FAILED-with-interpretation, not a hard stop.",
      10, italic=True, color=GRAY)
-footer(s, "Appendix", "A3", 39)
+footer(s, "Appendix", "A3", 43)
 
 # ── Appendix A4: Math Details ─────────────────────────────────────────
 s = new_slide()
@@ -1542,7 +1646,7 @@ for row_i, (param, val) in enumerate(HYPER_A4):
             for r in p.runs:
                 r.font.size = Pt(9)
                 r.font.color.rgb = DARK_TXT
-footer(s, "Appendix", "A4", 39)
+footer(s, "Appendix", "A4", 43)
 
 # ── Appendix A5: Full Sensitivity Tables ──────────────────────────────
 s = new_slide()
@@ -1644,7 +1748,7 @@ for row_i, (elast, lu_rew, xgb_rew, diff, pct) in enumerate(ELASTICITY_ROWS):
 tf_a5note = textbox(s, MARGIN_L, 7450000, CONTENT_W, 400000)
 para(tf_a5note, "Benefit gap widens with elasticity; core finding is robust across slope values.",
      10, italic=True, color=GRAY)
-footer(s, "Appendix", "A5", 39)
+footer(s, "Appendix", "A5", 43)
 
 
 # ── Save ──────────────────────────────────────────────────────────────

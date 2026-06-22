@@ -2,21 +2,33 @@ from pptx.dml.color import RGBColor
 from pptx.util import Emu, Pt
 
 # ── Palette ───────────────────────────────────────────────────────────
-NAVY     = RGBColor(0x1F, 0x3A, 0x6E)
-BLUE     = RGBColor(0x2E, 0x74, 0xB5)
-LIGHT_BG = RGBColor(0xEF, 0xF3, 0xF8)
+# Burgundy-chrome restyle 2026-06-22: token VALUES remapped to the
+# user-approved cobalt "Yuth-reference" palette (build_burgundy_presentation.py
+# 61-82). Token NAMES kept so 66 content-slide usages auto-repaint.
+NAVY     = RGBColor(0x1B, 0x56, 0x97)   # titles, underline, card accent, stat blocks, table headers
+BLUE     = RGBColor(0x1F, 0x6F, 0xC4)   # secondary accents
+LIGHT_BG = RGBColor(0xF3, 0xF6, 0xFB)   # card / panel fill
 WHITE    = RGBColor(0xFF, 0xFF, 0xFF)
 GRAY     = RGBColor(0x50, 0x50, 0x50)
 DARK_TXT = RGBColor(0x26, 0x26, 0x26)
-DIVIDER  = RGBColor(0xCB, 0xDC, 0xEF)
+DIVIDER  = RGBColor(0xDD, 0xDD, 0xDD)   # thin separators / hairlines
 AMBER_BG = RGBColor(0xFE, 0xF3, 0xCD)
-AMBER_ACC= RGBColor(0xF4, 0xA1, 0x1D)
+AMBER_ACC= RGBColor(0xE6, 0xA6, 0x2E)
 AMBER_TXT= RGBColor(0x7D, 0x4E, 0x00)
 RED_BG   = RGBColor(0xF8, 0xE7, 0xE7)
-RED_ACC  = RGBColor(0xC0, 0x20, 0x20)
+RED_ACC  = RGBColor(0xD9, 0x3B, 0x3B)
 GREEN_BG = RGBColor(0xE7, 0xF4, 0xE8)
-GREEN_ACC= RGBColor(0x21, 0x82, 0x38)
-ORANGE   = RGBColor(0xF4, 0xA1, 0x1D)
+GREEN_ACC= RGBColor(0x2E, 0x8B, 0x57)
+ORANGE   = RGBColor(0xE6, 0xA6, 0x2E)
+
+# Finer cobalt blues for chrome (footer / divider) — used by defense_draw
+BLUE_DEEP    = RGBColor(0x14, 0x3D, 0x6B)   # footer org panels
+BLUE_DIVIDER = RGBColor(0x1F, 0x6F, 0xC4)   # divider-slide background
+BLUE_TINT    = RGBColor(0xAF, 0xC4, 0xE4)   # footer center panel
+
+# Fonts (burgundy: Segoe UI headings / Calibri body; v3 previously unset)
+HEAD_FONT = "Segoe UI"
+BODY_FONT = "Calibri"
 
 # ── Geometry ──────────────────────────────────────────────────────────
 SW          = 12191695   # slide width  EMU
