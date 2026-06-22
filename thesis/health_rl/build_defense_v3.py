@@ -48,7 +48,7 @@ new_para(tf3, "Supervisor: Dr. HAS Sothea  ·  DAC Advisor: Mr. ON Radet", 11,
 tf4 = textbox(s, MARGIN_L, 3300000, CONTENT_W, 400000)
 para(tf4, "Decent Actuarial Consultants Co., Ltd.", 12,
      color=GRAY, align=PP_ALIGN.CENTER)
-footer(s, "Title", "–", 29)
+footer(s, "Title", "–", 39)
 
 # ── Slide 2: TOC ──────────────────────────────────────────────────────
 s = new_slide()
@@ -69,7 +69,7 @@ for i, (num, name) in enumerate(SECTIONS):
     para(tf, num, 18, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     tf2 = textbox(s, MARGIN_L + 500000, t + 200000, CONTENT_W - 600000, 350000)
     para(tf2, name, 16, color=NAVY)
-footer(s, "Contents", "–", 29)
+footer(s, "Contents", "–", 39)
 
 # ── Slide 3: Meet Sophea ──────────────────────────────────────────────
 s = new_slide()
@@ -132,7 +132,7 @@ tf7 = textbox(s, R_L, ct + 1380000, R_W, 500000)
 para(tf7, "Sophea leaves without coverage.", 12, italic=True, color=GRAY)
 new_para(tf7, "Was that the right answer?", 13, bold=True, color=NAVY,
          space_before=8)
-footer(s, "Introduction & Problem Background", "1", 29)
+footer(s, "Introduction & Problem Background", "1", 39)
 
 # ── Slide 4: About DAC ────────────────────────────────────────────────
 s = new_slide()
@@ -162,7 +162,7 @@ tf = textbox(s, MARGIN_L, 3950000, CONTENT_W, 400000)
 para(tf, "HQ: Taipei, Taiwan  ·  Regional offices: Phnom Penh, Vietnam, SEA  "
      "·  Internship: March–June 2026  ·  Advisor: Mr. ON Radet",
      11, italic=True, color=GRAY)
-footer(s, "Introduction & Problem Background", "2", 29)
+footer(s, "Introduction & Problem Background", "2", 39)
 
 # ── Slide 5: Cambodia Context ─────────────────────────────────────────
 s = new_slide()
@@ -216,7 +216,7 @@ for i, (num, name, desc) in enumerate(SDG_DATA):
 tf7 = textbox(s, MARGIN_L, 5600000, CONTENT_W, 400000)
 para(tf7, "Sophea represents the 98% the current system was not built for.", 12,
      bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-footer(s, "Introduction & Problem Background", "3", 29)
+footer(s, "Introduction & Problem Background", "3", 39)
 
 # ── Slide 6: Problem Statement ────────────────────────────────────────
 s = new_slide()
@@ -244,7 +244,7 @@ for i, (hdr, body) in enumerate(PROBLEMS):
     t = 1200000 + row * (card_h + 150000)
     card(s, l, t, card_w, card_h, header=hdr, body_lines=[body],
          header_size=14, body_size=12)
-footer(s, "Introduction & Problem Background", "4", 29)
+footer(s, "Introduction & Problem Background", "4", 39)
 
 # ── Slide 7: Research Questions ───────────────────────────────────────
 s = new_slide()
@@ -270,7 +270,7 @@ for i, (num, text) in enumerate(RQS):
     para(tf, num, 16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     tf2 = textbox(s, MARGIN_L + 600000, t + 200000, CONTENT_W - 700000, rq_h - 400000)
     para(tf2, text, 13, color=DARK_TXT)
-footer(s, "Introduction & Problem Background", "5", 29)
+footer(s, "Introduction & Problem Background", "5", 39)
 
 # ── Slide 8: Objectives & Deliverables ───────────────────────────────
 s = new_slide()
@@ -316,12 +316,12 @@ for i, (num, text) in enumerate(OBJECTIVES):
     para(tfn, num, 14, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
     tf2 = textbox(s, r_l + 380000, t + 150000, col_w - 420000, 600000)
     para(tf2, text, 12, color=DARK_TXT)
-footer(s, "Introduction & Problem Background", "6", 29)
+footer(s, "Introduction & Problem Background", "6", 39)
 
 
 # ── Slide 9: Literature Review Section Divider ────────────────────────
 s = new_slide()
-section_divider(s, "Literature Review", "7", "II.", 29)
+section_divider(s, "Literature Review", "7", "II.", 39)
 
 # ── Slide 10: Literature Review ───────────────────────────────────────
 s = new_slide()
@@ -350,7 +350,7 @@ for i, (hdr, body) in enumerate(THEMES):
     t = 1150000 + i * (THEME_H + 60000)
     card(s, MARGIN_L, t, CONTENT_W, THEME_H, header=hdr, body_lines=[body],
          header_size=12, body_size=10)
-footer(s, "Literature Review", "7", 29)
+footer(s, "Literature Review", "7", 39)
 
 # ── Slide 11: Algorithm Comparison Table ─────────────────────────────
 s = new_slide()
@@ -391,11 +391,11 @@ for row_i, row in enumerate(ALG_ROWS):
 for row_i in [1, 2]:
     tbl.cell(row_i, 0).fill.solid()
     tbl.cell(row_i, 0).fill.fore_color.rgb = RGBColor(0xD4, 0xE6, 0xF7)
-footer(s, "Literature Review", "8", 29)
+footer(s, "Literature Review", "8", 39)
 
 # ── Slide 12: Methodology Section Divider ────────────────────────────
 s = new_slide()
-section_divider(s, "Methodology & Model Design", "9", "III.", 29)
+section_divider(s, "Methodology & Model Design", "9", "III.", 39)
 
 # ── Slide 13: System Architecture ────────────────────────────────────
 s = new_slide()
@@ -432,7 +432,7 @@ for i, b in enumerate(BULLETS):
     rect(s, MARGIN_L, 2400000 + i * 600000, 40000, 400000, fill=BLUE)
     tf3 = textbox(s, MARGIN_L + 120000, 2440000 + i * 600000, CONTENT_W - 200000, 420000)
     para(tf3, b, 12, color=DARK_TXT)
-footer(s, "Methodology & Model Design", "9", 29)
+footer(s, "Methodology & Model Design", "9", 39)
 
 # ── Slide 14: Dataset & Context ───────────────────────────────────────
 s = new_slide()
@@ -484,7 +484,7 @@ for row_i, (cat, feats, dims) in enumerate(FEAT_CATS):
                 r.font.size = Pt(9)
                 r.font.bold = (col_i == 0)
                 r.font.color.rgb = NAVY if col_i == 0 else DARK_TXT
-footer(s, "Methodology & Model Design", "10", 29)
+footer(s, "Methodology & Model Design", "10", 39)
 
 # ── Slide 15: Reward Simulator ────────────────────────────────────────
 s = new_slide()
@@ -556,7 +556,7 @@ tf_note = textbox(s, MARGIN_L, 5450000, CONTENT_W, 700000)
 para(tf_note, "Design rationale: DECLINE penalty prevents over-rejection; "
      "REFER formula incentivises selective escalation rather than blanket referral.", 11,
      italic=True, color=GRAY)
-footer(s, "Methodology & Model Design", "11", 29)
+footer(s, "Methodology & Model Design", "11", 39)
 
 # ── Slide 16: Bandit — Context + Values ───────────────────────────────
 s = new_slide()
@@ -625,7 +625,7 @@ for i, (arm, score, bg, fg) in enumerate(ARM_SCORE_DATA):
 tf_verdict = textbox(s, RIGHT_L, 6350000, RIGHT_W, 380000)
 para(tf_verdict, "→ argmax = STANDARD  (Sophea gets coverage)", 13,
      bold=True, color=NAVY)
-footer(s, "Methodology & Model Design", "12", 29)
+footer(s, "Methodology & Model Design", "12", 39)
 
 # ── Slide 17: Bandit — Selection + Policy Ladder ─────────────────────
 s = new_slide()
@@ -685,7 +685,7 @@ para(tf_note17,
      "Note: AlwaysRATED = 122,287 (between Oracle and LinTS) — inadmissible: "
      "denies all low-risk applicants coverage; discriminatory by design.",
      11, italic=True, color=GRAY)
-footer(s, "Results & Evaluation", "13", 29)
+footer(s, "Methodology & Model Design", "13", 39)
 
 # ── Slide 18: PSI Guardrail ───────────────────────────────────────────
 s = new_slide()
@@ -734,7 +734,7 @@ para(tf_src,
      "(mean PSI 0.042 region / 0.037 occupation); criterion 6 FAILED-with-interpretation "
      "(EpsGreedy AMBER on 1 seed).",
      11, italic=True, color=GRAY)
-footer(s, "Methodology & Model Design", "14", 29)
+footer(s, "Methodology & Model Design", "14", 39)
 
 # ── Slide 19: Human-in-the-Loop (HITL) ───────────────────────────────
 s = new_slide()
@@ -776,7 +776,7 @@ card(s, RIGHT_L19, 1150000, RIGHT_W19, 1600000,
      body_lines=[
          "κ = 0.7   (uncertainty threshold for headline result)",
          "Review rate: 1.5% of rounds",
-         "Reward gain: +14.8% vs bandit-alone (20-seed, p<0.001, d=2.65)",
+         "Reward gain: +6.5% vs vanilla bandit (p=0.017, d=0.87)",
      ], header_size=12, body_size=11)
 
 card(s, RIGHT_L19, 2950000, RIGHT_W19, 1400000,
@@ -791,13 +791,13 @@ card(s, RIGHT_L19, 2950000, RIGHT_W19, 1400000,
 card(s, RIGHT_L19, 4550000, RIGHT_W19, 1600000,
      header="EXP-008 Result",
      body_lines=[
-         "HITL+LinUCB:  +14.8%  (seed=42 headline)",
+         "HITL+LinUCB:  +6.5% vs vanilla bandit",
          "κ sweep: 0.3 – 0.9 tested; κ=0.7 optimal",
-         "20-seed: paired Wilcoxon p<0.001, Cohen’s d=2.65",
+         "p=0.017, Cohen’s d=0.87",
      ], header_size=12, body_size=11,
      bg=GREEN_BG, accent=GREEN_ACC)
 
-footer(s, "Methodology & Model Design", "15", 29)
+footer(s, "Methodology & Model Design", "15", 39)
 
 # ── Slide 20: Experimental Design ────────────────────────────────────
 s = new_slide()
@@ -846,7 +846,7 @@ for row_i, row in enumerate(EXP_ROWS):
                 r.font.size = Pt(10)
                 r.font.bold = (col_i == 0)
                 r.font.color.rgb = NAVY if col_i == 0 else DARK_TXT
-footer(s, "Methodology & Model Design", "16", 29)
+footer(s, "Methodology & Model Design", "16", 39)
 
 
 # ── Slide 21: Results Section Divider ────────────────────────────────

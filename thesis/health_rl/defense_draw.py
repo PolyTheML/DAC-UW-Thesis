@@ -1,4 +1,3 @@
-import copy
 from pptx.util import Emu, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
