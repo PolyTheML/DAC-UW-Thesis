@@ -16,10 +16,10 @@ from pptx import Presentation
 DOCX_OUT  = r"thesis\health_rl\Poly_defense_script_v2.docx"
 PPTX_PATH = r"thesis\health_rl\Poly_defense_presentation_v3.pptx"
 SLIDES_DIR = r"thesis\health_rl\slide_thumbnails_v3"
-_APPENDIX_OFFSET = 34   # appendix A1 starts at pptx slide index 34 (0-based: slides 35-39)
+_APPENDIX_OFFSET = 38   # appendix A1 starts at pptx slide index 38 (0-based: slides 39-43)
 
 # ---------------------------------------------------------------------------
-# SLIDES — 39 entries: slides 1–34 + appendix A1–A5
+# SLIDES — 43 entries: slides 1–38 + appendix A1–A5
 # ---------------------------------------------------------------------------
 SLIDES = [
     # ── Slide 1: Title ─────────────────────────────────────────────────────
@@ -276,9 +276,23 @@ SLIDES = [
             "That is the fundamental difference from the static system."
         ),
     },
-    # ── Slide 14: Dataset & Context (Sophea beat MANDATORY) ───────────────
+    # ── Slide 14: ZOOM-IN — Applicant Context ─────────────────────────────
     {
         "num": 14,
+        "title": "ZOOM-IN: APPLICANT CONTEXT",
+        "timing": "~15 sec",
+        "script": (
+            "We have seen the architecture pipeline from left to right. "
+            "We now zoom in to the first stage — applicant context.\n\n"
+            "[Point to the highlighted input block.]\n\n"
+            "Each applicant is encoded as a 34-dimensional vector drawn from "
+            "CDHS-anchored features. That vector is the bandit's sole input "
+            "to every underwriting decision."
+        ),
+    },
+    # ── Slide 15: Dataset & Context (Sophea beat MANDATORY) ───────────────
+    {
+        "num": 15,
         "title": "DATASET & CONTEXT",
         "timing": "~1.5 min",
         "script": (
@@ -299,9 +313,24 @@ SLIDES = [
             "static system saw two of those features. The bandit sees all 34."
         ),
     },
-    # ── Slide 15: Reward Simulator ─────────────────────────────────────────
+    # ── Slide 16: ZOOM-IN — Actuarial Reward ──────────────────────────────
     {
-        "num": 15,
+        "num": 16,
+        "title": "ZOOM-IN: ACTUARIAL REWARD",
+        "timing": "~15 sec",
+        "script": (
+            "We have seen how the context enters the pipeline. "
+            "We now zoom in to the reward stage.\n\n"
+            "[Point to the highlighted reward block.]\n\n"
+            "After the bandit selects an arm, the actuarial simulator scores "
+            "that decision — premium revenue minus expected claims, with an "
+            "adverse-selection penalty and noise of plus-or-minus 8 percent. "
+            "That number is the signal that drives learning."
+        ),
+    },
+    # ── Slide 17: Reward Simulator ─────────────────────────────────────────
+    {
+        "num": 17,
         "title": "ACTUARIAL REWARD SIMULATOR (TABLE 8)",
         "timing": "~1.5 min",
         "script": (
@@ -324,9 +353,24 @@ SLIDES = [
             "escalation, not blanket referral."
         ),
     },
-    # ── Slide 16: Bandit Build-Up — Context (Sophea beat MANDATORY) ────────
+    # ── Slide 18: ZOOM-IN — Bandit Policy & Action ────────────────────────
     {
-        "num": 16,
+        "num": 18,
+        "title": "ZOOM-IN: BANDIT POLICY & ACTION",
+        "timing": "~15 sec",
+        "script": (
+            "We have seen how the reward is constructed. "
+            "We now zoom in to the decision stage.\n\n"
+            "[Point to the highlighted policy block.]\n\n"
+            "The bandit computes a UCB score for each of the four arms — "
+            "STANDARD, RATED, DECLINE, REFER — and selects the argmax. "
+            "This is the step where the exploration-exploitation trade-off "
+            "meets the actuarial judgment."
+        ),
+    },
+    # ── Slide 19: Bandit Build-Up — Context (Sophea beat MANDATORY) ────────
+    {
+        "num": 19,
         "title": "BANDIT IN ACTION: SOPHEA'S CONTEXT & ARM SCORES",
         "timing": "~1.5 min",
         "script": (
@@ -345,9 +389,9 @@ SLIDES = [
             "STANDARD, DECLINE, REFER — and takes the argmax."
         ),
     },
-    # ── Slide 17: Bandit Build-Up — Selection (Sophea beat MANDATORY) ──────
+    # ── Slide 20: Bandit Build-Up — Selection (Sophea beat MANDATORY) ──────
     {
-        "num": 17,
+        "num": 20,
         "title": "POLICY LADDER: CUMULATIVE REWARD OVER 5,000 ROUNDS",
         "timing": "~2 min",
         "script": (
@@ -370,9 +414,24 @@ SLIDES = [
             "is LinUCB versus Static XGB."
         ),
     },
-    # ── Slide 18: PSI Guardrail ────────────────────────────────────────────
+    # ── Slide 21: ZOOM-IN — Fairness Guardrail & HITL ─────────────────────
     {
-        "num": 18,
+        "num": 21,
+        "title": "ZOOM-IN: FAIRNESS GUARDRAIL & HITL",
+        "timing": "~15 sec",
+        "script": (
+            "We have seen how the bandit selects actions and receives rewards. "
+            "We now zoom in to the guardrails.\n\n"
+            "[Point to the highlighted PSI and HITL blocks.]\n\n"
+            "The PSI monitor checks demographic parity on a 500-round sliding "
+            "window. The HITL wrapper catches decisions where the bandit is "
+            "uncertain. Together these two layers ensure the system remains "
+            "fair, auditable, and safe to deploy."
+        ),
+    },
+    # ── Slide 22: PSI Guardrail ────────────────────────────────────────────
+    {
+        "num": 22,
         "title": "PSI FAIRNESS GUARDRAIL",
         "timing": "~1.5 min",
         "script": (
@@ -393,9 +452,9 @@ SLIDES = [
             "category PSI max: 0.123 — AMBER, in the monitor zone, below RED."
         ),
     },
-    # ── Slide 19: HITL Wrapper ─────────────────────────────────────────────
+    # ── Slide 23: HITL Wrapper ─────────────────────────────────────────────
     {
-        "num": 19,
+        "num": 23,
         "title": "HUMAN-IN-THE-LOOP (HITL) WRAPPER",
         "timing": "~1.5 min",
         "script": (
@@ -417,9 +476,9 @@ SLIDES = [
             "of 5,000. That is the value of targeted human judgment."
         ),
     },
-    # ── Slide 20: Experimental Design ─────────────────────────────────────
+    # ── Slide 24: Experimental Design ─────────────────────────────────────
     {
-        "num": 20,
+        "num": 24,
         "title": "EXPERIMENTAL DESIGN",
         "timing": "~1.5 min",
         "script": (
@@ -441,9 +500,9 @@ SLIDES = [
             "interrogating the system's boundaries."
         ),
     },
-    # ── Slide 21: Results Section Divider ──────────────────────────────────
+    # ── Slide 25: Results Section Divider ──────────────────────────────────
     {
-        "num": 21,
+        "num": 25,
         "title": "SECTION DIVIDER — Results & Evaluation",
         "timing": "~5 sec",
         "script": (
@@ -451,9 +510,9 @@ SLIDES = [
             "got right, what it got wrong, and what I reported honestly either way."
         ),
     },
-    # ── Slide 22: Baseline Ladder (Sophea beat MANDATORY + AlwaysRATED honesty) ─
+    # ── Slide 26: Baseline Ladder (Sophea beat MANDATORY + AlwaysRATED honesty) ─
     {
-        "num": 22,
+        "num": 26,
         "title": "THE BASELINE LADDER",
         "timing": "~2 min",
         "script": (
@@ -478,9 +537,9 @@ SLIDES = [
             "all-approve policy is not the answer."
         ),
     },
-    # ── Slide 23: EXP-005 Convergence (25.2% mention MANDATORY) ─────────────
+    # ── Slide 27: EXP-005 Convergence (25.2% mention MANDATORY) ─────────────
     {
-        "num": 23,
+        "num": 27,
         "title": "EXP-005: CONVERGENCE VALIDATION",
         "timing": "~1.5 min",
         "script": (
@@ -503,9 +562,9 @@ SLIDES = [
             "0.572, R-squared 0.9915. All five EXP-005 criteria: PASSED."
         ),
     },
-    # ── Slide 24: EXP-006 Fairness Audit ──────────────────────────────────
+    # ── Slide 28: EXP-006 Fairness Audit ──────────────────────────────────
     {
-        "num": 24,
+        "num": 28,
         "title": "EXP-006: FAIRNESS AUDIT",
         "timing": "~2 min",
         "script": (
@@ -530,9 +589,9 @@ SLIDES = [
             "guardrails are future work."
         ),
     },
-    # ── Slide 25: EXP-007 Benchmark ────────────────────────────────────────
+    # ── Slide 29: EXP-007 Benchmark ────────────────────────────────────────
     {
-        "num": 25,
+        "num": 29,
         "title": "EXP-007: BENCHMARK COMPARISON (CRN)",
         "timing": "~1.5 min",
         "script": (
@@ -555,9 +614,9 @@ SLIDES = [
             "bandits — honestly reported."
         ),
     },
-    # ── Slide 26: EXP-008 HITL ────────────────────────────────────────────
+    # ── Slide 30: EXP-008 HITL ────────────────────────────────────────────
     {
-        "num": 26,
+        "num": 30,
         "title": "EXP-008: HUMAN-IN-THE-LOOP",
         "timing": "~1.5 min",
         "script": (
@@ -579,9 +638,9 @@ SLIDES = [
             "portfolio. That is the value of the HITL layer."
         ),
     },
-    # ── Slide 27: EXP-011+EXP-015 — What Drives the Value? ────────────────
+    # ── Slide 31: EXP-011+EXP-015 — What Drives the Value? ────────────────
     {
-        "num": 27,
+        "num": 31,
         "title": "WHAT DRIVES THE VALUE? (EXP-011 + EXP-015)",
         "timing": "~2 min",
         "script": (
@@ -607,9 +666,9 @@ SLIDES = [
             "as a boundary of the current framework."
         ),
     },
-    # ── Slide 28: EXP-010+013 — Cold Start & Regret Bound ─────────────────
+    # ── Slide 32: EXP-010+013 — Cold Start & Regret Bound ─────────────────
     {
-        "num": 28,
+        "num": 32,
         "title": "COLD START & REGRET BOUND (EXP-010 + EXP-013)",
         "timing": "~1.5 min",
         "script": (
@@ -631,9 +690,9 @@ SLIDES = [
             "0.9915. Sublinear regret confirmed empirically."
         ),
     },
-    # ── Slide 29: Live Demo (Sophea beat MANDATORY) ─────────────────────────
+    # ── Slide 33: Live Demo (Sophea beat MANDATORY) ─────────────────────────
     {
-        "num": 29,
+        "num": 33,
         "title": "LIVE DEMONSTRATION",
         "timing": "~3 min",
         "script": (
@@ -658,16 +717,16 @@ SLIDES = [
             "in the thesis, deployed on Render, running in real time."
         ),
     },
-    # ── Slide 30: Conclusion Section Divider ───────────────────────────────
+    # ── Slide 34: Conclusion Section Divider ───────────────────────────────
     {
-        "num": 30,
+        "num": 34,
         "title": "SECTION DIVIDER — Conclusion & Future Work",
         "timing": "~5 sec",
         "script": "Let me bring this back to Sophea — and to the four key findings.",
     },
-    # ── Slide 31: 4 Key Findings — Sophea Resolution (MANDATORY) ──────────
+    # ── Slide 35: 4 Key Findings — Sophea Resolution (MANDATORY) ──────────
     {
-        "num": 31,
+        "num": 35,
         "title": "4 KEY FINDINGS",
         "timing": "~2.5 min",
         "script": (
@@ -695,9 +754,9 @@ SLIDES = [
             "auditable step forward for an insurance market that needs one."
         ),
     },
-    # ── Slide 32: Limitations ──────────────────────────────────────────────
+    # ── Slide 36: Limitations ──────────────────────────────────────────────
     {
-        "num": 32,
+        "num": 36,
         "title": "LIMITATIONS",
         "timing": "~1.5 min",
         "script": (
@@ -718,9 +777,9 @@ SLIDES = [
             "and defines the next phase of work."
         ),
     },
-    # ── Slide 33: Future Work ──────────────────────────────────────────────
+    # ── Slide 37: Future Work ──────────────────────────────────────────────
     {
-        "num": 33,
+        "num": 37,
         "title": "FUTURE WORK",
         "timing": "~1 min",
         "script": (
@@ -740,9 +799,9 @@ SLIDES = [
             "single-decision reward framing."
         ),
     },
-    # ── Slide 34: Thank You / Q&A ──────────────────────────────────────────
+    # ── Slide 38: Thank You / Q&A ──────────────────────────────────────────
     {
-        "num": 34,
+        "num": 38,
         "title": "THANK YOU / Q&A",
         "timing": "~30 sec",
         "script": (
