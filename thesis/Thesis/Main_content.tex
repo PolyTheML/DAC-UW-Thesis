@@ -87,6 +87,7 @@
 % \usepackage{minted}   % removed: no code listings -> avoids -shell-escape/Pygments requirement
 \usepackage{mdframed}
 \usepackage{pgfgantt}
+\usepackage{sectsty}      % ITC template: exact section (14pt) / subsection (12pt) heading sizes
 
 % ── TikZ diagram styles (shared by the Ch.1-6 schematic figures; Phase-3 overhaul) ──
 \usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, fit, backgrounds}
@@ -114,7 +115,8 @@
 \counterwithin{subsection}{section}
 
 % ── Geometry ──────────────────────────────────────────────────────────
-\usepackage[margin=2.5cm, top=2cm, bottom=2.5cm]{geometry}
+% ITC AMS template binding margins: left 3.0 cm, right 2.0 cm, top 2.0 cm, bottom 2.5 cm.
+\usepackage[a4paper, left=3cm, right=2cm, top=2cm, bottom=2.5cm]{geometry}
 
 % ── Hyperref — ALWAYS LAST ────────────────────────────────────────────
 \usepackage{hyperref}
@@ -129,6 +131,28 @@
 % ── Settings ──────────────────────────────────────────────────────────
 \setlength{\parindent}{0pt}
 \setcounter{secnumdepth}{3}
+
+% ── ITC template: exact heading sizes ────────────────────────────────────
+% Chapter (16pt) is handled by the \@makechapterhead redefinition above; here
+% we pin the section levels: 1.1 -> 14pt bold, 1.1.1 / deeper -> 12pt bold.
+\sectionfont{\fontsize{14}{16.8}\selectfont\bfseries}
+\subsectionfont{\fontsize{12}{14.4}\selectfont\bfseries}
+\subsubsectionfont{\fontsize{12}{14.4}\selectfont\bfseries}
+
+% ── ITC template: 1.5 line spacing for body, single elsewhere ────────────
+% \onehalfspacing is switched on after the cover pages (see \begin{document}),
+% so the title/cover pages keep their original single-spaced layout. Tables,
+% captions, footnotes, the bibliography, and the front-matter lists are forced
+% back to single spacing so they do not look loose.
+\AtBeginEnvironment{longtable}{\setstretch{1.0}}
+\AtBeginEnvironment{tabular}{\setstretch{1.0}}
+\AtBeginEnvironment{tabularx}{\setstretch{1.0}}
+\AtBeginEnvironment{thebibliography}{\setstretch{1.0}}
+\captionsetup{font={stretch=1.0}}
+\makeatletter
+\renewcommand\@makefntext[1]{\setstretch{1.0}%
+  \parindent 1em\noindent\hb@xt@1.8em{\hss\@makefnmark}#1}
+\makeatother
 
 % Captions carry their own manual number ("Figure 7.", "Table 9") to match
 % the in-text references, so suppress LaTeX's auto label in the caption
@@ -163,14 +187,17 @@
 % do NOT redefine \thechapter, so section numbers stay arabic (4.1, 4.2, …) and
 % every manual "Section 4.x" reference remains valid. \chapter* (front matter,
 % TOC, bibliography, appendices) uses \@makeschapterhead and is left untouched.
+% ITC AMS format: "<Roman>.  TITLE" at 16pt bold, ALL CAPS, flush left, no
+% leading word "Chapter". \thechapter stays arabic so section numbers remain
+% 4.1, 4.2, … and every manual "Section 4.x" reference is still valid.
 \makeatletter
 \def\@makechapterhead#1{%
   \vspace*{30\p@}%
-  {\parindent \z@ \centering \normalfont
+  {\parindent \z@ \raggedright \normalfont
     \ifnum \c@secnumdepth >\m@ne
-        \LARGE\bfseries \@chapapp\space \Roman{chapter}.\space #1%
+        \fontsize{16}{19.2}\selectfont\bfseries \Roman{chapter}.\hspace{1em}\MakeUppercase{#1}%
     \else
-        \LARGE\bfseries #1%
+        \fontsize{16}{19.2}\selectfont\bfseries \MakeUppercase{#1}%
     \fi
     \par\nobreak \vskip 30\p@ }}
 \makeatother
@@ -257,6 +284,7 @@
 
 \newpage
 \pagenumbering{roman}
+\onehalfspacing   % ITC template: 1.5 line spacing from the front matter onward (cover pages stay single)
 \input{Cover_Pages/Acknowledgement}
 
 % \thispagestyle{empty} % Remove page number if needed
@@ -268,16 +296,22 @@
 \input{Cover_Pages/Executive_Summary}
 
 \newpage
+\begingroup\singlespacing
 \chapter*{\centering TABLE OF CONTENTS}
 \renewcommand{\contentsname}{\vspace{-4cm}}
 \tableofcontents
+\endgroup
 %\addcontentsline{toc}{chapter}{Table of Contents}
 
 \newpage
+\begingroup\singlespacing
 \input{Cover_Pages/List_figure}
+\endgroup
 
 \newpage
+\begingroup\singlespacing
 \input{Cover_Pages/List_table}
+\endgroup
 
 \newpage
 \input{Cover_Pages/List_abreviation}

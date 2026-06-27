@@ -1,4 +1,4 @@
-\chapter{Methodology}\label{chapter-iv.-project-analysis-and-concepts}
+\chapter{METHODOLOGY}\label{chapter-iv.-project-analysis-and-concepts}
 
 This chapter specifies the requirements that the proposed contextual bandit underwriting system must satisfy, identifies the technologies used to implement them, and documents the full methodology. Section 4.1 presents the general workflow of the methodology as an end-to-end pipeline and maps each subsequent section to a node of that pipeline. Section 4.2 defines the functional capabilities, organised around the four operational modules of the system. Section 4.3 specifies the non-functional quality attributes. Section 4.4 enumerates the implementation tool stack. Section 4.5 closes with a focused exposition of the core technology --- the contextual bandit framework --- describing what it is, how it operates, its place in the overall system architecture, and the reasons it was selected over competing alternatives. Section 4.6 describes the synthetic dataset and feature engineering. Section 4.7 specifies the bandit algorithms and baselines. Section 4.8 details the reward design and actuarial simulator. Section 4.9 documents the PSI guardrails and fairness metrics. Section 4.10 presents the experimental design for the three core validation experiments (EXP-005 through EXP-007); the human-in-the-loop experiment (EXP-008) is reported in §5.4. Section 4.11 outlines the implementation and deployment roadmap.
 
@@ -570,7 +570,7 @@ Multiple conditions can co-occur in a single applicant; the mean condition count
 
 \subsection{Feature Categories and Encoding}\label{feature-categories-and-encoding}
 
-After one-hot encoding of categorical variables and normalisation, each applicant is represented by a 34-dimensional real-valued context vector \(x_t \in \mathbb{R}^{34}\). Table 8 breaks the raw features into four categories.
+After one-hot encoding of categorical variables and normalisation, each applicant is represented by a 34-dimensional real-valued context vector \(x_t \in \mathbb{R}^{34}\). Table 8 breaks the raw features into eight categories.
 
 \captionof{table}{Table 8 --- Feature categories and encoding scheme}\label{tab:4.5.2}
 
