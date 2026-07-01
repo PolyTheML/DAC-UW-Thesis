@@ -19,7 +19,7 @@ SLIDES_DIR = r"thesis\health_rl\slide_thumbnails_v3"
 _APPENDIX_OFFSET = 38   # appendix A1 starts at pptx slide index 38 (0-based: slides 39-43)
 
 # ---------------------------------------------------------------------------
-# SLIDES — 43 entries: slides 1–38 + appendix A1–A5
+# SLIDES — 44 entries: slides 1–38 + appendix A1–A6
 # ---------------------------------------------------------------------------
 SLIDES = [
     # ── Slide 1: Title ─────────────────────────────────────────────────────
@@ -31,13 +31,16 @@ SLIDES = [
             "Good morning, Distinguished Committee. I am Lun Chanpoly, and I am "
             "here to defend my master's thesis — Adaptive Health Insurance "
             "Underwriting via Contextual Bandits: A Reinforcement Learning "
-            "Approach for Cambodia.\n\n"
-            "This work was carried out during my internship at Decent Actuarial "
-            "Consultants in Phnom Penh, from March to June 2026, under the "
-            "supervision of Dr. Has Sothea and the guidance of Mr. ON Radet at DAC.\n\n"
-            "I hope by the end of this presentation, I can convince you that the "
-            "question I was given — how do we make underwriting smarter for Cambodia "
-            "— has a rigorous, honest, and practically useful answer."
+            "Approach for Cambodia — a project born from my internship at Decent "
+            "Actuarial Consultants in Phnom Penh, from March to June 2026, under "
+            "the supervision of Dr. Has Sothea and the guidance of Mr. ON Radet "
+            "at DAC.\n\n"
+            "This research was driven by a single, urgent question: how do we "
+            "make underwriting in Cambodia not just faster, but fundamentally "
+            "smarter and more inclusive? By the end of this presentation, I hope "
+            "to show you that we have a rigorous, honest, and practically useful "
+            "answer.\n\n"
+            "But first, let me tell you about a person named Sophea."
         ),
     },
     # ── Slide 2: Table of Contents ─────────────────────────────────────────
@@ -52,7 +55,8 @@ SLIDES = [
             "and implemented. Then the results — including some honest findings that "
             "did not go as expected. And finally, what all of this means for Cambodia.\n\n"
             "I also have five technical appendix slides available if the Committee "
-            "wishes to go deeper on any specific point."
+            "wishes to go deeper on any specific point.\n\n"
+            "Let me start with the person at the center of this problem."
         ),
     },
     # ── Slide 3: Meet Sophea — HOOK (Sophea beat MANDATORY) ───────────────
@@ -62,10 +66,11 @@ SLIDES = [
         "timing": "~1.5 min",
         "script": (
             "[Point to the left card on screen.]\n\n"
-            "I would like to introduce you to Sophea. You can see her profile here "
-            "on the left: 42 years old, rice farmer from Kampong Cham Province. "
-            "BMI 24.1 — normal range. Non-smoker. High physical activity from field "
-            "farming. One clinical flag: managed hypertension.\n\n"
+            "This is Sophea. You can see her profile here on the left: 42 years "
+            "old, a rice farmer from Kampong Cham Province. She is active — high "
+            "physical activity from field farming — a non-smoker, with a BMI of "
+            "24.1, well within the normal range. Her only health flag: managed "
+            "hypertension.\n\n"
             "[Point to the two amber flag boxes on the right.]\n\n"
             "In 2023, Sophea walks into a private insurer in Phnom Penh and applies "
             "for voluntary health insurance. The static rule-based system checks "
@@ -74,7 +79,10 @@ SLIDES = [
             "[Point to the red DECLINE box.]\n\n"
             "The system decision, shown here in red: DECLINE. Sophea leaves without "
             "coverage.\n\n"
-            "Was that the right answer? This research begins with that question."
+            "But I have to ask: was that the right answer? This research is my "
+            "attempt to answer that question — not with intuition, but with a "
+            "system that learns. To pursue it rigorously, I joined the "
+            "organization that works with decisions like this every day."
         ),
     },
     # ── Slide 4: About DAC ─────────────────────────────────────────────────
@@ -93,7 +101,9 @@ SLIDES = [
             "like Sophea every day. Supervised by Mr. ON Radet, my task was to "
             "design and validate an adaptive underwriting system — and build a "
             "working prototype. The thesis and demonstration you will see today "
-            "are the outputs of that internship."
+            "are the outputs of that internship.\n\n"
+            "With that institutional context established, let me show you the market "
+            "Sophea lives in — and why her situation is not exceptional."
         ),
     },
     # ── Slide 5: Cambodia Context (Sophea beat MANDATORY) ─────────────────
@@ -103,20 +113,25 @@ SLIDES = [
         "timing": "~1.5 min",
         "script": (
             "[Point to the large stat on the left.]\n\n"
-            "This number — under two percent — is the estimated health insurance "
-            "penetration in Cambodia in 2023. Not 10 percent. Not 20 percent. Under "
-            "two percent of the population with private voluntary health coverage.\n\n"
+            "To understand why Sophea's case is the norm and not the exception, "
+            "we have to look at the market she lives in. This number — under two "
+            "percent — is the estimated health insurance penetration in Cambodia "
+            "in 2023. Not 10 percent. Not 20 percent. Under two percent of the "
+            "population with private voluntary health coverage.\n\n"
             "The NSSF provides mandatory coverage, but only to formal-sector workers "
-            "— roughly 16 percent of the population. Private underwriting is manual "
-            "and rule-based. Agent networks consume 15 to 30 percent of premium "
-            "revenue. And there is no demographic-parity monitoring in practice.\n\n"
+            "— roughly 16 percent of the population. For the remaining majority — "
+            "the 98 percent Sophea represents — the current system is not just "
+            "inefficient, it is effectively invisible: manual and rule-based, with "
+            "agent networks consuming 15 to 30 percent of premium revenue, and no "
+            "demographic-parity monitoring in practice.\n\n"
             "[Point to the SDG panel on the right.]\n\n"
             "This research connects directly to three of Cambodia's SDGs. SDG 3 — "
             "Good Health and Well-being — by widening access. SDG 1 — No Poverty "
             "— by shielding households from catastrophic health costs. SDG 10 — "
             "Reduced Inequalities — through the PSI fairness guardrail.\n\n"
             "Sophea's situation is not an edge case — she is one of the 98 percent "
-            "the current market was not built for."
+            "the current market was not built for.\n\n"
+            "That gap points to four precise failure modes in the current system."
         ),
     },
     # ── Slide 6: Problem Statement ─────────────────────────────────────────
@@ -125,8 +140,8 @@ SLIDES = [
         "title": "PROBLEM STATEMENT",
         "timing": "~1.5 min",
         "script": (
-            "The static system that declined Sophea has four specific failure modes — "
-            "each one visible in her case.\n\n"
+            "The static system that declined Sophea has four specific blind "
+            "spots — each one visible in her case.\n\n"
             "First: Static Thresholds. Fixed cutoffs ignore context. Sophea's BMI, "
             "her physical activity, her non-smoking status — all invisible to the "
             "rule engine. Two ones triggered two thresholds and the system said no.\n\n"
@@ -140,7 +155,10 @@ SLIDES = [
             "Fourth: No Intelligent Triage. Human experts review routine cases "
             "instead of the borderline ones — like Sophea's — that actually need "
             "expert judgment.\n\n"
-            "Each failure costs Sophea. Together, they define the problem."
+            "Each blind spot costs Sophea something. Together, they define the "
+            "problem this thesis sets out to solve.\n\n"
+            "With the problem clearly stated, I formulated four research questions "
+            "to guide exactly what I would measure."
         ),
     },
     # ── Slide 7: Research Questions ────────────────────────────────────────
@@ -162,7 +180,9 @@ SLIDES = [
             "for low-resource mobile infrastructure — under 200 milliseconds latency?\n\n"
             "All four questions have empirical answers in the results section. "
             "I will tell you which ones came back exactly as expected — and which "
-            "ones did not."
+            "ones did not.\n\n"
+            "These questions translate directly into four deliverables and five "
+            "measurable objectives."
         ),
     },
     # ── Slide 8: Objectives & Deliverables ────────────────────────────────
@@ -183,7 +203,9 @@ SLIDES = [
             "into a profit signal the bandit can learn from.\n\n"
             "D4: the PSI fairness monitoring framework with GREEN-AMBER-RED alerts.\n\n"
             "On the right — the five secondary objectives that map directly to the "
-            "experiments I will describe in the results section."
+            "experiments I will describe in the results section.\n\n"
+            "Before I describe what I built, let me briefly survey the research "
+            "literature that shaped how I built it."
         ),
     },
     # ── Slide 9: Literature Review Section Divider ────────────────────────
@@ -219,7 +241,9 @@ SLIDES = [
             "and occupational groups — exactly Sophea's category.\n\n"
             "Fifth: Population Stability Index. PSI gives us three interpretable "
             "zones: GREEN below 0.10, AMBER 0.10 to 0.25, RED above 0.25. The "
-            "full review cites 25 sources in APA format."
+            "full review cites 25 sources in APA format.\n\n"
+            "Two of these areas — linear bandits and algorithm selection — deserve "
+            "a direct comparison before we proceed to the system design."
         ),
     },
     # ── Slide 11: Algorithm Comparison ────────────────────────────────────
@@ -242,7 +266,9 @@ SLIDES = [
             "reward assumption but require much larger datasets and are not viable "
             "for our 2,000-record setting.\n\n"
             "Epsilon-Greedy is included as a weaker admissible baseline — it "
-            "achieves only O of T to the two-thirds regret in the worst case."
+            "achieves only O of T to the two-thirds regret in the worst case.\n\n"
+            "With LinUCB and LinTS selected as the proposed policies, let me now "
+            "show you the system I designed around them."
         ),
     },
     # ── Slide 12: Methodology Section Divider ─────────────────────────────
@@ -259,11 +285,12 @@ SLIDES = [
         "timing": "~1.5 min",
         "script": (
             "[Point to the pipeline diagram left to right.]\n\n"
-            "The system is a closed-loop pipeline. An applicant's context vector "
-            "enters on the left. A bandit policy selects one of four underwriting "
-            "arms. An actuarial reward simulator returns a profit signal. PSI and "
-            "HITL guardrails monitor the decision. The final decision goes out "
-            "on the right — and the reward loops back to update the bandit.\n\n"
+            "How do we replace the rigidity that failed Sophea? I built a "
+            "closed-loop pipeline. An applicant's context vector enters on the "
+            "left. A bandit policy selects one of four underwriting arms. An "
+            "actuarial reward simulator returns a profit signal. PSI and HITL "
+            "guardrails monitor the decision. The final decision goes out on the "
+            "right — and the reward loops back to update the bandit.\n\n"
             "Five key components:\n\n"
             "One — a 34-dimensional standardised context vector per applicant.\n\n"
             "Two — four underwriting arms: STANDARD, RATED, DECLINE, REFER.\n\n"
@@ -272,8 +299,12 @@ SLIDES = [
             "Four — PSI guardrail on a 500-round sliding window.\n\n"
             "Five — HITL wrapper that escalates when the bandit's uncertainty "
             "exceeds threshold kappa.\n\n"
-            "Every decision feeds back into making the next decision sharper. "
-            "That is the fundamental difference from the static system."
+            "Every decision feeds back into making the next decision sharper — "
+            "a system that evolves with every single applicant, not one frozen "
+            "at deployment. That is the fundamental difference from the static "
+            "system.\n\n"
+            "To make this pipeline concrete, I will zoom in to each component "
+            "in turn — beginning with how the system sees Sophea."
         ),
     },
     # ── Slide 14: ZOOM-IN — Applicant Context ─────────────────────────────
@@ -282,12 +313,14 @@ SLIDES = [
         "title": "ZOOM-IN: APPLICANT CONTEXT",
         "timing": "~15 sec",
         "script": (
-            "We have seen the architecture pipeline from left to right. "
-            "We now zoom in to the first stage — applicant context.\n\n"
+            "Having traced the full architecture pipeline from left to right, "
+            "we now zoom in to the first stage — applicant context.\n\n"
             "[Point to the highlighted input block.]\n\n"
             "Each applicant is encoded as a 34-dimensional vector drawn from "
             "CDHS-anchored features. That vector is the bandit's sole input "
-            "to every underwriting decision."
+            "to every underwriting decision.\n\n"
+            "This is what the system sees. Let me show you exactly what those "
+            "34 dimensions look like."
         ),
     },
     # ── Slide 15: Dataset & Context (Sophea beat MANDATORY) ───────────────
@@ -310,7 +343,10 @@ SLIDES = [
             "Sophea is represented in this dataset as a vector: age 42, female, "
             "BMI 24.1, non-smoker, hypertension flag on, Kampong Cham indicator "
             "on, agriculture indicator on, and twenty-seven more features. The "
-            "static system saw two of those features. The bandit sees all 34."
+            "static system saw two of those features. The bandit sees all 34.\n\n"
+            "Building on this, the bandit must now select an action — and it "
+            "needs a reward signal to learn from. Let me zoom in to show how "
+            "that reward is constructed."
         ),
     },
     # ── Slide 16: ZOOM-IN — Actuarial Reward ──────────────────────────────
@@ -319,13 +355,15 @@ SLIDES = [
         "title": "ZOOM-IN: ACTUARIAL REWARD",
         "timing": "~15 sec",
         "script": (
-            "We have seen how the context enters the pipeline. "
-            "We now zoom in to the reward stage.\n\n"
+            "With Sophea's context encoded as a 34-dimensional vector, the bandit "
+            "selects an action and receives a reward signal. "
+            "We now zoom in to that reward stage.\n\n"
             "[Point to the highlighted reward block.]\n\n"
             "After the bandit selects an arm, the actuarial simulator scores "
             "that decision — premium revenue minus expected claims, with an "
             "adverse-selection penalty and noise of plus-or-minus 8 percent. "
-            "That number is the signal that drives learning."
+            "That number is the signal that drives learning.\n\n"
+            "Let me show you how that signal is calculated in detail."
         ),
     },
     # ── Slide 17: Reward Simulator ─────────────────────────────────────────
@@ -350,7 +388,9 @@ SLIDES = [
             "captures the opportunity cost of refusing a viable applicant.\n\n"
             "REFER: escalate to human. Deferred reward — 70 percent of the best "
             "available arm, minus $35 review cost. This incentivises selective "
-            "escalation, not blanket referral."
+            "escalation, not blanket referral.\n\n"
+            "With the reward structure defined, the next question is: how does "
+            "the bandit use these signals to choose between the four arms?"
         ),
     },
     # ── Slide 18: ZOOM-IN — Bandit Policy & Action ────────────────────────
@@ -359,13 +399,16 @@ SLIDES = [
         "title": "ZOOM-IN: BANDIT POLICY & ACTION",
         "timing": "~15 sec",
         "script": (
-            "We have seen how the reward is constructed. "
-            "We now zoom in to the decision stage.\n\n"
+            "Building on the reward structure we just examined, we now zoom in "
+            "to the decision stage — how the bandit translates that reward signal "
+            "into an underwriting action.\n\n"
             "[Point to the highlighted policy block.]\n\n"
             "The bandit computes a UCB score for each of the four arms — "
             "STANDARD, RATED, DECLINE, REFER — and selects the argmax. "
             "This is the step where the exploration-exploitation trade-off "
-            "meets the actuarial judgment."
+            "meets the actuarial judgment.\n\n"
+            "To better understand this decision, let me show it working on "
+            "Sophea's actual application."
         ),
     },
     # ── Slide 19: Bandit Build-Up — Context (Sophea beat MANDATORY) ────────
@@ -386,7 +429,9 @@ SLIDES = [
             "her vector. The second term is the exploration bonus — large early "
             "in training when A is sparse, shrinking as the gram matrix fills in.\n\n"
             "The bandit computes this score for each of the four arms — RATED, "
-            "STANDARD, DECLINE, REFER — and takes the argmax."
+            "STANDARD, DECLINE, REFER — and takes the argmax.\n\n"
+            "Across 5,000 rounds, those individual decisions accumulate into a "
+            "full performance picture — the policy ladder."
         ),
     },
     # ── Slide 20: Bandit Build-Up — Selection (Sophea beat MANDATORY) ──────
@@ -401,6 +446,8 @@ SLIDES = [
             "RATED 0.31, STANDARD 0.52, DECLINE 0.10, REFER 0.28. The STANDARD "
             "arm wins by a clear margin. The system issues coverage at the correct "
             "actuarial price.\n\n"
+            "We did not just optimize for profit here — we optimized for access. "
+            "A DECLINE became a STANDARD.\n\n"
             "[Point to the policy ladder table.]\n\n"
             "Here is the full policy ladder across 5,000 rounds. Oracle — the "
             "theoretically perfect policy — earns $126,804. That is the ceiling.\n\n"
@@ -411,7 +458,9 @@ SLIDES = [
             "AlwaysRATED earns $122,287 — between Oracle and LinTS. This is "
             "reported honestly in the note: commercially and regulatorily "
             "inadmissible. It cannot be deployed. The admissible comparison "
-            "is LinUCB versus Static XGB."
+            "is LinUCB versus Static XGB.\n\n"
+            "A system that performs well is only half the story. It must also "
+            "be fair. This naturally leads to the guardrails — let me zoom in."
         ),
     },
     # ── Slide 21: ZOOM-IN — Fairness Guardrail & HITL ─────────────────────
@@ -420,13 +469,16 @@ SLIDES = [
         "title": "ZOOM-IN: FAIRNESS GUARDRAIL & HITL",
         "timing": "~15 sec",
         "script": (
-            "We have seen how the bandit selects actions and receives rewards. "
-            "We now zoom in to the guardrails.\n\n"
+            "Having established how the bandit selects actions and earns rewards, "
+            "we now zoom in to the guardrails — the layers that ensure the system "
+            "remains trustworthy in practice.\n\n"
             "[Point to the highlighted PSI and HITL blocks.]\n\n"
             "The PSI monitor checks demographic parity on a 500-round sliding "
             "window. The HITL wrapper catches decisions where the bandit is "
             "uncertain. Together these two layers ensure the system remains "
-            "fair, auditable, and safe to deploy."
+            "fair, auditable, and safe to deploy.\n\n"
+            "Let me take you through each layer in detail — starting with the "
+            "PSI monitor."
         ),
     },
     # ── Slide 22: PSI Guardrail ────────────────────────────────────────────
@@ -449,7 +501,8 @@ SLIDES = [
             "The EXP-006 result: LinUCB sits GREEN on all 8 regions and 7 occupations "
             "across 20 seeds. Mean PSI 0.042 for region and 0.037 for occupation. "
             "Sophea's Kampong Cham region PSI: 0.082 — GREEN. Her occupation "
-            "category PSI max: 0.123 — AMBER, in the monitor zone, below RED."
+            "category PSI max: 0.123 — AMBER, in the monitor zone, below RED.\n\n"
+            "Turning now to the second guardrail: the HITL wrapper."
         ),
     },
     # ── Slide 23: HITL Wrapper ─────────────────────────────────────────────
@@ -473,7 +526,9 @@ SLIDES = [
             "implementation gotcha discovered during EXP-008 development.\n\n"
             "The headline result: plus 6.5 percent reward gain over vanilla bandit, "
             "at a review rate of only 1.5 percent. 75 applications reviewed out "
-            "of 5,000. That is the value of targeted human judgment."
+            "of 5,000. That is the value of targeted human judgment.\n\n"
+            "Having described the full system design, let me now show you the "
+            "experimental framework I used to evaluate it."
         ),
     },
     # ── Slide 24: Experimental Design ─────────────────────────────────────
@@ -497,7 +552,8 @@ SLIDES = [
             "variance reduction.\n\n"
             "EXP-008 to EXP-015 cover HITL, drift adaptation, cold start, "
             "ablation, regret bound validation, and drift rescue — progressively "
-            "interrogating the system's boundaries."
+            "interrogating the system's boundaries.\n\n"
+            "Nine pre-registered experiments. Let me now tell you what they found."
         ),
     },
     # ── Slide 25: Results Section Divider ──────────────────────────────────
@@ -534,7 +590,9 @@ SLIDES = [
             "LinTS versus LinUCB: p equals 0.87. They are statistically tied at "
             "the top of the admissible set. I do not claim one beats the other.\n\n"
             "AlwaysSTANDARD earns only $34,684 — well below Static XGB. A naive "
-            "all-approve policy is not the answer."
+            "all-approve policy is not the answer.\n\n"
+            "That is the summary picture. Let me now walk you through the primary "
+            "pre-registered experiment that underpins it."
         ),
     },
     # ── Slide 27: EXP-005 Convergence (25.2% mention MANDATORY) ─────────────
@@ -559,7 +617,9 @@ SLIDES = [
             "entropy drops from 1.314 to 1.105 nats — exploration giving way to "
             "exploitation. Oracle-agreement in the last 500 rounds reaches 37.8 "
             "percent. And the regret curve follows O of root-T — log-log slope "
-            "0.572, R-squared 0.9915. All five EXP-005 criteria: PASSED."
+            "0.572, R-squared 0.9915. All five EXP-005 criteria: PASSED.\n\n"
+            "Performance confirmed. The next question is fairness — did the bandit "
+            "introduce any demographic bias in its decisions?"
         ),
     },
     # ── Slide 28: EXP-006 Fairness Audit ──────────────────────────────────
@@ -568,8 +628,10 @@ SLIDES = [
         "title": "EXP-006: FAIRNESS AUDIT",
         "timing": "~2 min",
         "script": (
-            "The fairness audit evaluates six pre-registered criteria. Five passed. "
-            "One failed — and I want to address that failure directly.\n\n"
+            "A smart system that is unfair is a failure — so this audit was "
+            "non-negotiable. The fairness audit evaluates six pre-registered "
+            "criteria. Five passed. One failed — and I want to address that "
+            "failure directly.\n\n"
             "[Point to the six criterion cards.]\n\n"
             "Region PSI: 0.082 — GREEN. Occupation PSI: 0.123 — AMBER, in the "
             "monitor zone but below RED. Region parity at 85.72 percent — above "
@@ -584,9 +646,13 @@ SLIDES = [
             "Rice farmers, garment workers, and office workers carry genuinely "
             "different health risk profiles. The association is statistically "
             "significant but practically small — no regulatory threshold is "
-            "breached. I call this FAILED-with-interpretation. I stand by that "
+            "breached. The system is learning those profiles, not mimicking "
+            "human bias — a distinction that makes it more transparent, not "
+            "less. I call this FAILED-with-interpretation. I stand by that "
             "verdict. PSI is a monitor, not an enforcer — constrained-action "
-            "guardrails are future work."
+            "guardrails are future work.\n\n"
+            "With fairness addressed, let me show you the full benchmark "
+            "comparison across all policies."
         ),
     },
     # ── Slide 29: EXP-007 Benchmark ────────────────────────────────────────
@@ -611,7 +677,9 @@ SLIDES = [
             "d equals negative 3.89 — WIN.\n\n"
             "Two coexisting findings: adaptive bandits decisively beat the frozen "
             "static rule. And the trivial constant AlwaysRATED still beats all "
-            "bandits — honestly reported."
+            "bandits — honestly reported.\n\n"
+            "Building on this benchmark, the HITL layer adds targeted human "
+            "judgment on top of the bandit baseline."
         ),
     },
     # ── Slide 30: EXP-008 HITL ────────────────────────────────────────────
@@ -635,7 +703,9 @@ SLIDES = [
             "baseline.\n\n"
             "Thirteen applicants reviewed per thousand. The actuary's judgment "
             "on those thirteen cases is worth a 6.5 percent gain on the whole "
-            "portfolio. That is the value of the HITL layer."
+            "portfolio. That is the value of the HITL layer.\n\n"
+            "These findings motivate a deeper question: what exactly drives the "
+            "bandit's value — and where does it fall short?"
         ),
     },
     # ── Slide 31: EXP-011+EXP-015 — What Drives the Value? ────────────────
@@ -663,7 +733,9 @@ SLIDES = [
             "$71,373 — minus 39.2 percent. The discounted LinUCB with gamma of "
             "0.999 earns $70,995 — no meaningful improvement.\n\n"
             "Non-stationarity does not rescue the bandit. We honestly report this "
-            "as a boundary of the current framework."
+            "as a boundary of the current framework.\n\n"
+            "Two further questions matter for real deployment: when does the bandit "
+            "become trustworthy, and does its regret decay as theory predicts?"
         ),
     },
     # ── Slide 32: EXP-010+013 — Cold Start & Regret Bound ─────────────────
@@ -687,7 +759,9 @@ SLIDES = [
             "LinUCB honestly as draws-level, not a proven win at 2,000.\n\n"
             "[Point to the regret bound panel on the right.]\n\n"
             "EXP-013: log-log slope 0.572, theory 0.5 — near-optimal. R-squared "
-            "0.9915. Sublinear regret confirmed empirically."
+            "0.9915. Sublinear regret confirmed empirically.\n\n"
+            "With the empirical evidence established, let me now show you the "
+            "system working in practice."
         ),
     },
     # ── Slide 33: Live Demo (Sophea beat MANDATORY) ─────────────────────────
@@ -714,7 +788,8 @@ SLIDES = [
             "rate and cumulative review cost.\n\n"
             "[This is the FastAPI prototype deployed on Render — not a mockup.]\n\n"
             "This is not a simulation. This is the same FastAPI stack described "
-            "in the thesis, deployed on Render, running in real time."
+            "in the thesis, deployed on Render, running in real time.\n\n"
+            "Let me now bring together the key findings."
         ),
     },
     # ── Slide 34: Conclusion Section Divider ───────────────────────────────
@@ -730,6 +805,7 @@ SLIDES = [
         "title": "4 KEY FINDINGS",
         "timing": "~2.5 min",
         "script": (
+            "To summarize, this project proves four things.\n\n"
             "[Point to Finding 1.]\n\n"
             "Finding 1 — EXP-005: Online adaptation beats static rules. Plus 25.2 "
             "percent, p less than 0.001, d equals 2.98. LinUCB earns plus $18,248 "
@@ -751,7 +827,8 @@ SLIDES = [
             "coverage. In 2026, the bandit issues STANDARD premium — the correct "
             "actuarial answer. That is the 25.2%. It is not everything "
             "— a trivial constant earns more. But it is a principled, fair, "
-            "auditable step forward for an insurance market that needs one."
+            "auditable step forward for an insurance market that needs one.\n\n"
+            "These findings come with limits I want to name directly."
         ),
     },
     # ── Slide 36: Limitations ──────────────────────────────────────────────
@@ -774,7 +851,8 @@ SLIDES = [
             "Fourth: the constant-policy ceiling. AlwaysRATED beats bandits by "
             "roughly 30 percent. Bandits lead every admissible deployable alternative "
             "— but the headroom to Oracle remains large. This is honestly reported "
-            "and defines the next phase of work."
+            "and defines the next phase of work.\n\n"
+            "Those limits point directly to the next research agenda."
         ),
     },
     # ── Slide 37: Future Work ──────────────────────────────────────────────
@@ -796,7 +874,9 @@ SLIDES = [
             "trial with real Cambodian insurers is the natural next step.\n\n"
             "Fourth: multi-period customer value. Customer lifetime value, "
             "retention, and cross-selling would move the system beyond the "
-            "single-decision reward framing."
+            "single-decision reward framing.\n\n"
+            "Each of these directions builds on the foundation this thesis has "
+            "established. Finally, let me close with the story we began with."
         ),
     },
     # ── Slide 38: Thank You / Q&A ──────────────────────────────────────────
@@ -807,11 +887,11 @@ SLIDES = [
         "script": (
             "[The slide reads: 2023: DECLINE. 2026: STANDARD.]\n\n"
             "That is the story of this thesis.\n\n"
-            "In 2023, the static system declined Sophea. In 2026, the bandit "
-            "issues STANDARD premium. Cambodia has hundreds of thousands of "
-            "applicants like her — people whose risk profiles are nuanced, whose "
-            "context matters, and who deserve a decision system capable of seeing "
-            "them fully.\n\n"
+            "In 2023, the system told Sophea 'No.' In 2026, my system tells her "
+            "'Yes — at the right price': STANDARD premium, the correct actuarial "
+            "answer. Cambodia has hundreds of thousands of applicants like her — "
+            "people whose risk profiles are nuanced, whose context matters, and "
+            "who deserve a decision system capable of seeing them fully.\n\n"
             "Thank you, Distinguished Committee, for your time and attention.\n\n"
             "I am now ready for your questions. If it would be helpful, I have "
             "five appendix slides available: A1 covers the complete baseline "
@@ -952,6 +1032,39 @@ SLIDES = [
             "Sophea receives STANDARD across all parameter combinations tested."
         ),
     },
+    # ── Appendix A6: Why a Bandit Has No Train/Test Split ─────────────────
+    {
+        "num": "A6",
+        "title": "A6: WHY A BANDIT HAS NO TRAIN/TEST SPLIT",
+        "timing": "if asked",
+        "script": (
+            "[Show if the Committee asks why there is no train/test split, or "
+            "challenges whether the bandit's numbers could be overfit.]\n\n"
+            "This is a fair question, because it does not map onto the workflow "
+            "this Committee is used to seeing from supervised learning.\n\n"
+            "Supervised ML — like the Static XGB incumbent — splits data into "
+            "train, validation, and test sets, fits once on the training set, "
+            "freezes the weights, and deploys unchanged. Generalisation is "
+            "measured as the score on a held-out test set.\n\n"
+            "A contextual bandit does not work that way. There is no split, "
+            "because it meets applicants one at a time: select an arm, observe "
+            "the reward, update. Every single round is simultaneously training "
+            "and testing — the model is always being evaluated on the next "
+            "applicant it has never seen, and immediately updating from that "
+            "outcome.\n\n"
+            "So how do we measure generalisation without a holdout set? Three "
+            "ways. First, performance is reported as cumulative regret against "
+            "the Oracle, averaged over 20 independent random seeds — the seeds "
+            "play the role the test set would normally play. Second, all pass "
+            "criteria and seeds are pre-registered and fixed, so the results "
+            "are fully reproducible and there is no test-set leakage, because "
+            "there is no test set to leak. Third, and importantly, the Static "
+            "XGB incumbent — the thing we are comparing against — IS fit "
+            "offline and frozen, exactly like standard supervised practice. So "
+            "the benchmark is fair: a supervised model at its best, versus a "
+            "bandit learning from scratch, evaluated across 20 seeds."
+        ),
+    },
 ]
 
 
@@ -1004,7 +1117,7 @@ def build_doc():
         "Bracketed notes [like this] are stage directions, not spoken text. "
         "The Sophea narrative beats are highlighted throughout — these are the "
         "emotional anchors of the presentation. "
-        "Appendix slides A1–A5 are on standby; only advance to them if the "
+        "Appendix slides A1–A6 are on standby; only advance to them if the "
         "Committee asks a question that slide addresses."
     )
     hr.font.size = Pt(10)
