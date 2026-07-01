@@ -220,22 +220,49 @@ SERVICES = [
     "Mergers & Acquisitions Advisory",
     "Education & Cooperation — University partnerships, government-academia-industry",
 ]
-# Left column: 3 services
-col_w = (CONTENT_W - 200000) // 2
-START_T = 1200000; ITEM_H = 700000; GAP = 80000
-for i, svc in enumerate(SERVICES[:3]):
-    t = START_T + i * (ITEM_H + GAP)
-    card(s, MARGIN_L, t, col_w, ITEM_H, body_lines=[svc], body_size=11)
-for i, svc in enumerate(SERVICES[3:]):
-    t = START_T + i * (ITEM_H + GAP)
-    card(s, MARGIN_L + col_w + 200000, t, col_w, ITEM_H,
-         body_lines=[svc], body_size=11)
-# Bottom context line
-tf = textbox(s, MARGIN_L, 3950000, CONTENT_W, 400000)
-para(tf, "HQ: Taipei, Taiwan  ·  Regional offices: Phnom Penh, Vietnam, SEA  "
-     "·  Internship: March–June 2026  ·  Advisor: Mr. ON Radet",
-     11, italic=True, color=GRAY)
-footer(s, "Introduction & Problem Background", "2", 43)
+
+OVERVIEW_TEXT = (
+    "Decent Actuarial Consultants (DAC) is a Taipei-headquartered actuarial "
+    "consultancy serving insurers across Taiwan, Vietnam, Cambodia, and the "
+    "wider Southeast Asian region. This thesis was completed during a "
+    "3-month internship (Mar–Jun 2026) at DAC's Phnom Penh office, applying "
+    "DAC's actuarial expertise to Cambodia's underserved health-insurance "
+    "underwriting problem."
+)
+
+# Left column: org-profile panel (logo + overview), mirrors the Slide 3
+# "Meet Sophea" profile-card pattern.
+PANEL_L = MARGIN_L
+PANEL_T = 1200000
+PANEL_W = 3900000
+PANEL_H = CONTENT_BOT - PANEL_T
+rect(s, PANEL_L, PANEL_T, PANEL_W, PANEL_H, fill=LIGHT_BG)
+rect(s, PANEL_L, PANEL_T, 91440, PANEL_H, fill=NAVY)
+
+LOGO_W = 3200000
+LOGO_H = 1800000   # DAC.jpg is ~16:9; add_picture(width=...) preserves true aspect ratio
+LOGO_T = PANEL_T + 280000
+LOGO_L = PANEL_L + (PANEL_W - LOGO_W) // 2
+if os.path.exists(LOGO_DAC):
+    s.shapes.add_picture(LOGO_DAC, LOGO_L, LOGO_T, width=LOGO_W)
+
+OVERVIEW_T = LOGO_T + LOGO_H + 250000
+OVERVIEW_L = PANEL_L + 180000
+OVERVIEW_W = PANEL_W - 360000
+OVERVIEW_H = (PANEL_T + PANEL_H) - 100000 - OVERVIEW_T
+tf = textbox(s, OVERVIEW_L, OVERVIEW_T, OVERVIEW_W, OVERVIEW_H)
+para(tf, OVERVIEW_TEXT, 12, color=DARK_TXT)
+
+# Right column: 6 services as compact single-line rows.
+ROW_L = PANEL_L + PANEL_W + 280000
+ROW_W = (MARGIN_L + CONTENT_W) - ROW_L
+ROW_H = 784000
+ROW_GAP = 90000
+for i, svc in enumerate(SERVICES):
+    row_t = PANEL_T + i * (ROW_H + ROW_GAP)
+    card(s, ROW_L, row_t, ROW_W, ROW_H, body_lines=[svc], body_size=13)
+
+footer(s, "Introduction & Problem Background", "2", 44)
 
 # ── Slide 5: Cambodia Context ─────────────────────────────────────────
 s = new_slide()
