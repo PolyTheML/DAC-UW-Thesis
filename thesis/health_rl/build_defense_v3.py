@@ -1489,11 +1489,11 @@ for k, item in enumerate(APP_MENU):
 h34 = 420624
 rect(s, 0, FOOTER_TOP, SW, h34, fill=RGBColor(0x16, 0x2D, 0x58))
 tf34f1 = textbox(s, 164592, FOOTER_TOP, 2834640, h34)
-para(tf34f1, "DAC  ·  ITC-AMS", 12, bold=True, color=WHITE)
+para(tf34f1, "DAC  ·  ITC-AMS", 9, bold=True, color=WHITE)
 tf34f2 = textbox(s, 3200400, FOOTER_TOP, 5943600, h34)
-para(tf34f2, "Q & A", 12, color=RGBColor(0xBD, 0xCE, 0xE4), align=PP_ALIGN.CENTER)
+para(tf34f2, "Q & A", 9, color=RGBColor(0xBD, 0xCE, 0xE4), align=PP_ALIGN.CENTER)
 tf34f3 = textbox(s, 9326880, FOOTER_TOP, 2743200, h34)
-para(tf34f3, "July 2026  ·  34 / 44", 12, color=WHITE, align=PP_ALIGN.RIGHT)
+para(tf34f3, "July 2026  ·  34 / 44", 9, color=WHITE, align=PP_ALIGN.RIGHT)
 
 # ── Appendix A1: Complete Baseline Ladder ────────────────────────────
 s = new_slide()

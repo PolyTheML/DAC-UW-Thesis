@@ -62,9 +62,12 @@ default parameter values in `thesis/health_rl/defense_draw.py`:
 - Any literal ≥15pt anywhere in `build_defense_v3.py` (big stat numbers, DECLINE banner, etc.) — unchanged by the mapping's own rule.
 
 **`card()` default parameters** (`defense_draw.py:131`): `header_size=14` → `16`,
-`body_size=11` → `13`. This matters because 9 of the deck's 10 `card()` call
-sites omit `body_size` and rely on the default — only bumping explicit
-literals in `build_defense_v3.py` would miss 90% of card-based content.
+`body_size=11` → `13`. Correction (post-review): nearly all `card()` call
+sites pass explicit `header_size`/`body_size` values (bumped separately by
+the main transform), so this defaults edit does not visibly change existing
+card content — it is kept as a safe default for any future `card()` call
+that omits an explicit size, not as a mechanism that bumped most of the
+deck's cards.
 
 ## Overflow-risk verification
 
