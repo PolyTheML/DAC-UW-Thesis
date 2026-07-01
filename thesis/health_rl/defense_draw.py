@@ -128,7 +128,7 @@ def section_divider(slide, section_name, slide_num, numeral, total=39):
 
 
 def card(slide, l, t, w, h, header=None, body_lines=None,
-         bg=LIGHT_BG, accent=NAVY, header_size=14, body_size=11):
+         bg=LIGHT_BG, accent=NAVY, header_size=16, body_size=13):
     """Card box: light bg + left navy border + optional header + body lines."""
     rect(slide, l, t, w, h, fill=bg)
     rect(slide, l, t, 91440, h, fill=accent)
