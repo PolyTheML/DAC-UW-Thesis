@@ -38,10 +38,24 @@ CONTENT_BOT = FOOTER_TOP - 80000   # safe content bottom
 MARGIN_L    = 457200     # left margin
 MARGIN_R    = SW - 457200           # right edge
 CONTENT_W   = MARGIN_R - MARGIN_L  # 11277295
-TITLE_T     = 310896
-TITLE_H     = 566928
+TITLE_T     = 380000     # nudged below the nav-tab bar (was 310896)
+TITLE_H     = 540000
 UNDERLINE_T = 969696
 UNDERLINE_H = 36576
+
+# ── Section navigation (persistent top-tab chrome, Sreynich-flow) ──────
+# 7 reference-deck sections; the active tab is highlighted on every
+# content slide (slides 3-25). Short labels chosen to fit one 9pt line.
+NAV_SECTIONS = [
+    "i. Introduction",
+    "ii. Literature",
+    "iii. System Design",
+    "iv. Implementation",
+    "v. Results",
+    "vi. Conclusion",
+    "vii. Demo",
+]
+NAV_H       = 300000     # nav-bar height (EMU) — reclaims the old top margin
 
 # ── Sophea canonical profile ──────────────────────────────────────────
 SOPHEA = {

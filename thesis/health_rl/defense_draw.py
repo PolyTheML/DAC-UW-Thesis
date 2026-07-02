@@ -1,5 +1,5 @@
 from pptx.util import Emu, Pt
-from pptx.enum.text import PP_ALIGN
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.dml.color import RGBColor
 
@@ -75,6 +75,28 @@ def title_block(slide, text):
     rect(slide, underline_l, UNDERLINE_T, underline_w, UNDERLINE_H, fill=NAVY)
 
 
+def nav_tabs(slide, active_idx):
+    """Persistent top section-tab bar (Sreynich-flow chrome). 7 tabs span the
+    full width; the active section is NAVY-filled white-bold, the rest are
+    LIGHT_BG/GRAY. A thin DIVIDER hairline sits under the bar. Drawn on
+    content slides only (not title / ToC / thanks / appendix)."""
+    n = len(NAV_SECTIONS)
+    tab_w = SW // n
+    for i, label in enumerate(NAV_SECTIONS):
+        l = i * tab_w
+        w = (SW - l) if i == n - 1 else tab_w   # last tab absorbs rounding
+        is_active = (i == active_idx)
+        rect(slide, l, 0, w, NAV_H, fill=NAVY if is_active else LIGHT_BG)
+        tf = textbox(slide, l, 0, w, NAV_H)
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        tf.margin_left = 0
+        tf.margin_right = 0
+        para(tf, label, 9, bold=is_active,
+             color=WHITE if is_active else GRAY,
+             align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
+    rect(slide, 0, NAV_H, SW, 12700, fill=DIVIDER)   # hairline under the bar
+
+
 def footer(slide, section_name, slide_num, total=39):
     """3-panel footer ribbon (burgundy chrome): deep-cobalt org panels, tint centre."""
     h = 420624
@@ -90,7 +112,7 @@ def footer(slide, section_name, slide_num, total=39):
     # Right panel (deep cobalt bg)
     rect(slide, 9235440, FOOTER_TOP, 2956255, h, fill=BLUE_DEEP)
     tf3 = textbox(slide, 9326880, FOOTER_TOP, 2743200, h)
-    para(tf3, f"July 2026  ·  {slide_num} / {total}", 9,
+    para(tf3, f"8 July 2026  ·  {slide_num} / {total}", 9,
          color=WHITE, align=PP_ALIGN.RIGHT)
 
 
@@ -123,7 +145,7 @@ def section_divider(slide, section_name, slide_num, numeral, total=39):
     para(tf4, section_name, 9, color=BLUE_TINT,
          align=PP_ALIGN.CENTER)
     tf5 = textbox(slide, 9326880, FOOTER_TOP, 2743200, h)
-    para(tf5, f"July 2026  ·  {slide_num} / {total}", 9,
+    para(tf5, f"8 July 2026  ·  {slide_num} / {total}", 9,
          color=WHITE, align=PP_ALIGN.RIGHT)
 
 
