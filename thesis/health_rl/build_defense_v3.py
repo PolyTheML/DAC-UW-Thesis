@@ -185,7 +185,7 @@ new_para(tf, "— fixed rules, no learning, no fairness check.", 13,
 
 # Kicker + source
 tf = textbox(s, MARGIN_L, 4700000, CONTENT_W, 520000)
-para(tf, "Sophea represents the 98% the current system was not built for.",
+para(tf, "This is the 98% the current system was not built for.",
      16, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
 tf = textbox(s, MARGIN_L, 5980000, CONTENT_W, 300000)
 para(tf, "Sources: ILO (2023) · Cambodia Demographic & Health Survey (2021-22).",
@@ -555,36 +555,26 @@ content_footer(s, 2, 12)
 
 # ══ Slide 13: The fairness guardrail ══════════════════════════════════
 s = content_slide("THE FAIRNESS GUARDRAIL", 2)
-tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 560000)
+tf = textbox(s, MARGIN_L, 1080000, CONTENT_W, 520000)
 para(tf, "PSI asks one question:", 16, bold=True, color=NAVY)
-new_para(tf, "Are the people we approve today drifting away from the people we "
-         "trained on?", 16, italic=True, color=GRAY, space_before=4)
-ZONES = [
-    ("GREEN", "below 0.10", "All clear — the mix of approvals is stable.",
-     GREEN_BG, GREEN_ACC),
-    ("AMBER", "0.10 – 0.25", "Watch closely — a moderate shift; flag for review.",
-     AMBER_BG, AMBER_ACC),
-    ("RED",   "above 0.25", "Stop and recalibrate — a major shift; escalate.",
-     RED_BG, RED_ACC),
-]
-zt = 1950000; zh = 900000; zg = 110000
-for i, (lab, thr, desc, bg, acc) in enumerate(ZONES):
-    t = zt + i * (zh + zg)
-    rect(s, MARGIN_L, t, CONTENT_W, zh, fill=bg)
-    rect(s, MARGIN_L, t, 120000, zh, fill=acc)
-    tfl = textbox(s, MARGIN_L + 220000, t, 2400000, zh)
-    tfl.vertical_anchor = MSO_ANCHOR.MIDDLE
-    para(tfl, lab, 22, bold=True, color=acc, font_name=HEAD_FONT)
-    tft = textbox(s, MARGIN_L + 2700000, t, 2200000, zh)
-    tft.vertical_anchor = MSO_ANCHOR.MIDDLE
-    para(tft, thr, 15, bold=True, color=DARK_TXT)
-    tfd = textbox(s, MARGIN_L + 5000000, t, CONTENT_W - 5200000, zh)
-    tfd.vertical_anchor = MSO_ANCHOR.MIDDLE
-    para(tfd, desc, 14, color=DARK_TXT)
-tf = textbox(s, MARGIN_L, zt + 3 * (zh + zg) + 60000, CONTENT_W, 560000)
-para(tf, "And when the system isn't sure, the case goes to a human expert "
-     "(about 1 in 70). The exact PSI formula is in Appendix A8.", 13,
-     italic=True, color=GRAY)
+new_para(tf, "Has the mix of people we approve today drifted from the system's "
+         "own first 500 decisions?", 15, italic=True, color=GRAY, space_before=4)
+PSI_IMG = os.path.join(FIG_DIR, "slides", "slide_psi.png")
+CHART_TOP = 1660000
+caption_top = CHART_TOP + 20000
+if os.path.exists(PSI_IMG):
+    pic = s.shapes.add_picture(PSI_IMG, Emu(MARGIN_L), Emu(CHART_TOP), width=Emu(CONTENT_W))
+    aspect = pic.width / pic.height
+    max_h = 4200000
+    if pic.height > max_h:
+        pic.height = max_h
+        pic.width = int(max_h * aspect)
+        pic.left = Emu(MARGIN_L + (CONTENT_W - pic.width) // 2)
+    caption_top = CHART_TOP + pic.height + 60000
+tf = textbox(s, MARGIN_L, caption_top, CONTENT_W, 420000)
+para(tf, "Wobbles while exploring, settles as the policy converges — never "
+     "breaches RED. 20-seed result: Region 0.082 GREEN · Occupation 0.123 "
+     "AMBER — formula in Appendix A8.", 11, italic=True, color=GRAY)
 content_footer(s, 2, 13)
 
 # ══ Slide 14: Dataset ═════════════════════════════════════════════════
@@ -639,13 +629,17 @@ content_footer(s, 3, 14)
 
 # ══ Slide 15: How we tested it ════════════════════════════════════════
 s = content_slide("HOW WE TESTED IT", 3)
+tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 450000)
+para(tf, "Same 2,000 applicants as slide 14, run through multiple times — "
+     "reshuffled each pass — to give the learner enough rounds to prove itself.",
+     15, italic=True, color=GRAY)
 TEST = [
     ("5,000 applicants", "seen one at a time, in order — exactly how it would run in production.", NAVY),
     ("20 independent repeats", "each with a different random draw. The learning system won every time.", GREEN_ACC),
     ("Compared head-to-head", "against the incumbent static-rules approach on the same applicants.", BLUE),
 ]
 tw = (CONTENT_W - 2 * 300000) // 3
-tt = 1250000; th = 2650000
+tt = 1700000; th = 2650000
 for i, (hdr, body, acc) in enumerate(TEST):
     l = MARGIN_L + i * (tw + 300000)
     rect(s, l, tt, tw, th, fill=LIGHT_BG)
@@ -654,13 +648,13 @@ for i, (hdr, body, acc) in enumerate(TEST):
     para(tfh, hdr, 18, bold=True, color=acc, font_name=HEAD_FONT)
     tfb = textbox(s, l + 150000, tt + 1050000, tw - 250000, th - 1150000)
     para(tfb, body, 15, color=DARK_TXT)
-rect(s, MARGIN_L, 4150000, CONTENT_W, 780000, fill=LIGHT_BG)
-tf = textbox(s, MARGIN_L + 180000, 4260000, CONTENT_W - 360000, 560000)
+rect(s, MARGIN_L, 4600000, CONTENT_W, 780000, fill=LIGHT_BG)
+tf = textbox(s, MARGIN_L + 180000, 4710000, CONTENT_W - 360000, 560000)
 para(tf, "A learning system has no train/test split — it learns as it goes. So we "
      "judge it by how much reward it loses versus a perfect-knowledge Oracle, "
      "averaged over the 20 repeats.", 14, color=DARK_TXT)
 new_para(tf, "Details: Appendix A6.", 12, italic=True, color=GRAY, space_before=4)
-tf = textbox(s, MARGIN_L, 5100000, CONTENT_W, 780000)
+tf = textbox(s, MARGIN_L, 5550000, CONTENT_W, 780000)
 para(tf, "Under the hood: bootstrap 95% confidence intervals, paired Wilcoxon "
      "signed-rank tests, Bonferroni correction, Cohen's d effect sizes; "
      "experiments EXP-005 through EXP-015.", 11, italic=True, color=GRAY)
@@ -1339,7 +1333,8 @@ rect(s, MARGIN_L, 1120000, 91440, 900000, fill=NAVY)
 tf = textbox(s, MARGIN_L + 180000, 1210000, CONTENT_W - 360000, 380000)
 para(tf, "PSI  =  Σ  (Aᵢ − Eᵢ) × ln(Aᵢ / Eᵢ)", 20, bold=True, color=DARK_TXT)
 tf = textbox(s, MARGIN_L + 180000, 1620000, CONTENT_W - 360000, 340000)
-para(tf, "Aᵢ = share we approve now in group i    ·    Eᵢ = share in the training data",
+para(tf, "Aᵢ = share we approve now in group i    ·    Eᵢ = share in the system's "
+     "own first 500 decisions (the reference window)",
      13, italic=True, color=GRAY)
 # Worked mini-example (2 buckets)
 half_a8 = (CONTENT_W - 300000) // 2
@@ -1347,8 +1342,8 @@ rect(s, MARGIN_L, 2200000, half_a8, 2650000, fill=WHITE, line_color=DIVIDER)
 tf = textbox(s, MARGIN_L + 150000, 2300000, half_a8 - 250000, 380000)
 para(tf, "A worked example — 2 regions", 14, bold=True, color=NAVY)
 EX = [
-    "Region A:  trained 60%,  now 55%",
-    "Region B:  trained 40%,  now 45%",
+    "Region A:  first 500 decisions 60%,  now 55%",
+    "Region B:  first 500 decisions 40%,  now 45%",
     "",
     "A: (0.55−0.60)·ln(0.55/0.60) = 0.0044",
     "B: (0.45−0.40)·ln(0.45/0.40) = 0.0059",

@@ -41,6 +41,7 @@ from experiment_utils import run_experiment_seeds               # noqa: E402
 import gen_fig07_ladder                                         # noqa: E402
 import gen_fig13_hitl                                           # noqa: E402
 import gen_fig15_drift                                          # noqa: E402
+import gen_fairness_exp006                                          # noqa: E402
 
 N = EXPERIMENT.n_rounds
 ROUNDS = np.arange(1, N + 1)
@@ -107,6 +108,13 @@ def collect_hitl():
 def collect_drift():
     reg = gen_fig15_drift.collect(EXPERIMENT.n_seeds)
     return {k: v for k, v in reg.items()}
+
+
+def collect_psi():
+    """Reuses gen_fairness_exp006's EXP-006 harness (sliding-window PSI vs the
+    first-500-round reference window). Same 20-seed data as fig_psi_timeseries."""
+    d = gen_fairness_exp006.collect(EXPERIMENT.n_seeds)
+    return {"centers": d["centers"], "reg_psis": d["reg_psis"], "occ_psis": d["occ_psis"]}
 
 
 def coldstart_stats():
@@ -220,6 +228,38 @@ def fig_drift():
     save_slide(fig, "slide_drift")
 
 
+def fig_psi():
+    d = _cached_npz("psi", collect_psi)
+    apply_slide_style()
+    fig, ax = plt.subplots(figsize=(9.6, 2.5))
+    x = d["centers"]; top = 0.28
+    ax.axhspan(0, 0.10, color=SLIDE_PALETTE["green"], alpha=0.12, zorder=0)
+    ax.axhspan(0.10, 0.25, color=SLIDE_PALETTE["amber"], alpha=0.14, zorder=0)
+    ax.axhspan(0.25, top, color=SLIDE_PALETTE["red"], alpha=0.14, zorder=0)
+    ax.axhline(0.10, color=SLIDE_PALETTE["amber"], ls="--", lw=1.2, alpha=0.7)
+    ax.axhline(0.25, color=SLIDE_PALETTE["red"], ls="--", lw=1.2, alpha=0.7)
+    for key, col, lab in (("reg_psis", "hero", "Region"), ("occ_psis", "amber", "Occupation")):
+        p = d[key]
+        m = p.mean(0)
+        lo = np.array([bootstrap_ci(p[:, j])[0] for j in range(p.shape[1])])
+        hi = np.array([bootstrap_ci(p[:, j])[1] for j in range(p.shape[1])])
+        ax.plot(x, m, color=SLIDE_PALETTE[col], marker="o", markersize=7,
+                linewidth=3.0, label=lab)
+        ax.fill_between(x, lo, hi, color=SLIDE_PALETTE[col], alpha=0.18, lw=0)
+    for yb, txt, col in ((0.05, "GREEN < 0.10", "green"), (0.175, "AMBER 0.10–0.25", "amber"),
+                         (0.265, "RED > 0.25", "red")):
+        ax.text(N, yb, txt, ha="right", va="center", fontsize=12,
+                 color=SLIDE_PALETTE[col], fontweight="bold")
+    ax.set_xlabel("Round (sliding-window centre)")
+    ax.set_ylabel("PSI vs first-500-\nround snapshot", fontsize=15)
+    ax.set_xlim(0, N); ax.set_ylim(0, top)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.02), ncol=2, frameon=False)
+    save_slide(fig, "slide_psi")
+    print(f"  [psi] Region max {d['reg_psis'].max(axis=1).mean():.4f} GREEN | "
+          f"Occupation max {d['occ_psis'].max(axis=1).mean():.4f} AMBER "
+          f"(frozen 0.0821/0.1225)")
+
+
 def fig_ladder():
     d = gen_fig07_ladder.load()                      # cheap CSV read; no cache needed
     apply_slide_style()
@@ -260,7 +300,7 @@ def fig_ladder():
 
 
 FIGS = {"reward": fig_reward, "loglog": fig_loglog, "coldstart": fig_coldstart,
-        "hitl": fig_hitl, "drift": fig_drift, "ladder": fig_ladder}
+        "hitl": fig_hitl, "drift": fig_drift, "ladder": fig_ladder, "psi": fig_psi}
 
 
 def main():

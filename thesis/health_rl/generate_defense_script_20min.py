@@ -162,12 +162,12 @@ SLIDES = [
     {
         "num": 13, "title": "THE FAIRNESS GUARDRAIL", "timing": "30 sec",
         "script": (
-            "The fairness guardrail is called PSI, and it asks one question: are "
-            "the people we're approving today drifting away from the people we "
-            "originally trained on? Think of it as a traffic light — green below "
-            "0.10, amber up to 0.25, red above that. And whenever the system's "
-            "uncertain, it hands the case to a human — that's about one in every "
-            "seventy applicants."
+            "The fairness guardrail is called PSI. A bandit has no training set, "
+            "so instead it checks itself: it freezes who it approved in its first "
+            "500 decisions, then keeps comparing later windows back to that "
+            "snapshot. This chart traces that across the run — it wobbles while "
+            "exploring, then settles as the policy converges. Green below 0.10, "
+            "amber up to 0.25, red above that — it never breaches red."
         ),
     },
     {
@@ -181,14 +181,15 @@ SLIDES = [
         ),
     },
     {
-        "num": 15, "title": "HOW WE TESTED IT", "timing": "25 sec",
+        "num": 15, "title": "HOW WE TESTED IT", "timing": "30 sec",
         "script": (
-            "I ran five thousand applicants through, one at a time, twenty "
-            "independent repeats — head-to-head against the static rules. The "
-            "learning system won every single time. Now, a bandit doesn't have a "
-            "train/test split the way a normal model does, so instead I judge it "
-            "by how much reward it loses compared to a perfect Oracle, averaged "
-            "across those twenty repeats."
+            "Same two thousand applicants as before, run through the system five "
+            "thousand times — two and a half passes, reshuffled each time, one at "
+            "a time — twenty independent repeats, head-to-head against the static "
+            "rules. The learning system won every single time. Now, a bandit "
+            "doesn't have a train/test split the way a normal model does, so "
+            "instead I judge it by how much reward it loses compared to a perfect "
+            "Oracle, averaged across those twenty repeats."
         ),
     },
     {

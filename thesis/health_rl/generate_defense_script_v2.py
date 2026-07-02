@@ -256,12 +256,18 @@ SLIDES = [
         "script": (
             "Learning fast is not enough — it also has to stay fair. That's the "
             "job of the Population Stability Index, or PSI.\n\n"
-            "PSI asks one question: are the people we approve today drifting away "
-            "from the people we trained on? It's a simple traffic light. Green, "
-            "below 0.10, means all clear. Amber, between 0.10 and 0.25, means watch "
-            "closely. Red, above 0.25, means stop and recalibrate.\n\n"
-            "And when the system isn't sure about a case, it hands it to a human "
-            "expert — about one in seventy. The exact formula is in Appendix A8."
+            "Now — a bandit doesn't have a training set the way a supervised model "
+            "does, so PSI can't compare against 'the data we trained on.' Instead it "
+            "compares the system to itself: it freezes a snapshot of who it approved "
+            "in its first 500 live decisions, then checks every later window against "
+            "that snapshot. Has the mix drifted?\n\n"
+            "[Point to the chart.]\n\n"
+            "This is that check traced across the whole run. You can see it wobble "
+            "while the system is still exploring — occupation brushes up toward "
+            "amber early on — then settle back down toward green as the policy "
+            "converges. It never breaches red. Green means all clear, amber means "
+            "watch closely, red means stop and recalibrate.\n\n"
+            "The exact formula and a worked example are in Appendix A8."
         ),
     },
     {
@@ -288,6 +294,11 @@ SLIDES = [
         "timing": "~1 min",
         "script": (
             "How did I test it? Three things, in plain words.\n\n"
+            "First, a quick word on the numbers: it's the same two thousand "
+            "applicants from the last slide, not a new batch. Five thousand "
+            "rounds means the system runs through that pool two and a half times, "
+            "reshuffled each pass, so the learner sees enough rounds to actually "
+            "converge.\n\n"
             "Five thousand applicants, seen one at a time in order — exactly how it "
             "would run in production. Twenty independent repeats, each with a "
             "different random draw; the learning system won every single time. And "
