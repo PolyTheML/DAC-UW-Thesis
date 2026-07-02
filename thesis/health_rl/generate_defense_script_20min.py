@@ -37,251 +37,297 @@ SLIDES = [
     {
         "num": 1, "title": "TITLE SLIDE", "timing": "30 sec",
         "script": (
-            "Good morning, Distinguished Committee. I am Lun Chanpoly, defending "
-            "Adaptive Health Insurance Underwriting via Contextual Bandits — a "
-            "Reinforcement Learning approach for Cambodia, from my internship at "
-            "Decent Actuarial Consultants under Dr. Has Sothea and Mr. ON Radet.\n\n"
-            "Seven short sections, plain language, maths in the appendix. Let me "
-            "start with a person named Sophea."
+            "Good morning, Distinguished Committee. My name is Lun Chanpoly, and "
+            "I'm here to defend Adaptive Health Insurance Underwriting via "
+            "Contextual Bandits — a reinforcement learning approach for Cambodia. "
+            "This grew out of my internship at Decent Actuarial Consultants, under "
+            "Dr. Has Sothea and Mr. ON Radet.\n\n"
+            "I've kept this to seven short sections, in plain language — the math "
+            "lives in the appendix if you want it. But I'd rather start with a "
+            "person. Her name is Sophea."
         ),
     },
     {
         "num": 2, "title": "TABLE OF CONTENTS", "timing": "8 sec",
-        "script": "Here's the roadmap — problem, literature, design, results, "
-                  "conclusion, and a live demo. [Advance.]",
+        "script": "Quick roadmap: the problem, what's been tried before, how I "
+                  "built this, what it found, and then I'll show it to you live. "
+                  "[Advance.]",
     },
     {
         "num": 3, "title": "A MARKET THE SYSTEM WAS NOT BUILT FOR", "timing": "25 sec",
         "script": (
-            "This is Sophea's market. In Cambodia, fewer than two percent have any "
-            "health insurance. The state scheme reaches only formal workers — about "
-            "sixteen percent. Everyone else is underwritten by hand. Sophea "
-            "represents the ninety-eight percent the system was not built for."
+            "This is the market Sophea lives in. In Cambodia, fewer than two "
+            "percent of people carry any health insurance at all. The state scheme "
+            "only reaches formal-sector workers — roughly sixteen percent of the "
+            "workforce. Everyone else? Underwritten by hand, one judgment call at "
+            "a time. Sophea is part of that other ninety-eight percent — the "
+            "market this system was never built for."
         ),
     },
     {
         "num": 4, "title": "MEET SOPHEA", "timing": "40 sec",
         "script": (
             "[Point to the profile, then the flags, then the red box.]\n\n"
-            "Sophea: 42, a rice farmer from Kampong Cham. Active, non-smoker, BMI "
-            "24.1, one flag — managed hypertension.\n\n"
-            "In 2023 she applies for cover. The static system checks two fields — "
-            "occupation agriculture, condition hypertension — both cross a "
-            "threshold. Decision: DECLINE. Was that the right answer?"
+            "Meet Sophea. She's forty-two, a rice farmer in Kampong Cham. Active, "
+            "doesn't smoke, BMI of 24.1 — and one flag on her chart: managed "
+            "hypertension.\n\n"
+            "In 2023, she applies for cover. The static system looks at exactly "
+            "two fields — occupation is agriculture, condition is hypertension — "
+            "and both cross a hard-coded threshold. The decision comes back: "
+            "DECLINE.\n\n"
+            "Was that the right call?"
         ),
     },
     {
         "num": 5, "title": "WHY STATIC RULES FAIL", "timing": "25 sec",
         "script": (
-            "The rule couldn't have known. It can't see her full picture, and it "
-            "never learns. Three problems: fixed cutoffs that ignore context, a "
-            "model that never updates from claims, and no one checking whether "
-            "whole groups get shut out."
+            "Here's the problem — the rule couldn't have known better. It only "
+            "sees two fields, not her whole picture, and it never learns from what "
+            "actually happens afterward. Three things are broken here: the "
+            "cutoffs are fixed and ignore context, the model never updates itself "
+            "from real claims, and nobody's checking whether whole groups are "
+            "quietly getting shut out."
         ),
     },
     {
         "num": 6, "title": "GOAL & OBJECTIVES", "timing": "30 sec",
         "script": (
-            "The goal in one sentence: can a system that learns from every decision "
-            "underwrite better — and stay fair — than today's fixed rules? Three "
-            "questions: does it earn more, does it stay fair without being told to, "
-            "and which method wins. And it touches three of Cambodia's SDGs — "
-            "health, poverty, and inequality."
+            "So here's the goal, in one sentence: can a system that learns from "
+            "every decision underwrite better — and stay fairer — than today's "
+            "fixed rules? That breaks into three questions I set out to answer: "
+            "does it earn more money, does it stay fair without anyone telling it "
+            "to, and which learning method actually wins. And underneath all of "
+            "that, this touches three of Cambodia's Sustainable Development "
+            "Goals — health, poverty, and inequality."
         ),
     },
     {
         "num": 7, "title": "ABOUT DECENT ACTUARIAL CONSULTANTS", "timing": "20 sec",
         "script": (
-            "I did this at Decent Actuarial Consultants — a regional actuarial "
-            "firm across Taiwan, Vietnam and Cambodia, whose clients face "
-            "applicants like Sophea daily. My task: design, validate, and "
-            "prototype an adaptive underwriting system."
+            "I did this work at Decent Actuarial Consultants — a regional "
+            "actuarial firm operating across Taiwan, Vietnam, and Cambodia. Their "
+            "clients face applicants like Sophea every single day. My task was to "
+            "design, validate, and prototype an adaptive underwriting system for "
+            "exactly that problem."
         ),
     },
     {
         "num": 8, "title": "PROJECT TIMELINE", "timing": "12 sec",
-        "script": "A three-month internship: research and modelling, then "
-                  "experiments, then engineering the demo and writing up. [Advance.]",
+        "script": "Three months, roughly three phases: research and modelling "
+                  "first, then the experiments, then building the demo and "
+                  "writing it all up. [Advance.]",
     },
     {
         "num": 9, "title": "THE LITERATURE, IN ONE TABLE", "timing": "35 sec",
         "script": (
-            "Four bodies of work, in one table: emerging-market health insurance, "
-            "contextual bandits — the method at the core of this, from Li 2010 and "
-            "Agrawal and Goyal 2013 — fairness and drift monitoring, and "
-            "human-in-the-loop review. The gap: no prior work applies "
-            "online-learning underwriting to Cambodia."
+            "I pulled together four bodies of work into one table. Emerging-"
+            "market health insurance. Contextual bandits — the method at the core "
+            "of this thesis, going back to Li in 2010 and Agrawal and Goyal in "
+            "2013. Fairness and drift monitoring. And human-in-the-loop review. "
+            "Put them side by side, and one gap jumps out: nobody had applied "
+            "online-learning underwriting to Cambodia before."
         ),
     },
     {
         "num": 10, "title": "HOW THE SYSTEM WORKS", "timing": "25 sec",
         "script": (
-            "The whole system on one line: it decides, sees what happens, and gets "
-            "a little smarter each round. It reads a short profile, picks one of "
-            "four actions, earns a reward, checks fairness, and refers the "
+            "The whole system, in one line: it decides, watches what happens, and "
+            "gets a little smarter every round. Concretely — it reads a short "
+            "applicant profile, picks one of four actions, earns a reward based "
+            "on the outcome, checks itself for fairness, and hands off the "
             "uncertain cases to a human."
         ),
     },
     {
         "num": 11, "title": "HOW THE SYSTEM DECIDES FOR SOPHEA", "timing": "35 sec",
         "script": (
-            "Watch it decide for Sophea. On the left, what it knows — a short "
-            "profile. It scores the four options: Standard highest at 0.52, then "
-            "Rated, Refer, Decline. Highest wins, so Sophea gets Standard. In plain "
-            "words: it estimates how each option pays off, plus a small bonus for "
-            "options it hasn't tried much."
+            "Let's watch it actually decide, for Sophea specifically. On the left "
+            "is everything it knows about her — that short profile. It scores all "
+            "four options: Standard comes out highest at 0.52, then Rated, then "
+            "Refer, then Decline. Highest score wins, so Sophea gets Standard. In "
+            "plain words, it's estimating how each option would pay off — plus a "
+            "small bonus for options it hasn't tried very often yet."
         ),
     },
     {
         "num": 12, "title": "WHAT THE SYSTEM EARNS", "timing": "25 sec",
         "script": (
-            "Reward is simple: premiums collected minus claims paid. Insure someone "
-            "healthy, you earn; a frequent claimer, you lose; decline everyone, you "
-            "earn nothing. So it's rewarded for insuring the right people at the "
-            "right price."
+            "The reward function is deliberately simple: premiums collected, "
+            "minus claims paid. Insure someone healthy, and you earn. Insure a "
+            "frequent claimer, and you lose. Decline everyone, and you earn "
+            "nothing at all. So the incentive is exactly what you'd want — "
+            "insure the right people, at the right price."
         ),
     },
     {
         "num": 13, "title": "THE FAIRNESS GUARDRAIL", "timing": "30 sec",
         "script": (
-            "The fairness guardrail, PSI, asks one question: are the people we "
-            "approve today drifting away from the people we trained on? A traffic "
-            "light — green below 0.10, amber to 0.25, red above. And uncertain "
-            "cases go to a human, about one in seventy."
+            "The fairness guardrail is called PSI, and it asks one question: are "
+            "the people we're approving today drifting away from the people we "
+            "originally trained on? Think of it as a traffic light — green below "
+            "0.10, amber up to 0.25, red above that. And whenever the system's "
+            "uncertain, it hands the case to a human — that's about one in every "
+            "seventy applicants."
         ),
     },
     {
         "num": 14, "title": "THE DATA", "timing": "25 sec",
         "script": (
-            "Two thousand synthetic applicants, thirty-four facts each, four "
-            "decisions. Synthetic because no insurer shares real records — but "
-            "shaped to match published Cambodia statistics: CDHS, STEPS, ILO, WHO."
+            "The dataset is two thousand synthetic applicants, thirty-four facts "
+            "each, across four possible decisions. Synthetic, because no insurer "
+            "was going to share real records with me — but shaped carefully to "
+            "match published Cambodia statistics: the CDHS, STEPS, ILO, and WHO "
+            "surveys."
         ),
     },
     {
         "num": 15, "title": "HOW WE TESTED IT", "timing": "25 sec",
         "script": (
-            "Five thousand applicants one at a time, twenty independent repeats — "
-            "the learning system won every time — head-to-head against the static "
-            "rules. A bandit has no train/test split, so I judge it by reward lost "
-            "versus a perfect Oracle, averaged over the twenty repeats."
+            "I ran five thousand applicants through, one at a time, twenty "
+            "independent repeats — head-to-head against the static rules. The "
+            "learning system won every single time. Now, a bandit doesn't have a "
+            "train/test split the way a normal model does, so instead I judge it "
+            "by how much reward it loses compared to a perfect Oracle, averaged "
+            "across those twenty repeats."
         ),
     },
     {
         "num": 16, "title": "THE HEADLINE RESULT", "timing": "40 sec",
         "script": (
-            "The headline: twenty-five point two percent more reward than the "
-            "static rules — $90,540 versus $72,292, over twenty seeds. In plain "
-            "words, for every hundred dollars the old rules earned, the learning "
-            "system earned a hundred and twenty-five — and the gap held across all "
-            "twenty repeats. p below 0.001, d of 2.98."
+            "So here's the headline number: twenty-five point two percent more "
+            "reward than the static rules — $90,540 against $72,292, averaged "
+            "over twenty seeds. Put plainly, for every hundred dollars the old "
+            "rules earned, the learning system earned a hundred and twenty-five. "
+            "And this wasn't a lucky run — the gap held across all twenty "
+            "repeats, p below 0.001, effect size d of 2.98."
         ),
     },
     {
         "num": 17, "title": "THE BASELINE LADDER", "timing": "30 sec",
         "script": (
-            "Against a full ladder, every realistic alternative lands below the "
-            "bandits. Two things sit above them — the Oracle, which sees the "
-            "future, and AlwaysRATED, which rates everyone at a flat loading and no "
-            "regulator would allow. Among deployable policies, the bandit leads."
+            "I didn't just compare against one baseline — I built a full ladder "
+            "of them. And every realistic alternative lands below the bandit. "
+            "Only two things sit above it: the Oracle, which cheats by seeing "
+            "the future, and AlwaysRATED, which just rates every single "
+            "applicant at a flat loading — something no regulator would ever "
+            "actually allow. Among the policies you could actually deploy, the "
+            "bandit leads."
         ),
     },
     {
         "num": 18, "title": "SOPHEA, THREE WAYS", "timing": "25 sec",
         "script": (
-            "The same applicant, three systems. Static rules say DECLINE. Our "
-            "LinUCB bandit says STANDARD. And the perfect-knowledge Oracle also "
-            "says STANDARD. The bandit reaches the answer the all-knowing benchmark "
-            "picks — the static rule never can."
+            "Same applicant, three systems, three answers. The static rules say "
+            "DECLINE. Our LinUCB bandit says STANDARD. And the Oracle — the one "
+            "with perfect, all-knowing information — also says STANDARD. So the "
+            "bandit lands on the same answer as the all-knowing benchmark. The "
+            "static rule never gets there."
         ),
     },
     {
         "num": 19, "title": "FAIRNESS & HUMAN OVERSIGHT — RESULTS", "timing": "40 sec",
         "script": (
-            "Is it fair, and does oversight help? Region drift green at 0.082, "
-            "occupation amber at 0.123, approval parity 85.7 and 90.1 percent — "
-            "above the eighty-percent rule. One of six checks failed narrowly on "
-            "occupation; I report it, no threshold breached. And a human review "
-            "lifts reward by fourteen point eight percent for a 2.2 percent cost — "
-            "one case in seventy."
+            "Two questions here: is it fair, and does human oversight actually "
+            "help? On fairness — region drift is green at 0.082, occupation is "
+            "amber at 0.123, and approval parity sits at 85.7 and 90.1 percent, "
+            "both clearing the eighty-percent rule. One of six checks came in "
+            "narrowly on occupation — I report that honestly, though no "
+            "threshold was actually breached. And on oversight — adding a human "
+            "reviewer lifts reward by fourteen point eight percent, for a cost "
+            "of just 2.2 percent of cases, about one in seventy."
         ),
     },
     {
         "num": 20, "title": "FINDINGS & LIMITATIONS", "timing": "35 sec",
         "script": (
-            "Four findings: learning beats static rules by twenty-five percent; no "
-            "bias introduced; it's the learning, not the exploration, that does the "
-            "work; and human oversight adds value cheaply. And the honest limits: "
-            "synthetic data, single-period reward, one country — a constant policy "
-            "still tops the ladder."
+            "So, what does this actually add up to? Four findings. Learning "
+            "beats static rules by twenty-five percent. It doesn't introduce new "
+            "bias while doing it. It's the learning itself doing the work, not "
+            "just lucky exploration — I checked. And human oversight adds real "
+            "value, cheaply. Now, the honest limits, because there are some: "
+            "this is synthetic data, a single-period reward, one country — and "
+            "a constant policy still tops the full ladder."
         ),
     },
     {
         "num": 21, "title": "FUTURE WORK", "timing": "25 sec",
         "script": (
-            "Four directions: handle change over time with forgetting plus PSI "
-            "early warning; richer neural models; a real shadow-mode trial with a "
-            "Cambodian insurer; and lifetime customer value beyond a single "
-            "decision."
+            "Looking ahead, four directions feel worth chasing: handling change "
+            "over time, using forgetting alongside PSI as an early-warning "
+            "system; richer neural models; an actual shadow-mode trial with a "
+            "Cambodian insurer; and thinking about lifetime customer value, not "
+            "just a single decision."
         ),
     },
     {
         "num": 22, "title": "THE TAKEAWAY", "timing": "20 sec",
         "script": (
-            "So, to close: in 2023 the static system declined Sophea; in 2026 the "
-            "learning system offers her Standard cover. The same woman — a system "
-            "that finally sees her whole picture. And Cambodia has hundreds of "
-            "thousands like her."
+            "So, to close where I started. In 2023, the static system declined "
+            "Sophea. Run the same profile through the learning system today, "
+            "and it offers her Standard cover. Same woman — but finally, a "
+            "system that sees her whole picture. And Cambodia has hundreds of "
+            "thousands more like her."
         ),
     },
     {
         "num": 23, "title": "LIVE DEMONSTRATION", "timing": "75 sec",
         "script": (
             "[Switch to the browser — a live FastAPI app, not a mockup.]\n\n"
-            "First I score Sophea live with the fairness guardrail on screen. Then "
-            "a higher-risk applicant, to show the decision and reward change. Then "
-            "'Watch it Learn' — the cumulative-reward animation, the learning "
-            "system pulling ahead of the static rules."
+            "Let me show you this actually running. First, I'll score Sophea "
+            "live, right here, with the fairness guardrail visible on screen. "
+            "Then I'll run a higher-risk applicant through, so you can see the "
+            "decision and the reward change. And finally, 'Watch it Learn' — a "
+            "live animation of cumulative reward, watching the learning system "
+            "pull ahead of the static rules in real time."
         ),
     },
     {
         "num": 24, "title": "IF LIVE DEMO FAILS — A SCORED APPLICANT", "timing": "skip if live demo worked",
-        "script": "[Backup only.] A captured Underwriting Desk screenshot — a "
-                  "sample applicant scored, decision and fairness guardrail shown.",
+        "script": "[Backup only.] If the live demo didn't cooperate — here's a "
+                  "captured screenshot from the Underwriting Desk, a sample "
+                  "applicant already scored, decision and fairness guardrail "
+                  "both visible.",
     },
     {
         "num": 25, "title": "IF LIVE DEMO FAILS — WATCH IT LEARN", "timing": "skip if live demo worked",
-        "script": "[Backup only.] The cumulative-reward curve — learning system "
-                  "versus static rules — as the live animation renders it.",
+        "script": "[Backup only.] And here's the cumulative-reward curve itself "
+                  "— learning system against static rules — exactly as the live "
+                  "animation would have rendered it.",
     },
     {
         "num": 26, "title": "THANK YOU / Q&A", "timing": "15 sec",
         "script": (
-            "That is my thesis. Thank you for your attention — I welcome your "
-            "questions. If a question targets a number, I have eight appendix "
-            "slides on standby."
+            "That's my thesis. Thank you for your attention — I'd welcome your "
+            "questions. And if a question needs a specific number, I've got "
+            "eight appendix slides standing by."
         ),
     },
     {
         "num": 28, "title": "APPENDIX A2: NUMBER RECONCILIATION", "timing": "if asked (Q&A)",
         "script": (
-            "The three percentages. Plus 25.2 percent is the headline — LinUCB vs "
-            "Static XGB, pre-registered. Plus 29.8 percent is LinTS on a different "
-            "harness. Plus 14.8 percent is the human-in-the-loop gain over the "
-            "vanilla bandit across twenty seeds. At the single seed 42 that same "
-            "HITL comparison reads plus 6.5 percent — one seed, not twenty; I quote "
-            "the twenty-seed 14.8 percent."
+            "Let's untangle the three percentages you might have seen. Plus "
+            "25.2 percent is the headline — LinUCB against Static XGB, "
+            "pre-registered before I ran it. Plus 29.8 percent is LinTS, "
+            "measured on a different harness. And plus 14.8 percent is the "
+            "human-in-the-loop gain over the vanilla bandit, across twenty "
+            "seeds. If you only look at seed 42 alone, that same HITL "
+            "comparison reads plus 6.5 percent — but that's one seed, not "
+            "twenty, and the number I actually quote and stand behind is the "
+            "twenty-seed 14.8 percent."
         ),
     },
     {
         "num": 32, "title": "APPENDIX A6: WHY A BANDIT HAS NO TRAIN/TEST SPLIT", "timing": "if asked (Q&A)",
         "script": (
-            "A supervised model splits data, fits once, freezes. A bandit meets "
-            "applicants one at a time — every round is both train and test, "
-            "regularised online by a ridge prior, so there's no static fit to "
-            "overfit. I measure generalisation as cumulative regret versus the "
-            "Oracle over twenty seeds; the Static XGB baseline is fit offline and "
-            "frozen, so the comparison is fair."
+            "Good question, and it's a fair one. A supervised model splits its "
+            "data, fits once, and freezes. A bandit doesn't work that way — it "
+            "meets applicants one at a time, so every single round is both "
+            "training and testing at once, regularised online by a ridge prior, "
+            "which means there's no static fit sitting around to overfit. So "
+            "instead, I measure generalisation as cumulative regret against the "
+            "Oracle, averaged over twenty seeds. And the Static XGB baseline, by "
+            "contrast, is fit offline and frozen — so the comparison between "
+            "them is still fair."
         ),
     },
 ]
