@@ -11,9 +11,10 @@ const Desk = (function () {
   // decisions below are not assumed, they are deterministic outputs of both scorers.
   // high_risk: bandit DECLINE, xgb DECLINE (conf 98.7%) — agreement.
   // low_risk: bandit STANDARD, xgb STANDARD (conf 92.7%) — agreement.
-  // borderline: bandit RATED, xgb STANDARD (conf 48.75%, xgb mortality 1.48 just
-  // under its 1.5 STANDARD cutoff) — disagreement; the bandit's STANDARD vs RATED
-  // value estimates are exactly tied ($29.1 = $29.1), the textbook thin-margin case.
+  // borderline: bandit RATED, xgb STANDARD (conf 50.6%, xgb mortality 1.36 under its
+  // 1.5 STANDARD cutoff) — disagreement; the bandit estimates STANDARD would be a net
+  // loss (-$21) here where XGB's threshold rule sees a comfortably low mortality
+  // prediction and auto-approves, leaving ~$30/applicant on the table (seed 42).
   const PRESETS = {
     high_risk: {
       age: 65, gender: 'Male', bmi: 34.0,
@@ -34,13 +35,13 @@ const Desk = (function () {
       mortality_multiplier: 1.0,
     },
     borderline: {
-      age: 40, gender: 'Male', bmi: 32.0,
-      region: 'Siem Reap', occupation: 'Market Vendor',
-      is_smoking: 0, alcohol_use: 0, is_exercise: 1, has_family_history: 1,
+      age: 38, gender: 'Male', bmi: 32.0,
+      region: 'Prey Veng', occupation: 'Civil Servant',
+      is_smoking: 0, alcohol_use: 0, is_exercise: 1, has_family_history: 0,
       conditions: [],
-      monthly_income_usd: 200, education: 'Secondary',
-      wealth_quintile: 'Middle', self_reported_health: 'Fair',
-      mortality_multiplier: 1.48,
+      monthly_income_usd: 150, education: 'Primary',
+      wealth_quintile: 'Richer', self_reported_health: 'Good',
+      mortality_multiplier: 1.36,
     },
   };
 
@@ -125,6 +126,37 @@ const Desk = (function () {
       <span>$${val.toFixed(0)}</span></div>`;
   }
 
+  function renderComparison(d) {
+    const bandit = d.decision;
+    const xgb = d.static_xgb;
+    const er = d.estimated_rewards;
+    const disagree = bandit !== xgb.action;
+    const xgbBorder = disagree ? 'var(--amber)' : 'var(--green)';
+    const gap = (er[bandit] - er[xgb.action]).toFixed(0);
+    return `
+    <div class="group-title">Adaptive vs static — same applicant</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+      <div style="border:1px solid var(--accent);border-radius:8px;padding:.75rem;">
+        <div class="muted" style="color:var(--accent);font-weight:600;">LINUCB · ADAPTIVE</div>
+        <div style="font-size:1.3rem;font-weight:700;">${bandit}</div>
+        <div class="muted">Value estimate: $${er[bandit].toFixed(0)}</div>
+      </div>
+      <div style="border:1px solid ${xgbBorder};border-radius:8px;padding:.75rem;">
+        <div class="muted" style="color:${xgbBorder};font-weight:600;">
+          STATIC XGB · BASELINE ${disagree ? '⚡ DISAGREES' : '✓ AGREES'}</div>
+        <div style="font-size:1.3rem;font-weight:700;">${xgb.action}</div>
+        <div class="muted">Value estimate: $${er[xgb.action].toFixed(0)}</div>
+        <div class="muted" style="margin-top:.35rem;">${xgb.reasoning}</div>
+      </div>
+    </div>
+    ${disagree ? `<div class="muted" style="color:var(--amber);margin-top:.5rem;">
+      ⚡ Decision conflict — under the learned value model the static choice leaves
+      $${gap} per applicant on the table (illustrative, seed 42). Compounded over
+      5,000 applicants, differences like this are the +25.2% headline
+      (20 seeds, admissible policies).
+    </div>` : ''}`;
+  }
+
   function renderResult(d) {
     const er = d.estimated_rewards;
     const vals = ACTIONS.map(a => er[a]);
@@ -141,6 +173,7 @@ const Desk = (function () {
       </div>
       <div class="group-title">Estimated reward by action</div>
       ${ACTIONS.map(a => bar(a, er[a], lo, hi, a === d.decision)).join('')}
+      ${renderComparison(d)}
       <div class="group-title">Recommended premium</div>
       <div style="font-size:1.2rem;font-weight:700">${prem.display}
         ${prem.multiplier ? `<span class="muted" style="font-size:.8rem">×${prem.multiplier}</span>` : ''}</div>

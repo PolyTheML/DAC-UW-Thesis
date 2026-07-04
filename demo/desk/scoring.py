@@ -19,6 +19,7 @@ from healthrl.underwriting_bandit import (
     ACTION_NAMES,
     DATA_PATH,
     RewardConfig,
+    StaticXGBBaseline,
     preprocess_cambodia_data,
 )
 from demo.pricing_engine import compute_psi, optimize_premium
@@ -94,6 +95,7 @@ class DeskScorer:
         # Original raw columns, for concatenating a new applicant row.
         self.raw_base = pd.read_csv(DATA_PATH)
         self.config = RewardConfig()
+        self.static_xgb = StaticXGBBaseline()  # loads cambodia_life_xgb.pkl + encoders
 
         self._canonical_zones = self._load_canonical_zones()
         self.fairness = self._compute_model_fairness()  # cached at startup
@@ -171,6 +173,27 @@ class DeskScorer:
             "p_accept": opt["optimal_p_accept"],
         }
 
+    def _score_static_xgb(self, applicant: dict[str, Any]) -> dict[str, Any]:
+        """Static XGB's decision + its real, explainable mechanics.
+
+        The baseline predicts a mortality multiplier from the raw applicant row and
+        applies frozen thresholds (<=1.5 STANDARD, <=2.2 RATED, <=2.6 REFER, else
+        DECLINE) - underwriting_bandit.py StaticXGBBaseline.select_action.
+        """
+        row = pd.Series(applicant)
+        mort_pred = float(self.static_xgb.model.predict(
+            self.static_xgb._preprocess_row(row))[0])
+        action = self.static_xgb.select_action(np.zeros(1), row=row)
+        bands = "≤1.5 STANDARD · ≤2.2 RATED · ≤2.6 REFER · >2.6 DECLINE"
+        return {
+            "action": ACTION_NAMES[action],
+            "mortality_pred": round(mort_pred, 2),
+            "reasoning": (
+                f"Predicted mortality ×{mort_pred:.2f} → "
+                f"{ACTION_NAMES[action]} band (frozen thresholds: {bands})"
+            ),
+        }
+
     def score(self, applicant: dict[str, Any]) -> dict[str, Any]:
         x = self.featurize(applicant)
         r = self.theta @ x  # (4,) estimated reward per action
@@ -205,6 +228,7 @@ class DeskScorer:
             },
             "drivers": drivers,
             "premium": self._premium(decision, applicant),
+            "static_xgb": self._score_static_xgb(applicant),
             "fairness": self.fairness,
             "illustrative_note": (
                 "Illustrative · single seed (42) · representative trained LinUCB policy"

@@ -127,6 +127,22 @@ def test_score_includes_model_fairness():
     assert fair["canonical"]["occupation_zone"] == "AMBER"
 
 
+def test_score_includes_static_xgb_comparison():
+    data = client.post("/api/score", json=SAMPLE_APPLICANT).json()
+    xgb = data["static_xgb"]
+    assert xgb["action"] in ACTION_NAMES
+    assert isinstance(xgb["mortality_pred"], (int, float))
+    assert "Predicted mortality" in xgb["reasoning"]
+
+
+def test_static_xgb_action_consistent_with_thresholds():
+    xgb = client.post("/api/score", json=SAMPLE_APPLICANT).json()["static_xgb"]
+    m = xgb["mortality_pred"]
+    expected = ("STANDARD" if m <= 1.5 else "RATED" if m <= 2.2
+                else "REFER" if m <= 2.6 else "DECLINE")
+    assert xgb["action"] == expected
+
+
 def test_model_fairness_is_constant_across_applicants():
     """Model-level (not per-applicant): identical for any applicant."""
     a = client.post("/api/score", json=SAMPLE_APPLICANT).json()["fairness"]
