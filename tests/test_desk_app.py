@@ -152,6 +152,14 @@ def test_static_xgb_action_consistent_with_thresholds():
     assert xgb["action"] == expected
 
 
+def test_fairness_endpoint_matches_score_payload():
+    standalone = client.get("/api/fairness").json()
+    embedded = client.post("/api/score", json=SAMPLE_APPLICANT).json()["fairness"]
+    assert standalone == embedded
+    assert standalone["canonical"]["region_zone"] == "GREEN"
+    assert standalone["canonical"]["occupation_zone"] == "AMBER"
+
+
 def test_model_fairness_is_constant_across_applicants():
     """Model-level (not per-applicant): identical for any applicant."""
     a = client.post("/api/score", json=SAMPLE_APPLICANT).json()["fairness"]

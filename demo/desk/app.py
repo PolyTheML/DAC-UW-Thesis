@@ -126,6 +126,11 @@ async def canonical() -> dict[str, Any]:
     return CANONICAL_HEADLINE
 
 
+@app.get("/api/fairness")
+async def fairness() -> dict[str, Any]:
+    return scoring.SCORER.fairness
+
+
 class ApplicantIn(BaseModel):
     age: int = Field(..., ge=18, le=85)
     gender: str = Field(..., pattern="^(Male|Female)$")

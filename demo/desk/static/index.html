@@ -100,6 +100,15 @@
     </div>
   </header>
 
+  <div id="fairness-panel" style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;
+       padding:.5rem 1.5rem;border-bottom:1px solid var(--line);background:var(--panel);">
+    <span class="seg-label">Fairness guardrails</span>
+    <span id="fair-region" class="muted">Region: …</span>
+    <span id="fair-occupation" class="muted">Occupation: …</span>
+    <span class="muted" style="margin-left:auto;font-size:.7rem;">
+      PSI zones: GREEN &lt; 0.10 · AMBER 0.10–0.25 · RED &gt; 0.25 · canonical: EXP-006, 20 seeds</span>
+  </div>
+
   <main>
     <!-- VIEW 1: UNDERWRITING DESK -->
     <section id="view-desk" class="view active">
