@@ -110,6 +110,12 @@
             <button class="btn ghost" id="btn-load">⟳ Load CDHS sample</button>
             <button class="btn ghost" id="btn-clear">Clear</button>
           </div>
+          <div class="chips" id="preset-bar" style="margin-top:.75rem;">
+            <span class="muted" style="align-self:center;">Try:</span>
+            <span class="chip" id="preset-low" style="border-color:var(--green);color:var(--green);">✅ Low Risk</span>
+            <span class="chip" id="preset-borderline" style="border-color:var(--amber);color:var(--amber);">⚠️ Borderline</span>
+            <span class="chip" id="preset-high" style="border-color:var(--red);color:var(--red);">🚫 High Risk</span>
+          </div>
           <div id="form"></div>
           <div class="btn-row">
             <button class="btn" id="btn-score">Score applicant →</button>

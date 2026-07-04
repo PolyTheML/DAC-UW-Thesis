@@ -6,6 +6,44 @@ const Desk = (function () {
 
   const ACTIONS = ['STANDARD', 'RATED', 'DECLINE', 'REFER'];
 
+  // Calibrated preset profiles (2026-07-04): verified against the frozen theta
+  // (demo/static/coefficients_linucb_seed42.json) and StaticXGBBaseline directly —
+  // decisions below are not assumed, they are deterministic outputs of both scorers.
+  // high_risk: bandit DECLINE, xgb DECLINE (conf 98.7%) — agreement.
+  // low_risk: bandit STANDARD, xgb STANDARD (conf 92.7%) — agreement.
+  // borderline: bandit RATED, xgb STANDARD (conf 48.75%, xgb mortality 1.48 just
+  // under its 1.5 STANDARD cutoff) — disagreement; the bandit's STANDARD vs RATED
+  // value estimates are exactly tied ($29.1 = $29.1), the textbook thin-margin case.
+  const PRESETS = {
+    high_risk: {
+      age: 65, gender: 'Male', bmi: 34.0,
+      region: 'Prey Veng', occupation: 'Rice Farmer',
+      is_smoking: 1, alcohol_use: 1, is_exercise: 0, has_family_history: 1,
+      conditions: ['Hypertension', 'Diabetes', 'Heart Disease'],
+      monthly_income_usd: 120, education: 'No education',
+      wealth_quintile: 'Poorest', self_reported_health: 'Poor',
+      mortality_multiplier: 3.5,
+    },
+    low_risk: {
+      age: 24, gender: 'Female', bmi: 21.0,
+      region: 'Prey Veng', occupation: 'Market Vendor',
+      is_smoking: 0, alcohol_use: 0, is_exercise: 1, has_family_history: 0,
+      conditions: [],
+      monthly_income_usd: 250, education: 'Secondary',
+      wealth_quintile: 'Richest', self_reported_health: 'Good',
+      mortality_multiplier: 1.0,
+    },
+    borderline: {
+      age: 40, gender: 'Male', bmi: 32.0,
+      region: 'Siem Reap', occupation: 'Market Vendor',
+      is_smoking: 0, alcohol_use: 0, is_exercise: 1, has_family_history: 1,
+      conditions: [],
+      monthly_income_usd: 200, education: 'Secondary',
+      wealth_quintile: 'Middle', self_reported_health: 'Fair',
+      mortality_multiplier: 1.48,
+    },
+  };
+
   function opt(list, val) {
     return list.map(v => `<option ${v === val ? 'selected' : ''}>${v}</option>`).join('');
   }
@@ -142,13 +180,24 @@ const Desk = (function () {
     renderForm({});
   }
 
+  function loadPreset(key) {
+    const p = PRESETS[key];
+    loadedMortality = p.mortality_multiplier;
+    selectedConditions = new Set(p.conditions);
+    renderForm(p);
+    score();
+  }
+
   async function init() {
     FIELDS = await API.fields();
     renderForm({});
     document.getElementById('btn-load').addEventListener('click', loadSample);
     document.getElementById('btn-clear').addEventListener('click', clearForm);
     document.getElementById('btn-score').addEventListener('click', score);
+    document.getElementById('preset-low').addEventListener('click', () => loadPreset('low_risk'));
+    document.getElementById('preset-borderline').addEventListener('click', () => loadPreset('borderline'));
+    document.getElementById('preset-high').addEventListener('click', () => loadPreset('high_risk'));
   }
 
-  return { init };
+  return { init, loadPreset };
 })();
