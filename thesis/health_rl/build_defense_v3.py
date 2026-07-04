@@ -4,7 +4,7 @@
 34-slide "Nang Sreynich flow" redesign (spec 2026-07-02):
   - 7-section persistent top-nav tabs + ToC + physical page numbers
   - Cambodia map on the < 2% slide; plain-language-first everywhere
-  - formulas exiled to appendix (A1-A8); Sophea threaded throughout
+  - formulas exiled to appendix (A1-A9); Sophea threaded throughout
   - demonstration section LAST, then Thanks, then Appendices
 Run order: build_defense_v3.py FIRST, then the script generators
 (the builder creates a fresh Presentation() and wipes injected notes).
@@ -20,7 +20,7 @@ from defense_draw import (rect, textbox, para, new_para, add_run,
                           title_block, footer, card, nav_tabs)
 
 OUT = r"thesis\health_rl\Poly_defense_presentation_v3.pptx"
-TOTAL = 34
+TOTAL = 35
 
 prs = Presentation()
 prs.slide_width  = Emu(SW)
@@ -109,7 +109,7 @@ para(tf, "LUN CHANPOLY", 27, bold=True, color=NAVY, align=PP_ALIGN.CENTER,
 
 _lx, _rx = Inches(1.5), Inches(7.5)
 for _i, (_lt, _rt) in enumerate([
-    ("Supervisor   :  Dr. HAS Sothea",       "Organization  :  DAC (Decent Actuarial Consultants)"),
+    ("Supervisor   :  Dr. HAS Sothea",       "Organization  :  DAC"),
     ("Duration       :  Mar 2026 – Jun 2026", "DAC Advisor  :  Mr. ON Radet"),
 ]):
     _y = Inches(5.68) + _i * Inches(0.36)
@@ -202,13 +202,13 @@ PAD_L = CARD_L + 160000
 tf = textbox(s, PAD_L, CARD_T + 140000, CARD_W - 200000, 480000)
 para(tf, "SOPHEA", 26, bold=True, color=NAVY)
 tf2 = textbox(s, PAD_L, CARD_T + 640000, CARD_W - 200000, 340000)
-para(tf2, "Age 42  ·  Kampong Cham Province  ·  Rice Farmer", 14,
+para(tf2, "Age 43  ·  Other Provinces  ·  Garment Worker", 14,
      color=RGBColor(0x40, 0x40, 0x40))
 rect(s, PAD_L, CARD_T + 1080000, CARD_W - 250000, 27432, fill=DIVIDER)
-ATTRS = [("BMI", "24.1  (Normal range)"), ("Smoker", "No"),
-         ("Physical Activity", "High  (field farming)"),
+ATTRS = [("BMI", "25.7"), ("Smoker", "No"),
+         ("Physical Activity", "Low  (sedentary factory work)"),
          ("Clinical Flag", "Hypertension  (managed)"),
-         ("Wealth Index", "Low"), ("Education", "Primary")]
+         ("Wealth Index", "Middle"), ("Education", "Secondary")]
 tf3 = textbox(s, PAD_L, CARD_T + 1180000, CARD_W - 200000, CARD_H - 1300000)
 first = True
 for label, value in ATTRS:
@@ -222,12 +222,13 @@ for label, value in ATTRS:
 
 R_L = CARD_L + CARD_W + 280000; R_T = CARD_T; R_W = SW - R_L - 200000
 tf4 = textbox(s, R_L, R_T + 80000, R_W, 1350000)
-para(tf4, "In 2023 she applies for voluntary health insurance in Phnom Penh.\n\n"
-     "The static system checks just two fields.", 15, italic=True, color=GRAY)
+para(tf4, "In 2023 she applies for voluntary health insurance.\n\n"
+     "The static system predicts her mortality risk from her full profile.", 15,
+     italic=True, color=GRAY)
 FLAG_H = 550000
 for i, (label, text) in enumerate([
-        ("OCCUPATION:", "Agriculture"),
-        ("CONDITION:", "Hypertension")]):
+        ("PREDICTED MORTALITY:", "1.83×"),
+        ("FIXED BAND:", "1.5×–2.2× → RATED")]):
     ft = R_T + 1550000 + i * (FLAG_H + 120000)
     rect(s, R_L, ft, R_W, FLAG_H, fill=AMBER_BG)
     rect(s, R_L, ft, 73152, FLAG_H, fill=AMBER_ACC)
@@ -235,30 +236,31 @@ for i, (label, text) in enumerate([
     para(tff, f"{label}  {text}", 15, bold=True, color=AMBER_TXT)
 ct = R_T + 2850000
 tf5 = textbox(s, R_L, ct, R_W, 340000)
-para(tf5, "Both thresholds crossed. In 2023 the system decides:", 14, italic=True, color=GRAY)
-rect(s, R_L, ct + 400000, R_W, 820000, fill=RED_BG)
-rect(s, R_L, ct + 400000, 109728, 820000, fill=RED_ACC)
+para(tf5, "The threshold band decides. In 2023 the system offers:", 14, italic=True, color=GRAY)
+rect(s, R_L, ct + 400000, R_W, 820000, fill=AMBER_BG)
+rect(s, R_L, ct + 400000, 109728, 820000, fill=AMBER_ACC)
 tf6 = textbox(s, R_L + 170000, ct + 560000, R_W - 200000, 500000)
-para(tf6, "DECLINE", 36, bold=True, color=RED_ACC)
+para(tf6, "RATED", 36, bold=True, color=AMBER_ACC)
 tf7 = textbox(s, R_L, ct + 1380000, R_W, 500000)
-para(tf7, "Sophea leaves without coverage.", 14, italic=True, color=GRAY)
-new_para(tf7, "Was that the right answer?", 15, bold=True, color=NAVY, space_before=8)
+para(tf7, "Sophea gets covered — but pays a loaded premium.", 14, italic=True, color=GRAY)
+new_para(tf7, "Was that the right price?", 15, bold=True, color=NAVY, space_before=8)
 content_footer(s, 0, 4)
 
 # ══ Slide 5: Why static rules fail ════════════════════════════════════
 s = content_slide("WHY STATIC RULES FAIL", 0)
 tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 640000)
-para(tf, "A fixed rule can't see Sophea's full picture —", 18, bold=True,
+para(tf, "Getting the risk right isn't the same as getting the price right —", 18, bold=True,
      color=NAVY, align=PP_ALIGN.CENTER)
-new_para(tf, "and it never learns from its mistakes.", 18, italic=True,
+new_para(tf, "and a fixed rule can't tell the difference.", 18, italic=True,
          color=GRAY, align=PP_ALIGN.CENTER, space_before=4)
 FAIL = [
     ("Fixed cutoffs",
-     "It checks two fields and stops. Her normal BMI, active lifestyle and "
-     "managed blood pressure are invisible to the rule."),
+     "Its risk estimate for Sophea is accurate — 1.83× against a true 1.84×. "
+     "But a fixed band can't weigh whether a loaded premium is still worth "
+     "offering — it just applies the same cutoff to everyone in the band."),
     ("Never updates",
      "Claims come back over the years, but the rule stays frozen. It repeats "
-     "the same mistake on the next Sophea, and the next."),
+     "the same pricing mistake on the next Sophea, and the next."),
     ("Nobody checks fairness",
      "No one tracks whether whole regions or occupations are being quietly "
      "shut out. Bias can build up unseen."),
@@ -431,7 +433,7 @@ PIPELINE = [
     ("Bandit\nPolicy", BLUE, WHITE),
     ("Underwriting\nAction", BLUE, WHITE),
     ("Actuarial\nReward", ORANGE, WHITE),
-    ("PSI + HITL\nGuardrail", BLUE, WHITE),
+    ("Drift monitor\n+ HITL", BLUE, WHITE),
     ("Decision", RGBColor(0xC0, 0x70, 0x00), WHITE),
 ]
 box_w = 1500000; box_h = 700000; gap = 200000
@@ -453,7 +455,7 @@ BULLETS = [
     "It reads a short profile of the applicant.",
     "It picks one of four actions: Standard · Rated · Decline · Refer to a human.",
     "It earns a reward: premiums collected minus the claims that follow.",
-    "A fairness guardrail (PSI) watches for demographic drift.",
+    "A drift monitor (PSI) watches whether who we approve shifts over time.",
     "Uncertain cases are handed to a human expert.",
 ]
 for i, b in enumerate(BULLETS):
@@ -470,8 +472,8 @@ rect(s, MARGIN_L, 1120000, L_W, 4900000, fill=LIGHT_BG)
 rect(s, MARGIN_L, 1120000, 91440, 4900000, fill=NAVY)
 tf = textbox(s, MARGIN_L + 170000, 1250000, L_W - 300000, 420000)
 para(tf, "What it knows about Sophea", 16, bold=True, color=NAVY, font_name=HEAD_FONT)
-KNOWS = ["Age 42", "Non-smoker", "Managed blood pressure",
-         "Active (field farming)", "Rice farmer, Kampong Cham", "Low wealth index"]
+KNOWS = ["Age 43", "Non-smoker", "Managed blood pressure",
+         "Sedentary work", "Garment worker, Other Provinces", "Middle wealth index"]
 tfk = textbox(s, MARGIN_L + 170000, 1780000, L_W - 300000, 3600000)
 first = True
 for k in KNOWS:
@@ -490,10 +492,10 @@ tf = textbox(s, R_L, 1180000, R_W, 380000)
 para(tf, "It scores each option (higher = better)", 16, bold=True, color=NAVY,
      font_name=HEAD_FONT)
 ARMS = [
-    ("STANDARD", 0.52, RGBColor(0xD4, 0xE6, 0xF7), NAVY, True),
-    ("RATED",    0.31, AMBER_BG, AMBER_TXT, False),
-    ("REFER",    0.28, GREEN_BG, GREEN_ACC, False),
-    ("DECLINE",  0.10, RED_BG,   RED_ACC,   False),
+    ("STANDARD", 0.66, RGBColor(0xD4, 0xE6, 0xF7), NAVY, True),
+    ("DECLINE",  0.20, RED_BG,   RED_ACC,   False),
+    ("REFER",    0.13, GREEN_BG, GREEN_ACC, False),
+    ("RATED",    0.00, AMBER_BG, AMBER_TXT, False),
 ]
 bar_top = 1980000; bar_h = 620000; bar_gap = 260000
 bar_max = R_W - 1200000
@@ -503,7 +505,7 @@ for i, (arm, score, bg, acc, sel) in enumerate(ARMS):
     para(tf, f"{arm}", 13, bold=sel, color=acc)
     # track + fill
     rect(s, R_L, t, bar_max, bar_h, fill=LIGHT_BG)
-    fillw = int(bar_max * score / 0.52)
+    fillw = int(bar_max * score / ARMS[0][1])
     rect(s, R_L, t, fillw, bar_h, fill=acc)
     if sel:
         from defense_draw import outline
@@ -553,8 +555,8 @@ new_para(tf, "Full actuarial detail — risk loadings, adverse selection, price 
          11, italic=True, color=GRAY, space_before=8)
 content_footer(s, 2, 12)
 
-# ══ Slide 13: The fairness guardrail ══════════════════════════════════
-s = content_slide("THE FAIRNESS GUARDRAIL", 2)
+# ══ Slide 13: The drift monitor ═══════════════════════════════════════
+s = content_slide("THE DRIFT MONITOR (PSI)", 2)
 tf = textbox(s, MARGIN_L, 1080000, CONTENT_W, 520000)
 para(tf, "PSI asks one question:", 16, bold=True, color=NAVY)
 new_para(tf, "Has the mix of people we approve today drifted from the system's "
@@ -573,69 +575,22 @@ if os.path.exists(PSI_IMG):
     caption_top = CHART_TOP + pic.height + 60000
 tf = textbox(s, MARGIN_L, caption_top, CONTENT_W, 420000)
 para(tf, "Wobbles while exploring, settles as the policy converges — never "
-     "breaches RED. 20-seed result: Region 0.082 GREEN · Occupation 0.123 "
-     "AMBER — formula in Appendix A8.", 11, italic=True, color=GRAY)
+     "breaches RED (Region 0.082 GREEN · Occupation 0.123 AMBER). PSI is a "
+     "stability monitor of who-we-approve, not a proof of group fairness — "
+     "demographic parity is tested separately (Appendix A3).", 11, italic=True,
+     color=GRAY)
 content_footer(s, 2, 13)
 
-# ══ Slide 14: Dataset ═════════════════════════════════════════════════
-s = content_slide("THE DATA", 3)
-STATS = [
-    ("2,000", "SYNTHETIC\nAPPLICANTS"),
-    ("34", "FACTS ABOUT\nEACH PERSON"),
-    ("4", "POSSIBLE\nDECISIONS"),
-    ("4", "REAL-SURVEY\nANCHORS"),
-]
-stat_w = CONTENT_W // 4 - 50000
-for i, (num, label) in enumerate(STATS):
-    l = MARGIN_L + i * (stat_w + 50000)
-    tf = textbox(s, l, 1160000, stat_w, 520000)
-    para(tf, num, 36, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-    tf2 = textbox(s, l, 1700000, stat_w, 380000)
-    para(tf2, label, 12, color=GRAY, align=PP_ALIGN.CENTER)
-FEAT_CATS = [
-    ("Demographics & Vitals", "Age, Gender, BMI", "3"),
-    ("Lifestyle", "Smoking, Alcohol, Exercise", "3"),
-    ("Social Determinants", "Education, Wealth, Self-rated health", "3"),
-    ("Economic", "Monthly income, Family history", "2"),
-    ("Clinical Flags", "Hypertension, Diabetes, Heart, COPD, Arthritis, TB, Hepatitis B", "7+1"),
-    ("Region (one-hot)", "8 macro-regions (CDHS 2021-22)", "8"),
-    ("Occupation (one-hot)", "Rice farmer 28%, Garment 20%, Market vendor 15%, Moto 12%…", "7"),
-]
-TBL_T = 2280000
-tbl = s.shapes.add_table(len(FEAT_CATS) + 1, 3,
-                         Emu(MARGIN_L), Emu(TBL_T),
-                         Emu(CONTENT_W), Emu(3350000)).table
-for ci, h in enumerate(["Category", "Features", "Dims"]):
-    c = tbl.cell(0, ci); c.text = h
-    c.fill.solid(); c.fill.fore_color.rgb = NAVY
-    for p in c.text_frame.paragraphs:
-        for r in p.runs:
-            r.font.color.rgb = WHITE; r.font.bold = True; r.font.size = Pt(12)
-for ri, (cat, feats, dims) in enumerate(FEAT_CATS):
-    for ci, val in enumerate([cat, feats, dims]):
-        c = tbl.cell(ri + 1, ci); c.text = val
-        bg = LIGHT_BG if ri % 2 == 0 else WHITE
-        c.fill.solid(); c.fill.fore_color.rgb = bg
-        for p in c.text_frame.paragraphs:
-            for r in p.runs:
-                r.font.size = Pt(11)
-                r.font.bold = (ci == 0)
-                r.font.color.rgb = NAVY if ci == 0 else DARK_TXT
-tf = textbox(s, MARGIN_L, 5780000, CONTENT_W, 480000)
-para(tf, "Synthetic because no insurer would share real records — but shaped to "
-     "match published Cambodia statistics (CDHS 2021-22, STEPS, ILO, WHO).", 12,
-     italic=True, color=GRAY)
-content_footer(s, 3, 14)
-
-# ══ Slide 15: How we tested it ════════════════════════════════════════
+# ══ Slide 14: How we tested it ════════════════════════════════════════
 s = content_slide("HOW WE TESTED IT", 3)
 tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 450000)
-para(tf, "Same 2,000 applicants as slide 14, run through multiple times — "
-     "reshuffled each pass — to give the learner enough rounds to prove itself.",
+para(tf, "2,000 synthetic, Cambodia-shaped applicant profiles, run through "
+     "multiple times — reshuffled each pass — to give the learner enough "
+     "rounds to prove itself. (Data details: Appendix A9.)",
      15, italic=True, color=GRAY)
 TEST = [
     ("5,000 applicants", "seen one at a time, in order — exactly how it would run in production.", NAVY),
-    ("20 independent repeats", "each with a different random draw. The learning system won every time.", GREEN_ACC),
+    ("20 independent repeats", "each with a different random draw. The learning system led in all 20 (in-simulation).", GREEN_ACC),
     ("Compared head-to-head", "against the incumbent static-rules approach on the same applicants.", BLUE),
 ]
 tw = (CONTENT_W - 2 * 300000) // 3
@@ -658,16 +613,16 @@ tf = textbox(s, MARGIN_L, 5550000, CONTENT_W, 780000)
 para(tf, "Under the hood: bootstrap 95% confidence intervals, paired Wilcoxon "
      "signed-rank tests, Bonferroni correction, Cohen's d effect sizes; "
      "experiments EXP-005 through EXP-015.", 11, italic=True, color=GRAY)
-content_footer(s, 3, 15)
+content_footer(s, 3, 14)
 
-# ══ Slide 16: The headline result ═════════════════════════════════════
+# ══ Slide 15: The headline result ═════════════════════════════════════
 s = content_slide("THE HEADLINE RESULT", 4)
 # Left: the number + plain line
 rect(s, MARGIN_L, 1180000, 4900000, 1650000, fill=NAVY)
 tf = textbox(s, MARGIN_L, 1280000, 4900000, 900000)
 para(tf, "+25.2%", 60, bold=True, color=WHITE, align=PP_ALIGN.CENTER, font_name=HEAD_FONT)
 tf = textbox(s, MARGIN_L, 2280000, 4900000, 440000)
-para(tf, "more cumulative reward than the static rules", 13,
+para(tf, "more cumulative reward than the static rules — in simulation", 13,
      color=RGBColor(0xBD, 0xCE, 0xE4), align=PP_ALIGN.CENTER)
 tf = textbox(s, MARGIN_L, 3050000, 4900000, 1200000)
 para(tf, "$90,540", 30, bold=True, color=NAVY)
@@ -679,7 +634,8 @@ para(tf, "For every $100 the old rules earned, the learning system earned $125 �
 new_para(tf, "and the gap held across all 20 repeats.", 15, italic=True,
          color=GRAY, space_before=4)
 tf = textbox(s, MARGIN_L, 5850000, 4900000, 360000)
-para(tf, "20 seeds · p < 0.001 · Cohen's d = 2.98", 11, italic=True, color=GRAY)
+para(tf, "20 seeds · p < 0.001 · d = 2.98 · CDHS-anchored simulated environment",
+     11, italic=True, color=GRAY)
 # Right: reward-curve figure
 RC = os.path.join(FIG_DIR, "slides", "slide_reward_curves.png")
 if os.path.exists(RC):
@@ -689,9 +645,9 @@ if os.path.exists(RC):
     tf = textbox(s, rc_l, 5350000, rc_w, 340000)
     para(tf, "Cumulative reward — learning system vs static rules.", 11,
          italic=True, color=GRAY, align=PP_ALIGN.CENTER)
-content_footer(s, 4, 16)
+content_footer(s, 4, 15)
 
-# ══ Slide 17: The baseline ladder ═════════════════════════════════════
+# ══ Slide 16: The baseline ladder ═════════════════════════════════════
 s = content_slide("THE BASELINE LADDER", 4)
 tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 340000)
 para(tf, "Every realistic alternative we tried lands below the bandits.", 15,
@@ -729,20 +685,21 @@ tf = textbox(s, MARGIN_L, 6120000, CONTENT_W, 320000)
 para(tf, "‡ The only policies above the bandits either see the future (Oracle) or "
      "approve nobody cheaply and everybody expensively (AlwaysRATED) — no "
      "regulator would allow the latter.", 11, italic=True, color=GRAY)
-content_footer(s, 4, 17)
+content_footer(s, 4, 16)
 
-# ══ Slide 18: Side-by-side validation ═════════════════════════════════
+# ══ Slide 17: Side-by-side validation ═════════════════════════════════
 s = content_slide("SOPHEA, THREE WAYS", 4)
 tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 360000)
 para(tf, "The same applicant, decided by three different systems:", 15,
      italic=True, color=GRAY)
 PANELS = [
-    ("Static rules", "today's incumbent", "DECLINE", RED_BG, RED_ACC,
-     "Sees two fields, crosses two thresholds, says no."),
+    ("Static rules", "today's incumbent", "RATED", AMBER_BG, AMBER_ACC,
+     "Predicts 1.83× mortality — close to her true risk — but the fixed "
+     "band still loads her premium."),
     ("LinUCB bandit", "our learning system", "STANDARD", GREEN_BG, GREEN_ACC,
-     "Weighs her whole profile, offers standard cover."),
+     "Weighs the price trade-off: offers standard cover outright."),
     ("Oracle", "knows the true risk", "STANDARD", RGBColor(0xD4, 0xE6, 0xF7), NAVY,
-     "The perfect-knowledge benchmark agrees: standard."),
+     "With true risk known (1.84×), a loaded premium isn't worth the lost sale."),
 ]
 pw = (CONTENT_W - 2 * 300000) // 3
 pt = 1650000; ph = 3550000
@@ -763,9 +720,9 @@ for i, (name, sub, verdict, bg, acc, note) in enumerate(PANELS):
 tf = textbox(s, MARGIN_L, 5400000, CONTENT_W, 560000)
 para(tf, "The bandit reaches the answer the all-knowing benchmark picks — the "
      "static rule never can.", 16, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
-content_footer(s, 4, 18)
+content_footer(s, 4, 17)
 
-# ══ Slide 19: Fairness + HITL results ═════════════════════════════════
+# ══ Slide 18: Fairness + HITL results ═════════════════════════════════
 s = content_slide("FAIRNESS & HUMAN OVERSIGHT — RESULTS", 4)
 col_half = CONTENT_W // 2 - 150000
 ROW_H = 560000; ROW_GAP = 60000
@@ -812,19 +769,19 @@ _grid(3560000, HITL_ITEMS)
 tf = textbox(s, MARGIN_L, 4880000, CONTENT_W, 560000)
 para(tf, "A human safety net adds real reward (+14.8%) for a small cost (2.2%) — "
      "sending only about 1 in 70 cases to an expert.", 13, italic=True, color=NAVY)
-content_footer(s, 4, 19)
+content_footer(s, 4, 18)
 
-# ══ Slide 20: Findings & limitations ══════════════════════════════════
+# ══ Slide 19: Findings & limitations ══════════════════════════════════
 s = content_slide("FINDINGS & LIMITATIONS", 5)
 tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 260000)
 para(tf, "WHAT WE FOUND", 13, bold=True, color=BLUE)
 FINDINGS = [
-    ("Learning beats static rules",
+    ("Learning outperforms static rules (in simulation)",
      "+25.2%,  p < 0.001,  d = 2.98",
      "LinUCB earned $18,248 more than the static baseline across 20 repeats."),
-    ("No demographic bias introduced",
+    ("No demographic parity failures on the primary metrics",
      "85.72% & 90.12% approval parity",
-     "Fairness held across regions and occupations."),
+     "Cleared the 4/5 rule; criterion 6 flagged (interpreted in A3)."),
     ("The learning — not the exploration — is what works",
      "greedy version ties the full one (p = 0.58)",
      "It's the updating-as-it-goes that beats a frozen model."),
@@ -864,20 +821,20 @@ for i, (hdr, body) in enumerate(LIM):
     para(tfh, hdr, 13, bold=True, color=AMBER_TXT)
     tfb = textbox(s, l + 150000, LIM_TOP + 420000, LIM_W - 250000, LIM_H - 500000)
     para(tfb, body, 12, color=DARK_TXT)
-content_footer(s, 5, 20)
+content_footer(s, 5, 19)
 
-# ══ Slide 21: Future work ═════════════════════════════════════════════
+# ══ Slide 20: Future work ═════════════════════════════════════════════
 s = content_slide("FUTURE WORK", 5)
 FW = [
     ("Handle change over time",
-     ["Forgetting-factor updates + PSI early-warning",
-      "Adapt faster when the population shifts"]),
+     ["PSI RED (> 0.25) triggers a DiscountedLinUCB warm-restart (λ = 0.90)",
+      "Adapt faster when the population shifts, without a full cold retrain"]),
+    ("Real-world deployment",
+     ["Shadow-mode trial with a Cambodian insurer, scoped with the IRC regulator",
+      "Delayed reward (6–24mo claims lag) via a proxy or survival model"]),
     ("Richer models",
      ["Neural bandit extensions",
       "Move beyond 34 simple features"]),
-    ("Real-world deployment",
-     ["Shadow-mode trial with a Cambodian insurer",
-      "Delayed reward via a claims-lag proxy"]),
     ("Lifetime customer value",
      ["Retention, renewals, cross-selling",
       "Beyond a single-decision reward"]),
@@ -897,6 +854,38 @@ for i, (hdr, lines) in enumerate(FW):
             para(tfb, line, 13, color=DARK_TXT)
         else:
             new_para(tfb, line, 13, color=GRAY, space_before=6)
+content_footer(s, 5, 20)
+
+# ══ Slide 21: Next steps (personally) ═════════════════════════════════
+s = content_slide("NEXT STEPS (PERSONALLY)", 5)
+tf = textbox(s, MARGIN_L, 1120000, CONTENT_W, 260000)
+para(tf, "THE ACADEMIC WORK ABOVE CONTINUES — HERE'S WHERE I'M TAKING IT", 13,
+     bold=True, color=BLUE)
+NEXT_PERSONAL = [
+    ("Continuing with DAC",
+     ["Hardening this pipeline for DAC's actual client work",
+      "PSI monitoring + drift response, built production-grade"]),
+    ("MSIG Vietnam PA POC",
+     ["A dynamic-underwriting proof-of-concept for personal accident cover",
+      "Same offline-eval + human-in-the-loop architecture, design already locked"]),
+]
+NP_H = 2800000; NP_W = (CONTENT_W - 300000) // 2; NP_TOP = 1550000
+for i, (hdr, lines) in enumerate(NEXT_PERSONAL):
+    fl = MARGIN_L + i * (NP_W + 300000)
+    rect(s, fl, NP_TOP, NP_W, NP_H, fill=LIGHT_BG)
+    rect(s, fl, NP_TOP, 91440, NP_H, fill=NAVY)
+    tfh = textbox(s, fl + 150000, NP_TOP + 130000, NP_W - 200000, 420000)
+    para(tfh, hdr, 16, bold=True, color=NAVY)
+    tfb = textbox(s, fl + 150000, NP_TOP + 660000, NP_W - 200000, NP_H - 760000)
+    for j, line in enumerate(lines):
+        if j == 0:
+            para(tfb, line, 13, color=DARK_TXT)
+        else:
+            new_para(tfb, line, 13, color=GRAY, space_before=8)
+tf = textbox(s, MARGIN_L, NP_TOP + NP_H + 300000, CONTENT_W, 500000)
+para(tf, "Same core idea — learn from data offline, keep a human in the loop, "
+     "keep a drift monitor running — applied to the next problem.", 13,
+     italic=True, color=NAVY, align=PP_ALIGN.CENTER)
 content_footer(s, 5, 21)
 
 # ══ Slide 22: Takeaway ════════════════════════════════════════════════
@@ -907,15 +896,15 @@ tf.vertical_anchor = MSO_ANCHOR.MIDDLE
 p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
 r = p.add_run(); r.text = "2023: "; r.font.size = Pt(40); r.font.bold = True
 r.font.color.rgb = GRAY; r.font.name = HEAD_FONT
-r = p.add_run(); r.text = "DECLINE"; r.font.size = Pt(40); r.font.bold = True
-r.font.color.rgb = RED_ACC; r.font.name = HEAD_FONT
+r = p.add_run(); r.text = "RATED"; r.font.size = Pt(40); r.font.bold = True
+r.font.color.rgb = AMBER_ACC; r.font.name = HEAD_FONT
 r = p.add_run(); r.text = "     2026: "; r.font.size = Pt(40); r.font.bold = True
 r.font.color.rgb = GRAY; r.font.name = HEAD_FONT
 r = p.add_run(); r.text = "STANDARD"; r.font.size = Pt(40); r.font.bold = True
 r.font.color.rgb = GREEN_ACC; r.font.name = HEAD_FONT
 tf = textbox(s, MARGIN_L, 3600000, CONTENT_W, 900000)
-para(tf, "The same woman. A system that finally sees her whole picture — and keeps "
-     "learning.", 18, italic=True, color=DARK_TXT, align=PP_ALIGN.CENTER)
+para(tf, "The same woman. A system that weighs the price trade-off a fixed rule "
+     "can't — and keeps learning.", 18, italic=True, color=DARK_TXT, align=PP_ALIGN.CENTER)
 tf = textbox(s, MARGIN_L, 4700000, CONTENT_W, 700000)
 para(tf, "Cambodia has hundreds of thousands of applicants like her.", 20,
      bold=True, color=NAVY, align=PP_ALIGN.CENTER)
@@ -924,7 +913,7 @@ content_footer(s, 5, 22)
 # ══ Slide 23: Demonstration ═══════════════════════════════════════════
 s = content_slide("LIVE DEMONSTRATION", 6)
 DEMO_BEATS = [
-    ("1", "Score Sophea live", "→  decision + the fairness guardrail (PSI), on screen"),
+    ("1", "Score Sophea live", "→  decision + the drift monitor (PSI), on screen"),
     ("2", "A higher-risk applicant", "→  see the decision and the reward change"),
     ("3", "Watch it learn", "→  cumulative-reward animation, learning system vs static"),
 ]
@@ -988,7 +977,7 @@ para(tf, "BACKUP SLIDES IN THE APPENDIX", 13, bold=True,
 APP_MENU = [
     "A1 Baseline ladder   ·   A2 Number reconciliation   ·   A3 All 6 fairness checks",
     "A4 The maths   ·   A5 Sensitivity analysis   ·   A6 No train/test split",
-    "A7 The exploration bonus (α)   ·   A8 The fairness index (PSI)",
+    "A7 The exploration bonus (α)   ·   A8 The drift index (PSI)   ·   A9 The data",
 ]
 tf = textbox(s, MARGIN_L, 4400000, CONTENT_W, 1100000)
 for k, item in enumerate(APP_MENU):
@@ -1009,7 +998,7 @@ para(tf, f"8 July 2026  ·  26 / {TOTAL}", 9, color=WHITE, align=PP_ALIGN.RIGHT)
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  APPENDIX  (A1-A8) — plain title chrome, no nav tabs
+#  APPENDIX  (A1-A9) — plain title chrome, no nav tabs
 # ══════════════════════════════════════════════════════════════════════
 
 def appendix_slide(title):
@@ -1132,8 +1121,9 @@ LINUCB_LINES = [
     "UCB score:",
     "  p(x) = θ̂ᵀ x + α √(xᵀ A⁻¹ x)",
     "",
-    "PSI formula:",
-    "  PSI = Σ (Pₙₑw − Pₒₗd) × ln(Pₙₑw / Pₒₗd)",
+    "Regret bound (motivation, not a guarantee):",
+    "  √(Td) is proven for SupLinUCB, not plain LinUCB;",
+    "  LinTS sits √d above the lower bound. (PSI: A8.)",
     "",
     "HITL dual-update:",
     "  If human overrides → update on human label",
@@ -1238,8 +1228,8 @@ for ri, (setting, adv, d) in enumerate(ADV_ROWS):
 rect(s, MARGIN_L, 4350000, CONTENT_W, 1000000, fill=LIGHT_BG)
 rect(s, MARGIN_L, 4350000, 91440, 1000000, fill=GREEN_ACC)
 tf = textbox(s, MARGIN_L + 180000, 4460000, CONTENT_W - 360000, 800000)
-para(tf, "Robust: α = 1.0 is regret-minimising, and LinUCB beats Static XGB at "
-     "every α, adverse-selection factor and elasticity slope tested.", 14,
+para(tf, "Robust: α = 1.0 is regret-minimising, and LinUCB outperforms Static XGB "
+     "(in-simulation) at every α, adverse-selection factor and elasticity slope tested.", 14,
      bold=True, color=GREEN_ACC)
 new_para(tf, "Note: α = 1.0 gives $91,378 over 10 seeds here; the headline "
          "$90,540 is the 20-seed EXP-005 figure — both real, different seed counts.",
@@ -1312,7 +1302,7 @@ rect(s, right_a7, 2050000, 91440, 2400000, fill=NAVY)
 tf = textbox(s, right_a7 + 170000, 2170000, half_a7 - 300000, 420000)
 para(tf, "Sophea's STANDARD arm:", 14, bold=True, color=NAVY)
 tf = textbox(s, right_a7 + 170000, 2600000, half_a7 - 300000, 1750000)
-para(tf, "score 0.52  =  payoff guess  +  a small curiosity bonus", 14,
+para(tf, "score 0.66  =  payoff guess  +  a small curiosity bonus", 14,
      bold=True, color=DARK_TXT)
 new_para(tf, "The bonus nudges the system to try arms it hasn't seen often — so it "
          "keeps learning instead of locking in early.", 13, color=GRAY, space_before=12)
@@ -1326,7 +1316,7 @@ new_para(tf, "We swept α ∈ {0.1, 0.5, 1, 2, 5} over 10 seeds — the reward b
 footer(s, "Appendix", "33", TOTAL)
 
 # ── A8: The fairness index (PSI) walkthrough ─────────────────────────
-s = appendix_slide("A8: THE FAIRNESS INDEX (PSI), STEP BY STEP")
+s = appendix_slide("A8: THE DRIFT INDEX (PSI), STEP BY STEP")
 # Labeled formula
 rect(s, MARGIN_L, 1120000, CONTENT_W, 900000, fill=LIGHT_BG)
 rect(s, MARGIN_L, 1120000, 91440, 900000, fill=NAVY)
@@ -1382,8 +1372,60 @@ new_para(tf, "Region 0.082 (GREEN) · Occupation 0.123 (AMBER)", 13,
          color=DARK_TXT, space_before=6)
 tf = textbox(s, MARGIN_L, 5100000, CONTENT_W, 700000)
 para(tf, "PSI is a monitor, not an enforcer: it detects drift but does not change "
-     "the policy. An enforcement layer is future work.", 13, italic=True, color=GRAY)
+     "the policy — and detecting drift is not the same as guaranteeing demographic "
+     "fairness, which is tested separately (A3). An enforcement layer is future work.",
+     13, italic=True, color=GRAY)
 footer(s, "Appendix", "34", TOTAL)
+
+# ── A9: The Data ──────────────────────────────────────────────────────
+s = appendix_slide("A9: THE DATA")
+STATS = [
+    ("2,000", "SYNTHETIC\nAPPLICANTS"),
+    ("34", "FACTS ABOUT\nEACH PERSON"),
+    ("4", "POSSIBLE\nDECISIONS"),
+    ("4", "REAL-SURVEY\nANCHORS"),
+]
+stat_w = CONTENT_W // 4 - 50000
+for i, (num, label) in enumerate(STATS):
+    l = MARGIN_L + i * (stat_w + 50000)
+    tf = textbox(s, l, 1160000, stat_w, 520000)
+    para(tf, num, 36, bold=True, color=NAVY, align=PP_ALIGN.CENTER)
+    tf2 = textbox(s, l, 1700000, stat_w, 380000)
+    para(tf2, label, 12, color=GRAY, align=PP_ALIGN.CENTER)
+FEAT_CATS = [
+    ("Demographics & Vitals", "Age, Gender, BMI", "3"),
+    ("Lifestyle", "Smoking, Alcohol, Exercise", "3"),
+    ("Social Determinants", "Education, Wealth, Self-rated health", "3"),
+    ("Economic", "Monthly income, Family history", "2"),
+    ("Clinical Flags", "Hypertension, Diabetes, Heart, COPD, Arthritis, TB, Hepatitis B", "7+1"),
+    ("Region (one-hot)", "8 macro-regions (CDHS 2021-22)", "8"),
+    ("Occupation (one-hot)", "Rice farmer 28%, Garment 20%, Market vendor 15%, Moto 12%…", "7"),
+]
+TBL_T = 2280000
+tbl = s.shapes.add_table(len(FEAT_CATS) + 1, 3,
+                         Emu(MARGIN_L), Emu(TBL_T),
+                         Emu(CONTENT_W), Emu(3350000)).table
+for ci, h in enumerate(["Category", "Features", "Dims"]):
+    c = tbl.cell(0, ci); c.text = h
+    c.fill.solid(); c.fill.fore_color.rgb = NAVY
+    for p in c.text_frame.paragraphs:
+        for r in p.runs:
+            r.font.color.rgb = WHITE; r.font.bold = True; r.font.size = Pt(12)
+for ri, (cat, feats, dims) in enumerate(FEAT_CATS):
+    for ci, val in enumerate([cat, feats, dims]):
+        c = tbl.cell(ri + 1, ci); c.text = val
+        bg = LIGHT_BG if ri % 2 == 0 else WHITE
+        c.fill.solid(); c.fill.fore_color.rgb = bg
+        for p in c.text_frame.paragraphs:
+            for r in p.runs:
+                r.font.size = Pt(11)
+                r.font.bold = (ci == 0)
+                r.font.color.rgb = NAVY if ci == 0 else DARK_TXT
+tf = textbox(s, MARGIN_L, 5780000, CONTENT_W, 480000)
+para(tf, "Synthetic because no insurer would share real records — but shaped to "
+     "match published Cambodia statistics (CDHS 2021-22, STEPS, ILO, WHO).", 12,
+     italic=True, color=GRAY)
+footer(s, "Appendix", "35", TOTAL)
 
 
 # ══ Save ══════════════════════════════════════════════════════════════

@@ -73,6 +73,18 @@ PRESETS: dict[str, dict[str, Any]] = {
         monthly_income_usd=309.0, education="Primary", wealth_quintile="Middle",
         self_reported_health="Fair", mortality_multiplier=2.69,
     ),
+    # Defense-deck persona "Sophea" (2026-07-04) — dataset row 6 (applicant_id
+    # KH-00007), one of 80/2000 real rows where StaticXGB RATED / bandit STANDARD /
+    # Oracle STANDARD all verified simultaneously. Locked here so the live demo
+    # reproduces exactly what the slides claim — see
+    # thesis/health_rl/build_defense_v3.py slides 4/5/11/17/22.
+    "sophea": dict(
+        age=43, gender="Female", bmi=25.7, region="Other Provinces",
+        occupation="Garment Worker", is_smoking=0, alcohol_use=0, is_exercise=0,
+        has_family_history=0, conditions=["Hypertension"],
+        monthly_income_usd=159.0, education="Secondary", wealth_quintile="Middle",
+        self_reported_health="Good", mortality_multiplier=1.84,
+    ),
 }
 
 FORM_DEFAULTS = dict(
@@ -363,11 +375,12 @@ def render_desk_tab() -> None:
         b2.button("Clear", key="btn_clear", on_click=_clear_form, use_container_width=True)
 
         st.caption("Try:")
-        p1, p2, p3, p4 = st.columns(4)
+        p1, p2, p3, p4, p5 = st.columns(5)
         p1.button("✅ Low Risk", key="btn_preset_low", on_click=_apply_preset, args=("low_risk",), use_container_width=True)
         p2.button("⚠️ Borderline", key="btn_preset_borderline", on_click=_apply_preset, args=("borderline",), use_container_width=True)
         p3.button("🚫 High Risk", key="btn_preset_high", on_click=_apply_preset, args=("high_risk",), use_container_width=True)
         p4.button("🧑‍⚖️ Referral", key="btn_preset_refer", on_click=_apply_preset, args=("refer_case",), use_container_width=True)
+        p5.button("👩 Sophea", key="btn_preset_sophea", on_click=_apply_preset, args=("sophea",), use_container_width=True)
 
         st.markdown('<div class="group-title">Demographics</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)

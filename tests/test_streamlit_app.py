@@ -61,6 +61,20 @@ def test_refer_preset_shows_hitl_card():
     assert "AlwaysRATED" in md
 
 
+def test_sophea_preset_matches_defense_deck():
+    """Locked defense-deck persona (2026-07-04): dataset row 6 (KH-00007).
+
+    Verified real result: StaticXGB RATED (mortality 1.83x, true 1.84x),
+    bandit STANDARD, Oracle STANDARD -- see build_defense_v3.py slides 4/5/11/17/22.
+    """
+    at = AppTest.from_file(str(APP_PATH), default_timeout=30)
+    at.run()
+    at.button(key="btn_preset_sophea").click().run()
+    md = _all_markdown(at)
+    assert 'b-STANDARD">STANDARD' in md
+    assert "⚡ DISAGREES" in md and "✓ AGREES" not in md  # static RATED vs bandit STANDARD
+
+
 def test_fairness_panel_shows_canonical_zones():
     at = AppTest.from_file(str(APP_PATH), default_timeout=30)
     at.run()

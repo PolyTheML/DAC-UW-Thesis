@@ -55,6 +55,20 @@ const Desk = (function () {
       wealth_quintile: 'Middle', self_reported_health: 'Fair',
       mortality_multiplier: 2.69,
     },
+    // Defense-deck persona "Sophea" (2026-07-04) — dataset row 6 (applicant_id
+    // KH-00007), one of 80/2000 real rows where StaticXGB RATED / bandit STANDARD /
+    // Oracle STANDARD all verified simultaneously. Locked here so the live demo
+    // reproduces exactly what the slides claim — see thesis/health_rl/build_defense_v3.py
+    // slides 4/5/11/17/22. Do not hand-type her numbers live; use this button.
+    sophea: {
+      age: 43, gender: 'Female', bmi: 25.7,
+      region: 'Other Provinces', occupation: 'Garment Worker',
+      is_smoking: 0, alcohol_use: 0, is_exercise: 0, has_family_history: 0,
+      conditions: ['Hypertension'],
+      monthly_income_usd: 159, education: 'Secondary',
+      wealth_quintile: 'Middle', self_reported_health: 'Good',
+      mortality_multiplier: 1.84,
+    },
   };
 
   function opt(list, val) {
@@ -290,6 +304,7 @@ const Desk = (function () {
     document.getElementById('preset-borderline').addEventListener('click', () => loadPreset('borderline'));
     document.getElementById('preset-high').addEventListener('click', () => loadPreset('high_risk'));
     document.getElementById('preset-refer').addEventListener('click', () => loadPreset('refer_case'));
+    document.getElementById('preset-sophea').addEventListener('click', () => loadPreset('sophea'));
   }
 
   return { init, loadPreset };
