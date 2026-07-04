@@ -126,6 +126,34 @@ const Desk = (function () {
       <span>$${val.toFixed(0)}</span></div>`;
   }
 
+  // Thresholds calibrated against the P3 preset table (2026-07-04): borderline
+  // lands at 50.6% confidence, low/high risk at 92.7%/98.7% — the presets never
+  // land near the plan's original 40/75 split, so the cut-points move to 55/85
+  // to keep Low/High Risk GREEN and Borderline clearly separated (RED).
+  function confidenceBadge(pct) {
+    if (pct < 55) return { label: '⚠️ Margin thin — human review territory', color: 'var(--red)' };
+    if (pct < 85) return { label: '👁 Bandit decides, monitored', color: 'var(--accent)' };
+    return { label: '✅ High margin, automated', color: 'var(--green)' };
+  }
+
+  function renderConfidence(conf) {
+    const pct = Math.round(conf * 100);
+    const { label, color } = confidenceBadge(pct);
+    const tip = 'How decisively this decision beats the runner-up action under the ' +
+      'learned value model (softmax margin, τ=6). Illustrative — not a calibrated ' +
+      'probability. Low margin = actions nearly tied = the natural case for human review.';
+    return `
+      <div style="margin-top:.75rem;" title="${tip}">
+        <div style="display:flex;justify-content:space-between;" class="muted">
+          <span>Decision confidence (illustrative)</span><span>${pct}%</span>
+        </div>
+        <div class="bar-track" style="height:8px;border-radius:4px;overflow:hidden;">
+          <div style="width:${pct}%;height:100%;background:${color};transition:width .4s;"></div>
+        </div>
+        <div class="muted" style="color:${color};margin-top:.3rem;">${label}</div>
+      </div>`;
+  }
+
   function renderComparison(d) {
     const bandit = d.decision;
     const xgb = d.static_xgb;
@@ -166,11 +194,10 @@ const Desk = (function () {
     document.getElementById('result').innerHTML = `
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
         <span class="badge decision-badge b-${d.decision}">${d.decision}</span>
-        <span class="muted">confidence ${(d.confidence * 100).toFixed(0)}%
-          <span style="font-size:.7rem">(illustrative)</span></span>
         <span class="badge z-${fair.badge_status}" title="${fair.note}">
           Guardrail: ${fair.badge_status}</span>
       </div>
+      ${renderConfidence(d.confidence)}
       <div class="group-title">Estimated reward by action</div>
       ${ACTIONS.map(a => bar(a, er[a], lo, hi, a === d.decision)).join('')}
       ${renderComparison(d)}

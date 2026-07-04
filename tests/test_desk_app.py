@@ -127,6 +127,15 @@ def test_score_includes_model_fairness():
     assert fair["canonical"]["occupation_zone"] == "AMBER"
 
 
+def test_confidence_varies_across_applicants():
+    a = client.post("/api/score", json=SAMPLE_APPLICANT).json()["confidence"]
+    risky = dict(SAMPLE_APPLICANT, age=70, bmi=34.0, is_smoking=1,
+                 pre_existing_conditions="Hypertension, Diabetes, Heart Disease",
+                 self_reported_health="Poor")
+    b = client.post("/api/score", json=risky).json()["confidence"]
+    assert a != b
+
+
 def test_score_includes_static_xgb_comparison():
     data = client.post("/api/score", json=SAMPLE_APPLICANT).json()
     xgb = data["static_xgb"]
