@@ -9,14 +9,27 @@ IMPORTANT run order: build_defense_v3.py FIRST, then this script. The builder
 creates a fresh Presentation() every run and silently wipes injected notes, so
 this generator must always run afterwards to restore them.
 
-2026-07-02 (Sreynich-flow redesign): re-synced to the 34-slide deck
-(1 Title · 2 ToC · 3 Map · 4-8 Introduction · 9 Literature · 10-13 System
-Design · 14-15 Implementation · 16-19 Results · 20-22 Conclusion · 23-25
-Demonstration · 26 Thanks · 27-34 Appendix A1-A8). Plain-language-first;
-formulas exiled to the appendix. HITL headline is the canonical 20-seed
-figure: +14.8% ($103,951 vs $90,540, p<0.001, d=2.65, review rate 1.3% =
-65/5,000, cost 2.2% of reward). The stale "+6.5%" figure survives ONLY as the
-single-seed-42 illustrative reading inside the A2 reconciliation.
+2026-07-03 (data slide relocated to appendix + linking-phrase pass): re-synced
+to the 34-slide deck (1 Title · 2 ToC · 3 Map · 4-8 Introduction · 9
+Literature · 10-13 System Design · 14 Implementation · 15-18 Results · 19-21
+Conclusion · 22-24 Demonstration · 25 Thanks · 26-34 Appendix A1-A9). The
+former standalone "THE DATA" slide now lives only as Appendix A9 — slide 14
+("How We Tested It") carries the one-line data intro instead. Every slide's
+script now opens with a bridge phrase back to the previous slide's content.
+Plain-language-first; formulas exiled to the appendix. HITL headline is the
+canonical 20-seed figure: +14.8% ($103,951 vs $90,540, p<0.001, d=2.65,
+review rate 1.3% = 65/5,000, cost 2.2% of reward). The stale "+6.5%" figure
+survives ONLY as the single-seed-42 illustrative reading inside the A2
+reconciliation.
+
+2026-07-04: re-synced to the 35-slide deck (1 Title · 2 ToC · 3 Map · 4-8
+Introduction · 9 Literature · 10-13 System Design · 14 Implementation · 15-18
+Results · 19-22 Conclusion · 23-25 Demonstration · 26 Thanks · 27-35 Appendix
+A1-A9) — a new slide 21 "NEXT STEPS (PERSONALLY)" was inserted after Future
+Work (DAC production-readiness track + MSIG Vietnam PA POC), and the Future
+Work card order was rebalanced (drift-adaptation, real-world deployment,
+neural bandits, lifetime value) to bridge naturally into it. Every physical
+slide from 21 onward shifted by +1 versus the prior sync.
 """
 
 import os
@@ -33,7 +46,7 @@ SLIDES_DIR = r"thesis\health_rl\slide_thumbnails_v3"
 # Appendix labels -> real 1-based pptx slide index (physical position).
 _APPENDIX_SLIDE_MAP = {
     "A1": 27, "A2": 28, "A3": 29, "A4": 30,
-    "A5": 31, "A6": 32, "A7": 33, "A8": 34,
+    "A5": 31, "A6": 32, "A7": 33, "A8": 34, "A9": 35,
 }
 
 # Nav-tab labels (drawn before the title on every content slide) — skipped
@@ -43,13 +56,13 @@ _NAV_LABELS = {
     "iv. Implementation", "v. Results", "vi. Conclusion", "vii. Demo",
 }
 
-# Thumbnails regenerated 2026-07-02 against the 34-slide deck (3-digit
+# Thumbnails regenerated 2026-07-03 against the 34-slide deck (3-digit
 # slide_NNN.png in SLIDES_DIR) — safe to embed.
 _THUMBNAILS_CURRENT = True
 
 
 # ---------------------------------------------------------------------------
-# SLIDES — 34 entries: main 1-26 + appendix A1-A8
+# SLIDES — 35 entries: main 1-26 + appendix A1-A9
 # ---------------------------------------------------------------------------
 SLIDES = [
     {
@@ -75,10 +88,11 @@ SLIDES = [
         "title": "TABLE OF CONTENTS",
         "timing": "~0.5 min",
         "script": (
-            "Here is the shape of the talk. I'll start with the problem and the "
-            "market, review the literature in a single table, walk through how the "
-            "system is designed and built, show the results, draw the conclusions, "
-            "and finish with a live demonstration.\n\n"
+            "Before I introduce her properly, here is the shape of the talk. "
+            "I'll start with the problem and the market, review the literature "
+            "in a single table, walk through how the system is designed and "
+            "built, show the results, draw the conclusions, and finish with a "
+            "live demonstration.\n\n"
             "[Advance to the map.]"
         ),
     },
@@ -102,18 +116,18 @@ SLIDES = [
         "title": "MEET SOPHEA",
         "timing": "~1.5 min",
         "script": (
+            "Let's meet one of them.\n\n"
             "[Point to the profile card on the left.]\n\n"
-            "This is Sophea — forty-two years old, a rice farmer from Kampong Cham. "
-            "She is active from field farming, a non-smoker, with a BMI of 24.1, "
-            "well within the normal range. Her only health flag is managed "
-            "hypertension.\n\n"
+            "This is Sophea — forty-three years old, a garment worker. She's a "
+            "non-smoker, sedentary factory work, with a BMI of 25.7. Her only "
+            "health flag is managed hypertension.\n\n"
             "[Point to the two amber flags on the right.]\n\n"
-            "In 2023 she applies for voluntary health insurance in Phnom Penh. The "
-            "static system checks just two fields: occupation — agriculture; and "
-            "condition — hypertension. Both thresholds are crossed.\n\n"
-            "[Point to the red box.]\n\n"
-            "The decision: DECLINE. Sophea leaves without coverage. And I have to "
-            "ask — was that the right answer?"
+            "In 2023 she applies for voluntary health insurance. The static system "
+            "predicts her mortality risk from her full profile — one point eight "
+            "three times normal — and that estimate falls in a fixed band.\n\n"
+            "[Point to the amber box.]\n\n"
+            "The decision: RATED. She's covered, but at a loaded premium. And I "
+            "have to ask — was that the right price?"
         ),
     },
     {
@@ -121,13 +135,15 @@ SLIDES = [
         "title": "WHY STATIC RULES FAIL",
         "timing": "~1 min",
         "script": (
-            "The honest answer is that the rule couldn't have known. A fixed rule "
-            "can't see Sophea's full picture — and it never learns from its "
-            "mistakes.\n\n"
-            "Three problems, in plain words. First, fixed cutoffs: it checks two "
-            "fields and stops, so her normal BMI and active lifestyle are invisible. "
-            "Second, it never updates: claims come back over the years but the rule "
-            "stays frozen, repeating the same mistake. And third, nobody checks "
+            "The honest answer is subtler than 'the rule couldn't see her.' Its risk "
+            "estimate for Sophea is actually accurate — one point eight three "
+            "against a true one point eight four. Getting the risk right isn't "
+            "the same as getting the price right.\n\n"
+            "Three problems, in plain words. First, fixed cutoffs: a fixed band "
+            "can't weigh whether a loaded premium is still worth offering — it "
+            "just applies the same cutoff to everyone in the band. Second, it "
+            "never updates: claims come back over the years but the rule stays "
+            "frozen, repeating the same pricing mistake. And third, nobody checks "
             "fairness: no one is watching whether whole regions or occupations are "
             "quietly shut out.\n\n"
             "My thesis asks whether a system that learns can do better on all three."
@@ -155,8 +171,9 @@ SLIDES = [
         "title": "ABOUT DECENT ACTUARIAL CONSULTANTS",
         "timing": "~1 min",
         "script": (
-            "I pursued this at Decent Actuarial Consultants — DAC — as a research "
-            "intern from March 2026.\n\n"
+            "Before I show you how I built this, a word on where. I pursued "
+            "this at Decent Actuarial Consultants — DAC — as a research intern "
+            "from March 2026.\n\n"
             "DAC is a regional actuarial consultancy headquartered in Taipei, with "
             "offices across Taiwan, Vietnam and Cambodia. Their work spans life and "
             "general insurance — appointed-actuary services, IFRS 17, product "
@@ -183,8 +200,8 @@ SLIDES = [
         "title": "THE LITERATURE, IN ONE TABLE",
         "timing": "~1.5 min",
         "script": (
-            "Four bodies of work meet in this thesis, and I've put them in one "
-            "table.\n\n"
+            "Before any of those milestones, I did the reading. Four bodies of "
+            "work meet in this thesis, and I've put them in one table.\n\n"
             "First, health insurance in emerging markets — the surveys that tell us "
             "Cambodia is barely insured. Second, contextual bandits — the machine-"
             "learning method at the heart of this work, from Li and colleagues in "
@@ -202,8 +219,9 @@ SLIDES = [
         "title": "HOW THE SYSTEM WORKS",
         "timing": "~1 min",
         "script": (
-            "Here's the whole system on one line. In plain words: it decides, sees "
-            "what happens, and gets a little smarter each round.\n\n"
+            "So that's the gap. Here's the whole system I built to fill it, on "
+            "one line. In plain words: it decides, sees what happens, and gets "
+            "a little smarter each round.\n\n"
             "It reads a short profile of the applicant. It picks one of four "
             "actions — Standard, Rated, Decline, or Refer to a human. It earns a "
             "reward: the premiums it collects minus the claims that follow. A "
@@ -220,11 +238,11 @@ SLIDES = [
             "Let's watch it decide for Sophea.\n\n"
             "[Point to the left panel.]\n\n"
             "On the left is what it knows about her — a short profile: age, "
-            "non-smoker, managed blood pressure, active, rice farmer, low wealth. "
-            "Thirty-four facts in all.\n\n"
+            "non-smoker, managed blood pressure, sedentary work, garment worker, "
+            "middle wealth. Thirty-four facts in all.\n\n"
             "[Point to the bars.]\n\n"
-            "It scores each of the four options. Standard scores highest, at 0.52; "
-            "Rated 0.31; Refer 0.28; Decline just 0.10. The highest score wins, so "
+            "It scores each of the four options. Standard scores highest, at 0.66; "
+            "Decline 0.20; Refer 0.13; Rated just 0.00. The highest score wins, so "
             "Sophea gets Standard coverage.\n\n"
             "In plain words: it estimates how each option would pay off for someone "
             "like her, then adds a small bonus for options it hasn't tried often — "
@@ -237,8 +255,9 @@ SLIDES = [
         "title": "WHAT THE SYSTEM EARNS",
         "timing": "~1 min",
         "script": (
-            "What does 'reward' actually mean? It's simple: reward equals premiums "
-            "collected minus claims paid.\n\n"
+            "That score is built from a reward — so what does 'reward' "
+            "actually mean? It's simple: reward equals premiums collected "
+            "minus claims paid.\n\n"
             "Insure someone who stays healthy and you collect premiums and pay few "
             "claims — you earn. Insure a frequent claimer and the claims outrun the "
             "premiums — you lose. Decline everyone and you collect nothing.\n\n"
@@ -272,33 +291,18 @@ SLIDES = [
     },
     {
         "num": 14,
-        "title": "THE DATA",
-        "timing": "~1 min",
-        "script": (
-            "Now, the data. Two thousand synthetic applicants, thirty-four facts "
-            "about each person, four possible decisions, anchored to four real "
-            "Cambodian surveys.\n\n"
-            "[Gesture at the table.]\n\n"
-            "The features span demographics and vitals, lifestyle, social "
-            "determinants, economics, clinical flags, and one-hot region and "
-            "occupation.\n\n"
-            "Why synthetic? Because no insurer would share real records. But the "
-            "data is shaped to match published Cambodia statistics — the CDHS "
-            "survey, STEPS, ILO, and WHO — so it behaves realistically even though "
-            "no real person is in it."
-        ),
-    },
-    {
-        "num": 15,
         "title": "HOW WE TESTED IT",
         "timing": "~1 min",
         "script": (
-            "How did I test it? Three things, in plain words.\n\n"
-            "First, a quick word on the numbers: it's the same two thousand "
-            "applicants from the last slide, not a new batch. Five thousand "
-            "rounds means the system runs through that pool two and a half times, "
-            "reshuffled each pass, so the learner sees enough rounds to actually "
-            "converge.\n\n"
+            "So it earns well and stays fair — now, how did I actually test "
+            "that? Two thousand synthetic, Cambodia-shaped applicant profiles, "
+            "thirty-four facts about each person, anchored to four real "
+            "Cambodian surveys — the CDHS survey, STEPS, ILO, and WHO. Full "
+            "feature breakdown is in Appendix A9 if you'd like it.\n\n"
+            "A quick word on the numbers: five thousand rounds means the "
+            "system runs through that same pool of two thousand two and a "
+            "half times, reshuffled each pass, so the learner sees enough "
+            "rounds to actually converge.\n\n"
             "Five thousand applicants, seen one at a time in order — exactly how it "
             "would run in production. Twenty independent repeats, each with a "
             "different random draw; the learning system won every single time. And "
@@ -313,11 +317,12 @@ SLIDES = [
         ),
     },
     {
-        "num": 16,
+        "num": 15,
         "title": "THE HEADLINE RESULT",
         "timing": "~1.5 min",
         "script": (
-            "This is the headline result. The learning system earned twenty-five "
+            "And that testing produces the headline result. The learning "
+            "system earned twenty-five "
             "point two percent more cumulative reward than the static rules — "
             "$90,540 versus $72,292, over twenty seeds.\n\n"
             "In plain words: for every hundred dollars the old rules earned, the "
@@ -330,12 +335,13 @@ SLIDES = [
         ),
     },
     {
-        "num": 17,
+        "num": 16,
         "title": "THE BASELINE LADDER",
         "timing": "~1.5 min",
         "script": (
-            "I want to be honest about where the bandit sits, so I tested it "
-            "against a whole ladder of alternatives.\n\n"
+            "And that result isn't a fluke of the comparison, either. I want "
+            "to be honest about where the bandit sits, so I tested it against "
+            "a whole ladder of alternatives.\n\n"
             "Every realistic alternative lands below the bandits — the static "
             "incumbent, epsilon-greedy, always-standard, random. The two learning "
             "methods, LinTS and LinUCB, are the best deployable policies on the "
@@ -349,22 +355,23 @@ SLIDES = [
         ),
     },
     {
-        "num": 18,
+        "num": 17,
         "title": "SOPHEA, THREE WAYS",
         "timing": "~1 min",
         "script": (
             "Let me bring it back to Sophea. Here is the same applicant, decided by "
             "three different systems.\n\n"
-            "The static rules — today's incumbent — see two fields and say DECLINE. "
-            "Our LinUCB bandit weighs her whole profile and offers STANDARD cover. "
-            "And the Oracle, the perfect-knowledge benchmark that knows her true "
-            "risk, also says STANDARD.\n\n"
+            "The static rules — today's incumbent — predict 1.83× mortality, close "
+            "to her true risk, but the fixed band still loads her premium: RATED. "
+            "Our LinUCB bandit weighs the price trade-off and offers STANDARD cover "
+            "outright. And the Oracle, the perfect-knowledge benchmark that knows "
+            "her true risk, also says STANDARD.\n\n"
             "That's the whole story in one line: the bandit reaches the answer the "
             "all-knowing benchmark picks — the static rule never can."
         ),
     },
     {
-        "num": 19,
+        "num": 18,
         "title": "FAIRNESS & HUMAN OVERSIGHT — RESULTS",
         "timing": "~1.5 min",
         "script": (
@@ -382,11 +389,12 @@ SLIDES = [
         ),
     },
     {
-        "num": 20,
+        "num": 19,
         "title": "FINDINGS & LIMITATIONS",
         "timing": "~1.5 min",
         "script": (
-            "Let me gather the findings — and be honest about the limits.\n\n"
+            "Pulling that together — let me gather the findings, and be "
+            "honest about the limits.\n\n"
             "Four findings. Learning beats static rules, by twenty-five percent. No "
             "demographic bias was introduced. It's the learning-as-it-goes, not the "
             "exploration, that does the work — the greedy version ties the full one. "
@@ -399,18 +407,34 @@ SLIDES = [
         ),
     },
     {
-        "num": 21,
+        "num": 20,
         "title": "FUTURE WORK",
         "timing": "~1 min",
         "script": (
-            "So where next? Four directions.\n\n"
-            "First, handle change over time — forgetting-factor updates paired with "
-            "the PSI early warning, so it adapts faster when the population shifts. "
-            "Second, richer models — neural bandits that go beyond thirty-four "
-            "simple features. Third, real-world deployment — a shadow-mode trial "
-            "with a Cambodian insurer, using a claims-lag proxy for delayed reward. "
-            "And fourth, lifetime customer value — retention and renewals, beyond a "
+            "Given those limits, so where next? Four directions.\n\n"
+            "First, handle change over time — a PSI RED alert triggers a "
+            "DiscountedLinUCB warm-restart, so it adapts faster without a full "
+            "cold retrain. Second, real-world deployment — a shadow-mode trial "
+            "with a Cambodian insurer, using a proxy or survival model to bridge "
+            "the six-to-twenty-four-month claims lag. Third, richer models — "
+            "neural bandits that go beyond thirty-four simple features. And "
+            "fourth, lifetime customer value — retention and renewals, beyond a "
             "single decision."
+        ),
+    },
+    {
+        "num": 21,
+        "title": "NEXT STEPS (PERSONALLY)",
+        "timing": "~0.5 min",
+        "script": (
+            "And that academic list keeps going — but here's where I'm actually "
+            "taking it myself.\n\n"
+            "I'm continuing with DAC, hardening this same pipeline — the bandit, "
+            "the PSI guardrail — for their real client work. And I'm carrying the "
+            "same architecture into a new proof-of-concept: dynamic underwriting "
+            "for personal accident cover with MSIG Vietnam. Same core idea — learn "
+            "from data, keep a guardrail on fairness — applied to the next "
+            "problem."
         ),
     },
     {
@@ -419,9 +443,10 @@ SLIDES = [
         "timing": "~0.5 min",
         "script": (
             "So let me close where I began.\n\n"
-            "In 2023, the static system issued Sophea a DECLINE. In 2026, the "
-            "learning system issues STANDARD. The same woman — but a system that "
-            "finally sees her whole picture, and keeps learning.\n\n"
+            "In 2023, the static system issued Sophea a RATED — a loaded premium "
+            "she may not have needed. In 2026, the learning system offers her "
+            "STANDARD outright. The same woman — but a system that weighs the "
+            "price trade-off a fixed rule can't, and keeps learning.\n\n"
             "And Cambodia has hundreds of thousands of applicants like her."
         ),
     },
@@ -430,8 +455,8 @@ SLIDES = [
         "title": "LIVE DEMONSTRATION",
         "timing": "~2 min",
         "script": (
-            "Let me show you it working — this is a live FastAPI app, not a "
-            "mockup.\n\n"
+            "And rather than just describe that, let me show you it working "
+            "— this is a live FastAPI app, not a mockup.\n\n"
             "[Switch to the browser: uvicorn demo.desk.app:app --port 8000.]\n\n"
             "First, I'll score Sophea live and you'll see the decision and the "
             "fairness guardrail on screen. Then I'll score a higher-risk applicant "
@@ -467,12 +492,13 @@ SLIDES = [
         "title": "THANK YOU",
         "timing": "~0.5 min",
         "script": (
-            "That is my thesis. Thank you very much for your attention — I welcome "
-            "your questions.\n\n"
+            "That is my thesis, start to finish. Thank you very much for your "
+            "attention — I welcome your questions.\n\n"
             "[If a question targets a specific number, advance to the matching "
             "appendix: A1 the full ladder, A2 the number reconciliation, A3 all six "
             "fairness checks, A4 the maths, A5 the sensitivity analysis, A6 the "
-            "no-split point, A7 the exploration bonus, or A8 the PSI walkthrough.]"
+            "no-split point, A7 the exploration bonus, A8 the PSI walkthrough, or "
+            "A9 the data.]"
         ),
     },
     # ── Appendix (on standby; only walked if asked) ────────────────────────
@@ -565,7 +591,7 @@ SLIDES = [
             "expected payoff plus alpha times how-unsure-we-still-are. In the "
             "formula, x-bar is the best guess of the payoff, the square-root term is "
             "how uncertain we still are, and alpha — which we set to 1.0 — controls "
-            "how adventurous to be. For Sophea's Standard arm, the 0.52 is a payoff "
+            "how adventurous to be. For Sophea's Standard arm, the 0.66 is a payoff "
             "guess plus a small curiosity bonus. Too high wastes decisions "
             "exploring; too low and it never learns. I swept alpha from 0.1 to 5 — "
             "the reward barely moves, and 1.0 is best."
@@ -583,6 +609,24 @@ SLIDES = [
             "amber to 0.25, red above. Our own result: region 0.082, green; "
             "occupation 0.123, amber. And PSI is a monitor, not an enforcer — it "
             "detects drift but does not change the policy."
+        ),
+    },
+    {
+        "num": "A9",
+        "title": "A9: THE DATA",
+        "timing": "on standby",
+        "script": (
+            "The data, in full. Two thousand synthetic applicants, thirty-four "
+            "facts about each person, four possible decisions, anchored to four "
+            "real Cambodian surveys.\n\n"
+            "[Gesture at the table.]\n\n"
+            "The features span demographics and vitals, lifestyle, social "
+            "determinants, economics, clinical flags, and one-hot region and "
+            "occupation.\n\n"
+            "Why synthetic? Because no insurer would share real records. But the "
+            "data is shaped to match published Cambodia statistics — the CDHS "
+            "survey, STEPS, ILO, and WHO — so it behaves realistically even though "
+            "no real person is in it."
         ),
     },
 ]
@@ -633,8 +677,8 @@ def build_doc():
         "HOW TO USE THIS SCRIPT\n"
         "Read aloud naturally — do not recite word-for-word if it feels unnatural. "
         "Bracketed notes [like this] are stage directions, not spoken text. The "
-        "Sophea narrative is the emotional thread — carry it slides 4, 11, 18 and "
-        "22. The eight appendix slides A1-A8 are on standby; only advance to them "
+        "Sophea narrative is the emotional thread — carry it slides 4, 11, 17 and "
+        "22. The nine appendix slides A1-A9 are on standby; only advance to them "
         "if the Committee asks a question that slide addresses."
     )
     hr.font.size = Pt(10)
@@ -712,8 +756,8 @@ def verify_alignment(prs):
     """Cross-check SLIDES order against the live pptx. Returns (ok, problems)."""
     total = len(prs.slides)
     problems = []
-    if total != 34:
-        problems.append(f"expected 34 slides in pptx, found {total}")
+    if total != 35:
+        problems.append(f"expected 35 slides in pptx, found {total}")
 
     for slide_data in SLIDES:
         num = slide_data["num"]
