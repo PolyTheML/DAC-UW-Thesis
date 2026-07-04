@@ -196,6 +196,21 @@ def test_run_learn_rejects_unknown_preset():
         run_learn("LinUCB", n_rounds=300, exploration="Wild")
 
 
+# ---- P1: server-side cache for deterministic learn runs ----
+
+def test_run_learn_is_cached_and_stable():
+    a = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Balanced")
+    b = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Balanced")
+    assert a == b                      # deterministic
+    assert a is not b                  # no shared mutable object
+
+
+def test_run_learn_cache_does_not_leak_across_presets():
+    a = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Greedy")
+    b = run_learn("LinUCB", seed=42, n_rounds=300, exploration="Exploratory")
+    assert a["param"] != b["param"]
+
+
 # ---- Exploration speed-control: HTTP boundary (spec §6/§9) ----
 
 def test_learn_run_http_greedy_param():

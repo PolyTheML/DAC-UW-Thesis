@@ -81,6 +81,11 @@
     .seg-btn { border:0; background:transparent; color:var(--muted); padding:.4rem .8rem;
                cursor:pointer; font-size:.8rem; font-weight:600; }
     .seg-btn.active { background:var(--accent); color:#fff; }
+    .learn-error { background:#dc2626; color:#fff; padding:10px 16px; border-radius:8px;
+                   margin-bottom:12px; display:flex; justify-content:space-between;
+                   align-items:center; gap:1rem; }
+    .learn-error button { background:#fff; color:#dc2626; border:none; padding:4px 12px;
+                          border-radius:4px; cursor:pointer; font-weight:600; }
   </style>
 </head>
 <body>
@@ -122,7 +127,7 @@
     <!-- VIEW 2: WATCH IT LEARN -->
     <section id="view-learn" class="view">
       <div id="headline" class="headline"><span class="muted">Loading headline…</span></div>
-      <div class="card">
+      <div class="card" id="learn-card">
         <h2>Cumulative reward — adaptive policy vs Static XGB</h2>
         <div class="btn-row">
           <select id="algo"><option>LinUCB</option><option>LinTS</option></select>

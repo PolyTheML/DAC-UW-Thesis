@@ -5,6 +5,7 @@ them (no server streaming). Live numbers are single-seed and illustrative.
 """
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any
 
 import numpy as np
@@ -39,7 +40,26 @@ def _mix(actions: np.ndarray) -> dict[str, float]:
     return {ACTION_NAMES[i]: round(float(counts[i] / total), 4) for i in range(4)}
 
 
+@lru_cache(maxsize=32)
+def _run_learn_cached(
+    algorithm: str, seed: int, n_rounds: int, exploration: str
+) -> str:
+    """Cached JSON string (immutable) of a deterministic learn run."""
+    import json
+    return json.dumps(_run_learn_impl(algorithm, seed, n_rounds, exploration))
+
+
 def run_learn(
+    algorithm: str,
+    seed: int = 42,
+    n_rounds: int = 2000,
+    exploration: str = "Balanced",
+) -> dict[str, Any]:
+    import json
+    return json.loads(_run_learn_cached(algorithm, seed, n_rounds, exploration))
+
+
+def _run_learn_impl(
     algorithm: str,
     seed: int = 42,
     n_rounds: int = 2000,

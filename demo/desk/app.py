@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import sys
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -84,6 +85,14 @@ def _row_to_applicant(row: pd.Series) -> dict[str, Any]:
 @app.get("/api/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.on_event("startup")
+def _warm_default_learn_run() -> None:
+    threading.Thread(
+        target=lambda: learning.run_learn("LinUCB", 42, 3000, "Balanced"),
+        daemon=True,
+    ).start()
 
 
 @app.get("/")

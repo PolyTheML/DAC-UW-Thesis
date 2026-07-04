@@ -96,24 +96,70 @@ const Learn = (function () {
     btn.classList.add('active');
   }
 
+  let isLoading = false;
+
+  function setBusy(busy) {
+    document.getElementById('btn-play').disabled = busy;
+    document.getElementById('btn-reset').disabled = busy;
+  }
+
+  function showError(msg) {
+    let el = document.getElementById('error-banner');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'error-banner';
+      el.className = 'learn-error';
+      document.getElementById('learn-card').prepend(el);
+    }
+    el.innerHTML = '';
+    const span = document.createElement('span');
+    span.textContent = msg;
+    const btn = document.createElement('button');
+    btn.textContent = 'Retry';
+    btn.addEventListener('click', loadAndReset);
+    el.append(span, btn);
+  }
+
+  function hideError() {
+    const el = document.getElementById('error-banner');
+    if (el) el.remove();
+  }
+
   async function loadAndReset() {
+    if (isLoading) return;
     stop(); frame = 0;
+    isLoading = true;
+    setBusy(true);
+    hideError();
     document.getElementById('lift-readout').textContent = '';
-    document.getElementById('learn-note').textContent = 'Running…';
-    const algo = document.getElementById('algo').value;
-    data = await API.learn({ algorithm: algo, seed: 42, n_rounds: N_ROUNDS, exploration });
-    const sym = data.param.name === 'alpha' ? 'α' : 'v²';
-    document.getElementById('param-readout').textContent =
-      `${sym} = ${data.param.value} · ${data.exploration}`;
     document.getElementById('learn-note').textContent =
-      `${data.illustrative_note} · ${data.exploration}`;
-    document.getElementById('mix-early').innerHTML = '';
-    document.getElementById('mix-late').innerHTML = '';
-    drawTo(1);
+      'Simulating 3,000 applicant decisions — the first run can take up to a minute on the free server…';
+    const algo = document.getElementById('algo').value;
+    try {
+      data = await API.learn({ algorithm: algo, seed: 42, n_rounds: N_ROUNDS, exploration });
+      const sym = data.param.name === 'alpha' ? 'α' : 'v²';
+      document.getElementById('param-readout').textContent =
+        `${sym} = ${data.param.value} · ${data.exploration}`;
+      document.getElementById('learn-note').textContent =
+        `${data.illustrative_note} · ${data.exploration}`;
+      document.getElementById('mix-early').innerHTML = '';
+      document.getElementById('mix-late').innerHTML = '';
+      drawTo(1);
+    } catch (e) {
+      showError('Could not reach the simulation server — it may be waking up (free tier). Retry in a few seconds.');
+    } finally {
+      isLoading = false;
+      setBusy(false);
+    }
   }
 
   async function init() {
-    await renderHeadline();
+    try {
+      await renderHeadline();
+    } catch (e) {
+      document.getElementById('headline').innerHTML =
+        '<span class="muted">Headline unavailable — server waking up. It will appear on the next reload.</span>';
+    }
     buildChart();
     document.getElementById('btn-play').addEventListener('click', play);
     document.getElementById('btn-reset').addEventListener('click', loadAndReset);
