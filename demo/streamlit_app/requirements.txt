@@ -1,0 +1,4 @@
+# Additional dependency for the Streamlit Underwriting Desk.
+# All other runtime deps (numpy, pandas, scikit-learn, xgboost, healthrl/)
+# are already in the project's top-level requirements.txt.
+streamlit>=1.40.0,<2.0.0
