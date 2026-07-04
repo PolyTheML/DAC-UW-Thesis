@@ -43,6 +43,18 @@ const Desk = (function () {
       wealth_quintile: 'Richer', self_reported_health: 'Good',
       mortality_multiplier: 1.36,
     },
+    // Dataset-mined (row 1823 of cambodia_dataset.csv): one of only 25 rows out of
+    // 2000 where the frozen theta's argmax is REFER. Verified via SCORER.score() ==
+    // "REFER" directly, not assumed.
+    refer_case: {
+      age: 45, gender: 'Male', bmi: 27.3,
+      region: 'Phnom Penh', occupation: 'Construction Worker',
+      is_smoking: 0, alcohol_use: 1, is_exercise: 0, has_family_history: 0,
+      conditions: ['Hypertension', 'COPD/Asthma'],
+      monthly_income_usd: 309, education: 'Primary',
+      wealth_quintile: 'Middle', self_reported_health: 'Fair',
+      mortality_multiplier: 2.69,
+    },
   };
 
   function opt(list, val) {
@@ -185,6 +197,25 @@ const Desk = (function () {
     </div>` : ''}`;
   }
 
+  function renderHitlCard(d) {
+    return `
+      <div style="border:2px solid var(--amber);border-radius:12px;padding:1rem;margin-top:.75rem;">
+        <div style="font-size:1.2rem;font-weight:800;color:var(--amber);">
+          🧑‍⚖️ REFERRED TO HUMAN UNDERWRITER</div>
+        <div class="muted" style="margin-top:.4rem;">
+          The policy's value estimates for this applicant are nearly tied — the case where
+          a human judgment adds the most. In the thesis (EXP-008), REFER routes the case to
+          a human whose decision replaces the mathematical referral payoff.</div>
+        <div class="muted" style="margin-top:.6rem;">
+          <b>Canonical result (20 seeds):</b> human-in-the-loop lifts reward
+          <b>+14.8%</b> over the unassisted bandit ($103,951 vs $90,540, p &lt; 0.001,
+          d = 2.65) — while referring only <b>1.3%</b> of cases and spending
+          <b>2.2%</b> of cumulative reward on review.</div>
+        <div class="note">Scope: +14.8% is vs the vanilla bandit, not vs Static XGB, and
+          HITL does not beat the inadmissible AlwaysRATED ceiling (thesis §5.4.2).</div>
+      </div>`;
+  }
+
   function renderResult(d) {
     const er = d.estimated_rewards;
     const vals = ACTIONS.map(a => er[a]);
@@ -201,9 +232,10 @@ const Desk = (function () {
       <div class="group-title">Estimated reward by action</div>
       ${ACTIONS.map(a => bar(a, er[a], lo, hi, a === d.decision)).join('')}
       ${renderComparison(d)}
-      <div class="group-title">Recommended premium</div>
-      <div style="font-size:1.2rem;font-weight:700">${prem.display}
-        ${prem.multiplier ? `<span class="muted" style="font-size:.8rem">×${prem.multiplier}</span>` : ''}</div>
+      ${d.decision === 'REFER' ? renderHitlCard(d) : `
+        <div class="group-title">Recommended premium</div>
+        <div style="font-size:1.2rem;font-weight:700">${prem.display}
+          ${prem.multiplier ? `<span class="muted" style="font-size:.8rem">×${prem.multiplier}</span>` : ''}</div>`}
       <div class="group-title">Why this decision</div>
       ${d.drivers.map(dr => `<div class="driver"><span>${dr.label}</span>
         <span class="${dr.direction}">${dr.direction === 'up' ? '▲' : '▼'}
@@ -257,6 +289,7 @@ const Desk = (function () {
     document.getElementById('preset-low').addEventListener('click', () => loadPreset('low_risk'));
     document.getElementById('preset-borderline').addEventListener('click', () => loadPreset('borderline'));
     document.getElementById('preset-high').addEventListener('click', () => loadPreset('high_risk'));
+    document.getElementById('preset-refer').addEventListener('click', () => loadPreset('refer_case'));
   }
 
   return { init, loadPreset };
