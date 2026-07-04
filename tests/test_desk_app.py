@@ -255,3 +255,27 @@ def test_learn_run_rejects_bad_exploration():
         json={"algorithm": "LinUCB", "n_rounds": 300, "exploration": "Wild"},
     )
     assert r.status_code == 422
+
+
+# ---- P2: continuous alpha override slider ----
+
+def test_learn_run_alpha_override_linucb():
+    r = client.post("/api/learn/run", json={
+        "algorithm": "LinUCB", "n_rounds": 300, "alpha": 0.4})
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["param"] == {"name": "alpha", "value": 0.4}
+    assert "Custom" in data["exploration"]
+
+
+def test_learn_run_alpha_zero_is_valid():
+    r = client.post("/api/learn/run", json={
+        "algorithm": "LinUCB", "n_rounds": 300, "alpha": 0.0})
+    assert r.status_code == 200
+    assert r.json()["param"]["value"] == 0.0
+
+
+def test_learn_run_alpha_out_of_range_rejected():
+    r = client.post("/api/learn/run", json={
+        "algorithm": "LinUCB", "n_rounds": 300, "alpha": 9.9})
+    assert r.status_code == 422

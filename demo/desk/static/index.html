@@ -152,6 +152,12 @@
               <button type="button" class="seg-btn" data-exploration="Exploratory">Exploratory</button>
             </div>
             <span class="muted" id="param-readout"></span>
+            <span class="seg-label" id="alpha-wrap" style="display:flex;align-items:center;gap:.5rem;">
+              <span>α</span>
+              <input type="range" id="alpha-slider" min="0" max="3" step="0.05" value="1"
+                     style="width:140px;accent-color:var(--accent);">
+              <span class="muted" id="alpha-display">1.00</span>
+            </span>
           </div>
           <div class="seg-group">
             <span class="seg-label">Speed</span>

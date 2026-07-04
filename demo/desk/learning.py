@@ -42,11 +42,11 @@ def _mix(actions: np.ndarray) -> dict[str, float]:
 
 @lru_cache(maxsize=32)
 def _run_learn_cached(
-    algorithm: str, seed: int, n_rounds: int, exploration: str
+    algorithm: str, seed: int, n_rounds: int, exploration: str, alpha: float | None
 ) -> str:
     """Cached JSON string (immutable) of a deterministic learn run."""
     import json
-    return json.dumps(_run_learn_impl(algorithm, seed, n_rounds, exploration))
+    return json.dumps(_run_learn_impl(algorithm, seed, n_rounds, exploration, alpha))
 
 
 def run_learn(
@@ -54,9 +54,10 @@ def run_learn(
     seed: int = 42,
     n_rounds: int = 2000,
     exploration: str = "Balanced",
+    alpha: float | None = None,
 ) -> dict[str, Any]:
     import json
-    return json.loads(_run_learn_cached(algorithm, seed, n_rounds, exploration))
+    return json.loads(_run_learn_cached(algorithm, seed, n_rounds, exploration, alpha))
 
 
 def _run_learn_impl(
@@ -64,10 +65,16 @@ def _run_learn_impl(
     seed: int = 42,
     n_rounds: int = 2000,
     exploration: str = "Balanced",
+    alpha: float | None = None,
 ) -> dict[str, Any]:
     if exploration not in EXPLORATION_PRESETS:
         raise ValueError(f"Unknown exploration preset: {exploration}")
     preset = EXPLORATION_PRESETS[exploration]
+    if alpha is not None:
+        if algorithm != "LinUCB":
+            raise ValueError("alpha override applies to LinUCB only")
+        preset = {**preset, "alpha": float(alpha)}
+        exploration = f"Custom α={alpha:g}"
 
     if algorithm == "LinUCB":
         adaptive = LinUCB(n_actions=4, n_features=N_FEATURES, alpha=preset["alpha"])

@@ -97,6 +97,14 @@ const Learn = (function () {
   }
 
   let isLoading = false;
+  let alphaOverride = null;   // null = use preset
+  let alphaTimer = null;
+  let requestToken = 0;       // stale-response guard
+
+  function syncAlphaVisibility() {
+    const isLinUCB = document.getElementById('algo').value === 'LinUCB';
+    document.getElementById('alpha-wrap').style.display = isLinUCB ? 'flex' : 'none';
+  }
 
   function setBusy(busy) {
     document.getElementById('btn-play').disabled = busy;
@@ -126,7 +134,7 @@ const Learn = (function () {
   }
 
   async function loadAndReset() {
-    if (isLoading) return;
+    const token = ++requestToken; // a newer call supersedes any still in flight
     stop(); frame = 0;
     isLoading = true;
     setBusy(true);
@@ -135,8 +143,12 @@ const Learn = (function () {
     document.getElementById('learn-note').textContent =
       'Simulating 3,000 applicant decisions — the first run can take up to a minute on the free server…';
     const algo = document.getElementById('algo').value;
+    const req = { algorithm: algo, seed: 42, n_rounds: N_ROUNDS, exploration };
+    if (algo === 'LinUCB' && alphaOverride !== null) req.alpha = alphaOverride;
     try {
-      data = await API.learn({ algorithm: algo, seed: 42, n_rounds: N_ROUNDS, exploration });
+      const res = await API.learn(req);
+      if (token !== requestToken) return; // superseded — drop this stale result
+      data = res;
       const sym = data.param.name === 'alpha' ? 'α' : 'v²';
       document.getElementById('param-readout').textContent =
         `${sym} = ${data.param.value} · ${data.exploration}`;
@@ -146,10 +158,13 @@ const Learn = (function () {
       document.getElementById('mix-late').innerHTML = '';
       drawTo(1);
     } catch (e) {
+      if (token !== requestToken) return;
       showError('Could not reach the simulation server — it may be waking up (free tier). Retry in a few seconds.');
     } finally {
-      isLoading = false;
-      setBusy(false);
+      if (token === requestToken) {
+        isLoading = false;
+        setBusy(false);
+      }
     }
   }
 
@@ -161,12 +176,21 @@ const Learn = (function () {
         '<span class="muted">Headline unavailable — server waking up. It will appear on the next reload.</span>';
     }
     buildChart();
+    syncAlphaVisibility();
     document.getElementById('btn-play').addEventListener('click', play);
     document.getElementById('btn-reset').addEventListener('click', loadAndReset);
-    document.getElementById('algo').addEventListener('change', loadAndReset);
+    document.getElementById('algo').addEventListener('change', () => {
+      alphaOverride = null; // switching algorithm resets to preset behaviour
+      syncAlphaVisibility();
+      loadAndReset();
+    });
     document.querySelectorAll('#seg-exploration .seg-btn').forEach(btn =>
       btn.addEventListener('click', () => {
         exploration = btn.dataset.exploration;
+        alphaOverride = null; // preset click clears any slider override
+        const s = document.getElementById('alpha-slider');
+        s.value = { Greedy: 0, Balanced: 1, Exploratory: 3 }[exploration];
+        document.getElementById('alpha-display').textContent = parseFloat(s.value).toFixed(2);
         setActive('#seg-exploration', btn);
         loadAndReset(); // re-run the curve with the new preset
       }));
@@ -176,6 +200,16 @@ const Learn = (function () {
         setActive('#seg-speed', btn);
         // no re-run / no restart: a running animation picks up the new pace next tick
       }));
+    document.getElementById('alpha-slider').addEventListener('input', function () {
+      document.getElementById('alpha-display').textContent = parseFloat(this.value).toFixed(2);
+      clearTimeout(alphaTimer);
+      alphaTimer = setTimeout(() => {
+        alphaOverride = parseFloat(this.value);
+        document.querySelectorAll('#seg-exploration .seg-btn')
+          .forEach(b => b.classList.remove('active')); // slider overrides preset highlight
+        loadAndReset();
+      }, 400);
+    });
     await loadAndReset();
   }
 
