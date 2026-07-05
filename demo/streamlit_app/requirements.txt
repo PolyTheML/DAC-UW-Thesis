@@ -1,4 +1,8 @@
-# Additional dependency for the Streamlit Underwriting Desk.
-# All other runtime deps (numpy, pandas, scikit-learn, xgboost, healthrl/)
-# are already in the project's top-level requirements.txt.
+# Streamlit Cloud only reads this file, not the repo-root requirements.txt,
+# so the full runtime chain (app.py -> demo/desk/scoring.py -> healthrl/
+# underwriting_bandit.py) needs to be pinned here explicitly.
 streamlit>=1.40.0,<2.0.0
+numpy>=1.26.0,<3.0.0
+pandas>=2.2.0,<3.0.0
+scikit-learn>=1.4.0,<2.0.0
+xgboost>=2.0.0,<4.0.0

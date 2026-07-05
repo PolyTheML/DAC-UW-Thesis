@@ -39,12 +39,11 @@ Everything else is full parity:
 1. Push this branch to GitHub (already done for `thesis/ch5-structural-pass`).
 2. On share.streamlit.io: New app → pick this repo/branch → main file path
    `demo/streamlit_app/app.py`.
-3. Streamlit Cloud auto-detects `demo/streamlit_app/requirements.txt` as the
-   app's own deps; it does **not** automatically pick up the top-level
-   `requirements.txt`. If the deploy fails on a missing package (numpy,
-   pandas, scikit-learn, xgboost), add an "Advanced settings" dependency
-   file pointing at the repo-root `requirements.txt`, or copy the needed
-   lines into `demo/streamlit_app/requirements.txt`.
+3. Streamlit Cloud only reads `demo/streamlit_app/requirements.txt`, not the
+   repo-root `requirements.txt` — it warns "More than one requirements file
+   detected" and picks the app-local one. That file pins the full runtime
+   chain (numpy, pandas, scikit-learn, xgboost) directly, since
+   `demo/desk/scoring.py` unpickles an XGBoost model at import time.
 4. `.streamlit/config.toml` at the repo root sets the dark theme; Streamlit
    Cloud picks it up automatically since it's at the repo root.
 
